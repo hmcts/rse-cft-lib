@@ -1,3 +1,4 @@
 includeBuild 'ccd-definition-store-api'
 includeBuild 'ccd-data-store-api'
 include 'ccd-lib'
+include 'lib-consumer'

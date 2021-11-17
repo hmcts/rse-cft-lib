@@ -29,3 +29,7 @@ dependencies {
     testImplementation 'junit:junit:4.13'
 }
 
+// We output a library, not an executable jar.
+bootJar {
+    enabled = false
+}
