@@ -23,7 +23,7 @@ repositories {
 
 dependencies {
     implementation 'uk.gov.hmcts.ccd:ccd-data-store-api'
-
+    implementation 'uk.gov.hmcts.ccd.definition:application'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13'
