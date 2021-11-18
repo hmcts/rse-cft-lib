@@ -8,7 +8,8 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
-    id 'org.springframework.boot' version '2.4.12'
+    //  https://spring.io/guides/gs/multi-module/
+    id 'org.springframework.boot' version '2.4.12' apply false
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 }
 
@@ -24,12 +25,17 @@ repositories {
 dependencies {
     implementation 'uk.gov.hmcts.ccd:ccd-data-store-api'
     implementation 'uk.gov.hmcts.ccd.definition:application'
+    implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
+
+
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13'
 }
 
-// We output a library, not an executable jar.
-bootJar {
-    enabled = false
+dependencyManagement {
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
 }
