@@ -4,3 +4,6 @@
 [submodule "ccd-definition-store-api"]
 	path = ccd-definition-store-api
 	url = git@github.com:hmcts/ccd-definition-store-api.git
+[submodule "ccd-user-profile-api"]
+	path = ccd-user-profile-api
+	url = git@github.com:hmcts/ccd-user-profile-api.git
