@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   uk.gov.hmcts.rse.ccd.lib.CCDConfig
+org.springframework.context.ApplicationListener=uk.gov.hmcts.rse.ccd.lib.PropertiesListener
