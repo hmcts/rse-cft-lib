@@ -27,6 +27,8 @@ dependencies {
     implementation 'uk.gov.hmcts.ccd.definition:application'
     implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
 
+    // Fix testcontainers on m1
+    implementation group: 'org.elasticsearch', name: 'jna', version: '5.7.0'
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 
