@@ -20,6 +20,8 @@ import uk.gov.hmcts.reform.idam.client.OAuth2Configuration;
 }, excludeFilters = {
     // Def/Data transaction managers are identical
     @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd.*TransactionConfiguration\\.*"),
+    // Unneeded caching
+    @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd.*ApplicationConfiguration\\.*"),
     // Disable the default application component scanning or our excludes won't work.
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
         CaseDataAPIApplication.class,
