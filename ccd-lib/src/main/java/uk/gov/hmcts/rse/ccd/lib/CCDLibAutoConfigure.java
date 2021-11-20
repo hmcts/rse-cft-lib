@@ -19,9 +19,9 @@ import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
 })
 @EnableJpaRepositories(basePackages = "uk.gov.hmcts.ccd.definition")
 @EntityScan(basePackages = "uk.gov.hmcts.ccd.definition")
-public class CCDConfig {
+public class CCDLibAutoConfigure {
 
-  public CCDConfig() {
+  public CCDLibAutoConfigure() {
 
   }
 
