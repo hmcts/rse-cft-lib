@@ -1,11 +1,17 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import uk.gov.hmcts.ccd.definition.store.AppInsights;
 import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
+import uk.gov.hmcts.ccd.definition.store.SecurityConfiguration;
+import uk.gov.hmcts.ccd.definition.store.repository.AuthClientConfiguration;
+import uk.gov.hmcts.reform.idam.client.OAuth2Configuration;
 
 @Configuration
 @ComponentScan(value = {
@@ -15,7 +21,12 @@ import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
     // Def/Data transaction managers are identical
     @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd.*TransactionConfiguration\\.*"),
     // Disable the default application component scanning or our excludes won't work.
-    @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {CaseDataAPIApplication.class})
+    @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
+        CaseDataAPIApplication.class,
+        AuthClientConfiguration.class,
+        SecurityConfiguration.class,
+        AppInsights.class
+    }),
 })
 @EnableJpaRepositories(basePackages = "uk.gov.hmcts.ccd.definition")
 @EntityScan(basePackages = "uk.gov.hmcts.ccd.definition")

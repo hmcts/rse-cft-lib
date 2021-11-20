@@ -13,6 +13,7 @@ public class PropertiesListener implements
     ConfigurableEnvironment environment = event.getEnvironment();
     Properties props = new Properties();
     props.put("ccd.user-profile.host", "http://localhost");
+    props.put("spring.autoconfigure.exclude", "org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration");
     environment.getPropertySources().addFirst(new PropertiesPropertySource("ccdLibProps", props));
   }
 }
