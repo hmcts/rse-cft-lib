@@ -7,7 +7,10 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
 import uk.gov.hmcts.rse.ccd.lib.Library;
 
-@PropertySource("classpath:def-store.properties")
+@PropertySource(value = {
+		"classpath:def-store.properties",
+		"classpath:data-store.properties",
+})
 @SpringBootApplication
 public class LibConsumerApplication {
 
