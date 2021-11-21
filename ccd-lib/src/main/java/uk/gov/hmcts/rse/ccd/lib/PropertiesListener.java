@@ -15,6 +15,7 @@ public class PropertiesListener implements
     Properties props = new Properties();
     props.put("ccd.user-profile.host", "http://localhost");
     props.put("spring.autoconfigure.exclude", "org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration");
+    props.put("spring.flyway.locations", "classpath:/data-store/db/migration");
     environment.getPropertySources().addFirst(new PropertiesPropertySource("ccdLibProps", props));
   }
 }

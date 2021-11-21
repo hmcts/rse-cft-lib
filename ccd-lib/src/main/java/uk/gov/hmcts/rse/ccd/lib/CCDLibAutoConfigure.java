@@ -1,15 +1,15 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Clock;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration;
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.ccd.AliasWebConfig;
 import uk.gov.hmcts.ccd.CoreCaseDataApplication;
 import uk.gov.hmcts.ccd.config.SwaggerConfiguration;
@@ -23,6 +23,9 @@ import uk.gov.hmcts.ccd.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.ccd.security.idam.IdamRepository;
 
 @Configuration
+// We register a non-primary ObjectMapper to stop Jackson doing so
+// and conflicting with the one data store registers.
+@AutoConfigureBefore(JacksonAutoConfiguration.class)
 @ComponentScan(
     nameGenerator = BeanNamer.class,
     value = {
@@ -57,8 +60,9 @@ import uk.gov.hmcts.ccd.security.idam.IdamRepository;
 @EntityScan(basePackages = "uk.gov.hmcts.ccd")
 public class CCDLibAutoConfigure {
 
-  public CCDLibAutoConfigure() {
-
+  @Bean
+  public ObjectMapper secondary() {
+    return new ObjectMapper();
   }
 
   // Because we disable CoreCaseDataApplication.class from scanning
