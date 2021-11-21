@@ -21,7 +21,6 @@ import uk.gov.hmcts.ccd.definition.store.elastic.config.ElasticSearchConfigurati
 import uk.gov.hmcts.ccd.definition.store.repository.AuthClientConfiguration;
 import uk.gov.hmcts.ccd.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.ccd.security.idam.IdamRepository;
-import uk.gov.hmcts.reform.idam.client.OAuth2Configuration;
 
 @Configuration
 @ComponentScan(

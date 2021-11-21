@@ -8,8 +8,8 @@ import org.springframework.context.annotation.PropertySource;
 import uk.gov.hmcts.rse.ccd.lib.Library;
 
 @PropertySource(value = {
-		"classpath:def-store.properties",
-		"classpath:data-store.properties",
+		"classpath:definition-store/application.properties",
+		"classpath:data-store/application.properties",
 })
 @SpringBootApplication
 public class LibConsumerApplication {

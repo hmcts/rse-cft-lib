@@ -1,6 +1,7 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
 import java.util.Properties;
+import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomizer;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.ConfigurableEnvironment;

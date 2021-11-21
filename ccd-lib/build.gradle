@@ -45,3 +45,8 @@ dependencyManagement {
         mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
     }
 }
+
+processResources {
+    from ('../ccd-data-store-api/src/main/resources') { into 'data-store' }
+    from ('../ccd-definition-store-api/application/src/main/resources') { into 'definition-store' }
+}
