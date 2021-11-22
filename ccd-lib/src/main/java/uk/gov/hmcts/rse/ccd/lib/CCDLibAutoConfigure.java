@@ -1,10 +1,13 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.applicationinsights.TelemetryClient;
 import java.time.Clock;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -23,9 +26,14 @@ import uk.gov.hmcts.ccd.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.ccd.security.idam.IdamRepository;
 
 @Configuration
-// We register a non-primary ObjectMapper to stop Jackson doing so
-// and conflicting with the one data store registers.
-@AutoConfigureBefore(JacksonAutoConfiguration.class)
+@AutoConfigureBefore({
+    // We register a non-primary ObjectMapper to stop Jackson doing so
+    // and conflicting with the one data store registers.
+    JacksonAutoConfiguration.class,
+    // Register our JPA config before the spring Hibernate auto config
+    // so our beans (EntityManager) stop spring creating its own.
+    HibernateJpaAutoConfiguration.class
+})
 @ComponentScan(
     nameGenerator = BeanNamer.class,
     value = {
@@ -43,7 +51,6 @@ import uk.gov.hmcts.ccd.security.idam.IdamRepository;
         SecurityConfiguration.class,
         AppInsights.class,
         uk.gov.hmcts.ccd.definition.store.SwaggerConfiguration.class,
-        ElasticSearchConfiguration.class,
 
         // Data store
         CoreCaseDataApplication.class,
@@ -52,11 +59,9 @@ import uk.gov.hmcts.ccd.security.idam.IdamRepository;
         uk.gov.hmcts.ccd.SecurityConfiguration.class,
         // Use the ones from def store
         JwtGrantedAuthoritiesConverter.class,
-        IdamRepository.class,
         AliasWebConfig.class
     }),
 })
-@EnableJpaRepositories(basePackages = "uk.gov.hmcts.ccd")
 @EntityScan(basePackages = "uk.gov.hmcts.ccd")
 public class CCDLibAutoConfigure {
 
@@ -69,5 +74,10 @@ public class CCDLibAutoConfigure {
   @Bean
   public Clock utcClock() {
     return Clock.systemUTC();
+  }
+
+  @Bean
+  public TelemetryClient client() {
+    return new TelemetryClient();
   }
 }

@@ -49,4 +49,5 @@ dependencyManagement {
 processResources {
     from ('../ccd-data-store-api/src/main/resources') { into 'data-store' }
     from ('../ccd-definition-store-api/application/src/main/resources') { into 'definition-store' }
+    from ('../ccd-definition-store-api/repository/src/main/resources') { into 'definition-store' }
 }
