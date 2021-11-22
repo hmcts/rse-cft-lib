@@ -63,6 +63,7 @@ import uk.gov.hmcts.ccd.security.idam.IdamRepository;
     }),
 })
 @EntityScan(basePackages = "uk.gov.hmcts.ccd")
+@EnableJpaRepositories(basePackages = "uk.gov.hmcts.ccd")
 public class CCDLibAutoConfigure {
 
   @Bean
