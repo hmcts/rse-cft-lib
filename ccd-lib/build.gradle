@@ -23,8 +23,11 @@ repositories {
 }
 
 dependencies {
+    // Bring in the ccd projects via Gradle's dependency substitution
     implementation 'uk.gov.hmcts.ccd:ccd-data-store-api'
     api 'uk.gov.hmcts.ccd.definition:application'
+    implementation 'uk.gov.hmcts.ccd:user-profile-api'
+
     implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
 
     // Fix testcontainers on m1

@@ -14,7 +14,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import uk.gov.hmcts.ccd.AliasWebConfig;
+import uk.gov.hmcts.ccd.ApplicationParams;
 import uk.gov.hmcts.ccd.CoreCaseDataApplication;
+//import uk.gov.hmcts.ccd.UserProfileApplication;
+import uk.gov.hmcts.ccd.UserProfileApplication;
+import uk.gov.hmcts.ccd.auth.AuthCheckerConfiguration;
+import uk.gov.hmcts.ccd.auth.AuthorizedConfiguration;
 import uk.gov.hmcts.ccd.config.SwaggerConfiguration;
 import uk.gov.hmcts.ccd.data.AuthClientsConfiguration;
 import uk.gov.hmcts.ccd.definition.store.AppInsights;
@@ -22,6 +27,8 @@ import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
 import uk.gov.hmcts.ccd.definition.store.SecurityConfiguration;
 import uk.gov.hmcts.ccd.definition.store.elastic.config.ElasticSearchConfiguration;
 import uk.gov.hmcts.ccd.definition.store.repository.AuthClientConfiguration;
+//import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
+import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
 import uk.gov.hmcts.ccd.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.ccd.security.idam.IdamRepository;
 
@@ -59,7 +66,16 @@ import uk.gov.hmcts.ccd.security.idam.IdamRepository;
         uk.gov.hmcts.ccd.SecurityConfiguration.class,
         // Use the ones from def store
         JwtGrantedAuthoritiesConverter.class,
-        AliasWebConfig.class
+        AliasWebConfig.class,
+
+        // User profile
+        UserProfileApplication.class,
+        uk.gov.hmcts.ccd.SwaggerConfiguration.class,
+        HikariConfigurationPropertiesReportEndpoint.class,
+        AuthCheckerConfiguration.class,
+        AuthorizedConfiguration.class,
+        uk.gov.hmcts.ccd.auth.SecurityConfiguration.class
+//        ApplicationParams.class
     }),
 })
 @EntityScan(basePackages = "uk.gov.hmcts.ccd")
