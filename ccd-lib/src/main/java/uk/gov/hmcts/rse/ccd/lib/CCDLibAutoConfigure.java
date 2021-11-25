@@ -6,15 +6,15 @@ import java.time.Clock;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import uk.gov.hmcts.ccd.AliasWebConfig;
-import uk.gov.hmcts.ccd.ApplicationParams;
 import uk.gov.hmcts.ccd.CoreCaseDataApplication;
 //import uk.gov.hmcts.ccd.UserProfileApplication;
 import uk.gov.hmcts.ccd.UserProfileApplication;
@@ -25,12 +25,11 @@ import uk.gov.hmcts.ccd.data.AuthClientsConfiguration;
 import uk.gov.hmcts.ccd.definition.store.AppInsights;
 import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
 import uk.gov.hmcts.ccd.definition.store.SecurityConfiguration;
-import uk.gov.hmcts.ccd.definition.store.elastic.config.ElasticSearchConfiguration;
+import uk.gov.hmcts.ccd.definition.store.domain.service.workbasket.WorkBasketUserDefaultService;
 import uk.gov.hmcts.ccd.definition.store.repository.AuthClientConfiguration;
 //import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
 import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
 import uk.gov.hmcts.ccd.security.JwtGrantedAuthoritiesConverter;
-import uk.gov.hmcts.ccd.security.idam.IdamRepository;
 
 @Configuration
 @AutoConfigureBefore({
@@ -75,7 +74,6 @@ import uk.gov.hmcts.ccd.security.idam.IdamRepository;
         AuthCheckerConfiguration.class,
         AuthorizedConfiguration.class,
         uk.gov.hmcts.ccd.auth.SecurityConfiguration.class
-//        ApplicationParams.class
     }),
 })
 @EntityScan(basePackages = "uk.gov.hmcts.ccd")
@@ -97,4 +95,5 @@ public class CCDLibAutoConfigure {
   public TelemetryClient client() {
     return new TelemetryClient();
   }
+
 }
