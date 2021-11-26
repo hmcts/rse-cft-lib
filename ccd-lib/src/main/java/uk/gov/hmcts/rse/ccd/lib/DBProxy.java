@@ -64,15 +64,23 @@ public class DBProxy implements BeanPostProcessor {
         Object result = proxyMethod.invoke(dataSource, invocation.getArguments());
         if (invocation.getMethod().getName().equals("getConnection")) {
           StackWalker walker = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
-          Boolean callerClass = walker.walk(s ->
+          Boolean isDefstore = walker.walk(s ->
               s.map(StackWalker.StackFrame::getDeclaringClass)
                   .anyMatch(x -> x.getPackageName().startsWith("uk.gov.hmcts.ccd.definition")));
-          if (callerClass) {
+          if (isDefstore) {
             try (Statement sql = ((Connection)result).createStatement()){
               sql.execute("set search_path to definitionstore,public");
             }
           } else {
             System.out.println("");
+            Boolean isDatastore = walker.walk(s ->
+                s.map(StackWalker.StackFrame::getDeclaringClass)
+                    .anyMatch(x -> x.getPackageName().startsWith("uk.gov.hmcts.ccd")));
+            if (isDatastore) {
+              try (Statement sql = ((Connection) result).createStatement()) {
+                sql.execute("set search_path to datastore,public");
+              }
+            }
           }
         }
 

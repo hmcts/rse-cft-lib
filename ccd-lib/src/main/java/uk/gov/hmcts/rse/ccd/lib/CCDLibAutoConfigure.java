@@ -16,20 +16,18 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import uk.gov.hmcts.ccd.AliasWebConfig;
 import uk.gov.hmcts.ccd.CoreCaseDataApplication;
-//import uk.gov.hmcts.ccd.UserProfileApplication;
 import uk.gov.hmcts.ccd.UserProfileApplication;
 import uk.gov.hmcts.ccd.auth.AuthCheckerConfiguration;
 import uk.gov.hmcts.ccd.auth.AuthorizedConfiguration;
 import uk.gov.hmcts.ccd.config.SwaggerConfiguration;
 import uk.gov.hmcts.ccd.data.AuthClientsConfiguration;
+import uk.gov.hmcts.ccd.data.SecurityUtils;
 import uk.gov.hmcts.ccd.definition.store.AppInsights;
 import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
 import uk.gov.hmcts.ccd.definition.store.SecurityConfiguration;
-import uk.gov.hmcts.ccd.definition.store.domain.service.workbasket.WorkBasketUserDefaultService;
 import uk.gov.hmcts.ccd.definition.store.repository.AuthClientConfiguration;
-//import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
+import uk.gov.hmcts.ccd.definition.store.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
-import uk.gov.hmcts.ccd.security.JwtGrantedAuthoritiesConverter;
 
 @Configuration
 @AutoConfigureBefore({
@@ -53,6 +51,8 @@ import uk.gov.hmcts.ccd.security.JwtGrantedAuthoritiesConverter;
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
         // Disable the default application component scanning or our excludes won't work.
         CaseDataAPIApplication.class,
+        // Use the one from data store.
+        JwtGrantedAuthoritiesConverter.class,
         AuthClientConfiguration.class,
         SecurityConfiguration.class,
         AppInsights.class,
@@ -64,16 +64,15 @@ import uk.gov.hmcts.ccd.security.JwtGrantedAuthoritiesConverter;
         AuthClientsConfiguration.class,
         uk.gov.hmcts.ccd.SecurityConfiguration.class,
         // Use the ones from def store
-        JwtGrantedAuthoritiesConverter.class,
         AliasWebConfig.class,
 
         // User profile
         UserProfileApplication.class,
+        uk.gov.hmcts.ccd.auth.SecurityConfiguration.class,
         uk.gov.hmcts.ccd.SwaggerConfiguration.class,
         HikariConfigurationPropertiesReportEndpoint.class,
         AuthCheckerConfiguration.class,
-        AuthorizedConfiguration.class,
-        uk.gov.hmcts.ccd.auth.SecurityConfiguration.class
+        AuthorizedConfiguration.class
     }),
 })
 @EntityScan(basePackages = "uk.gov.hmcts.ccd")

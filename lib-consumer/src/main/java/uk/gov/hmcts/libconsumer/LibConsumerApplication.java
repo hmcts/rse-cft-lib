@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
-import uk.gov.hmcts.rse.ccd.lib.Library;
 
 @PropertySource(value = {
 		"classpath:definitionstore/application.properties",

@@ -34,6 +34,7 @@ dependencies {
 
     // Fix testcontainers on m1
     implementation group: 'org.elasticsearch', name: 'jna', version: '5.7.0'
+    api group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.3'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13'
