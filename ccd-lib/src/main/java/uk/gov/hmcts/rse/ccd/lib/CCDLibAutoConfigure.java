@@ -1,6 +1,5 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.applicationinsights.TelemetryClient;
 import java.time.Clock;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -17,11 +16,9 @@ import uk.gov.hmcts.ccd.CoreCaseDataApplication;
 import uk.gov.hmcts.ccd.UserProfileApplication;
 import uk.gov.hmcts.ccd.auth.AuthCheckerConfiguration;
 import uk.gov.hmcts.ccd.auth.AuthorizedConfiguration;
-import uk.gov.hmcts.ccd.config.SwaggerConfiguration;
 import uk.gov.hmcts.ccd.data.AuthClientsConfiguration;
 import uk.gov.hmcts.ccd.definition.store.AppInsights;
 import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
-import uk.gov.hmcts.ccd.definition.store.SecurityConfiguration;
 import uk.gov.hmcts.ccd.definition.store.repository.AuthClientConfiguration;
 import uk.gov.hmcts.ccd.definition.store.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
@@ -42,32 +39,25 @@ import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
     "uk.gov.hmcts.ccd"
 }, excludeFilters = {
     // Def/Data transaction managers are identical
-    @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd.*TransactionConfiguration\\.*"),
-    // Registers a duplicate rest template
+    @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd.*(Transaction|Security|Swagger)Configuration\\.*"),
+    // Registers a duplicate rest template, package private in definition store.
     @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd.*ApplicationConfiguration\\.*"),
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-        // Def store
-        // Disable the default application component scanning or our excludes won't work.
+        // Definition store. Excluded to disable the default application component scanning or our excludes won't work.
         CaseDataAPIApplication.class,
         // Use the one from data store.
         JwtGrantedAuthoritiesConverter.class,
         AuthClientConfiguration.class,
-        SecurityConfiguration.class,
         AppInsights.class,
-        uk.gov.hmcts.ccd.definition.store.SwaggerConfiguration.class,
 
         // Data store
         CoreCaseDataApplication.class,
-        SwaggerConfiguration.class,
         AuthClientsConfiguration.class,
-        uk.gov.hmcts.ccd.SecurityConfiguration.class,
         // Use the ones from def store
         AliasWebConfig.class,
 
         // User profile
         UserProfileApplication.class,
-        uk.gov.hmcts.ccd.auth.SecurityConfiguration.class,
-        uk.gov.hmcts.ccd.SwaggerConfiguration.class,
         HikariConfigurationPropertiesReportEndpoint.class,
         AuthCheckerConfiguration.class,
         AuthorizedConfiguration.class
