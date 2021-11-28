@@ -6,6 +6,11 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 
+/**
+ * Spring beans must have unique names even if their types differ.
+ * This resolves conflicts between beans with the same name occuring in different projects,
+ * eg. IdamRepository in both def and data stores.
+ */
 public class BeanNamer implements BeanNameGenerator {
   @SneakyThrows
   @Override
