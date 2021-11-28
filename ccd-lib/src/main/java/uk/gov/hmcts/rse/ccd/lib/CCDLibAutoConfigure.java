@@ -43,9 +43,10 @@ import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
 }, excludeFilters = {
     // Def/Data transaction managers are identical
     @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd.*TransactionConfiguration\\.*"),
-    // Unneeded caching
+    // Registers a duplicate rest template
     @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd.*ApplicationConfiguration\\.*"),
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
+        // Def store
         // Disable the default application component scanning or our excludes won't work.
         CaseDataAPIApplication.class,
         // Use the one from data store.
