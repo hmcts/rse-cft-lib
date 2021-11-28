@@ -9,6 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource(value = {
 		"classpath:definitionstore/application.properties",
 		"classpath:datastore/application.properties",
+		"classpath:userprofile/application.properties",
 })
 @SpringBootApplication
 public class LibConsumerApplication {

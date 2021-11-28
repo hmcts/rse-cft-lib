@@ -48,7 +48,6 @@ import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
         // Use the one from data store.
         JwtGrantedAuthoritiesConverter.class,
         AuthClientConfiguration.class,
-        AppInsights.class,
 
         // Data store
         CoreCaseDataApplication.class,
@@ -58,9 +57,7 @@ import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
 
         // User profile
         UserProfileApplication.class,
-        HikariConfigurationPropertiesReportEndpoint.class,
-        AuthCheckerConfiguration.class,
-        AuthorizedConfiguration.class
+        HikariConfigurationPropertiesReportEndpoint.class
     }),
 })
 @EntityScan(basePackages = "uk.gov.hmcts.ccd")
