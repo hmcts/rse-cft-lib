@@ -38,7 +38,7 @@ import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
     "uk.gov.hmcts.rse.ccd.lib",
     "uk.gov.hmcts.ccd"
 }, excludeFilters = {
-    // Def/Data transaction managers are identical
+    // Common ccd configs we wish to disable/substitute.
     @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd.*(Transaction|Security|Swagger)Configuration\\.*"),
     // Registers a duplicate rest template, package private in definition store.
     @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd.*ApplicationConfiguration\\.*"),
