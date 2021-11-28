@@ -76,11 +76,6 @@ import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
 @EnableJpaRepositories(basePackages = "uk.gov.hmcts.ccd")
 public class CCDLibAutoConfigure {
 
-  @Bean
-  public ObjectMapper secondary() {
-    return new ObjectMapper();
-  }
-
   // Because we disable CoreCaseDataApplication.class from scanning
   @Bean
   public Clock utcClock() {
