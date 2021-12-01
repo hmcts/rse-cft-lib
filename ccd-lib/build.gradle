@@ -22,6 +22,8 @@ repositories {
     maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
 }
 
+version = '0.1.0'
+
 dependencies {
     // Bring in the ccd projects via Gradle's dependency substitution
     implementation 'uk.gov.hmcts.ccd:ccd-data-store-api'
@@ -32,6 +34,7 @@ dependencies {
 
     implementation 'net.ttddyy:datasource-proxy:1.7'
 
+    implementation "org.testcontainers:postgresql:1.16.2"
     // Fix testcontainers on m1
     implementation group: 'org.elasticsearch', name: 'jna', version: '5.7.0'
     api group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.3'

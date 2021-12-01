@@ -2,6 +2,8 @@ package uk.gov.hmcts.rse.ccd.lib;
 
 import feign.Response;
 import java.util.List;
+import org.apache.poi.ss.formula.functions.T;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 import uk.gov.hmcts.reform.idam.client.models.AuthenticateUserRequest;
@@ -19,7 +21,10 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 public class FakeIdam implements IdamApi {
   @Override
   public UserDetails retrieveUserDetails(String authorisation) {
-    throw new RuntimeException();
+    return UserDetails.builder()
+        .email("a@b.com")
+        .id("dev")
+        .build();
   }
 
   @Override
@@ -58,7 +63,7 @@ public class FakeIdam implements IdamApi {
 
   @Override
   public TokenResponse generateOpenIdToken(TokenRequest tokenRequest) {
-    throw new RuntimeException();
+    return new TokenResponse("", "", "", "", "", "");
   }
 
   @Override

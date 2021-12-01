@@ -19,7 +19,6 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation "org.testcontainers:postgresql:1.16.2"
 
 	implementation project(':ccd-lib')
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
