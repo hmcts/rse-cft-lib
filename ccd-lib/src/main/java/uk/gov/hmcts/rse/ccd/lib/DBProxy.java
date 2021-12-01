@@ -31,6 +31,7 @@ public class DBProxy implements BeanPostProcessor {
     datastore,
     definitionstore,
     userprofile,
+    am,
     unknown
   }
 
@@ -70,6 +71,9 @@ public class DBProxy implements BeanPostProcessor {
       }
       if (p.startsWith("uk.gov.hmcts.ccd")) {
         return project.datastore;
+      }
+      if (p.startsWith("uk.gov.hmcts.reform.roleassignment")) {
+        return project.am;
       }
       return project.unknown;
     }

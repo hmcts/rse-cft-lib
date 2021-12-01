@@ -18,6 +18,12 @@ import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
 import uk.gov.hmcts.ccd.definition.store.repository.AuthClientConfiguration;
 import uk.gov.hmcts.ccd.definition.store.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
+import uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication;
+import uk.gov.hmcts.reform.roleassignment.config.AuditConfig;
+import uk.gov.hmcts.reform.roleassignment.config.AuthCheckerConfiguration;
+import uk.gov.hmcts.reform.roleassignment.config.SecurityConfiguration;
+import uk.gov.hmcts.reform.roleassignment.config.SwaggerConfiguration;
+import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
 
 @Configuration
 @AutoConfigureBefore({
@@ -29,7 +35,8 @@ import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
     nameGenerator = BeanNamer.class,
     basePackages = {
     "uk.gov.hmcts.rse.ccd.lib",
-    "uk.gov.hmcts.ccd"
+    "uk.gov.hmcts.ccd",
+    "uk.gov.hmcts.reform.roleassignment"
 }, excludeFilters = {
     // Common ccd configs we wish to disable/substitute.
     @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd.*(Transaction|Security|Swagger)Configuration\\.*"),
@@ -50,11 +57,25 @@ import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
 
         // User profile
         UserProfileApplication.class,
-        HikariConfigurationPropertiesReportEndpoint.class
+        HikariConfigurationPropertiesReportEndpoint.class,
+
+        // Role assignment
+        RoleAssignmentApplication.class,
+        Swagger2SpringBoot.class,
+        SecurityConfiguration.class,
+        SwaggerConfiguration.class,
+        AuditConfig.class,
+        AuthCheckerConfiguration.class,
     }),
 })
-@EntityScan(basePackages = "uk.gov.hmcts.ccd")
-@EnableJpaRepositories(basePackages = "uk.gov.hmcts.ccd")
+@EntityScan(basePackages = {
+    "uk.gov.hmcts.ccd",
+    "uk.gov.hmcts.reform.roleassignment"
+})
+@EnableJpaRepositories(basePackages = {
+    "uk.gov.hmcts.ccd",
+    "uk.gov.hmcts.reform.roleassignment"
+})
 public class CCDLibAutoConfigure {
 
   // Because we disable CoreCaseDataApplication.class from scanning

@@ -25,6 +25,7 @@ public class PropertiesListener implements
     props.put("ccd.user-profile.host", "http://localhost:${server.port}");
     props.put("ccd.case-definition.host", "http://localhost:${server.port}");
     props.put("ccd.ui-definition.host", "http://localhost:${server.port}");
+    props.put("role.assignment.api.host", "http://localhost:${server.port}");
 
     props.put("spring.datasource.driver-class-name", "org.testcontainers.jdbc.ContainerDatabaseDriver");
 

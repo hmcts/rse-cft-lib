@@ -25,8 +25,9 @@ public class FlywayMigrator implements FlywayMigrationStrategy {
     // so we rename the public schema each time.
     for (String module : List.of(
         "datastore",
-        "definitionstore"
-        ,"userprofile"
+        "definitionstore",
+        "userprofile",
+        "am"
     )) {
       Flyway.configure()
           .dataSource(dataStore)

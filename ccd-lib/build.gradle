@@ -29,6 +29,7 @@ dependencies {
     implementation 'uk.gov.hmcts.ccd:ccd-data-store-api'
     api 'uk.gov.hmcts.ccd.definition:application'
     implementation 'uk.gov.hmcts.ccd:user-profile-api'
+    implementation 'uk.gov.hmcts.reform.roleassignment:am-role-assignment-service'
 
     implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
 
@@ -63,4 +64,6 @@ processResources {
     from ('../ccd-definition-store-api/repository/src/main/resources') { into 'definitionstore' }
 
     from ('../ccd-user-profile-api/src/main/resources') { into 'userprofile' }
+
+    from ('../am-role-assignment-service/src/main/resources') { into 'am' }
 }

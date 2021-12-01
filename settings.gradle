@@ -1,5 +1,6 @@
 includeBuild 'ccd-definition-store-api'
 includeBuild 'ccd-data-store-api'
 includeBuild 'ccd-user-profile-api'
+includeBuild 'am-role-assignment-service'
 include 'ccd-lib'
 include 'lib-consumer'
