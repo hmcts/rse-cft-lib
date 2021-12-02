@@ -40,32 +40,32 @@ configurations {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_API))
         }
     }
-    shadow {
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_API))
-        }
-    }
 }
 
 configurations.compileClasspath.extendsFrom(configurations.bundler, configurations.bundlerTransitive)
-//configurations.runtimeClasspath.extendsFrom(configurations.bundler, configurations.bundlerTransitive)
 
 dependencies {
     // Bring in the ccd projects via Gradle's dependency substitution
     bundler 'uk.gov.hmcts.ccd:ccd-data-store-api'
+
     bundler 'uk.gov.hmcts.ccd.definition:application'
+    bundler 'uk.gov.hmcts.ccd.definition:domain'
+    bundler 'uk.gov.hmcts.ccd.definition:elastic-search-support'
+    bundler 'uk.gov.hmcts.ccd.definition:excel-importer'
+    bundler 'uk.gov.hmcts.ccd.definition:repository'
+    bundler 'uk.gov.hmcts.ccd.definition:rest-api'
+
     bundler 'uk.gov.hmcts.ccd:user-profile-api'
     bundler 'uk.gov.hmcts.reform.roleassignment:am-role-assignment-service'
 
     shadow group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
-    shadow 'org.springframework.cloud:spring-cloud-starter-openfeign:2342.5.0'
 
     shadow 'net.ttddyy:datasource-proxy:1.7'
 
-    implementation "org.testcontainers:postgresql:1.16.2"
+    shadow "org.testcontainers:postgresql:1.16.2"
     // Fix testcontainers on m1
-    implementation group: 'org.elasticsearch', name: 'jna', version: '5.7.0'
-    api group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.3'
+    shadow group: 'org.elasticsearch', name: 'jna', version: '5.7.0'
+    shadow group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.3'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13'
@@ -92,7 +92,10 @@ processResources {
 
     from ('../ccd-user-profile-api/src/main/resources') { into 'userprofile' }
 
-    from ('../am-role-assignment-service/src/main/resources') { into 'am' }
+    from ('../am-role-assignment-service/src/main/resources') {
+        into 'am'
+        include 'db/**'
+    }
 }
 
 shadowJar {
@@ -107,7 +110,7 @@ publishing {
     }
     repositories {
         maven {
-            url project.file('goat')
+            url project.file('mvn-repo')
         }
     }
 }
@@ -121,22 +124,16 @@ project.afterEvaluate {
         return onBundler || dep.moduleGroup.startsWith("uk.gov.hmcts.ccd.definition")
     }
 
-    logger.lifecycle '\nBundled artifacts and their 1st level dependencies:'
-
-    // level one dependencies
+    // Gather the dependencies of the subprojects.
     configurations.bundlerTransitive.resolvedConfiguration.firstLevelModuleDependencies.forEach {
-        logger.lifecycle "+--- ${it.getName()}"
 
-        // level two dependencies
+        // Iterate each subproject's dependencies and add to the shadow configuration, where they will be declared in
+        // the POM manifest but not shaded inside the jar.
         it.children.findAll({ ResolvedDependency dep -> !isBundled(dep) })
                 .forEach { ResolvedDependency dep ->
-                    project.dependencies.add('shadow', [group: dep.moduleGroup, name: dep.moduleName, version: dep.moduleVersion])
+                    project.dependencies.add('shadow', [group: dep.moduleGroup, name: dep.moduleName, version: dep.moduleVersion]) {
+                        exclude group: 'uk.gov.hmcts.reform', module: 'java-logging-spring'
+                    }
                 }
     }
-
-//    logger.lifecycle '\nExported Dependencies:'
-
-//    configurations.shadow.getResolvedConfiguration().getFirstLevelModuleDependencies().forEach {
-//        project.logger.lifecycle "+--- ${it.getName()}"
-//    }
 }

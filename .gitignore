@@ -5,3 +5,6 @@ build
 repository
 ccd-gradle-plugin/src/main/resources/application.properties
 log
+*.iml
+*.ipr
+*.iws
