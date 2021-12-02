@@ -68,7 +68,7 @@ dependencies {
     shadow group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.3'
 
     // Use JUnit test framework
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.2'
 
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
