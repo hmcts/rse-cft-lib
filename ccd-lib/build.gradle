@@ -6,8 +6,9 @@
  * User Manual available at https://docs.gradle.org/6.5.1/userguide/java_library_plugin.html
  */
 plugins {
-    // Apply the java-library plugin to add support for Java Library
     id 'java-library'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
     //  https://spring.io/guides/gs/multi-module/
     id 'org.springframework.boot' version '2.4.12' apply false
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
@@ -24,16 +25,42 @@ repositories {
 
 version = '0.1.0'
 
+configurations {
+    bundler {
+        transitive = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_API))
+        }
+    }
+
+    bundlerTransitive {
+        extendsFrom bundler
+        transitive = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_API))
+        }
+    }
+    shadow {
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_API))
+        }
+    }
+}
+
+configurations.compileClasspath.extendsFrom(configurations.bundler, configurations.bundlerTransitive)
+//configurations.runtimeClasspath.extendsFrom(configurations.bundler, configurations.bundlerTransitive)
+
 dependencies {
     // Bring in the ccd projects via Gradle's dependency substitution
-    implementation 'uk.gov.hmcts.ccd:ccd-data-store-api'
-    api 'uk.gov.hmcts.ccd.definition:application'
-    implementation 'uk.gov.hmcts.ccd:user-profile-api'
-    implementation 'uk.gov.hmcts.reform.roleassignment:am-role-assignment-service'
+    bundler 'uk.gov.hmcts.ccd:ccd-data-store-api'
+    bundler 'uk.gov.hmcts.ccd.definition:application'
+    bundler 'uk.gov.hmcts.ccd:user-profile-api'
+    bundler 'uk.gov.hmcts.reform.roleassignment:am-role-assignment-service'
 
-    implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
+    shadow group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
+    shadow 'org.springframework.cloud:spring-cloud-starter-openfeign:2342.5.0'
 
-    implementation 'net.ttddyy:datasource-proxy:1.7'
+    shadow 'net.ttddyy:datasource-proxy:1.7'
 
     implementation "org.testcontainers:postgresql:1.16.2"
     // Fix testcontainers on m1
@@ -66,4 +93,50 @@ processResources {
     from ('../ccd-user-profile-api/src/main/resources') { into 'userprofile' }
 
     from ('../am-role-assignment-service/src/main/resources') { into 'am' }
+}
+
+shadowJar {
+    configurations = [project.configurations.bundler]
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+        }
+    }
+    repositories {
+        maven {
+            url project.file('goat')
+        }
+    }
+}
+
+project.afterEvaluate {
+    def isBundled = { ResolvedDependency dep ->
+        def onBundler = configurations.bundler.dependencies.any {
+            dep.moduleGroup == it.group && dep.moduleName == it.name
+        }
+        // Def store bundled transitive
+        return onBundler || dep.moduleGroup.startsWith("uk.gov.hmcts.ccd.definition")
+    }
+
+    logger.lifecycle '\nBundled artifacts and their 1st level dependencies:'
+
+    // level one dependencies
+    configurations.bundlerTransitive.resolvedConfiguration.firstLevelModuleDependencies.forEach {
+        logger.lifecycle "+--- ${it.getName()}"
+
+        // level two dependencies
+        it.children.findAll({ ResolvedDependency dep -> !isBundled(dep) })
+                .forEach { ResolvedDependency dep ->
+                    project.dependencies.add('shadow', [group: dep.moduleGroup, name: dep.moduleName, version: dep.moduleVersion])
+                }
+    }
+
+//    logger.lifecycle '\nExported Dependencies:'
+
+//    configurations.shadow.getResolvedConfiguration().getFirstLevelModuleDependencies().forEach {
+//        project.logger.lifecycle "+--- ${it.getName()}"
+//    }
 }
