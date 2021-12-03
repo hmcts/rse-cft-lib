@@ -11,7 +11,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
     //  https://spring.io/guides/gs/multi-module/
     id 'org.springframework.boot' version '2.4.12' apply false
-    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
 repositories {
@@ -64,11 +64,11 @@ dependencies {
 
     shadow "org.testcontainers:postgresql:1.16.2"
     // Fix testcontainers on m1
-    shadow group: 'org.elasticsearch', name: 'jna', version: '5.7.0'
+    shadow group: 'org.elasticsearch', name: 'jna', version: '5.7.0-1'
     shadow group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.3'
 
     // Use JUnit test framework
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.2'
 
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
