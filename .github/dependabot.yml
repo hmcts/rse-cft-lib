@@ -5,3 +5,8 @@ updates:
     schedule:
       interval: "daily"
     open-pull-requests-limit: 50
+  - package-ecosystem: "gitsubmodule"
+    directory: "/ccd-data-store-api"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 50
