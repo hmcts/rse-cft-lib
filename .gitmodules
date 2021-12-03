@@ -1,6 +1,7 @@
 [submodule "ccd-data-store-api"]
 	path = ccd-data-store-api
 	url = git@github.com:banderous/ccd-data-store-api.git
+	ccd-lib = ccd-lib
 [submodule "ccd-definition-store-api"]
 	path = ccd-definition-store-api
 	url = git@github.com:banderous/ccd-definition-store-api.git
