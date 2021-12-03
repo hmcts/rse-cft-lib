@@ -100,17 +100,13 @@ processResources {
 
 shadowJar {
     configurations = [project.configurations.bundler]
+    archiveClassifier.set(null)
 }
 
 publishing {
     publications {
         shadow(MavenPublication) { publication ->
             project.shadow.component(publication)
-        }
-    }
-    repositories {
-        maven {
-            url project.file('mvn-repo')
         }
     }
 }
