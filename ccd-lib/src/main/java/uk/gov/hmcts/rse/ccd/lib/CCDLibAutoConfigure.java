@@ -22,6 +22,10 @@ import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
 import uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication;
 import uk.gov.hmcts.reform.roleassignment.config.AuditConfig;
 import uk.gov.hmcts.reform.roleassignment.config.AuthCheckerConfiguration;
+import uk.gov.hmcts.reform.roleassignment.config.LaunchDarklyConfiguration;
+import uk.gov.hmcts.reform.roleassignment.feignclients.configuration.DataStoreApiConfiguration;
+import uk.gov.hmcts.reform.roleassignment.feignclients.configuration.DataStoreApiInterceptor;
+import uk.gov.hmcts.reform.roleassignment.util.SecurityUtils;
 import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
 
 @Configuration
@@ -41,6 +45,7 @@ import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
     @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.(ccd|reform).*(Transaction|Security|Swagger)Configuration\\.*"),
     // Registers a duplicate rest template, package private in definition store.
     @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd.*ApplicationConfiguration\\.*"),
+    @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd\\.sdk.*"),
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
         // Definition store. Excluded to disable the default application component scanning or our excludes won't work.
         CaseDataAPIApplication.class,
@@ -62,6 +67,8 @@ import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
         RoleAssignmentApplication.class,
         Swagger2SpringBoot.class,
         AuditConfig.class,
+        DataStoreApiInterceptor.class,
+        DataStoreApiConfiguration.class,
         AuthCheckerConfiguration.class,
     }),
 })
@@ -78,6 +85,7 @@ import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
     "classpath:datastore/application.properties",
     "classpath:userprofile/application.properties",
 })
+@PropertySource(value = "classpath:am/application.yaml", factory = YamlPropertySourceFactory.class)
 public class CCDLibAutoConfigure {
 
   // Because we disable CoreCaseDataApplication.class from scanning

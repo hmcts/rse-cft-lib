@@ -94,13 +94,15 @@ processResources {
 
     from ('../am-role-assignment-service/src/main/resources') {
         into 'am'
-        include 'db/**'
+        include 'db/**', 'application.yaml'
     }
 }
 
 shadowJar {
     configurations = [project.configurations.bundler]
     archiveClassifier.set(null)
+    exclude 'application.yaml'
+    exclude 'application.yml'
 }
 
 publishing {
