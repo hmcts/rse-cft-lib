@@ -32,5 +32,7 @@ public class PropertiesListener implements
     props.put("spring.datasource.url", "jdbc:tc:postgresql:12.4:///data-store?stringtype=unspecified");
     props.put("spring.datasource.username", "ccd");
     props.put("spring.datasource.password", "password");
+
+    props.put("spring.main.allow-circular-references", "true");
   }
 }

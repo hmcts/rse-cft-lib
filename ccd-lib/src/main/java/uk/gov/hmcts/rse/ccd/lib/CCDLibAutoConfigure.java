@@ -3,6 +3,7 @@ package uk.gov.hmcts.rse.ccd.lib;
 import com.microsoft.applicationinsights.TelemetryClient;
 import java.time.Clock;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
 import uk.gov.hmcts.ccd.definition.store.repository.AuthClientConfiguration;
 import uk.gov.hmcts.ccd.definition.store.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
+import uk.gov.hmcts.reform.authorisation.validators.ServiceAuthTokenValidator;
 import uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication;
 import uk.gov.hmcts.reform.roleassignment.config.AuditConfig;
 import uk.gov.hmcts.reform.roleassignment.config.AuthCheckerConfiguration;
@@ -70,6 +72,8 @@ import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
         DataStoreApiInterceptor.class,
         DataStoreApiConfiguration.class,
         AuthCheckerConfiguration.class,
+
+        ServiceAuthTokenValidator.class,
     }),
 })
 @EntityScan(basePackages = {
@@ -94,6 +98,7 @@ public class CCDLibAutoConfigure {
     return Clock.systemUTC();
   }
 
+  @ConditionalOnMissingBean
   @Bean
   public TelemetryClient client() {
     return new TelemetryClient();
