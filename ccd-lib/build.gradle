@@ -80,6 +80,7 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+        mavenBom 'com.fasterxml.jackson:jackson-bom:2.12.4'
     }
 }
 
@@ -94,23 +95,23 @@ processResources {
 
     from ('../am-role-assignment-service/src/main/resources') {
         into 'am'
-        include 'db/**'
+        include 'db/**', 'application.yaml'
     }
 }
 
 shadowJar {
     configurations = [project.configurations.bundler]
+    // Remove the default 'all' suffix from the jar name for POM compatibility.
+    archiveClassifier.set(null)
+    // We don't want to clobber these in consuming projects by having them collide on the classpath.
+    exclude 'application.yaml'
+    exclude 'application.yml'
 }
 
 publishing {
     publications {
         shadow(MavenPublication) { publication ->
             project.shadow.component(publication)
-        }
-    }
-    repositories {
-        maven {
-            url project.file('mvn-repo')
         }
     }
 }
@@ -131,8 +132,11 @@ project.afterEvaluate {
         // the POM manifest but not shaded inside the jar.
         it.children.findAll({ ResolvedDependency dep -> !isBundled(dep) })
                 .forEach { ResolvedDependency dep ->
-                    project.dependencies.add('shadow', [group: dep.moduleGroup, name: dep.moduleName, version: dep.moduleVersion]) {
-                        exclude group: 'uk.gov.hmcts.reform', module: 'java-logging-spring'
+                    // Springfox generates json based docs, which we don't need for integration testing.
+                    if (dep.moduleGroup != "io.springfox") {
+                        project.dependencies.add('shadow', [group: dep.moduleGroup, name: dep.moduleName, version: dep.moduleVersion]) {
+                            exclude group: 'uk.gov.hmcts.reform', module: 'java-logging-spring'
+                        }
                     }
                 }
     }
