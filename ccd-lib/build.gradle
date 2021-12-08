@@ -80,7 +80,7 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
-        mavenBom 'com.fasterxml.jackson:jackson-bom:2.12.4'
+        mavenBom 'com.fasterxml.jackson:jackson-bom:2.13.0'
     }
 }
 
