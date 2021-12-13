@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
 
-public class PropertiesListener implements
+public class PropertiesInjector implements
     ApplicationListener<ApplicationEnvironmentPreparedEvent> {
 
   @Override
