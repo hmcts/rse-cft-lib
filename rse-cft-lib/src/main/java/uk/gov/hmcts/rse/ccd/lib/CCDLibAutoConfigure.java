@@ -73,6 +73,7 @@ import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
         DataStoreApiConfiguration.class,
         AuthCheckerConfiguration.class,
 
+        // S2S
         ServiceAuthTokenValidator.class,
     }),
 })

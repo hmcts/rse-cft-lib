@@ -20,7 +20,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 
-	implementation project(path: ':ccd-lib', configuration: 'shadow')
+	implementation project(path: ':rse-cft-lib', configuration: 'shadow')
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	testImplementation 'org.springframework.security:spring-security-test'
