@@ -23,6 +23,7 @@ repositories {
     maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
 }
 
+group = 'com.github.hmcts'
 version = '0.1.0'
 
 configurations {

@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
 
-public class PropertiesListener implements
+public class PropertiesInjector implements
     ApplicationListener<ApplicationEnvironmentPreparedEvent> {
 
   @Override
@@ -26,6 +26,10 @@ public class PropertiesListener implements
     props.put("ccd.case-definition.host", "http://localhost:${server.port}");
     props.put("ccd.ui-definition.host", "http://localhost:${server.port}");
     props.put("role.assignment.api.host", "http://localhost:${server.port}");
+    // TODO - quick hack for a positive health check
+    props.put("feign.client.config.datastoreclient.url", "https://idam-api.platform.hmcts.net");
+    props.put("case_document_am.url", "https://idam-api.platform.hmcts.net");
+
 
     props.put("spring.datasource.driver-class-name", "org.testcontainers.jdbc.ContainerDatabaseDriver");
 
