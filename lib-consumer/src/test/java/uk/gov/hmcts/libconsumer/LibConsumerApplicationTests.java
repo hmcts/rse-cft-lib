@@ -1,5 +1,7 @@
 package uk.gov.hmcts.libconsumer;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -8,183 +10,183 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.TextCodec;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import lombok.SneakyThrows;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import uk.gov.hmcts.ccd.definition.store.excel.endpoint.ImportController;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
 import uk.gov.hmcts.ccd.definition.store.repository.model.UserRole;
 import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
-import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
+import uk.gov.hmcts.ccd.domain.model.UserProfile;
+import uk.gov.hmcts.ccd.domain.model.aggregated.JurisdictionDisplayProperties;
+import uk.gov.hmcts.ccd.endpoint.userprofile.UserProfileEndpoint;
+import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.Event;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 
-@AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LibConsumerApplicationTests {
 
-	@Autowired
-	ImportController controller;
+  @Autowired
+  UserRoleController roleController;
 
-	@Autowired
-	UserRoleController roleController;
+  @Autowired
+  WebApplicationContext context;
 
-	@Autowired
-	WebApplicationContext context;
+  @Autowired
+  UserProfileEndpoint userProfile;
 
-	MockMvc mockMvc;
+  @Autowired
+  ServiceAuthorisationApi s2s;
 
-	@Before
-	public void setup() {
-	}
+  MockMvc mockMvc;
 
-	private static final String JURISDICTION = "DIVORCE";
-	private static final String CASE_TYPE = "NFD";
-	private static final String SOLICITOR_CREATE = "solicitor-create-application";
+  @SneakyThrows
+  @BeforeAll
+  public void setup() {
+    mockMvc = MockMvcBuilders
+        .webAppContextSetup(context)
+        .apply(springSecurity())
+        .build();
 
-	@Autowired
-	protected CoreCaseDataApi coreCaseDataApi;
+    createProfile("a@b.com");
+    createRoles(
+        "caseworker-divorce-courtadmin_beta",
+        "caseworker-divorce-superuser",
+        "caseworker-divorce-courtadmin-la",
+        "caseworker-divorce-courtadmin",
+        "caseworker-divorce-solicitor",
+        "caseworker-divorce-pcqextractor",
+        "caseworker-divorce-systemupdate",
+        "caseworker-divorce-bulkscan",
+        "caseworker-caa",
+        "citizen"
+    );
 
-	@SneakyThrows
-	MockMultipartFile loadNFDivDef() {
+    var f = new MockMultipartFile(
+        "file",
+        "hello.txt",
+        MediaType.MULTIPART_FORM_DATA_VALUE,
+        getClass().getClassLoader().getResourceAsStream("NFD-dev.xlsx").readAllBytes()
+    );
 
-		return new MockMultipartFile(
-				"file",
-				"hello.txt",
-				MediaType.MULTIPART_FORM_DATA_VALUE,
-		        getClass().getClassLoader().getResourceAsStream("NFD-dev.xlsx").readAllBytes()
-		);
-	}
+    mockMvc.perform(secure(multipart("/import").file(f)))
+        .andExpect(status().is2xxSuccessful());
+  }
+  MockHttpServletRequestBuilder secure(MockHttpServletRequestBuilder builder) {
+    return builder.with(jwt()
+        .authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor"))
+        .jwt(this::buildJwt)).header("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
+  }
 
-//	@WithMockUser("goat")
-	@SneakyThrows
-	@Test
-	void contextLoads() {
-		createRoles(
-		"caseworker-divorce-courtadmin_beta",
-		"caseworker-divorce-superuser",
-		"caseworker-divorce-courtadmin-la",
-		"caseworker-divorce-courtadmin",
-		"caseworker-divorce-solicitor",
-		"caseworker-divorce-pcqextractor",
-		"caseworker-divorce-systemupdate",
-		"caseworker-divorce-bulkscan",
-		"caseworker-caa",
-		"citizen"
-		);
-//		Authentication authentication = Mockito.mock(Authentication.class);
-//		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-//		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-//		SecurityContextHolder.setContext(securityContext);
-//
-//		Mockito.when(authentication.getPrincipal()).thenReturn(Mockito.mock(Jwt.class));
-		mockMvc = MockMvcBuilders
-				.webAppContextSetup(context)
-				.apply(springSecurity())
-				.build();
+  void buildJwt(Jwt.Builder builder) {
+    var token = JWT.create()
+        .withSubject("ronnie")
+        .sign(Algorithm.HMAC256("a secret"));
 
-		mockMvc.perform(multipart("/import").file(loadNFDivDef())
-						.with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor"))))
-				.andExpect(status().is2xxSuccessful());
+    builder.tokenValue(token)
+        .subject("ronnie");
+  }
 
+  public static String generateDummyS2SToken(String serviceName) {
+    return Jwts.builder()
+        .setSubject(serviceName)
+        .setIssuedAt(new Date())
+        .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.encode("AA"))
+        .compact();
 
-		String solicitorToken = "green";
-		String s2sTokenForCaseApi = "eggs";
-		String solicitorUserId = "ham";
-		StartEventResponse
-				startEventResponse = startEventForCreateCase(solicitorToken, s2sTokenForCaseApi, solicitorUserId);
+  }
 
-		CaseDataContent caseDataContent = CaseDataContent.builder()
-				.eventToken(startEventResponse.getToken())
-				.event(Event.builder()
-						.id("solicitor-create-application")
-						.summary("Create draft case")
-						.description("Create draft case for functional tests")
-						.build())
-				.data(Map.of(
-						"applicant1SolicitorName", "functional test",
-						"applicant1LanguagePreferenceWelsh", "NO",
-						"divorceOrDissolution", "divorce",
-						"applicant1FinancialOrder", "NO"
-				))
-				.build();
+  @SneakyThrows
+  @Test
+  void listJurisdictions() {
+    var r = mockMvc.perform(secure(get("/aggregated/caseworkers/:uid/jurisdictions?access=read"))
+            .header("Accept", "application/json")
+            .header("Content-Type", "application/json"))
+        .andExpect(status().is2xxSuccessful())
+        .andReturn();
+    var arr = new ObjectMapper().readValue(r.getResponse().getContentAsString(), JurisdictionDisplayProperties[].class);
+    assertEquals(arr.length, 1);
+  }
 
-		submitNewCase(caseDataContent, solicitorToken, s2sTokenForCaseApi, solicitorUserId);
-	}
+  @SneakyThrows
+    // TODO
+//  @Test
+  void createNewCase() {
+    StartEventResponse
+        startEventResponse = startEventForCreateCase();
 
-	@SneakyThrows
-	private StartEventResponse startEventForCreateCase(
-			String solicitorToken,
-			String s2sToken,
-			String solicitorUserId
-	) {
+    CaseDataContent caseDataContent = CaseDataContent.builder()
+        .eventToken(startEventResponse.getToken())
+        .event(Event.builder()
+            .id("solicitor-create-application")
+            .summary("Create draft case")
+            .description("Create draft case for functional tests")
+            .build())
+        .data(Map.of(
+            "applicant1SolicitorName", "functional test",
+            "applicant1LanguagePreferenceWelsh", "NO",
+            "divorceOrDissolution", "divorce",
+            "applicant1FinancialOrder", "NO"
+        ))
+        .build();
 
-		MvcResult result = mockMvc.perform(
-						get("/caseworkers/ham/jurisdictions/DIVORCE/case-types/NFD/event-triggers/solicitor-create-application/token")
-								.with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor")))
-								.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is2xxSuccessful())
-				.andReturn();
-		var r = new ObjectMapper().readValue(result.getResponse().getContentAsString(), StartEventResponse.class);
-		return r;
-//		coreCaseDataApi.startForCaseworker(
-//				solicitorToken,
-//				s2sToken,
-//				solicitorUserId,
-//				JURISDICTION,
-//				CASE_TYPE,
-//				SOLICITOR_CREATE
-//		);
-	}
+    mockMvc.perform(
+            secure(post("/caseworkers/ham/jurisdictions/DIVORCE/case-types/NFD/cases"))
+                .content(new ObjectMapper().writeValueAsString(caseDataContent))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().is2xxSuccessful())
+        .andReturn();
+  }
 
-	@SneakyThrows
-	private void submitNewCase(
-			CaseDataContent caseDataContent,
-			String solicitorToken,
-			String s2sToken,
-			String solicitorUserId
-	) {
-		MvcResult result = mockMvc.perform(
-						post("/caseworkers/ham/jurisdictions/DIVORCE/case-types/NFD/cases")
-								.with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor")))
-								.content(new ObjectMapper().writeValueAsString(caseDataContent))
-								.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is2xxSuccessful())
-				.andReturn();
+  @SneakyThrows
+  private StartEventResponse startEventForCreateCase() {
+    MvcResult result = mockMvc.perform(
+            secure(get("/caseworkers/ham/jurisdictions/DIVORCE/case-types/NFD/event-triggers/solicitor-create-application/token"))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().is2xxSuccessful())
+        .andReturn();
+    return new ObjectMapper().readValue(result.getResponse().getContentAsString(), StartEventResponse.class);
+  }
 
-//		// not including in try catch to fast fail the method
-//		return coreCaseDataApi.submitForCaseworker(
-//				solicitorToken,
-//				s2sToken,
-//				solicitorUserId,
-//				JURISDICTION,
-//				CASE_TYPE,
-//				true,
-//				caseDataContent
-//		);
-	}
+  void createRoles(String... roles) {
+    for (String role : roles) {
+      UserRole r = new UserRole();
+      r.setRole(role);
+      r.setSecurityClassification(SecurityClassification.PUBLIC);
+      roleController.userRolePut(r);
+    }
+  }
 
-	void createRoles(String... roles) {
-		for (String role : roles) {
-			UserRole r = new UserRole();
-			r.setRole(role);
-			r.setSecurityClassification(SecurityClassification.PUBLIC);
-			roleController.userRolePut(r);
-		}
-
-	}
-
+  void createProfile(String id) {
+    var p = new UserProfile();
+    p.setId(id);
+    p.setId(id);
+    p.setWorkBasketDefaultJurisdiction("DIVORCE");
+    p.setWorkBasketDefaultCaseType("NO_FAULT_DIVORCE");
+    p.setWorkBasketDefaultState("Submitted");
+    userProfile.populateUserProfiles(List.of(p), "banderous");
+  }
 }

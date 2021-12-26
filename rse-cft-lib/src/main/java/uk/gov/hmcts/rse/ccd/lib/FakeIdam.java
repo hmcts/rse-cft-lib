@@ -23,7 +23,7 @@ public class FakeIdam implements IdamApi {
   public UserDetails retrieveUserDetails(String authorisation) {
     return UserDetails.builder()
         .email("a@b.com")
-        .id("dev")
+        .id("banderous")
         .build();
   }
 
@@ -57,7 +57,7 @@ public class FakeIdam implements IdamApi {
         .familyName("Dev")
         .uid("banderous")
         .sub("a@b.com")
-        .roles(List.of("sudo"))
+        .roles(List.of("caseworker-divorce-solicitor"))
         .build();
   }
 

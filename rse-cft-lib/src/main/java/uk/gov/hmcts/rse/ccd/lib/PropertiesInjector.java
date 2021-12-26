@@ -30,12 +30,14 @@ public class PropertiesInjector implements
     props.put("feign.client.config.datastoreclient.url", "https://idam-api.platform.hmcts.net");
     props.put("case_document_am.url", "https://idam-api.platform.hmcts.net");
 
-
     props.put("spring.datasource.driver-class-name", "org.testcontainers.jdbc.ContainerDatabaseDriver");
-
     props.put("spring.datasource.url", "jdbc:tc:postgresql:12.4:///data-store?stringtype=unspecified");
     props.put("spring.datasource.username", "ccd");
     props.put("spring.datasource.password", "password");
+
+//    props.put("spring.datasource.url", "jdbc:postgresql://localhost:5432/ccd");
+//    props.put("spring.datasource.username", "postgres");
+//    props.put("spring.datasource.password", "foo");
 
     props.put("spring.main.allow-circular-references", "true");
   }
