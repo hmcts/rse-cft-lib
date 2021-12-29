@@ -16,15 +16,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
+import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import javax.sql.DataSource;
 import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -45,6 +51,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.Event;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 
+@AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LibConsumerApplicationTests {
@@ -61,15 +68,16 @@ class LibConsumerApplicationTests {
   @Autowired
   ServiceAuthorisationApi s2s;
 
+  @Autowired
+  DataSource dataSource;
+
+  @Autowired
   MockMvc mockMvc;
 
   @SneakyThrows
   @BeforeAll
   public void setup() {
-    mockMvc = MockMvcBuilders
-        .webAppContextSetup(context)
-        .apply(springSecurity())
-        .build();
+    prepRoleAssignment();
 
     createProfile("a@b.com");
     createRoles(
@@ -95,6 +103,23 @@ class LibConsumerApplicationTests {
     mockMvc.perform(secure(multipart("/import").file(f)))
         .andExpect(status().is2xxSuccessful());
   }
+
+  @SneakyThrows
+  void prepRoleAssignment() {
+    try (Connection c = dataSource.getConnection()) {
+      c.createStatement().execute(
+          "create extension pgcrypto"
+      );
+
+      ResourceLoader resourceLoader = new DefaultResourceLoader();
+      var json = IOUtils.toString(resourceLoader.getResource("classpath:am.json").getInputStream());
+      var sql = IOUtils.toString(resourceLoader.getResource("classpath:populate_am.sql").getInputStream());
+      var p = c.prepareStatement(sql);
+      p.setString(1, json);
+      p.executeQuery();
+    }
+  }
+
   MockHttpServletRequestBuilder secure(MockHttpServletRequestBuilder builder) {
     return builder.with(jwt()
         .authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor"))
@@ -129,6 +154,18 @@ class LibConsumerApplicationTests {
         .andReturn();
     var arr = new ObjectMapper().readValue(r.getResponse().getContentAsString(), JurisdictionDisplayProperties[].class);
     assertEquals(arr.length, 1);
+  }
+
+  @SneakyThrows
+  @Test
+  void getWorkbasketInputs() {
+    var r = mockMvc.perform(secure(get("/data/internal/case-types/NFD/work-basket-inputs"))
+            .header("Content-Type", "application/json")
+            .header("experimental", "true")
+
+        )
+        .andExpect(status().is2xxSuccessful())
+        .andReturn();
   }
 
   @SneakyThrows

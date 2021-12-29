@@ -35,7 +35,7 @@ public class PropertiesInjector implements
     props.put("spring.datasource.username", "ccd");
     props.put("spring.datasource.password", "password");
 
-//    props.put("spring.datasource.url", "jdbc:postgresql://localhost:5432/ccd");
+//    props.put("spring.datasource.url", "jdbc:postgresql://localhost:5432/ccd?stringtype=unspecified");
 //    props.put("spring.datasource.username", "postgres");
 //    props.put("spring.datasource.password", "foo");
 
