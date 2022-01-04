@@ -17,8 +17,6 @@ public class PropertiesInjector implements
     Properties props = new Properties();
     environment.getPropertySources().addFirst(new PropertiesPropertySource("ccdLibProps", props));
 
-    props.put("spring.autoconfigure.exclude", "org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration," +
-        "uk.gov.hmcts.reform.auth.checker.spring.AuthCheckerConfiguration");
     // This may be set by definition store and requires unsetting or it will override data store's cache settings.
     props.put("spring.cache.cache-names", "");
     props.put("core_case_data.api.url", "http://localhost:${server.port}");
@@ -39,6 +37,7 @@ public class PropertiesInjector implements
 //    props.put("spring.datasource.username", "postgres");
 //    props.put("spring.datasource.password", "foo");
 
+    // Required by ccd
     props.put("spring.main.allow-circular-references", "true");
   }
 }
