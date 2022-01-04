@@ -1,9 +1,7 @@
 package uk.gov.hmcts.libconsumer;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -16,21 +14,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
-import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -38,7 +32,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
 import uk.gov.hmcts.ccd.definition.store.repository.model.UserRole;
@@ -77,8 +70,6 @@ class LibConsumerApplicationTests {
   @SneakyThrows
   @BeforeAll
   public void setup() {
-    prepRoleAssignment();
-
     createProfile("a@b.com");
     createRoles(
         "caseworker-divorce-courtadmin_beta",
@@ -93,6 +84,11 @@ class LibConsumerApplicationTests {
         "citizen"
     );
 
+    importDefinition();
+  }
+
+  @SneakyThrows
+  void importDefinition() {
     var f = new MockMultipartFile(
         "file",
         "hello.txt",
@@ -102,28 +98,6 @@ class LibConsumerApplicationTests {
 
     mockMvc.perform(secure(multipart("/import").file(f)))
         .andExpect(status().is2xxSuccessful());
-  }
-
-  @SneakyThrows
-  void prepRoleAssignment() {
-    try (Connection c = dataSource.getConnection()) {
-      c.createStatement().execute(
-          "create extension pgcrypto"
-      );
-
-      ResourceLoader resourceLoader = new DefaultResourceLoader();
-      var json = IOUtils.toString(resourceLoader.getResource("classpath:am.json").getInputStream());
-      var sql = IOUtils.toString(resourceLoader.getResource("classpath:populate_am.sql").getInputStream());
-      var p = c.prepareStatement(sql);
-      p.setString(1, json);
-      p.executeQuery();
-    }
-  }
-
-  MockHttpServletRequestBuilder secure(MockHttpServletRequestBuilder builder) {
-    return builder.with(jwt()
-        .authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor"))
-        .jwt(this::buildJwt)).header("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
   }
 
   void buildJwt(Jwt.Builder builder) {
@@ -225,5 +199,11 @@ class LibConsumerApplicationTests {
     p.setWorkBasketDefaultCaseType("NO_FAULT_DIVORCE");
     p.setWorkBasketDefaultState("Submitted");
     userProfile.populateUserProfiles(List.of(p), "banderous");
+  }
+
+  MockHttpServletRequestBuilder secure(MockHttpServletRequestBuilder builder) {
+    return builder.with(jwt()
+        .authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor"))
+        .jwt(this::buildJwt)).header("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
   }
 }
