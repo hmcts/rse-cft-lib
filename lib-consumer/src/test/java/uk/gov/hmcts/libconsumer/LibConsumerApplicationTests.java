@@ -120,6 +120,13 @@ class LibConsumerApplicationTests {
 
   @SneakyThrows
   @Test
+  void isHealthy() {
+    mockMvc.perform(get("/health"))
+        .andExpect(status().is2xxSuccessful());
+  }
+
+  @SneakyThrows
+  @Test
   void listJurisdictions() {
     var r = mockMvc.perform(secure(get("/aggregated/caseworkers/:uid/jurisdictions?access=read"))
             .header("Accept", "application/json")
