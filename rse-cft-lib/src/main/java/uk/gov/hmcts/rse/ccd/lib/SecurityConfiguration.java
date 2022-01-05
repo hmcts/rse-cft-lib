@@ -57,9 +57,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
       @Override
       public Jwt decode(String token) throws JwtException {
         var j = JWT.decode(token);
-        return Jwt.withTokenValue(token)
+        var r = Jwt.withTokenValue(token)
             .header("typ", "JWT")
             .header("alg", "HS256")
+            .claim("tokenName", j.getClaim("tokenName").asString())
             .issuer(j.getIssuer())
             .issuedAt(j.getIssuedAt().toInstant())
             .notBefore(j.getNotBefore().toInstant())
@@ -67,6 +68,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .subject(j.getSubject())
             .audience(j.getAudience())
             .build();
+        return r;
       }
     };
   }

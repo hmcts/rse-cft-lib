@@ -107,6 +107,7 @@ class LibConsumerApplicationTests {
         .withSubject("banderous")
         .withNotBefore(new Date())
         .withIssuedAt(new Date())
+        .withClaim("tokenName", "access_token")
         .withExpiresAt(Date.from(LocalDateTime.now().plusDays(100).toInstant(ZoneOffset.UTC)))
         .sign(Algorithm.HMAC256("a secret"));
 
@@ -140,6 +141,7 @@ class LibConsumerApplicationTests {
         .andReturn();
     var arr = new ObjectMapper().readValue(r.getResponse().getContentAsString(), JurisdictionDisplayProperties[].class);
     assertEquals(arr.length, 1);
+    assertEquals(arr[0].getCaseTypeDefinitions().size(), 1);
   }
 
   @SneakyThrows
