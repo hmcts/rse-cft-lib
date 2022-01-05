@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib;
+package uk.gov.hmcts.libconsumer;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
