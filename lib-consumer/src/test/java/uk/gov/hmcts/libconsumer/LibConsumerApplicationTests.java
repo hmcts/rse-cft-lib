@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -102,7 +104,10 @@ class LibConsumerApplicationTests {
 
   void buildJwt(Jwt.Builder builder) {
     var token = JWT.create()
-        .withSubject("ronnie")
+        .withSubject("banderous")
+        .withNotBefore(new Date())
+        .withIssuedAt(new Date())
+        .withExpiresAt(Date.from(LocalDateTime.now().plusDays(100).toInstant(ZoneOffset.UTC)))
         .sign(Algorithm.HMAC256("a secret"));
 
     builder.tokenValue(token)

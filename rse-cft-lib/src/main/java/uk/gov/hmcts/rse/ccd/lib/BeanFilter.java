@@ -15,7 +15,10 @@ public class BeanFilter {
       // Disable the CCD client healthcheck (to avoid infinite recursion)
       // https://github.com/hmcts/ccd-client/blob/954e7a593d3854577df1606b54bd08dbaba5d5cf/src/main/java/uk/gov/hmcts/reform/ccd/client/CoreCaseDataClientAutoConfiguration.java#L15
       "coreCaseData",
-      "uk.gov.hmcts.reform.roleassignment.health.IdamServiceHealthIndicator"
+
+      // AM health checks
+      "uk.gov.hmcts.reform.roleassignment.health.IdamServiceHealthIndicator",
+      "uk.gov.hmcts.reform.roleassignment.health.CcdDataStoreHealthIndicator"
   );
 
   @Bean

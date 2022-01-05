@@ -28,6 +28,8 @@ public class PropertiesInjector implements
     props.put("feign.client.config.datastoreclient.url", "https://idam-api.platform.hmcts.net");
     props.put("case_document_am.url", "https://idam-api.platform.hmcts.net");
 
+    props.put("management.health.case-document-am-api.enabled", "false");
+
     props.put("spring.datasource.driver-class-name", "org.testcontainers.jdbc.ContainerDatabaseDriver");
     props.put("spring.datasource.url", "jdbc:tc:postgresql:12.4:///data-store?stringtype=unspecified");
     props.put("spring.datasource.username", "ccd");
