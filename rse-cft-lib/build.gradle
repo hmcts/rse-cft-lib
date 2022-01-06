@@ -105,8 +105,7 @@ shadowJar {
     // Remove the default 'all' suffix from the jar name for POM compatibility.
     archiveClassifier.set(null)
     // We don't want to clobber these in consuming projects by having them collide on the classpath.
-    exclude 'application.yaml'
-    exclude 'application.yml'
+    exclude 'application.yaml', 'application.yml', 'application.properties'
 }
 
 publishing {

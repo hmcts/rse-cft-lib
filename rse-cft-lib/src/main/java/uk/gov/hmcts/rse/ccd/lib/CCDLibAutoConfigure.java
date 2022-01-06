@@ -18,7 +18,7 @@ import uk.gov.hmcts.ccd.UserProfileApplication;
 import uk.gov.hmcts.ccd.data.AuthClientsConfiguration;
 import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
 import uk.gov.hmcts.ccd.definition.store.repository.AuthClientConfiguration;
-import uk.gov.hmcts.ccd.definition.store.security.JwtGrantedAuthoritiesConverter;
+import uk.gov.hmcts.ccd.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
 import uk.gov.hmcts.reform.authorisation.validators.ServiceAuthTokenValidator;
 import uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication;
@@ -51,13 +51,13 @@ import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
         // Definition store. Excluded to disable the default application component scanning or our excludes won't work.
         CaseDataAPIApplication.class,
-        // Use the one from data store.
-        JwtGrantedAuthoritiesConverter.class,
         AuthClientConfiguration.class,
 
         // Data store
         CoreCaseDataApplication.class,
         AuthClientsConfiguration.class,
+        // Use the one from definition store.
+        JwtGrantedAuthoritiesConverter.class,
         // Use the ones from def store
         AliasWebConfig.class,
 

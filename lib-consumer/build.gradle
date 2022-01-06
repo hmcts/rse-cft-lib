@@ -1,7 +1,7 @@
 plugins {
-	id 'org.springframework.boot' version '2.4.12'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.4.12'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
 }
 
 group = 'uk.gov.hmcts'
@@ -9,28 +9,43 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 repositories {
-	mavenCentral()
-	jcenter()
-	maven {
-		url 'https://jitpack.io'
-	}
-	maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
+    mavenCentral()
+    jcenter()
+    maven {
+        url 'https://jitpack.io'
+    }
+    maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter'
 
-	implementation project(path: ':rse-cft-lib', configuration: 'shadow')
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation project(path: ':rse-cft-lib', configuration: 'shadow')
 
-	testImplementation 'org.springframework.security:spring-security-test'
-	compileOnly 'org.projectlombok:lombok:1.18.22'
-	annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    // https://github.com/johnrengelman/shadow/issues/264
+    // Need these dependencies for intellij intellisense to work.
+    if (System.getProperty("idea.sync.active")) {
+        implementation 'uk.gov.hmcts.ccd:ccd-data-store-api'
+        implementation 'uk.gov.hmcts.ccd.definition:application'
+        implementation 'uk.gov.hmcts.ccd.definition:domain'
+        implementation 'uk.gov.hmcts.ccd.definition:elastic-search-support'
+        implementation 'uk.gov.hmcts.ccd.definition:excel-importer'
+        implementation 'uk.gov.hmcts.ccd.definition:repository'
+        implementation 'uk.gov.hmcts.ccd.definition:rest-api'
+        implementation 'uk.gov.hmcts.ccd:user-profile-api'
+        implementation 'uk.gov.hmcts.reform.roleassignment:am-role-assignment-service'
+    }
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.22'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    testImplementation 'org.springframework.security:spring-security-test'
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.22'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

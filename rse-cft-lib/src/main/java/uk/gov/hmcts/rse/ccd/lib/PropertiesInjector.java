@@ -17,8 +17,6 @@ public class PropertiesInjector implements
     Properties props = new Properties();
     environment.getPropertySources().addFirst(new PropertiesPropertySource("ccdLibProps", props));
 
-    props.put("spring.autoconfigure.exclude", "org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration," +
-        "uk.gov.hmcts.reform.auth.checker.spring.AuthCheckerConfiguration");
     // This may be set by definition store and requires unsetting or it will override data store's cache settings.
     props.put("spring.cache.cache-names", "");
     props.put("core_case_data.api.url", "http://localhost:${server.port}");
@@ -30,13 +28,18 @@ public class PropertiesInjector implements
     props.put("feign.client.config.datastoreclient.url", "https://idam-api.platform.hmcts.net");
     props.put("case_document_am.url", "https://idam-api.platform.hmcts.net");
 
+    props.put("management.health.case-document-am-api.enabled", "false");
 
     props.put("spring.datasource.driver-class-name", "org.testcontainers.jdbc.ContainerDatabaseDriver");
-
     props.put("spring.datasource.url", "jdbc:tc:postgresql:12.4:///data-store?stringtype=unspecified");
     props.put("spring.datasource.username", "ccd");
     props.put("spring.datasource.password", "password");
 
+//    props.put("spring.datasource.url", "jdbc:postgresql://localhost:5432/ccd?stringtype=unspecified");
+//    props.put("spring.datasource.username", "postgres");
+//    props.put("spring.datasource.password", "foo");
+
+    // Required by ccd
     props.put("spring.main.allow-circular-references", "true");
   }
 }
