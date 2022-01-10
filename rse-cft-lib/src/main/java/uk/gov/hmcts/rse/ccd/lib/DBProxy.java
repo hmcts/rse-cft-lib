@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
 import net.ttddyy.dsproxy.ExecutionInfo;
@@ -33,6 +34,23 @@ public class DBProxy implements BeanPostProcessor {
     userprofile,
     am,
     unknown
+  }
+
+  public static project detectSchema(String p) {
+    if (p.startsWith("uk.gov.hmcts.ccd.definition")) {
+      return project.definitionstore;
+    }
+    if (p.startsWith("uk.gov.hmcts.ccd.data.userprofile")
+        || p.startsWith("uk.gov.hmcts.ccd.endpoint.userprofile")) {
+      return project.userprofile;
+    }
+    if (p.startsWith("uk.gov.hmcts.ccd")) {
+      return project.datastore;
+    }
+    if (p.startsWith("uk.gov.hmcts.reform.roleassignment")) {
+      return project.am;
+    }
+    return project.unknown;
   }
 
   @Override
@@ -64,23 +82,6 @@ public class DBProxy implements BeanPostProcessor {
           .build();
     }
 
-    project detectSchema(StackWalker.StackFrame stackFrame) {
-      var p = stackFrame.getDeclaringClass().getPackageName();
-      if (p.startsWith("uk.gov.hmcts.ccd.definition")) {
-        return project.definitionstore;
-      }
-      if (p.startsWith("uk.gov.hmcts.ccd.data.userprofile")
-          || p.startsWith("uk.gov.hmcts.ccd.endpoint.userprofile")) {
-        return project.userprofile;
-      }
-      if (p.startsWith("uk.gov.hmcts.ccd")) {
-        return project.datastore;
-      }
-      if (p.startsWith("uk.gov.hmcts.reform.roleassignment")) {
-        return project.am;
-      }
-      return project.unknown;
-    }
 
     @Override
     public Object invoke(final MethodInvocation invocation) throws Throwable {
@@ -91,7 +92,7 @@ public class DBProxy implements BeanPostProcessor {
         if (invocation.getMethod().getName().equals("getConnection")) {
           StackWalker walker = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
           var schema = walker.walk(
-              s -> s.map(this::detectSchema)
+              s -> s.map(x -> x.getDeclaringClass().getPackageName()).map(DBProxy::detectSchema)
                   .filter(x -> x != project.unknown)
                   .findFirst());
 

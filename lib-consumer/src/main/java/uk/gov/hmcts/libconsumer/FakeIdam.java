@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib;
+package uk.gov.hmcts.libconsumer;
 
 import feign.Response;
 import java.util.List;

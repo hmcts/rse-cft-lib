@@ -24,10 +24,8 @@ import uk.gov.hmcts.reform.authorisation.validators.ServiceAuthTokenValidator;
 import uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication;
 import uk.gov.hmcts.reform.roleassignment.config.AuditConfig;
 import uk.gov.hmcts.reform.roleassignment.config.AuthCheckerConfiguration;
-import uk.gov.hmcts.reform.roleassignment.config.LaunchDarklyConfiguration;
 import uk.gov.hmcts.reform.roleassignment.feignclients.configuration.DataStoreApiConfiguration;
 import uk.gov.hmcts.reform.roleassignment.feignclients.configuration.DataStoreApiInterceptor;
-import uk.gov.hmcts.reform.roleassignment.util.SecurityUtils;
 import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
 
 @Configuration
