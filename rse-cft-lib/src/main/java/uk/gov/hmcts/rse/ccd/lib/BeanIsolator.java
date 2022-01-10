@@ -2,9 +2,11 @@ package uk.gov.hmcts.rse.ccd.lib;
 
 import java.util.Arrays;
 
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -32,20 +34,30 @@ public class BeanIsolator implements BeanFactoryPostProcessor {
 
     @Override
     public boolean isAutowireCandidate(final BeanDefinitionHolder bdHolder, final DependencyDescriptor descriptor) {
-      var potential = resolver.isAutowireCandidate(bdHolder, descriptor);
+      var result = resolver.isAutowireCandidate(bdHolder, descriptor);
 
-      if (potential && bdHolder.getSource() instanceof MethodMetadata) {
-        var m = (MethodMetadata) bdHolder.getSource();
-        if (m.getAnnotations().isPresent(ForProjects.class)) {
-          var allowableProjects = (DBProxy.project[]) m.getAnnotations().get(ForProjects.class).getValue("value").get();
-          var targetPackage = descriptor.getMember().getDeclaringClass().getPackageName();
-          var targetProject = DBProxy.detectSchema(targetPackage);
-          var result = !Arrays.asList(allowableProjects).contains(targetProject);
-          log.info("Can bean {} can be injected into {}?: {}", bdHolder.getBeanName(), targetPackage, result);
-          return result;
+      if (result && bdHolder.getSource() instanceof MethodMetadata) {
+        var beanSource = (MethodMetadata) bdHolder.getSource();
+        var targetPackage = descriptor.getMember().getDeclaringClass().getPackageName();
+        var targetProject = DBProxy.detectSchema(targetPackage);
+
+        if (beanSource.getAnnotations().isPresent(ForProjects.class)) {
+          // Ensure targeted beans only injectable into targeted packages.
+          var allowableProjects = (DBProxy.project[]) beanSource.getAnnotations().get(ForProjects.class).getValue("value").get();
+          result = Arrays.asList(allowableProjects).contains(targetProject);
+        } else {
+          // Ensure beans do not leak from application into common component projects.
+          var sourcePackage = ((MethodMetadata) bdHolder.getSource()).getDeclaringClassName();
+          var sourceProject = DBProxy.detectSchema(sourcePackage);
+          if (sourceProject == DBProxy.project.application
+              && !(targetProject == DBProxy.project.application || targetProject == DBProxy.project.unknown)) {
+            result = false;
+          }
         }
+        log.debug("Can bean {} be injected into {}?: {}", bdHolder.getBeanName(), targetPackage, result);
       }
-      return potential;
+
+      return result;
     }
 
     @Override

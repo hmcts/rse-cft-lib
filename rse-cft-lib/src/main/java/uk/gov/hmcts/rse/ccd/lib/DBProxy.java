@@ -28,11 +28,16 @@ import org.springframework.util.ReflectionUtils;
 
 @Component
 public class DBProxy implements BeanPostProcessor {
+  // Set by the RunListener.
+  // TODO
+  public static String applicationPackage;
+
   enum project {
     datastore,
     definitionstore,
     userprofile,
     am,
+    application,
     unknown
   }
 
@@ -49,6 +54,9 @@ public class DBProxy implements BeanPostProcessor {
     }
     if (p.startsWith("uk.gov.hmcts.reform.roleassignment")) {
       return project.am;
+    }
+    if (p.startsWith(applicationPackage)) {
+      return project.application;
     }
     return project.unknown;
   }
