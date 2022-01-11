@@ -1,23 +1,11 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
-import static org.reflections.util.ConfigurationBuilder.build;
-
-
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import javax.sql.DataSource;
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventListener;
 import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventListenerAdapter;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
-import net.ttddyy.dsproxy.transform.QueryTransformer;
-import net.ttddyy.dsproxy.transform.TransformInfo;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.aop.framework.ProxyFactory;

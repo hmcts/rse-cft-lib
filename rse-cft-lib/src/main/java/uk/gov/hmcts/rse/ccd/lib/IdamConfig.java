@@ -1,17 +1,22 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
+import com.auth0.jwt.JWT;
+import java.util.List;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGeneratorFactory;
 import uk.gov.hmcts.reform.authorisation.generators.ServiceAuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.client.OAuth2Configuration;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 @Configuration
+@Aspect
 class IdamConfig {
 
   @ForProjects({DBProxy.project.datastore, DBProxy.project.definitionstore})
@@ -59,5 +64,20 @@ class IdamConfig {
       @Value("${DEFINITION_STORE_IDAM_KEY:AAAAAAAAAAAAAAAA}") final String secret,
       final ServiceAuthorisationApi serviceAuthorisationApi) {
     return new ServiceAuthTokenGenerator(secret, "ccd_definition", serviceAuthorisationApi);
+  }
+
+  @Around("execution(* uk.gov.hmcts.reform.idam.client.IdamApi.retrieveUserInfo(..)) && args(authorisation)")
+  public UserInfo retrieveUserInfo(ProceedingJoinPoint p, String authorisation) throws Throwable {
+    var j = JWT.decode(authorisation.replace("Bearer ", ""));
+    if (j.getSubject().equals("banderous")) {
+      return UserInfo.builder()
+          .givenName("A")
+          .familyName("Dev")
+          .uid("banderous")
+          .sub("a@b.com")
+          .roles(List.of("caseworker-divorce-solicitor"))
+          .build();
+    }
+    return (UserInfo) p.proceed();
   }
 }

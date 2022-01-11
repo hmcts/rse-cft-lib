@@ -6,9 +6,11 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -21,6 +23,7 @@ import uk.gov.hmcts.ccd.definition.store.repository.AuthClientConfiguration;
 import uk.gov.hmcts.ccd.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
 import uk.gov.hmcts.reform.authorisation.validators.ServiceAuthTokenValidator;
+import uk.gov.hmcts.reform.idam.client.IdamApi;
 import uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication;
 import uk.gov.hmcts.reform.roleassignment.config.AuditConfig;
 import uk.gov.hmcts.reform.roleassignment.config.AuthCheckerConfiguration;
@@ -83,12 +86,17 @@ import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
     "uk.gov.hmcts.ccd",
     "uk.gov.hmcts.reform.roleassignment"
 })
+@EnableFeignClients(
+    clients = {
+        IdamApi.class,
+    })
 @PropertySource(value = {
     "classpath:definitionstore/application.properties",
     "classpath:datastore/application.properties",
     "classpath:userprofile/application.properties",
 })
 @PropertySource(value = "classpath:am/application.yaml", factory = YamlPropertySourceFactory.class)
+@EnableAspectJAutoProxy
 class CCDLibAutoConfigure {
 
   // Because we disable CoreCaseDataApplication.class from scanning

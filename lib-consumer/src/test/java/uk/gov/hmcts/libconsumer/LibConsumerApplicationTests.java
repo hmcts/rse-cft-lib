@@ -8,10 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.TextCodec;
-import java.util.Date;
 import java.util.Map;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -116,20 +112,12 @@ class LibConsumerApplicationTests {
   MockHttpServletRequestBuilder secure(MockHttpServletRequestBuilder builder) {
     return builder.with(jwt()
         .authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor"))
-        .jwt(this::buildJwt)).header("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
+        .jwt(this::buildJwt)).header("ServiceAuthorization", CFTLib.generateDummyS2SToken("ccd_gw"));
   }
 
   void buildJwt(Jwt.Builder builder) {
     builder.tokenValue(CFTLib.buildJwt())
-        .subject("ronnie");
+        .subject("banderous");
   }
 
-  public static String generateDummyS2SToken(String serviceName) {
-    return Jwts.builder()
-        .setSubject(serviceName)
-        .setIssuedAt(new Date())
-        .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.encode("AA"))
-        .compact();
-
-  }
 }
