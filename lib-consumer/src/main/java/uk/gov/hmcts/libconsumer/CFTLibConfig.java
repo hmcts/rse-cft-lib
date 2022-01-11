@@ -1,7 +1,12 @@
 package uk.gov.hmcts.libconsumer;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import javax.annotation.PostConstruct;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 
@@ -11,7 +16,7 @@ public class CFTLibConfig {
   CFTLib lib;
 
   @PostConstruct
-  void configure() {
+  void configure() throws IOException {
     lib.createProfile("a@b.com");
     lib.createRoles(
         "caseworker-divorce-courtadmin_beta",
@@ -25,5 +30,8 @@ public class CFTLibConfig {
         "caseworker-caa",
         "citizen"
     );
+    ResourceLoader resourceLoader = new DefaultResourceLoader();
+    var json = IOUtils.toString(resourceLoader.getResource("classpath:cftlib-am-role-assignments.json").getInputStream(), Charset.defaultCharset());
+    lib.configureRoleAssignments(json);
   }
 }
