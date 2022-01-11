@@ -89,7 +89,7 @@ import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
     "classpath:userprofile/application.properties",
 })
 @PropertySource(value = "classpath:am/application.yaml", factory = YamlPropertySourceFactory.class)
-public class CCDLibAutoConfigure {
+class CCDLibAutoConfigure {
 
   // Because we disable CoreCaseDataApplication.class from scanning
   @Bean

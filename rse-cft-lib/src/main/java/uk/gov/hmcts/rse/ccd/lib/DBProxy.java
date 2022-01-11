@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 @Component
-public class DBProxy implements BeanPostProcessor {
+class DBProxy implements BeanPostProcessor {
   // Set by the RunListener.
   // TODO
   public static String applicationPackage;

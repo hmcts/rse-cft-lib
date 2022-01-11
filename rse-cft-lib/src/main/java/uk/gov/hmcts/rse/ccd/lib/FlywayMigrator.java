@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class FlywayMigrator implements FlywayMigrationStrategy {
+class FlywayMigrator implements FlywayMigrationStrategy {
 
   @Autowired
   DataSource dataStore;

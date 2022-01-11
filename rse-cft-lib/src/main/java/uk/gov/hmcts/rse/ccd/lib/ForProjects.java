@@ -5,6 +5,6 @@ import java.lang.annotation.RetentionPolicy;
 import lombok.RequiredArgsConstructor;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ForProjects {
+@interface ForProjects {
   DBProxy.project[] value();
 }

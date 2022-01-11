@@ -52,40 +52,11 @@ import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 class LibConsumerApplicationTests {
 
   @Autowired
-  UserRoleController roleController;
-
-  @Autowired
-  WebApplicationContext context;
-
-  @Autowired
-  UserProfileEndpoint userProfile;
-
-  @Autowired
-  ServiceAuthorisationApi s2s;
-
-  @Autowired
-  DataSource dataSource;
-
-  @Autowired
   MockMvc mockMvc;
 
   @SneakyThrows
   @BeforeAll
   public void setup() {
-    createProfile("a@b.com");
-    createRoles(
-        "caseworker-divorce-courtadmin_beta",
-        "caseworker-divorce-superuser",
-        "caseworker-divorce-courtadmin-la",
-        "caseworker-divorce-courtadmin",
-        "caseworker-divorce-solicitor",
-        "caseworker-divorce-pcqextractor",
-        "caseworker-divorce-systemupdate",
-        "caseworker-divorce-bulkscan",
-        "caseworker-caa",
-        "citizen"
-    );
-
     importDefinition();
   }
 
@@ -196,24 +167,6 @@ class LibConsumerApplicationTests {
     return new ObjectMapper().readValue(result.getResponse().getContentAsString(), StartEventResponse.class);
   }
 
-  void createRoles(String... roles) {
-    for (String role : roles) {
-      UserRole r = new UserRole();
-      r.setRole(role);
-      r.setSecurityClassification(SecurityClassification.PUBLIC);
-      roleController.userRolePut(r);
-    }
-  }
-
-  void createProfile(String id) {
-    var p = new UserProfile();
-    p.setId(id);
-    p.setId(id);
-    p.setWorkBasketDefaultJurisdiction("DIVORCE");
-    p.setWorkBasketDefaultCaseType("NO_FAULT_DIVORCE");
-    p.setWorkBasketDefaultState("Submitted");
-    userProfile.populateUserProfiles(List.of(p), "banderous");
-  }
 
   MockHttpServletRequestBuilder secure(MockHttpServletRequestBuilder builder) {
     return builder.with(jwt()

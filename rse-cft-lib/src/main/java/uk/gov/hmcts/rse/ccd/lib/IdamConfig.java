@@ -12,7 +12,7 @@ import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.client.OAuth2Configuration;
 
 @Configuration
-public class IdamConfig {
+class IdamConfig {
 
   @ForProjects({DBProxy.project.datastore, DBProxy.project.definitionstore})
   @Bean

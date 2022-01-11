@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class BeanIsolator implements BeanFactoryPostProcessor {
+class BeanIsolator implements BeanFactoryPostProcessor {
 
   @Override
   public void postProcessBeanFactory(final ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.support.BeanNameGenerator;
  * This resolves conflicts between beans with the same name occuring in different projects,
  * eg. IdamRepository in both def and data stores.
  */
-public class BeanNamer implements BeanNameGenerator {
+class BeanNamer implements BeanNameGenerator {
   @SneakyThrows
   @Override
   public String generateBeanName(BeanDefinition definition, BeanDefinitionRegistry registry) {
