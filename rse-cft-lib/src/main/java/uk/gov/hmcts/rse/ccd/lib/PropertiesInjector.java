@@ -30,14 +30,9 @@ class PropertiesInjector implements
 
     props.put("management.health.case-document-am-api.enabled", "false");
 
-    props.put("spring.datasource.driver-class-name", "org.testcontainers.jdbc.ContainerDatabaseDriver");
-    props.put("spring.datasource.url", "jdbc:tc:postgresql:12.4:///data-store?stringtype=unspecified");
-    props.put("spring.datasource.username", "ccd");
-    props.put("spring.datasource.password", "password");
-
-//    props.put("spring.datasource.url", "jdbc:postgresql://localhost:5432/ccd?stringtype=unspecified");
-//    props.put("spring.datasource.username", "postgres");
-//    props.put("spring.datasource.password", "foo");
+    props.put("spring.datasource.url", "jdbc:postgresql://localhost:5051/postgres?stringtype=unspecified");
+    props.put("spring.datasource.username", "postgres");
+    props.put("spring.datasource.password", "postgres");
 
     // Required by ccd
     props.put("spring.main.allow-circular-references", "true");

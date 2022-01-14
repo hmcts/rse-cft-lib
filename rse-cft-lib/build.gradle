@@ -43,6 +43,10 @@ configurations {
     }
 }
 
+java {
+    withSourcesJar()
+}
+
 configurations.compileClasspath.extendsFrom(configurations.bundler, configurations.bundlerTransitive)
 
 dependencies {
@@ -112,6 +116,21 @@ publishing {
     publications {
         shadow(MavenPublication) { publication ->
             project.shadow.component(publication)
+            publication.artifact(project.tasks.sourcesJar)
+        }
+    }
+}
+
+tasks.sourcesJar {
+    doFirst {
+        from rootProject.fileTree('.') {
+            include '**/src/main/java/**'
+            includeEmptyDirs = false
+            eachFile { f ->
+                def i = f.relativePath.segments.findIndexOf{ it == "main" }
+                String[] segments = f.relativePath.segments.drop(i + 2)
+                f.relativePath = new RelativePath(true, segments)
+            }
         }
     }
 }
