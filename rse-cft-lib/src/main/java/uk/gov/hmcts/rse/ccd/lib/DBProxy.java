@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventListenerAdapter;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -25,8 +26,10 @@ import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 import org.testcontainers.containers.DockerComposeContainer;
+import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.wait.strategy.Wait;
 
+@Slf4j
 @Component
 class DBProxy implements BeanPostProcessor {
   private static volatile String applicationPackage;
@@ -59,11 +62,15 @@ class DBProxy implements BeanPostProcessor {
               .withExposedService("shared-database", 5432, Wait.forListeningPort())
               // Allow ES to initialise asynchronously in the background.
               .withExposedService("ccd-elasticsearch", 9200, Wait.forLogMessage(".*", 1))
+              .withLogConsumer("ccd-logstash", this::loggy)
               .withLocalCompose(true);
       environment.start();
       var db = environment.getServicePort("shared-database", 5432);
       var es = environment.getServicePort("ccd-elasticsearch", 9200);
       queue.put(new LibInfo(db, es));
+    }
+    private void loggy(OutputFrame outputFrame) {
+      log.debug("LOGSTASH " + outputFrame.getUtf8String());
     }
   }
 

@@ -95,7 +95,11 @@ import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
     "classpath:datastore/application.properties",
     "classpath:userprofile/application.properties",
 })
-@PropertySource(value = "classpath:am/application.yaml", factory = YamlPropertySourceFactory.class)
+@PropertySource(value = {
+    "classpath:am/application.yaml",
+    "classpath:cftlib-defstore-es.yml"
+}
+, factory = YamlPropertySourceFactory.class)
 @EnableAspectJAutoProxy
 class CCDLibAutoConfigure {
 

@@ -34,6 +34,11 @@ class PropertiesInjector implements
     props.put("spring.datasource.username", "postgres");
     props.put("spring.datasource.password", "postgres");
 
+    props.put("search.elastic.hosts", "http://localhost:9200");
+    props.put("search.elastic.data.hosts", "http://localhost:9200");
+    props.put("elasticsearch.enabled", "true");
+    props.put("elasticsearch.failImportIfError", "true");
+
     // Required by ccd
     props.put("spring.main.allow-circular-references", "true");
   }
