@@ -17,6 +17,15 @@ repositories {
     maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
 }
 
+dependencyManagement {
+    dependencies {
+        dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '6.8.17'
+        dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '6.5.0'
+        dependency group: 'org.elasticsearch', name: 'elasticsearch', version: '6.8.17'
+        dependency group: 'org.elasticsearch', name: 'jna', version: '5.5.0'
+    }
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
 
