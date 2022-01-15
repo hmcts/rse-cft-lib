@@ -95,6 +95,9 @@ processResources {
     from ('../ccd-definition-store-api/application/src/main/resources') { into 'definitionstore' }
     // migrations
     from ('../ccd-definition-store-api/repository/src/main/resources') { into 'definitionstore' }
+    from ('../ccd-definition-store-api/elastic-search-support/src/main/resources') {
+        rename('application.yml', 'cftlib-defstore-es.yml')
+    }
 
     from ('../ccd-user-profile-api/src/main/resources') { into 'userprofile' }
 
