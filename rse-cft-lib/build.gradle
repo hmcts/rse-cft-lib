@@ -68,8 +68,6 @@ dependencies {
 
     shadow 'net.ttddyy:datasource-proxy:1.7'
 
-    shadow "org.testcontainers:postgresql:1.16.2"
-    // Fix testcontainers on m1
     shadow group: 'org.elasticsearch', name: 'jna', version: '5.7.0-1'
     shadow group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.3'
 

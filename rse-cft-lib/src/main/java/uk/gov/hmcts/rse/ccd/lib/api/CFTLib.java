@@ -35,6 +35,7 @@ import uk.gov.hmcts.ccd.definition.store.repository.model.UserRole;
 import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
 import uk.gov.hmcts.ccd.domain.model.UserProfile;
 import uk.gov.hmcts.ccd.endpoint.userprofile.UserProfileEndpoint;
+import uk.gov.hmcts.rse.ccd.lib.FlywayMigrator;
 
 @Component
 public class CFTLib {
@@ -50,13 +51,16 @@ public class CFTLib {
   @Autowired
   CFTLibConfigurer configurer;
 
+  @Autowired
+  FlywayMigrator migrator;
+
   @Value("http://localhost:${server.port}")
   private String baseUrl;
 
   @SneakyThrows
   @EventListener(ApplicationReadyEvent.class)
   public void configure() {
-    configurer.configure(this);
+    configurer.configure(this, migrator.getDidCleanMigration());
   }
 
   public void createProfile(String id, String jurisdiction, String caseType, String state) {
@@ -83,7 +87,7 @@ public class CFTLib {
     try (Connection c = data.getConnection()) {
       // To use the uuid generation function.
       c.createStatement().execute(
-          "create extension pgcrypto"
+          "create extension if not exists pgcrypto"
       );
 
       ResourceLoader resourceLoader = new DefaultResourceLoader();
