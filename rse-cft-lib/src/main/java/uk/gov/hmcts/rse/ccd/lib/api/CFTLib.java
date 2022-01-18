@@ -25,7 +25,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -35,7 +34,6 @@ import uk.gov.hmcts.ccd.definition.store.repository.model.UserRole;
 import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
 import uk.gov.hmcts.ccd.domain.model.UserProfile;
 import uk.gov.hmcts.ccd.endpoint.userprofile.UserProfileEndpoint;
-import uk.gov.hmcts.rse.ccd.lib.FlywayMigrator;
 
 @Component
 public class CFTLib {
@@ -50,9 +48,6 @@ public class CFTLib {
 
   @Autowired
   CFTLibConfigurer configurer;
-
-  @Autowired
-  FlywayMigrator migrator;
 
   @Value("http://localhost:${server.port}")
   private String baseUrl;
