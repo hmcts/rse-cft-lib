@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import javax.sql.DataSource;
@@ -28,6 +29,8 @@ import org.springframework.util.ReflectionUtils;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.shaded.org.zeroturnaround.exec.ProcessExecutor;
+import org.testcontainers.shaded.org.zeroturnaround.exec.stream.slf4j.Slf4jStream;
 
 @Slf4j
 @Component
@@ -57,16 +60,26 @@ class DBProxy implements BeanPostProcessor {
       var f = File.createTempFile("cftlib", "");
       URL u = getClass().getResource("/rse/cftlib-docker-compose.yml");
       FileUtils.copyURLToFile(u, f);
-      environment =
-          new DockerComposeContainer<>(f)
-              .withExposedService("shared-database", 5432, Wait.forListeningPort())
-              // Allow ES to initialise asynchronously in the background.
-              .withExposedService("ccd-elasticsearch", 9200, Wait.forLogMessage(".*", 1))
-              .withLogConsumer("ccd-logstash", this::loggy)
-              .withLocalCompose(true);
-      environment.start();
-      var db = environment.getServicePort("shared-database", 5432);
-      var es = environment.getServicePort("ccd-elasticsearch", 9200);
+
+      var environment = Map.of("COMPOSE_FILE", f.getName());
+      new ProcessExecutor().command("docker-compose up -d")
+          .redirectOutput(Slf4jStream.of(log).asInfo())
+          .redirectError(Slf4jStream.of(log).asInfo())
+          .directory(f.getParentFile())
+          .environment(environment)
+          .exitValueNormal()
+          .executeNoTimeout();
+
+//      environment =
+//          new DockerComposeContainer<>(f)
+//              .withExposedService("shared-database", 5432, Wait.forListeningPort())
+//              // Allow ES to initialise asynchronously in the background.
+//              .withExposedService("ccd-elasticsearch", 9200, Wait.forLogMessage(".*", 1))
+//              .withLogConsumer("ccd-logstash", this::loggy)
+//              .withLocalCompose(true);
+//      environment.start();
+//      var db = environment.getServicePort("shared-database", 5432);
+//      var es = environment.getServicePort("ccd-elasticsearch", 9200);
       queue.put(new LibInfo(db, es));
     }
     private void loggy(OutputFrame outputFrame) {

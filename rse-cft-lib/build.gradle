@@ -64,6 +64,7 @@ dependencies {
     bundler 'uk.gov.hmcts.reform.roleassignment:am-role-assignment-service'
 
     shadow group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
+    shadow 'org.zeroturnaround:zt-exec:1.12'
 
     shadow 'net.ttddyy:datasource-proxy:1.7'
 
