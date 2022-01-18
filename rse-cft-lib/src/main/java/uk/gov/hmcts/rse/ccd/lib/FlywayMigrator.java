@@ -4,21 +4,39 @@ import java.sql.Connection;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.context.annotation.Configuration;
 
+@Slf4j
 @Configuration
-class FlywayMigrator implements FlywayMigrationStrategy {
+@Getter
+public class FlywayMigrator implements FlywayMigrationStrategy {
 
   @Autowired
   DataSource dataStore;
 
+  /**
+   * @return True for a clean migration, false otherwise
+   */
   @SneakyThrows
   @PostConstruct
-  public void migrate() {
+  public boolean migrate() {
+    // TODO: DB per service with regular migrations.
+    try (Connection c = dataStore.getConnection()) {
+      var rs = c.createStatement().executeQuery(
+          "SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'datastore'"
+      );
+      if (rs.next()) {
+        log.info("Skipping DB migrations in existing DB");
+        return false;
+      }
+    }
+
     // Run data and definition store migrations.
     // Many of the CCD migrations use the fully qualified public schema name
     // so we rename the public schema each time.
@@ -39,6 +57,7 @@ class FlywayMigrator implements FlywayMigrationStrategy {
         );
       }
     }
+    return true;
   }
 
   // Replace the default migration strategy with our own.

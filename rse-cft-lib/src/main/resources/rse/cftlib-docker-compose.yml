@@ -3,12 +3,12 @@ version: '3.5'
 services:
   shared-database:
     image: postgres
-    volumes:
-      - ./database:/docker-entrypoint-initdb.d
     environment:
       DB_USERNAME:
       DB_PASSWORD:
       POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - 6432:5432
   ccd-elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
     environment:
@@ -22,8 +22,6 @@ services:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - esdata1:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
 
@@ -40,9 +38,4 @@ services:
     depends_on:
       - ccd-elasticsearch
       - shared-database
-
-volumes:
-  ccd-docker-azure-blob-data:
-  esdata1:
-    driver: local
 

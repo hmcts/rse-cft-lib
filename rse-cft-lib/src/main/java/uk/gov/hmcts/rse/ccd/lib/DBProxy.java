@@ -5,9 +5,15 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Duration;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +24,7 @@ import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.io.FileUtils;
+import org.awaitility.Awaitility;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -25,9 +32,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
-import org.testcontainers.containers.DockerComposeContainer;
-import org.testcontainers.containers.output.OutputFrame;
-import org.testcontainers.containers.wait.strategy.Wait;
+import org.zeroturnaround.exec.ProcessExecutor;
+import org.zeroturnaround.exec.stream.slf4j.Slf4jStream;
 
 @Slf4j
 @Component
@@ -43,7 +49,6 @@ class DBProxy implements BeanPostProcessor {
   }
 
   public static class RunListener implements SpringApplicationRunListener {
-    static DockerComposeContainer<?> environment;
     public RunListener(SpringApplication app, String[] args) {
       if (applicationPackage == null) {
         // TODO
@@ -57,20 +62,36 @@ class DBProxy implements BeanPostProcessor {
       var f = File.createTempFile("cftlib", "");
       URL u = getClass().getResource("/rse/cftlib-docker-compose.yml");
       FileUtils.copyURLToFile(u, f);
-      environment =
-          new DockerComposeContainer<>(f)
-              .withExposedService("shared-database", 5432, Wait.forListeningPort())
-              // Allow ES to initialise asynchronously in the background.
-              .withExposedService("ccd-elasticsearch", 9200, Wait.forLogMessage(".*", 1))
-              .withLogConsumer("ccd-logstash", this::loggy)
-              .withLocalCompose(true);
-      environment.start();
-      var db = environment.getServicePort("shared-database", 5432);
-      var es = environment.getServicePort("ccd-elasticsearch", 9200);
-      queue.put(new LibInfo(db, es));
-    }
-    private void loggy(OutputFrame outputFrame) {
-      log.debug("LOGSTASH " + outputFrame.getUtf8String());
+
+      var environment = Map.of("COMPOSE_FILE", f.getName());
+      new ProcessExecutor().command("docker-compose", "up", "-d")
+          .redirectOutput(Slf4jStream.of(log).asInfo())
+          .redirectError(Slf4jStream.of(log).asInfo())
+          .directory(f.getParentFile())
+          .environment(environment)
+          .exitValueNormal()
+          .timeout(10, TimeUnit.MINUTES)
+          .execute();
+
+      Callable<Boolean> ready = () -> {
+        try (var c = DriverManager.getConnection(
+            "jdbc:postgresql://localhost:6432/postgres",
+            "postgres", "postgres")) {
+        } catch (SQLException s) {
+          log.info("DB unavailable", s);
+          throw s;
+        }
+        return true;
+      };
+      Awaitility.await()
+          .pollInSameThread()
+          .pollInterval(Duration.ofMillis(100))
+          .pollDelay(Duration.ZERO)
+          .ignoreExceptions()
+          .forever()
+          .until(ready);
+
+      queue.put(new LibInfo(6432, 9200));
     }
   }
 

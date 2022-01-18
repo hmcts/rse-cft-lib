@@ -25,7 +25,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -83,7 +82,7 @@ public class CFTLib {
     try (Connection c = data.getConnection()) {
       // To use the uuid generation function.
       c.createStatement().execute(
-          "create extension pgcrypto"
+          "create extension if not exists pgcrypto"
       );
 
       ResourceLoader resourceLoader = new DefaultResourceLoader();

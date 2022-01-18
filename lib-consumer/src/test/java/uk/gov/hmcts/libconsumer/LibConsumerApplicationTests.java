@@ -1,6 +1,8 @@
 package uk.gov.hmcts.libconsumer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -25,6 +27,7 @@ import uk.gov.hmcts.ccd.domain.model.aggregated.JurisdictionDisplayProperties;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.Event;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
+import uk.gov.hmcts.rse.ccd.lib.FlywayMigrator;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 
 @AutoConfigureMockMvc
@@ -35,6 +38,8 @@ class LibConsumerApplicationTests {
   @Autowired
   MockMvc mockMvc;
 
+  @Autowired
+  FlywayMigrator migrator;
 
   @SneakyThrows
   @Test
@@ -66,6 +71,11 @@ class LibConsumerApplicationTests {
         )
         .andExpect(status().is2xxSuccessful())
         .andReturn();
+  }
+
+  @Test
+  void migrateExistingDB() {
+    assertFalse(migrator.migrate());
   }
 
   @SneakyThrows
