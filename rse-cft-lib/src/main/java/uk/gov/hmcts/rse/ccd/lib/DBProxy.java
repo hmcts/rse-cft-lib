@@ -89,6 +89,7 @@ class DBProxy implements BeanPostProcessor {
           .forever()
           .until(ready);
 
+      Thread.sleep(10000);
       queue.put(new LibInfo(6432, 9200));
     }
   }
