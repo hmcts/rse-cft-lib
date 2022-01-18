@@ -2,18 +2,18 @@ package uk.gov.hmcts.rse.ccd.lib;
 
 import com.zaxxer.hikari.HikariDataSource;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -70,14 +70,16 @@ class DBProxy implements BeanPostProcessor {
           .directory(f.getParentFile())
           .environment(environment)
           .exitValueNormal()
-          .executeNoTimeout();
+          .timeout(10, TimeUnit.MINUTES)
+          .execute();
 
       Callable<Boolean> ready = () -> {
-        try (Socket socket = new Socket()) {
-          InetSocketAddress inetSocketAddress = new InetSocketAddress("localhost", 6432);
-          socket.connect(inetSocketAddress, 1000);
-        } catch (IOException e) {
-          throw new IllegalStateException("DB not ready yet");
+        try (var c = DriverManager.getConnection(
+            "jdbc:postgresql://localhost:6432/postgres",
+            "postgres", "postgres")) {
+        } catch (SQLException s) {
+          log.info("DB unavailable", s);
+          throw s;
         }
         return true;
       };
@@ -89,7 +91,6 @@ class DBProxy implements BeanPostProcessor {
           .forever()
           .until(ready);
 
-      Thread.sleep(10000);
       queue.put(new LibInfo(6432, 9200));
     }
   }
