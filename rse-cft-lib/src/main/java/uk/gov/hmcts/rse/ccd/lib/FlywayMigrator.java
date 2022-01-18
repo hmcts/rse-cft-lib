@@ -20,8 +20,6 @@ public class FlywayMigrator implements FlywayMigrationStrategy {
   @Autowired
   DataSource dataStore;
 
-  private Boolean didCleanMigration;
-
   /**
    * @return True for a clean migration, false otherwise
    */
@@ -35,7 +33,6 @@ public class FlywayMigrator implements FlywayMigrationStrategy {
       );
       if (rs.next()) {
         log.info("Skipping DB migrations in existing DB");
-        this.didCleanMigration = false;
         return false;
       }
     }
@@ -60,7 +57,6 @@ public class FlywayMigrator implements FlywayMigrationStrategy {
         );
       }
     }
-    this.didCleanMigration = true;
     return true;
   }
 

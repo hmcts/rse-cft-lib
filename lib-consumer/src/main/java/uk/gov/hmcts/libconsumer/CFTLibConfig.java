@@ -16,11 +16,7 @@ import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 public class CFTLibConfig implements CFTLibConfigurer {
   @SneakyThrows
   @Override
-  public void configure(CFTLib lib, boolean cleanInstall) {
-    if (!cleanInstall) {
-      return;
-    }
-
+  public void configure(CFTLib lib) {
     lib.createProfile("a@b.com","DIVORCE", "NO_FAULT_DIVORCE", "Submitted");
     lib.createRoles(
         "caseworker-divorce-courtadmin_beta",

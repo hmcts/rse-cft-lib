@@ -60,7 +60,7 @@ public class CFTLib {
   @SneakyThrows
   @EventListener(ApplicationReadyEvent.class)
   public void configure() {
-    configurer.configure(this, migrator.getDidCleanMigration());
+    configurer.configure(this);
   }
 
   public void createProfile(String id, String jurisdiction, String caseType, String state) {
