@@ -39,13 +39,18 @@ class LibConsumerApplicationTests {
   MockMvc mockMvc;
 
   @Autowired
-  FlywayMigrator migrator;
+  FlywayMigrator flyway;
 
   @SneakyThrows
   @Test
   void isHealthy() {
     mockMvc.perform(get("/health"))
         .andExpect(status().is2xxSuccessful());
+  }
+
+  @Test
+  void rerunFlyway() {
+    flyway.migrate();
   }
 
   @SneakyThrows
@@ -71,11 +76,6 @@ class LibConsumerApplicationTests {
         )
         .andExpect(status().is2xxSuccessful())
         .andReturn();
-  }
-
-  @Test
-  void migrateExistingDB() {
-    assertFalse(migrator.migrate());
   }
 
   @SneakyThrows
