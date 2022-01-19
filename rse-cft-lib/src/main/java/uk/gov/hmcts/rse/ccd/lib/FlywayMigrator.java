@@ -19,15 +19,14 @@ public class FlywayMigrator implements FlywayMigrationStrategy {
   @Autowired
   DataSource dataSource;
 
-  /**
-   * @return True for a clean migration, false otherwise
-   */
+  // Run common component SQL migrations placing each DB in its own schema.
+  // We do this by running the migrations in the public schema and then renaming it.
+  // Migrating existing DBs requires we rename back to the public schema.
+  // This is necessary since many migrations are written to explicitly reference the
+  // default postgres public schema.
   @SneakyThrows
   @PostConstruct
-  public boolean migrate() {
-    // Run data and definition store migrations.
-    // Many of the CCD migrations use the fully qualified public schema name
-    // so we rename each module back to the public schema to migrate it.
+  public void migrate() {
     for (String module : List.of(
         "datastore",
         "definitionstore",
@@ -51,7 +50,6 @@ public class FlywayMigrator implements FlywayMigrationStrategy {
         );
       }
     }
-    return true;
   }
 
   // Replace the default migration strategy with our own.

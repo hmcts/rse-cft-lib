@@ -50,6 +50,7 @@ class LibConsumerApplicationTests {
 
   @Test
   void rerunFlyway() {
+    // Should rerun without issue on existing database.
     flyway.migrate();
   }
 
