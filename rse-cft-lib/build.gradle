@@ -16,11 +16,9 @@ plugins {
 
 repositories {
     mavenCentral()
-    jcenter()
     maven {
         url 'https://jitpack.io'
     }
-    maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
 }
 
 group = 'com.github.hmcts'
@@ -63,7 +61,6 @@ dependencies {
     bundler 'uk.gov.hmcts.ccd:user-profile-api'
     bundler 'uk.gov.hmcts.reform.roleassignment:am-role-assignment-service'
 
-    shadow group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
     shadow 'org.zeroturnaround:zt-exec:1.12'
 
     shadow 'net.ttddyy:datasource-proxy:1.7'
@@ -157,6 +154,7 @@ project.afterEvaluate {
                     if (dep.moduleGroup != "io.springfox") {
                         project.dependencies.add('shadow', [group: dep.moduleGroup, name: dep.moduleName, version: dep.moduleVersion]) {
                             exclude group: 'uk.gov.hmcts.reform', module: 'java-logging-spring'
+//                            exclude group: 'com.github.hmcts', module: 'java-logging'
                         }
                     }
                 }
