@@ -14,50 +14,42 @@ import org.springframework.context.annotation.Configuration;
 
 @Slf4j
 @Configuration
-@Getter
 public class FlywayMigrator implements FlywayMigrationStrategy {
 
   @Autowired
-  DataSource dataStore;
+  DataSource dataSource;
 
-  /**
-   * @return True for a clean migration, false otherwise
-   */
+  // Run common component SQL migrations placing each DB in its own schema.
+  // We do this by running the migrations in the public schema and then renaming it.
+  // Migrating existing DBs requires we rename back to the public schema.
+  // This is necessary since many migrations are written to explicitly reference the
+  // default postgres public schema.
   @SneakyThrows
   @PostConstruct
-  public boolean migrate() {
-    // TODO: DB per service with regular migrations.
-    try (Connection c = dataStore.getConnection()) {
-      var rs = c.createStatement().executeQuery(
-          "SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'datastore'"
-      );
-      if (rs.next()) {
-        log.info("Skipping DB migrations in existing DB");
-        return false;
-      }
-    }
-
-    // Run data and definition store migrations.
-    // Many of the CCD migrations use the fully qualified public schema name
-    // so we rename the public schema each time.
+  public void migrate() {
     for (String module : List.of(
         "datastore",
         "definitionstore",
         "userprofile",
         "am"
     )) {
-      Flyway.configure()
-          .dataSource(dataStore)
-          .locations(String.format("classpath:/%s/db/migration", module))
-          .load()
-          .migrate();
-      try (Connection c = dataStore.getConnection()) {
+      try (Connection c = dataSource.getConnection()) {
+        c.createStatement().execute("drop schema if exists public cascade");
+        if (c.createStatement().executeQuery(
+            "select schema_name from information_schema.schemata where schema_name = '" + module + "'").next()) {
+          c.createStatement().execute("alter schema " + module + " rename to public");
+        }
+        c.createStatement().execute("create schema if not exists public");
+        Flyway.configure()
+            .dataSource(dataSource)
+            .locations(String.format("classpath:/%s/db/migration", module))
+            .load()
+            .migrate();
         c.createStatement().execute(
             String.format("alter schema public rename to %s;create schema public;", module)
         );
       }
     }
-    return true;
   }
 
   // Replace the default migration strategy with our own.
