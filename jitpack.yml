@@ -1,4 +1,4 @@
 jdk:
   - openjdk11
 install:
-  - ./gradlew -i publishShadowPublicationToMavenLocal
+  - ./gradlew -is publishShadowPublicationToMavenLocal
