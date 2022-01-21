@@ -1,3 +1,10 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 includeBuild 'ccd-definition-store-api'
 includeBuild 'ccd-data-store-api'
 includeBuild 'ccd-user-profile-api'
