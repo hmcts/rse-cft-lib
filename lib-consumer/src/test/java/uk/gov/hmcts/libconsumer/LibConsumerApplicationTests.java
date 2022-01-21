@@ -48,6 +48,13 @@ class LibConsumerApplicationTests {
         .andExpect(status().is2xxSuccessful());
   }
 
+  @SneakyThrows
+  @Test
+  void addressLookup() {
+    mockMvc.perform(get("/addresses"))
+        .andExpect(status().is2xxSuccessful());
+  }
+
   @Test
   void rerunFlyway() {
     // Should rerun without issue on existing database.
