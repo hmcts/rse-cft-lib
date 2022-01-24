@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGenerator;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import uk.gov.hmcts.ccd.AliasWebConfig;
@@ -19,7 +20,6 @@ import uk.gov.hmcts.ccd.CoreCaseDataApplication;
 import uk.gov.hmcts.ccd.UserProfileApplication;
 import uk.gov.hmcts.ccd.data.AuthClientsConfiguration;
 import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
-import uk.gov.hmcts.ccd.definition.store.elastic.config.ElasticSearchConfiguration;
 import uk.gov.hmcts.ccd.definition.store.repository.AuthClientConfiguration;
 import uk.gov.hmcts.ccd.security.JwtGrantedAuthoritiesConverter;
 import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
@@ -39,7 +39,7 @@ import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
     HibernateJpaAutoConfiguration.class
 })
 @ComponentScan(
-    nameGenerator = BeanNamer.class,
+    nameGenerator = FullyQualifiedAnnotationBeanNameGenerator.class,
     basePackages = {
     "uk.gov.hmcts.rse.ccd.lib",
     "uk.gov.hmcts.ccd",
