@@ -108,8 +108,7 @@ class DBProxy implements BeanPostProcessor {
     if (p.startsWith("uk.gov.hmcts.ccd.definition")) {
       return project.definitionstore;
     }
-    if (p.startsWith("uk.gov.hmcts.ccd.data.userprofile")
-        || p.startsWith("uk.gov.hmcts.ccd.endpoint.userprofile")) {
+    if (p.startsWith("uk.gov.hmcts.ccd.userprofile")) {
       return project.userprofile;
     }
     if (p.startsWith("uk.gov.hmcts.ccd")) {
