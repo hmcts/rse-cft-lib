@@ -17,12 +17,10 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import uk.gov.hmcts.ccd.AliasWebConfig;
 import uk.gov.hmcts.ccd.CoreCaseDataApplication;
-import uk.gov.hmcts.ccd.UserProfileApplication;
 import uk.gov.hmcts.ccd.data.AuthClientsConfiguration;
 import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
 import uk.gov.hmcts.ccd.definition.store.repository.AuthClientConfiguration;
 import uk.gov.hmcts.ccd.security.JwtGrantedAuthoritiesConverter;
-import uk.gov.hmcts.ccd.hikari.HikariConfigurationPropertiesReportEndpoint;
 import uk.gov.hmcts.reform.authorisation.validators.ServiceAuthTokenValidator;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 import uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication;
@@ -64,8 +62,8 @@ import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
         AliasWebConfig.class,
 
         // User profile
-        UserProfileApplication.class,
-        HikariConfigurationPropertiesReportEndpoint.class,
+//        UserProfileApplication.class,
+//        HikariConfigurationPropertiesReportEndpoint.class,
 
         // Role assignment
         RoleAssignmentApplication.class,
@@ -92,7 +90,7 @@ import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
         IdamApi.class,
     })
 @PropertySource(value = {
-    "classpath:definitionstore/application.properties",
+//    "classpath:definitionstore/application.properties",
     "classpath:datastore/application.properties",
     "classpath:userprofile/application.properties",
 })

@@ -4,19 +4,19 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 
 import com.auth0.jwt.JWT;
+import java.util.Collection;
 import javax.inject.Inject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import uk.gov.hmcts.reform.auth.checker.core.RequestAuthorizer;
-import uk.gov.hmcts.reform.auth.checker.core.service.Service;
-import uk.gov.hmcts.reform.roleassignment.oidc.JwtGrantedAuthoritiesConverter;
+import uk.gov.hmcts.ccd.definition.store.security.JwtGrantedAuthoritiesConverter;
 
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -24,9 +24,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   private final JwtAuthenticationConverter jwtAuthenticationConverter;
 
   @Inject
-  public SecurityConfiguration(final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter,
-                               RequestAuthorizer<Service> serviceRequestAuthorizer,
-                               AuthenticationManager authenticationManager) {
+  public SecurityConfiguration(
+      Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter
+//      JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter
+  ) {
     jwtAuthenticationConverter = new JwtAuthenticationConverter();
     jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
   }

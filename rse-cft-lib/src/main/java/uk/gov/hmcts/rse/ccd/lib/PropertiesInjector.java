@@ -16,7 +16,10 @@ class PropertiesInjector implements
     environment.getPropertySources().addFirst(new PropertiesPropertySource("ccdLibProps", props));
 
     // We instead configure multiple package-scoped idam clients.
-    props.put("spring.autoconfigure.exclude", "uk.gov.hmcts.reform.idam.client.IdamClient");
+//    props.put("spring.autoconfigure.exclude",
+//        "org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration"
+//        + ",uk.gov.hmcts.reform.idam.client.IdamClient"
+//    );
 
     // This may be set by definition store and requires unsetting or it will override data store's cache settings.
     props.put("spring.cache.cache-names", "");
@@ -29,10 +32,11 @@ class PropertiesInjector implements
     props.put("feign.client.config.datastoreclient.url", "https://idam-api.platform.hmcts.net");
 
     props.put("management.health.case-document-am-api.enabled", "false");
+    props.put("flyway.locations", "/definition/db/migration");
 
-    props.put("spring.datasource.url", "jdbc:postgresql://localhost:5051/postgres?stringtype=unspecified");
-    props.put("spring.datasource.username", "postgres");
-    props.put("spring.datasource.password", "postgres");
+//    props.put("spring.datasource.url", "jdbc:postgresql://localhost:6432/definition?stringtype=unspecified");
+//    props.put("spring.datasource.username", "postgres");
+//    props.put("spring.datasource.password", "postgres");
 
     props.put("search.elastic.hosts", "http://localhost:9200");
     props.put("search.elastic.data.hosts", "http://localhost:9200");

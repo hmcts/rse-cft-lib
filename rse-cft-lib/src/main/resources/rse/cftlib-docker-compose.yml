@@ -2,7 +2,7 @@
 version: '3.5'
 services:
   shared-database:
-    image: postgres
+    image: postgres:12.4
     environment:
       DB_USERNAME:
       DB_PASSWORD:

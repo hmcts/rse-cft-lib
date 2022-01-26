@@ -43,8 +43,6 @@ dependencies {
         implementation 'uk.gov.hmcts.reform.roleassignment:am-role-assignment-service'
     }
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
     testImplementation 'org.springframework.security:spring-security-test'
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'

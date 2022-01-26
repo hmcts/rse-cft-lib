@@ -32,8 +32,8 @@ import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
 import uk.gov.hmcts.ccd.definition.store.repository.model.UserRole;
 import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
-import uk.gov.hmcts.ccd.domain.model.UserProfile;
-import uk.gov.hmcts.ccd.endpoint.userprofile.UserProfileEndpoint;
+import uk.gov.hmcts.ccd.userprofile.domain.model.UserProfile;
+import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 
 @Component
 public class CFTLib {
