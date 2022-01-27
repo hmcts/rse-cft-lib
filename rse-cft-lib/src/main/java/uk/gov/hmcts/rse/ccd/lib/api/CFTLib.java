@@ -15,9 +15,6 @@ import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
@@ -37,24 +34,21 @@ import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 
 @Component
 public class CFTLib {
-  @Autowired
-  private DataSource data;
 
-  @Autowired
   UserRoleController roleController;
-
-  @Autowired
   UserProfileEndpoint userProfile;
 
   @Autowired
   CFTLibConfigurer configurer;
 
-  @Value("http://localhost:${server.port}")
-  private String baseUrl;
+  private int countDown = 2;
+  private DataSource amDB;
 
   @SneakyThrows
-  @EventListener(ApplicationReadyEvent.class)
-  public void configure() {
+  public void init(UserRoleController role, UserProfileEndpoint profile, DataSource amDB) {
+    this.roleController = role;
+    this.userProfile = profile;
+    this.amDB = amDB;
     configurer.configure(this);
   }
 
@@ -79,14 +73,13 @@ public class CFTLib {
 
   @SneakyThrows
   public void configureRoleAssignments(String json){
-    try (Connection c = data.getConnection()) {
+    try (Connection c = amDB.getConnection()) {
       // To use the uuid generation function.
       c.createStatement().execute(
           "create extension if not exists pgcrypto"
       );
 
       ResourceLoader resourceLoader = new DefaultResourceLoader();
-      // Provided by the consuming application.
       var sql = IOUtils.toString(resourceLoader.getResource("classpath:rse/cftlib-populate-am.sql").getInputStream(), Charset.defaultCharset());
       var p = c.prepareStatement(sql);
       p.setString(1, json);
@@ -113,7 +106,7 @@ public class CFTLib {
 
     RestTemplate restTemplate = new RestTemplate();
     ResponseEntity<String> response = restTemplate
-        .postForEntity(baseUrl + "/import", requestEntity, String.class);
+        .postForEntity("http://localhost:9990/import", requestEntity, String.class);
   }
 
   public static String buildJwt() {

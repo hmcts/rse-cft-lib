@@ -3,7 +3,7 @@ with entries(val) as (select jsonb_array_elements(?::jsonb))
 , rows(id, val) as (
   select val->>'id', jsonb_array_elements(val->'roleAssignments') from entries
 ), actors as (
-insert into am.role_assignment
+insert into role_assignment
   select
     gen_random_uuid() as id,
     'IDAM' as actor_id_type,
@@ -32,7 +32,7 @@ insert into am.role_assignment
     )
   returning actor_id
 )
-insert into am.actor_cache_control
+insert into actor_cache_control
   select distinct actor_id, 1, '{}'::jsonb  from actors
-on conflict (actor_id) do update set etag = am.actor_cache_control.etag + 1
+on conflict (actor_id) do update set etag = actor_cache_control.etag + 1
 returning *

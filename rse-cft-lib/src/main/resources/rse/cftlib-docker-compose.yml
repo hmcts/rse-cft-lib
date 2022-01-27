@@ -1,8 +1,8 @@
 ---
 version: '3.5'
 services:
-  shared-database:
-    image: postgres
+  shared-database-pg12:
+    image: postgres:12.4
     environment:
       DB_USERNAME:
       DB_PASSWORD:
@@ -30,12 +30,12 @@ services:
     environment:
       - JAVA_TOOL_OPTIONS=-Xms128m -Xmx400m
       - XPACK_MONITORING_ENABLED=false
-      - DB_URL=jdbc:postgresql://shared-database:5432/postgres?stringtype=unspecified&ssl=false&currentSchema=datastore
+      - DB_URL=jdbc:postgresql://shared-database-pg12:5432/postgres?stringtype=unspecified&ssl=false&currentSchema=datastore
       - DB_USER=postgres
       - DB_PWD=postgres
       - ES_DATA_NODES_URL=http://ccd-elasticsearch:9200
       - LOG_LEVEL=warn
     depends_on:
       - ccd-elasticsearch
-      - shared-database
+      - shared-database-pg12
 
