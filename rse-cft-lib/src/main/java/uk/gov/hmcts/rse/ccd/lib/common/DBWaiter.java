@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.rse.ccd.lib.ComposeRunner;
 
 @Component
-class DBWaiter implements BeanPostProcessor {
+public class DBWaiter implements BeanPostProcessor {
 
   @Override
   public Object postProcessAfterInitialization(final Object bean, final String beanName) throws

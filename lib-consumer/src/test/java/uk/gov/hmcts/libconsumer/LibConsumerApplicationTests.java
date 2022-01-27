@@ -49,6 +49,7 @@ import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.ccd.domain.model.aggregated.JurisdictionDisplayProperties;
 import uk.gov.hmcts.rse.ccd.lib.Project;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
+import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
 import uk.gov.hmcts.rse.ccd.lib.v2.am.BootAccessManagement;
 import uk.gov.hmcts.rse.ccd.lib.v2.data.BootData;
 import uk.gov.hmcts.rse.ccd.lib.v2.definition.BootDef;
@@ -57,37 +58,17 @@ import uk.gov.hmcts.rse.ccd.lib.v2.profile.BootUserProfile;
 import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
 import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 
-//@AutoConfigureMockMvc
-//@ContextHierarchy({
-//    @ContextConfiguration(name = "root", classes = ParentContextConfiguration.class),
-//    @ContextConfiguration(name = "sibling", classes = {BootDef.class}),
-//    @ContextConfiguration(name = "sibling", classes = {BootUserProfile.class}),
-//    @ContextConfiguration(name = "sibling", classes = {LibConsumerApplication.class, CFTLib.class})
-//})
-//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-
-//@ContextHierarchy({
-//    @ContextConfiguration(name = "root", classes = ParentContextConfiguration.class),
-//    @ContextConfiguration(name = "child", classes = {LibConsumerApplication.class, CFTLib.class}),
-//    @ContextConfiguration(name = "child", classes = BootDef.class),
-//    @ContextConfiguration(name = "child-2", classes = BootUserProfile.class, inheritInitializers = false, inheritLocations = false)
-//})
-//@RunWith(SpringRunner.class)
-//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//@AutoConfigureMockMvc
 class LibConsumerApplicationTests {
 
-//  @Autowired
-//  MockMvc mockMvc;
-  private Map<Project, ConfigurableApplicationContext> contexts = Maps.newHashMap();
+  private Map<Project, ConfigurableApplicationContext> contexts = Maps.newConcurrentMap();
 
-  Map<Project, Class> childContexts = Map.of(
-      Project.AM, BootAccessManagement.class,
-      Project.Defstore, BootDef.class,
-      Project.Userprofile, BootUserProfile.class,
-      Project.Datastore, BootData.class
+  Map<Project, List<Class>> childContexts = Map.of(
+      Project.Application, List.of(LibConsumerApplication.class, CFTLib.class),
+      Project.AM, List.of(BootAccessManagement.class),
+      Project.Defstore, List.of(BootDef.class),
+      Project.Userprofile, List.of(BootUserProfile.class),
+      Project.Datastore, List.of(BootData.class)
   );
 
   Map<Project, MockMvc> mockMVCs = Maps.newHashMap();
@@ -95,7 +76,8 @@ class LibConsumerApplicationTests {
   @SneakyThrows
   @BeforeAll
   void setup() {
-    final SpringApplication parentApplication = new SpringApplication( ParentContextConfiguration.class, FakeS2S.class );
+    final SpringApplication parentApplication = new SpringApplication( ParentContextConfiguration.class, FakeS2S.class,
+        DBWaiter.class);
     parentApplication.setWebApplicationType(WebApplicationType.NONE);
     var parentContext = parentApplication.run( "" );
     final ParentContextApplicationContextInitializer parentContextApplicationContextInitializer = new ParentContextApplicationContextInitializer( parentContext );
@@ -106,32 +88,24 @@ class LibConsumerApplicationTests {
     final StandardEnvironment environment = new StandardEnvironment( );
     environment.getPropertySources( ).addFirst( new MapPropertySource( "Test Properties", properties ) );
 
-    final SpringApplication app = new SpringApplication(LibConsumerApplication.class, CFTLib.class);
-    app.addInitializers(parentContextApplicationContextInitializer);
-    app.setEnvironment(environment);
-    var appContext = app.run();
-    contexts.put(Project.Application, appContext);
-    WebApplicationContext web = (WebApplicationContext) appContext;
-
-    for (Project project : childContexts.keySet()) {
-        final SpringApplication a = new SpringApplication(childContexts.get(project));
+    childContexts.keySet().parallelStream().forEach(project -> {
+        System.out.println("Starting " + project);
+        final SpringApplication a = new SpringApplication(childContexts.get(project).toArray(new Class[0]));
         a.addInitializers( parentContextApplicationContextInitializer );
+        if (project == Project.Application) {
+          a.setEnvironment(environment);
+        }
         var context = a.run();
-        contexts.put(project, context);
         mockMVCs.put(project, MockMvcBuilders.webAppContextSetup((WebApplicationContext) context).build());
-    }
+        contexts.put(project, context);
+    });
+
 
     var userprofile = contexts.get(Project.Userprofile).getBean(UserProfileEndpoint.class);
     var roleController = contexts.get(Project.Defstore).getBean(UserRoleController.class);
     var lib = contexts.get(Project.Application).getBean(CFTLib.class);
     var amDB = contexts.get(Project.AM).getBean(DataSource.class);
     lib.init(roleController, userprofile, amDB);
-
-//    DefaultMockMvcBuilder builder = MockMvcBuilders.webAppContextSetup(
-//        (WebApplicationContext) contexts.get(2));
-//    MockMvc mvc = builder.build();
-//        mvc.perform(get("/health"))
-//        .andExpect(status().is2xxSuccessful());
 
   }
 
@@ -162,6 +136,7 @@ class LibConsumerApplicationTests {
 //  @SneakyThrows
 //  @Test
 //  void listJurisdictions() {
+//    var mockMvc = mockMVCs.get(Project.Datastore);
 //    var r = mockMvc.perform(secure(get("/aggregated/caseworkers/:uid/jurisdictions?access=read"))
 //            .header("Accept", "application/json")
 //            .header("Content-Type", "application/json"))
@@ -171,7 +146,7 @@ class LibConsumerApplicationTests {
 //    assertEquals(arr.length, 1);
 //    assertEquals(arr[0].getCaseTypeDefinitions().size(), 1);
 //  }
-//
+
 //  @SneakyThrows
 //  @Test
 //  void getWorkbasketInputs() {
