@@ -27,8 +27,6 @@ import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
 
 @SpringBootConfiguration
 @EnableAutoConfiguration
-//@ComponentScan(excludeFilters = { @ComponentScan.Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
-//    @ComponentScan.Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
 @ComponentScan(
     basePackageClasses = {
         CoreCaseDataApplication.class,

@@ -68,14 +68,6 @@ import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
 @EnableCaching
 public class BootAccessManagement {
 
-//  @Bean
-//  public ServiceAuthorisationApi generateServiceAuthorisationApi(@Value("${idam.s2s-auth.url}") final String s2sUrl) {
-//    return Feign.builder()
-//        .encoder(new JacksonEncoder())
-//        .contract(new SpringMvcContract())
-//        .target(ServiceAuthorisationApi.class, s2sUrl);
-//  }
-
   @Bean
   public ServiceAuthTokenGenerator authTokenGenerator(
       @Value("${idam.s2s-auth.totp_secret}") final String secret,
@@ -93,11 +85,5 @@ public class BootAccessManagement {
   public RestTemplate restTemplate() {
     return new RestTemplate();
   }
-
-//  @ConditionalOnMissingBean
-//  @Bean
-//  public TelemetryClient client() {
-//    return new TelemetryClient();
-//  }
 
 }
