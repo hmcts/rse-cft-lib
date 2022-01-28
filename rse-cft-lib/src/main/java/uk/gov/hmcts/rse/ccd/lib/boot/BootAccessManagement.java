@@ -22,6 +22,7 @@ import uk.gov.hmcts.reform.roleassignment.config.SecurityConfiguration;
 import uk.gov.hmcts.reform.roleassignment.config.SwaggerConfiguration;
 import uk.gov.hmcts.reform.roleassignment.util.Swagger2SpringBoot;
 import uk.gov.hmcts.rse.ccd.lib.YamlPropertySourceFactory;
+import uk.gov.hmcts.rse.ccd.lib.common.Common;
 import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
 
 @SpringBootConfiguration
@@ -29,7 +30,7 @@ import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
 @ComponentScan(
     basePackageClasses = {
         RoleAssignmentApplication.class,
-        DBWaiter.class
+        Common.class
     },
     excludeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
