@@ -71,7 +71,7 @@ public class ComposeRunner {
             "postgres", "postgres")) {
 
           // Create the databases if necessary.
-          for (var db : List.of("datastore", "definitionstore", "am")) {
+          for (var db : List.of("datastore", "definitionstore", "am", "userprofile")) {
             var s = c.prepareStatement(String.format("SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower('%s')", db));
             s.execute();
             if (!s.getResultSet().next()) {

@@ -90,6 +90,7 @@ class LibConsumerApplicationTests {
 
     childContexts.keySet().parallelStream().forEach(project -> {
         System.out.println("Starting " + project);
+        Thread.currentThread().setName("**** " + project);
         final SpringApplication a = new SpringApplication(childContexts.get(project).toArray(new Class[0]));
         a.addInitializers( parentContextApplicationContextInitializer );
         if (project == Project.Application) {

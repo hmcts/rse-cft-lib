@@ -17,13 +17,17 @@ import uk.gov.hmcts.ccd.CoreCaseDataApplication;
 import uk.gov.hmcts.ccd.config.SwaggerConfiguration;
 import uk.gov.hmcts.ccd.data.AuthClientsConfiguration;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
+import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
 
 @SpringBootConfiguration
 @EnableAutoConfiguration
 //@ComponentScan(excludeFilters = { @ComponentScan.Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
 //    @ComponentScan.Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
 @ComponentScan(
-    basePackageClasses = CoreCaseDataApplication.class,
+    basePackageClasses = {
+        CoreCaseDataApplication.class,
+        DBWaiter.class
+    },
     excludeFilters = {
         @ComponentScan.Filter(type= FilterType.REGEX, pattern = "uk\\.gov\\.hmcts\\.ccd\\.(definition|userprofile)\\..*"),
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {

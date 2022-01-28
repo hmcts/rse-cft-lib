@@ -18,11 +18,12 @@ import uk.gov.hmcts.ccd.userprofile.auth.AuthorizedConfiguration;
 import uk.gov.hmcts.ccd.userprofile.auth.AuthCheckerConfiguration;
 import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
+import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
 
 @ComponentScan(
     basePackageClasses = {
         UserProfileApplication.class,
-        uk.gov.hmcts.rse.ccd.lib.common.SecurityConfiguration.class
+        DBWaiter.class
     },
     excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
         UserProfileApplication.class,
