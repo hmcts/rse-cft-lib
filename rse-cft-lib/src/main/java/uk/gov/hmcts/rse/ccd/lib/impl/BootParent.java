@@ -9,9 +9,4 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class BootParent {
 
-  @ConditionalOnMissingBean
-  @Bean
-  public TelemetryClient defaultTelemetry() {
-    return new TelemetryClient();
-  }
 }

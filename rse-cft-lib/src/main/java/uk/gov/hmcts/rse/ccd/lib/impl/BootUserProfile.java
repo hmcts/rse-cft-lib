@@ -1,9 +1,12 @@
 package uk.gov.hmcts.rse.ccd.lib.impl;
 
+import com.microsoft.applicationinsights.TelemetryClient;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
@@ -46,4 +49,9 @@ import uk.gov.hmcts.rse.ccd.lib.injected.CFTLibSecurityConfiguration;
 @EnableAutoConfiguration
 public class BootUserProfile {
 
+  @ConditionalOnMissingBean
+  @Bean
+  public TelemetryClient defaultTelemetry() {
+    return new TelemetryClient();
+  }
 }
