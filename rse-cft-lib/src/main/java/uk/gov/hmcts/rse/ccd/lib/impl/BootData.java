@@ -65,12 +65,6 @@ public class BootData {
     return Clock.systemUTC();
   }
 
-  @ConditionalOnMissingBean
-  @Bean
-  public TelemetryClient client() {
-    return new TelemetryClient();
-  }
-
   @Bean
   public AuthTokenGenerator authTokenGenerator(
       @Value("${idam.s2s-auth.totp_secret}") final String secret,

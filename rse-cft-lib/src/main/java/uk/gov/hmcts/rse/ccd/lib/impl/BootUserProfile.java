@@ -49,9 +49,4 @@ import uk.gov.hmcts.rse.ccd.lib.injected.CFTLibSecurityConfiguration;
 @EnableAutoConfiguration
 public class BootUserProfile {
 
-  @ConditionalOnMissingBean
-  @Bean
-  public TelemetryClient defaultTelemetry() {
-    return new TelemetryClient();
-  }
 }
