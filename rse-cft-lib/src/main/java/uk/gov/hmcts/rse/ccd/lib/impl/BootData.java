@@ -11,6 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -77,5 +78,12 @@ public class BootData {
   @Bean
   public AuthTokenValidator authTokenValidator(ServiceAuthorisationApi serviceAuthorisationApi) {
     return new ServiceAuthTokenValidator(serviceAuthorisationApi);
+  }
+
+  // TODO: investigate flakey AI autoconfiguration
+  @Primary
+  @Bean
+  public TelemetryClient defaultTelemetry() {
+    return new TelemetryClient();
   }
 }
