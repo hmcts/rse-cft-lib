@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.ccd.domain.model.aggregated.JurisdictionDisplayProperties;
+import uk.gov.hmcts.rse.ccd.lib.api.LibRunner;
 import uk.gov.hmcts.rse.ccd.lib.impl.Project;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 import uk.gov.hmcts.rse.ccd.lib.injected.DBWaiter;
@@ -45,57 +46,22 @@ import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LibConsumerApplicationTests {
 
-  private Map<Project, ConfigurableApplicationContext> contexts = Maps.newConcurrentMap();
-
-  Map<Project, List<Class>> childContexts = Map.of(
-      Project.Application, List.of(LibConsumerApplication.class, CFTLib.class),
-      Project.AM, List.of(BootAccessManagement.class),
-      Project.Definitionstore, List.of(BootDef.class),
-      Project.Userprofile, List.of(BootUserProfile.class),
-      Project.Datastore, List.of(BootData.class)
-  );
-
   Map<Project, MockMvc> mockMVCs = Maps.newHashMap();
 
   @SneakyThrows
   @BeforeAll
   void setup() {
-    final SpringApplication parentApplication = new SpringApplication( BootParent.class, FakeS2S.class,
-        DBWaiter.class);
-    parentApplication.setWebApplicationType(WebApplicationType.NONE);
-    var parentContext = parentApplication.run( "" );
-    final ParentContextApplicationContextInitializer parentContextApplicationContextInitializer = new ParentContextApplicationContextInitializer( parentContext );
+    var contexts = new LibRunner(LibConsumerApplication.class, FakeS2S.class)
+        .run();
 
-    childContexts.keySet().parallelStream().forEach(project -> {
-      System.out.println("Starting " + project);
-      var name = Thread.currentThread().getName();
-        Thread.currentThread().setName("**** " + project);
-        final SpringApplication a = new SpringApplication(childContexts.get(project).toArray(new Class[0]));
-        a.addInitializers( parentContextApplicationContextInitializer );
-        if (project == Project.Application) {
-          final StandardEnvironment environment = new StandardEnvironment( );
-          final Map<String, Object> properties = Map.of( "spring.autoconfigure.exclude",
-              "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration"
-          );
-          environment.getPropertySources().addFirst( new MapPropertySource( "Autoconfig exclusions", properties ) );
-          a.setEnvironment(environment);
-        }
-        var context = a.run();
+    for (Project project : contexts.keySet()) {
+      var context = contexts.get(project);
+      var builder = MockMvcBuilders.webAppContextSetup(context);
+      new SpringBootMockMvcBuilderCustomizer(context).customize(builder);
 
-        var builder = MockMvcBuilders.webAppContextSetup((WebApplicationContext) context);
-        new SpringBootMockMvcBuilderCustomizer((WebApplicationContext) context).customize(builder);
-
-        mockMVCs.put(project, builder.apply(springSecurity())
-            .build());
-        contexts.put(project, context);
-        Thread.currentThread().setName(name);
-    });
-
-    var userprofile = contexts.get(Project.Userprofile).getBean(UserProfileEndpoint.class);
-    var roleController = contexts.get(Project.Definitionstore).getBean(UserRoleController.class);
-    var lib = contexts.get(Project.Application).getBean(CFTLib.class);
-    var amDB = contexts.get(Project.AM).getBean(DataSource.class);
-    lib.init(roleController, userprofile, amDB);
+      mockMVCs.put(project, builder.apply(springSecurity())
+          .build());
+    }
   }
 
   @AfterAll
