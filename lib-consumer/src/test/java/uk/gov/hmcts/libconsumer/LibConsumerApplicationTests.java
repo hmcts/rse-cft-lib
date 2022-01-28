@@ -34,11 +34,11 @@ import uk.gov.hmcts.ccd.domain.model.aggregated.JurisdictionDisplayProperties;
 import uk.gov.hmcts.rse.ccd.lib.Project;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
-import uk.gov.hmcts.rse.ccd.lib.v2.am.BootAccessManagement;
-import uk.gov.hmcts.rse.ccd.lib.v2.data.BootData;
-import uk.gov.hmcts.rse.ccd.lib.v2.definition.BootDef;
-import uk.gov.hmcts.rse.ccd.lib.v2.lib.ParentContextConfiguration;
-import uk.gov.hmcts.rse.ccd.lib.v2.profile.BootUserProfile;
+import uk.gov.hmcts.rse.ccd.lib.boot.BootAccessManagement;
+import uk.gov.hmcts.rse.ccd.lib.boot.BootData;
+import uk.gov.hmcts.rse.ccd.lib.boot.BootDef;
+import uk.gov.hmcts.rse.ccd.lib.boot.BootParent;
+import uk.gov.hmcts.rse.ccd.lib.boot.BootUserProfile;
 import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
 import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 
@@ -60,7 +60,7 @@ class LibConsumerApplicationTests {
   @SneakyThrows
   @BeforeAll
   void setup() {
-    final SpringApplication parentApplication = new SpringApplication( ParentContextConfiguration.class, FakeS2S.class,
+    final SpringApplication parentApplication = new SpringApplication( BootParent.class, FakeS2S.class,
         DBWaiter.class);
     parentApplication.setWebApplicationType(WebApplicationType.NONE);
     var parentContext = parentApplication.run( "" );

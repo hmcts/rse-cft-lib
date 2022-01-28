@@ -11,7 +11,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 @Configuration
 @Aspect
-class IdamConfig {
+class IdamAugmenter {
 
   @Around("execution(* uk.gov.hmcts.reform.idam.client.IdamApi.retrieveUserInfo(..)) && args(authorisation)")
   public UserInfo retrieveUserInfo(ProceedingJoinPoint p, String authorisation) throws Throwable {

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib.v2.profile;
+package uk.gov.hmcts.rse.ccd.lib.boot;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -14,7 +14,7 @@ import uk.gov.hmcts.ccd.userprofile.SwaggerConfiguration;
 import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
-import uk.gov.hmcts.rse.ccd.lib.common.SecurityConfiguration;
+import uk.gov.hmcts.rse.ccd.lib.common.CFTLibSecurityConfiguration;
 
 @ComponentScan(
     basePackageClasses = {
@@ -25,7 +25,7 @@ import uk.gov.hmcts.rse.ccd.lib.common.SecurityConfiguration;
         UserProfileApplication.class,
         SwaggerConfiguration.class,
         // Don't apply our custom security config.
-        SecurityConfiguration.class
+        CFTLibSecurityConfiguration.class
     }))
 @PropertySources({
     @PropertySource("classpath:userprofile/application.properties"),

@@ -1,17 +1,12 @@
-package uk.gov.hmcts.rse.ccd.lib.v2.am;
+package uk.gov.hmcts.rse.ccd.lib.boot;
 
-import com.microsoft.applicationinsights.TelemetryClient;
-import feign.Feign;
-import feign.jackson.JacksonEncoder;
 import java.time.Clock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;

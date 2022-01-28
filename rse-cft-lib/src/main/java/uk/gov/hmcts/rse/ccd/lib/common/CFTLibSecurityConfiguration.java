@@ -19,12 +19,12 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import uk.gov.hmcts.ccd.definition.store.security.JwtGrantedAuthoritiesConverter;
 
 @Configuration
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class CFTLibSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   private final JwtAuthenticationConverter jwtAuthenticationConverter;
 //
   @Inject
-  public SecurityConfiguration(
+  public CFTLibSecurityConfiguration(
       Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter
   ) {
     jwtAuthenticationConverter = new JwtAuthenticationConverter();
