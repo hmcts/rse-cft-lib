@@ -23,8 +23,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGeneratorFactory;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 import uk.gov.hmcts.reform.authorisation.validators.ServiceAuthTokenValidator;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
-import uk.gov.hmcts.rse.ccd.lib.common.Common;
-import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
+import uk.gov.hmcts.rse.ccd.lib.injected.Common;
 
 @SpringBootConfiguration
 @EnableAutoConfiguration

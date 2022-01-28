@@ -13,9 +13,8 @@ import uk.gov.hmcts.ccd.userprofile.UserProfileApplication;
 import uk.gov.hmcts.ccd.userprofile.SwaggerConfiguration;
 import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
-import uk.gov.hmcts.rse.ccd.lib.common.Common;
-import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
-import uk.gov.hmcts.rse.ccd.lib.common.CFTLibSecurityConfiguration;
+import uk.gov.hmcts.rse.ccd.lib.injected.Common;
+import uk.gov.hmcts.rse.ccd.lib.injected.CFTLibSecurityConfiguration;
 
 @ComponentScan(
     basePackageClasses = {

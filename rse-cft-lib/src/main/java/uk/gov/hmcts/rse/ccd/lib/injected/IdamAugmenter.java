@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib.common;
+package uk.gov.hmcts.rse.ccd.lib.injected;
 
 
 import com.auth0.jwt.JWT;

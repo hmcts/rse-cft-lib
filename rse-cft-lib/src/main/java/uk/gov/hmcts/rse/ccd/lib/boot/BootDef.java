@@ -21,8 +21,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGeneratorFactory;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 import uk.gov.hmcts.rse.ccd.lib.YamlPropertySourceFactory;
-import uk.gov.hmcts.rse.ccd.lib.common.Common;
-import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
+import uk.gov.hmcts.rse.ccd.lib.injected.Common;
 
 @ComponentScan(
     basePackageClasses = {

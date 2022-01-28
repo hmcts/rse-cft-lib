@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib.common;
+package uk.gov.hmcts.rse.ccd.lib.injected;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -16,7 +16,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import uk.gov.hmcts.ccd.definition.store.security.JwtGrantedAuthoritiesConverter;
 
 @Configuration
 public class CFTLibSecurityConfiguration extends WebSecurityConfigurerAdapter {

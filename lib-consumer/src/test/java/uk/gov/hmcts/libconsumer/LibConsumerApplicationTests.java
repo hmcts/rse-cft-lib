@@ -33,7 +33,7 @@ import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.ccd.domain.model.aggregated.JurisdictionDisplayProperties;
 import uk.gov.hmcts.rse.ccd.lib.Project;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
-import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
+import uk.gov.hmcts.rse.ccd.lib.injected.DBWaiter;
 import uk.gov.hmcts.rse.ccd.lib.boot.BootAccessManagement;
 import uk.gov.hmcts.rse.ccd.lib.boot.BootData;
 import uk.gov.hmcts.rse.ccd.lib.boot.BootDef;
