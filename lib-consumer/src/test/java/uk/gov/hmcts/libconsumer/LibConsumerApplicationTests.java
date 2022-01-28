@@ -50,7 +50,7 @@ class LibConsumerApplicationTests {
   Map<Project, List<Class>> childContexts = Map.of(
       Project.Application, List.of(LibConsumerApplication.class, CFTLib.class),
       Project.AM, List.of(BootAccessManagement.class),
-      Project.Defstore, List.of(BootDef.class),
+      Project.Definitionstore, List.of(BootDef.class),
       Project.Userprofile, List.of(BootUserProfile.class),
       Project.Datastore, List.of(BootData.class)
   );
@@ -92,7 +92,7 @@ class LibConsumerApplicationTests {
     });
 
     var userprofile = contexts.get(Project.Userprofile).getBean(UserProfileEndpoint.class);
-    var roleController = contexts.get(Project.Defstore).getBean(UserRoleController.class);
+    var roleController = contexts.get(Project.Definitionstore).getBean(UserRoleController.class);
     var lib = contexts.get(Project.Application).getBean(CFTLib.class);
     var amDB = contexts.get(Project.AM).getBean(DataSource.class);
     lib.init(roleController, userprofile, amDB);

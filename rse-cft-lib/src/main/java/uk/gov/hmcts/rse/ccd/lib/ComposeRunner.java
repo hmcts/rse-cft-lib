@@ -16,9 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.awaitility.Awaitility;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.stream.slf4j.Slf4jStream;
@@ -27,12 +25,6 @@ import org.zeroturnaround.exec.stream.slf4j.Slf4jStream;
 @Component
 public class ComposeRunner {
   public static CountDownLatch DB_READY = new CountDownLatch(1);
-
-  @SneakyThrows
-  @EventListener(ApplicationReadyEvent.class)
-  public void configure() {
-    System.out.println();
-  }
 
   private static boolean booted;
   public static class RunListener implements SpringApplicationRunListener {
@@ -71,7 +63,7 @@ public class ComposeRunner {
             "postgres", "postgres")) {
 
           // Create the databases if necessary.
-          for (var db : List.of("datastore", "definitionstore", "am", "userprofile")) {
+          for (var db : List.of(Project.Datastore, Project.Definitionstore, Project.Userprofile, Project.AM)) {
             var s = c.prepareStatement(String.format("SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower('%s')", db));
             s.execute();
             if (!s.getResultSet().next()) {

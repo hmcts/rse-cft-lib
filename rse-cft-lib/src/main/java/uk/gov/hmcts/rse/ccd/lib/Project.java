@@ -2,7 +2,7 @@ package uk.gov.hmcts.rse.ccd.lib;
 
 public enum Project {
   Datastore,
-  Defstore,
+  Definitionstore,
   Userprofile,
   AM,
   Application
