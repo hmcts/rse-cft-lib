@@ -82,18 +82,17 @@ class LibConsumerApplicationTests {
     var parentContext = parentApplication.run( "" );
     final ParentContextApplicationContextInitializer parentContextApplicationContextInitializer = new ParentContextApplicationContextInitializer( parentContext );
 
-    final Map<String, Object> properties = Map.of( "spring.autoconfigure.exclude",
-        "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration"
-    );
-    final StandardEnvironment environment = new StandardEnvironment( );
-    environment.getPropertySources( ).addFirst( new MapPropertySource( "Test Properties", properties ) );
-
     childContexts.keySet().parallelStream().forEach(project -> {
         System.out.println("Starting " + project);
         Thread.currentThread().setName("**** " + project);
         final SpringApplication a = new SpringApplication(childContexts.get(project).toArray(new Class[0]));
         a.addInitializers( parentContextApplicationContextInitializer );
         if (project == Project.Application) {
+          final StandardEnvironment environment = new StandardEnvironment( );
+          final Map<String, Object> properties = Map.of( "spring.autoconfigure.exclude",
+              "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration"
+          );
+          environment.getPropertySources().addFirst( new MapPropertySource( "Autoconfig exclusions", properties ) );
           a.setEnvironment(environment);
         }
         var context = a.run();
@@ -101,13 +100,11 @@ class LibConsumerApplicationTests {
         contexts.put(project, context);
     });
 
-
     var userprofile = contexts.get(Project.Userprofile).getBean(UserProfileEndpoint.class);
     var roleController = contexts.get(Project.Defstore).getBean(UserRoleController.class);
     var lib = contexts.get(Project.Application).getBean(CFTLib.class);
     var amDB = contexts.get(Project.AM).getBean(DataSource.class);
     lib.init(roleController, userprofile, amDB);
-
   }
 
   @AfterAll
