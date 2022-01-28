@@ -31,6 +31,7 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.ParentContextApplicationContextInitializer;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcBuilderCustomizer;
 import org.springframework.boot.test.autoconfigure.web.servlet.SpringBootMockMvcBuilderCustomizer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -83,7 +84,7 @@ class LibConsumerApplicationTests {
     var parentContext = parentApplication.run( "" );
     final ParentContextApplicationContextInitializer parentContextApplicationContextInitializer = new ParentContextApplicationContextInitializer( parentContext );
 
-    childContexts.keySet().parallelStream().sorted().forEach(project -> {
+    childContexts.keySet().parallelStream().forEach(project -> {
       System.out.println("Starting " + project);
       var name = Thread.currentThread().getName();
         Thread.currentThread().setName("**** " + project);
@@ -98,8 +99,11 @@ class LibConsumerApplicationTests {
           a.setEnvironment(environment);
         }
         var context = a.run();
-        mockMVCs.put(project, MockMvcBuilders.webAppContextSetup((WebApplicationContext) context)
-                .apply(springSecurity())
+
+        var builder = MockMvcBuilders.webAppContextSetup((WebApplicationContext) context);
+        new SpringBootMockMvcBuilderCustomizer((WebApplicationContext) context).customize(builder);
+
+        mockMVCs.put(project, builder.apply(springSecurity())
             .build());
         contexts.put(project, context);
         Thread.currentThread().setName(name);
@@ -150,18 +154,19 @@ class LibConsumerApplicationTests {
     assertEquals(arr[0].getCaseTypeDefinitions().size(), 1);
   }
 
-//  @SneakyThrows
-//  @Test
-//  void getWorkbasketInputs() {
-//    var r = mockMvc.perform(secure(get("/data/internal/case-types/NFD/work-basket-inputs"))
-//            .header("Content-Type", "application/json")
-//            .header("experimental", "true")
-//
-//        )
-//        .andExpect(status().is2xxSuccessful())
-//        .andReturn();
-//  }
-//
+  @SneakyThrows
+  @Test
+  void getWorkbasketInputs() {
+    var mockMvc = mockMVCs.get(Project.Datastore);
+    var r = mockMvc.perform(secure(get("/data/internal/case-types/NFD/work-basket-inputs"))
+            .header("Content-Type", "application/json")
+            .header("experimental", "true")
+
+        )
+        .andExpect(status().is2xxSuccessful())
+        .andReturn();
+  }
+
 //  @SneakyThrows
 //    // TODO
 ////  @Test
