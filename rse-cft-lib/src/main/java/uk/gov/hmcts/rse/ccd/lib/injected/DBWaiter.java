@@ -10,7 +10,7 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.rse.ccd.lib.ComposeRunner;
+import uk.gov.hmcts.rse.ccd.lib.impl.ComposeRunner;
 
 @Component
 public class DBWaiter implements BeanPostProcessor {

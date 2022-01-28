@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib.boot;
+package uk.gov.hmcts.rse.ccd.lib.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
@@ -20,7 +20,6 @@ import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGeneratorFactory;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
-import uk.gov.hmcts.rse.ccd.lib.YamlPropertySourceFactory;
 import uk.gov.hmcts.rse.ccd.lib.injected.Common;
 
 @ComponentScan(

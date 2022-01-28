@@ -1,1 +1,1 @@
-org.springframework.boot.SpringApplicationRunListener=uk.gov.hmcts.rse.ccd.lib.ComposeRunner.RunListener
+org.springframework.boot.SpringApplicationRunListener=uk.gov.hmcts.rse.ccd.lib.impl.ComposeRunner.RunListener

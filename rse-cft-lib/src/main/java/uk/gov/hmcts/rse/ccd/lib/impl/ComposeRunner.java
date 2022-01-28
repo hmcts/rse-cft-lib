@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib;
+package uk.gov.hmcts.rse.ccd.lib.impl;
 
 import java.io.File;
 import java.net.URL;

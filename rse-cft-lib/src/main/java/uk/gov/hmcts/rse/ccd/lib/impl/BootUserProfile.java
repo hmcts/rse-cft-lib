@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib.boot;
+package uk.gov.hmcts.rse.ccd.lib.impl;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

@@ -31,14 +31,14 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.ccd.domain.model.aggregated.JurisdictionDisplayProperties;
-import uk.gov.hmcts.rse.ccd.lib.Project;
+import uk.gov.hmcts.rse.ccd.lib.impl.Project;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 import uk.gov.hmcts.rse.ccd.lib.injected.DBWaiter;
-import uk.gov.hmcts.rse.ccd.lib.boot.BootAccessManagement;
-import uk.gov.hmcts.rse.ccd.lib.boot.BootData;
-import uk.gov.hmcts.rse.ccd.lib.boot.BootDef;
-import uk.gov.hmcts.rse.ccd.lib.boot.BootParent;
-import uk.gov.hmcts.rse.ccd.lib.boot.BootUserProfile;
+import uk.gov.hmcts.rse.ccd.lib.impl.BootAccessManagement;
+import uk.gov.hmcts.rse.ccd.lib.impl.BootData;
+import uk.gov.hmcts.rse.ccd.lib.impl.BootDef;
+import uk.gov.hmcts.rse.ccd.lib.impl.BootParent;
+import uk.gov.hmcts.rse.ccd.lib.impl.BootUserProfile;
 import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
 import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 

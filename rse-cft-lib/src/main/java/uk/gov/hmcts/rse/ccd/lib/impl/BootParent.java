@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib.boot;
+package uk.gov.hmcts.rse.ccd.lib.impl;
 
 import com.microsoft.applicationinsights.TelemetryClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
