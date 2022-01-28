@@ -1,12 +1,14 @@
 package uk.gov.hmcts.rse.ccd.lib.v2.definition;
 
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
@@ -20,6 +22,9 @@ import uk.gov.hmcts.ccd.definition.store.SwaggerConfiguration;
 import uk.gov.hmcts.ccd.definition.store.repository.AuthClientConfiguration;
 import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
 import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
+import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGeneratorFactory;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 import uk.gov.hmcts.rse.ccd.lib.YamlPropertySourceFactory;
 import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
@@ -58,4 +63,12 @@ import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
 @EnableAutoConfiguration
 public class BootDef {
 
+  @Bean
+  public AuthTokenGenerator authTokenGenerator(
+      @Value("${idam.s2s-auth.totp_secret}") final String secret,
+      @Value("${idam.s2s-auth.microservice}") final String microService,
+      final ServiceAuthorisationApi serviceAuthorisationApi
+  ) {
+    return AuthTokenGeneratorFactory.createDefaultGenerator(secret, microService, serviceAuthorisationApi);
+  }
 }

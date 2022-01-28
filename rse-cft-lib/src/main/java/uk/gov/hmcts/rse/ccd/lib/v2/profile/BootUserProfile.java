@@ -13,12 +13,12 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import uk.gov.hmcts.ccd.userprofile.UserProfileApplication;
 import uk.gov.hmcts.ccd.userprofile.SwaggerConfiguration;
-import uk.gov.hmcts.ccd.userprofile.auth.SecurityConfiguration;
 import uk.gov.hmcts.ccd.userprofile.auth.AuthorizedConfiguration;
 import uk.gov.hmcts.ccd.userprofile.auth.AuthCheckerConfiguration;
 import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
+import uk.gov.hmcts.rse.ccd.lib.common.SecurityConfiguration;
 
 @ComponentScan(
     basePackageClasses = {
@@ -28,7 +28,8 @@ import uk.gov.hmcts.rse.ccd.lib.common.DBWaiter;
     excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
         UserProfileApplication.class,
         SwaggerConfiguration.class,
-        SecurityConfiguration.class,
+        // Don't apply our custom security config.
+        SecurityConfiguration.class
 //        AuthorizedConfiguration.class,
 //        AuthCheckerConfiguration.class,
     }))

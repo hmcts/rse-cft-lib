@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib;
+package uk.gov.hmcts.rse.ccd.lib.common;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

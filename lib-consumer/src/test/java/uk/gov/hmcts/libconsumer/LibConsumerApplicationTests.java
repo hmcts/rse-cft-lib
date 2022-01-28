@@ -2,6 +2,7 @@ package uk.gov.hmcts.libconsumer;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -82,8 +83,9 @@ class LibConsumerApplicationTests {
     var parentContext = parentApplication.run( "" );
     final ParentContextApplicationContextInitializer parentContextApplicationContextInitializer = new ParentContextApplicationContextInitializer( parentContext );
 
-    childContexts.keySet().parallelStream().forEach(project -> {
-        System.out.println("Starting " + project);
+    childContexts.keySet().parallelStream().sorted().forEach(project -> {
+      System.out.println("Starting " + project);
+      var name = Thread.currentThread().getName();
         Thread.currentThread().setName("**** " + project);
         final SpringApplication a = new SpringApplication(childContexts.get(project).toArray(new Class[0]));
         a.addInitializers( parentContextApplicationContextInitializer );
@@ -96,8 +98,11 @@ class LibConsumerApplicationTests {
           a.setEnvironment(environment);
         }
         var context = a.run();
-        mockMVCs.put(project, MockMvcBuilders.webAppContextSetup((WebApplicationContext) context).build());
+        mockMVCs.put(project, MockMvcBuilders.webAppContextSetup((WebApplicationContext) context)
+                .apply(springSecurity())
+            .build());
         contexts.put(project, context);
+        Thread.currentThread().setName(name);
     });
 
     var userprofile = contexts.get(Project.Userprofile).getBean(UserProfileEndpoint.class);
@@ -131,19 +136,19 @@ class LibConsumerApplicationTests {
         .andExpect(status().is2xxSuccessful());
   }
 
-//  @SneakyThrows
-//  @Test
-//  void listJurisdictions() {
-//    var mockMvc = mockMVCs.get(Project.Datastore);
-//    var r = mockMvc.perform(secure(get("/aggregated/caseworkers/:uid/jurisdictions?access=read"))
-//            .header("Accept", "application/json")
-//            .header("Content-Type", "application/json"))
-//        .andExpect(status().is2xxSuccessful())
-//        .andReturn();
-//    var arr = new ObjectMapper().readValue(r.getResponse().getContentAsString(), JurisdictionDisplayProperties[].class);
-//    assertEquals(arr.length, 1);
-//    assertEquals(arr[0].getCaseTypeDefinitions().size(), 1);
-//  }
+  @SneakyThrows
+  @Test
+  void listJurisdictions() {
+    var mockMvc = mockMVCs.get(Project.Datastore);
+    var r = mockMvc.perform(secure(get("/aggregated/caseworkers/:uid/jurisdictions?access=read"))
+            .header("Accept", "application/json")
+            .header("Content-Type", "application/json"))
+        .andExpect(status().is2xxSuccessful())
+        .andReturn();
+    var arr = new ObjectMapper().readValue(r.getResponse().getContentAsString(), JurisdictionDisplayProperties[].class);
+    assertEquals(arr.length, 1);
+    assertEquals(arr[0].getCaseTypeDefinitions().size(), 1);
+  }
 
 //  @SneakyThrows
 //  @Test

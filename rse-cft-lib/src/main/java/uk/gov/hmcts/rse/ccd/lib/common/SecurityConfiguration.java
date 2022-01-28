@@ -21,15 +21,15 @@ import uk.gov.hmcts.ccd.definition.store.security.JwtGrantedAuthoritiesConverter
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-//  private final JwtAuthenticationConverter jwtAuthenticationConverter;
-
-//  @Inject
-//  public SecurityConfiguration(
-//      Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter
-//  ) {
-//    jwtAuthenticationConverter = new JwtAuthenticationConverter();
-//    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-//  }
+  private final JwtAuthenticationConverter jwtAuthenticationConverter;
+//
+  @Inject
+  public SecurityConfiguration(
+      Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter
+  ) {
+    jwtAuthenticationConverter = new JwtAuthenticationConverter();
+    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+  }
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -44,7 +44,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .and()
         .oauth2ResourceServer()
         .jwt()
-//        .jwtAuthenticationConverter(jwtAuthenticationConverter)
+        .jwtAuthenticationConverter(jwtAuthenticationConverter)
         .and()
         .and()
         .oauth2Client();

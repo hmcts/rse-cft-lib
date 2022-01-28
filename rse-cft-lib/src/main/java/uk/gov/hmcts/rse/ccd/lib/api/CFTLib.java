@@ -106,7 +106,7 @@ public class CFTLib {
 
     RestTemplate restTemplate = new RestTemplate();
     ResponseEntity<String> response = restTemplate
-        .postForEntity("http://localhost:9990/import", requestEntity, String.class);
+        .postForEntity("http://localhost:4451/import", requestEntity, String.class);
   }
 
   public static String buildJwt() {

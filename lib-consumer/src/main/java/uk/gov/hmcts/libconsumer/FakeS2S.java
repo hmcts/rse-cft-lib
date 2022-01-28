@@ -12,7 +12,7 @@ public class FakeS2S implements ServiceAuthorisationApi {
 
   @Override
   public String serviceToken(Map<String, String> signIn) {
-    return CFTLib.generateDummyS2SToken("fake");
+    return CFTLib.generateDummyS2SToken(signIn.get("microservice"));
   }
 
   @Override
