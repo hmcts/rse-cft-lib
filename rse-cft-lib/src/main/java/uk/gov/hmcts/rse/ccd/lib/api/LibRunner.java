@@ -1,11 +1,14 @@
 package uk.gov.hmcts.rse.ccd.lib.api;
 
 import com.google.common.collect.Maps;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.sql.DataSource;
-import org.elasticsearch.common.util.set.Sets;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.builder.ParentContextApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.StandardEnvironment;
@@ -14,6 +17,7 @@ import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
 import uk.gov.hmcts.rse.ccd.lib.impl.BootAccessManagement;
 import uk.gov.hmcts.rse.ccd.lib.impl.BootData;
 import uk.gov.hmcts.rse.ccd.lib.impl.BootDef;
+import uk.gov.hmcts.rse.ccd.lib.impl.BootParent;
 import uk.gov.hmcts.rse.ccd.lib.impl.BootUserProfile;
 import uk.gov.hmcts.rse.ccd.lib.impl.Project;
 import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
@@ -22,19 +26,28 @@ public class LibRunner {
   private Map<Project, ConfigurableApplicationContext> contexts = Maps.newConcurrentMap();
 
   private final Class application;
-  private final Set<Class> inject;
+  private final Class[] inject;
   public LibRunner(Class application, Class... inject) {
     this.application = application;
-    this.inject = Set.of(inject);
+    this.inject = inject;
   }
 
   public Map<Project, WebApplicationContext> run() {
-    Map<Project, Set<Class>> childContexts = Map.of(
-        Project.Application, Set.of(application, CFTLib.class),
-        Project.AM, Set.of(BootAccessManagement.class),
-        Project.Definitionstore, Set.of(BootDef.class),
-        Project.Userprofile, Set.of(BootUserProfile.class),
-        Project.Datastore, Set.of(BootData.class)
+    var classes = new ArrayList<Class>();
+    classes.add(BootParent.class);
+    classes.addAll(Arrays.asList(inject));
+
+    final SpringApplication parentApplication = new SpringApplication(classes.toArray(new Class[0]));
+    parentApplication.setWebApplicationType(WebApplicationType.NONE);
+    var parentContext = parentApplication.run( "" );
+    final ParentContextApplicationContextInitializer parentContextApplicationContextInitializer = new ParentContextApplicationContextInitializer( parentContext );
+
+    Map<Project, List<Class>> childContexts = Map.of(
+        Project.Application, List.of(application, CFTLib.class),
+        Project.AM, List.of(BootAccessManagement.class),
+        Project.Definitionstore, List.of(BootDef.class),
+        Project.Userprofile, List.of(BootUserProfile.class),
+        Project.Datastore, List.of(BootData.class)
     );
 
     Map<Project, WebApplicationContext> contexts = Maps.newConcurrentMap();
@@ -42,8 +55,8 @@ public class LibRunner {
       System.out.println("Starting " + project);
       var name = Thread.currentThread().getName();
       Thread.currentThread().setName("**** " + project);
-      var classes = Sets.union(childContexts.get(project), inject);
-      final SpringApplication a = new SpringApplication(classes.toArray(new Class[0]));
+      final SpringApplication a = new SpringApplication(childContexts.get(project).toArray(new Class[0]));
+      a.addInitializers( parentContextApplicationContextInitializer );
 
       // Shut off unwanted autoconfiguration.
       if (project == Project.Application) {
