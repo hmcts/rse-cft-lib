@@ -1,7 +1,6 @@
 package uk.gov.hmcts.rse.ccd.lib.api;
 
 import com.google.common.collect.Maps;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.sql.DataSource;
