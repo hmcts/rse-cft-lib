@@ -7,6 +7,7 @@ import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 
+@Primary
 @Component
 public class FakeS2S implements ServiceAuthorisationApi {
 

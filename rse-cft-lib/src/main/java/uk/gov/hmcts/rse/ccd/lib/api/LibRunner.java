@@ -1,17 +1,31 @@
 package uk.gov.hmcts.rse.ccd.lib.api;
 
 import com.google.common.collect.Maps;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import javax.sql.DataSource;
+import lombok.SneakyThrows;
+import org.apache.lucene.analysis.util.ClasspathResourceLoader;
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.ParentContextApplicationContextInitializer;
+import org.springframework.boot.env.PropertiesPropertySourceLoader;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.PropertySources;
 import org.springframework.core.env.StandardEnvironment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.EncodedResource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
 import uk.gov.hmcts.rse.ccd.lib.impl.BootAccessManagement;
@@ -21,6 +35,7 @@ import uk.gov.hmcts.rse.ccd.lib.impl.BootParent;
 import uk.gov.hmcts.rse.ccd.lib.impl.BootUserProfile;
 import uk.gov.hmcts.rse.ccd.lib.impl.Project;
 import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
+import uk.gov.hmcts.rse.ccd.lib.impl.YamlPropertySourceFactory;
 
 public class LibRunner {
   private Map<Project, ConfigurableApplicationContext> contexts = Maps.newConcurrentMap();
@@ -32,7 +47,7 @@ public class LibRunner {
     this.inject = inject;
   }
 
-  public Map<Project, WebApplicationContext> run() {
+  public Map<Project, WebApplicationContext> run(Map<String, Object> propertyOverrides) {
     var classes = new ArrayList<Class>();
     classes.add(BootParent.class);
     classes.addAll(Arrays.asList(inject));
@@ -51,23 +66,33 @@ public class LibRunner {
     );
 
     Map<Project, WebApplicationContext> contexts = Maps.newConcurrentMap();
-    childContexts.keySet().parallelStream().forEach(project -> {
+    childContexts.keySet().stream().sorted().forEach(project -> {
       System.out.println("Starting " + project);
       var name = Thread.currentThread().getName();
       Thread.currentThread().setName("**** " + project);
       final SpringApplication a = new SpringApplication(childContexts.get(project).toArray(new Class[0]));
       a.addInitializers( parentContextApplicationContextInitializer );
+      a.setBannerMode(Banner.Mode.OFF);
+
+      final StandardEnvironment environment = new StandardEnvironment( );
+      a.setEnvironment(environment);
+
+      var sources = environment.getPropertySources();
 
       // Shut off unwanted autoconfiguration.
       if (project == Project.Application) {
-        final StandardEnvironment environment = new StandardEnvironment( );
         final Map<String, Object> properties = Map.of( "spring.autoconfigure.exclude",
             "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration"
         );
         environment.getPropertySources().addFirst( new MapPropertySource( "Autoconfig exclusions", properties ) );
-        a.setEnvironment(environment);
+      } else {
+        tryAddProperties(sources, project.name() + "-base", project.name().toLowerCase() + "/application.properties");
+        tryAddProperties(sources, project.name() + "-baseyaml", project.name().toLowerCase() + "/application.yaml");
+        tryAddProperties(sources, project.name() + "-rse", "rse/application.properties");
+        tryAddProperties(sources, project.name() + "-specific", "rse/" + project.name().toLowerCase() + ".properties");
       }
 
+      sources.addFirst(new MapPropertySource("applicationOverrides", propertyOverrides));
       contexts.put(project, (WebApplicationContext) a.run());
       Thread.currentThread().setName(name);
     });
@@ -80,4 +105,20 @@ public class LibRunner {
 
     return contexts;
   }
+
+  @SneakyThrows
+  void tryAddProperties(MutablePropertySources sources, String name, String path) {
+    if (new ClassPathResource(path).exists()) {
+      sources.addFirst(loadClasspathProperties(name, path));
+    }
+  }
+
+  @SneakyThrows
+  PropertySource<?> loadClasspathProperties(String name, String path) {
+    if (path.endsWith("yaml")) {
+      return new YamlPropertySourceFactory().createPropertySource(name, new EncodedResource(new ClassPathResource(path)));
+    }
+    return new PropertiesPropertySource(name, PropertiesLoaderUtils.loadAllProperties(path));
+  }
+
 }

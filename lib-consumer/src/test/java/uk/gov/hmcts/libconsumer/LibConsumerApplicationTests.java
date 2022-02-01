@@ -52,7 +52,10 @@ class LibConsumerApplicationTests {
   @BeforeAll
   void setup() {
     var contexts = new LibRunner(LibConsumerApplication.class, FakeS2S.class)
-        .run();
+        .run(Map.of(
+            // Disable default feign client in favour of our fake.
+           "idam.s2s-auth.url", "false"
+        ));
 
     for (Project project : contexts.keySet()) {
       var context = contexts.get(project);

@@ -37,10 +37,7 @@ import uk.gov.hmcts.rse.ccd.lib.injected.Common;
     @PropertySource(value = {
         "classpath:cftlib-defstore-es.yml"
     }
-        , factory = YamlPropertySourceFactory.class),
-    @PropertySource("classpath:definitionstore/application.properties"),
-    @PropertySource("classpath:rse/definitionstore.properties"),
-    @PropertySource("classpath:rse/application.properties"),
+        , factory = YamlPropertySourceFactory.class)
 })
 @EntityScan(basePackages = {
     "uk.gov.hmcts.ccd.definition.store"

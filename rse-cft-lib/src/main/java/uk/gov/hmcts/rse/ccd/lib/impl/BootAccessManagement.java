@@ -39,15 +39,6 @@ import uk.gov.hmcts.rse.ccd.lib.injected.Common;
         }),
     }
 )
-@PropertySources({
-    @PropertySource(
-        factory = YamlPropertySourceFactory.class,
-        value = {
-            "classpath:am/application.yaml",
-        }),
-    @PropertySource("classpath:rse/application.properties"),
-    @PropertySource("classpath:rse/am.properties")
-})
 @EntityScan(basePackages = {
     "uk.gov.hmcts.reform.roleassignment.data"
 })
