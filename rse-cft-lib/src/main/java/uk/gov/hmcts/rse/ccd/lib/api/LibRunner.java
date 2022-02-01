@@ -69,7 +69,7 @@ public class LibRunner {
     );
 
     Map<Project, WebApplicationContext> contexts = Maps.newConcurrentMap();
-    childContexts.keySet().stream().sorted().forEach(project -> {
+    childContexts.keySet().parallelStream().sorted().forEach(project -> {
       System.out.println("Starting " + project);
       var name = Thread.currentThread().getName();
       Thread.currentThread().setName("**** " + project);

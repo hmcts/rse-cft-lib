@@ -153,12 +153,8 @@ project.afterEvaluate {
                 .forEach { ResolvedDependency dep ->
                     // Springfox generates json based docs, which we don't need for integration testing.
                     if (dep.moduleGroup != "io.springfox") {
-                        // Hystrix client not thread safe when doing parallel context booting.
-                        if (dep.moduleName != "spring-cloud-starter-netflix-hystrix") {
-                            project.dependencies.add('shadow', [group: dep.moduleGroup, name: dep.moduleName, version: dep.moduleVersion]) {
-                                exclude group: 'uk.gov.hmcts.reform', module: 'java-logging-spring'
-//                            exclude group: 'com.github.hmcts', module: 'java-logging'
-                            }
+                        project.dependencies.add('shadow', [group: dep.moduleGroup, name: dep.moduleName, version: dep.moduleVersion]) {
+                            exclude group: 'uk.gov.hmcts.reform', module: 'java-logging-spring'
                         }
                     }
                 }
