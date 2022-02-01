@@ -33,9 +33,11 @@ import uk.gov.hmcts.rse.ccd.lib.impl.BootData;
 import uk.gov.hmcts.rse.ccd.lib.impl.BootDef;
 import uk.gov.hmcts.rse.ccd.lib.impl.BootParent;
 import uk.gov.hmcts.rse.ccd.lib.impl.BootUserProfile;
+import uk.gov.hmcts.rse.ccd.lib.impl.PermissiveSecurity;
 import uk.gov.hmcts.rse.ccd.lib.impl.Project;
 import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 import uk.gov.hmcts.rse.ccd.lib.impl.YamlPropertySourceFactory;
+import uk.gov.hmcts.rse.ccd.lib.injected.CFTLibSecurityConfiguration;
 
 public class LibRunner {
   private Map<Project, ConfigurableApplicationContext> contexts = Maps.newConcurrentMap();
@@ -58,7 +60,8 @@ public class LibRunner {
     final ParentContextApplicationContextInitializer parentContextApplicationContextInitializer = new ParentContextApplicationContextInitializer( parentContext );
 
     Map<Project, List<Class>> childContexts = Map.of(
-        Project.Application, List.of(application, CFTLib.class),
+        // TODO - auto-auto spring security config.
+        Project.Application, List.of(application, CFTLib.class, PermissiveSecurity.class),
         Project.AM, List.of(BootAccessManagement.class),
         Project.Definitionstore, List.of(BootDef.class),
         Project.Userprofile, List.of(BootUserProfile.class),

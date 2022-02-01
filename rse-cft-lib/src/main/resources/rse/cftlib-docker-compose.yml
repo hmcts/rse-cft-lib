@@ -30,7 +30,7 @@ services:
     environment:
       - JAVA_TOOL_OPTIONS=-Xms128m -Xmx400m
       - XPACK_MONITORING_ENABLED=false
-      - DB_URL=jdbc:postgresql://shared-database-pg12:5432/postgres?stringtype=unspecified&ssl=false&currentSchema=datastore
+      - DB_URL=jdbc:postgresql://shared-database-pg12:5432/datastore?stringtype=unspecified&ssl=false
       - DB_USER=postgres
       - DB_PWD=postgres
       - ES_DATA_NODES_URL=http://ccd-elasticsearch:9200

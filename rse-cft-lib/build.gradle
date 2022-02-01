@@ -22,7 +22,7 @@ repositories {
 }
 
 group = 'com.github.hmcts'
-version = '0.1.0'
+version = '0.99.0'
 
 configurations {
     bundler {
