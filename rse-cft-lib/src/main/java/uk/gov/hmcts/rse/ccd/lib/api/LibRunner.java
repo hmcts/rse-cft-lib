@@ -1,29 +1,23 @@
 package uk.gov.hmcts.rse.ccd.lib.api;
 
 import com.google.common.collect.Maps;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
-import org.apache.lucene.analysis.util.ClasspathResourceLoader;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.ParentContextApplicationContextInitializer;
-import org.springframework.boot.env.PropertiesPropertySourceLoader;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
-import org.springframework.core.env.PropertySources;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.web.context.WebApplicationContext;
@@ -37,7 +31,6 @@ import uk.gov.hmcts.rse.ccd.lib.impl.PermissiveSecurity;
 import uk.gov.hmcts.rse.ccd.lib.impl.Project;
 import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 import uk.gov.hmcts.rse.ccd.lib.impl.YamlPropertySourceFactory;
-import uk.gov.hmcts.rse.ccd.lib.injected.CFTLibSecurityConfiguration;
 
 public class LibRunner {
   private Map<Project, ConfigurableApplicationContext> contexts = Maps.newConcurrentMap();
@@ -47,6 +40,10 @@ public class LibRunner {
   public LibRunner(Class application, Class... inject) {
     this.application = application;
     this.inject = inject;
+  }
+
+  public Map<Project, WebApplicationContext> run() {
+    return run(Map.of());
   }
 
   public Map<Project, WebApplicationContext> run(Map<String, Object> propertyOverrides) {
@@ -85,7 +82,9 @@ public class LibRunner {
       // Shut off unwanted autoconfiguration.
       if (project == Project.Application) {
         final Map<String, Object> properties = Map.of( "spring.autoconfigure.exclude",
-            "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration"
+            "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration",
+            // Disable a problematic cdam healthcheck.
+            "management.health.case-document-am-api.enabled", "false"
         );
         environment.getPropertySources().addFirst( new MapPropertySource( "Autoconfig exclusions", properties ) );
       } else {
