@@ -48,7 +48,7 @@ public class DBWaiter implements BeanPostProcessor {
     @SneakyThrows
     private void checkDBIsReady() {
       if (!initialised) {
-        ComposeRunner.DB_READY.await();
+        ComposeRunner.waitForDB();
         initialised = true;
       }
     }

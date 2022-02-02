@@ -24,21 +24,33 @@ import org.zeroturnaround.exec.stream.slf4j.Slf4jStream;
 @Slf4j
 @Component
 public class ComposeRunner {
-  public static CountDownLatch DB_READY = new CountDownLatch(1);
+  private static volatile Throwable DB_EXCEPTION;
+  private static CountDownLatch DB_READY = new CountDownLatch(1);
+
+  @SneakyThrows
+  public static void waitForDB() {
+    DB_READY.await();
+    if (DB_EXCEPTION != null) {
+      throw DB_EXCEPTION;
+    }
+  }
 
   private static boolean booted;
   public static class RunListener implements SpringApplicationRunListener {
     public RunListener(SpringApplication app, String[] args) {
       if (!booted) {
         booted = true;
-        new Thread(this::dockerBoot).start();
+        new Thread(this::startBoot).start();
       }
     }
 
-
-    @Override
-    public void running(ConfigurableApplicationContext context) {
-      SpringApplicationRunListener.super.running(context);
+    void startBoot() {
+      try {
+        dockerBoot();
+      } catch (Exception e) {
+        DB_EXCEPTION = e;
+      }
+      DB_READY.countDown();
     }
 
     @SneakyThrows
@@ -83,8 +95,6 @@ public class ComposeRunner {
           .ignoreExceptions()
           .forever()
           .until(ready);
-
-      DB_READY.countDown();
     }
   }
 }
