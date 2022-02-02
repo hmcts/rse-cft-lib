@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
+import org.junit.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -67,21 +68,15 @@ class LibConsumerApplicationTests {
     }
   }
 
-  @AfterAll
-  void teardown() {
-//    for (ConfigurableApplicationContext context : contexts) {
-//      context.close();
-//    }
+  @Ignore
+  @SneakyThrows
+  @Test
+  void isHealthy() {
+    for (Project project : mockMVCs.keySet()) {
+      mockMVCs.get(project).perform(get("/health"))
+          .andExpect(status().is2xxSuccessful());
+    }
   }
-
-//  @SneakyThrows
-//  @Test
-//  void isHealthy() {
-//    for (Project project : mockMVCs.keySet()) {
-//      mockMVCs.get(project).perform(get("/health"))
-//          .andExpect(status().is2xxSuccessful());
-//    }
-//  }
 
   @SneakyThrows
   @Test

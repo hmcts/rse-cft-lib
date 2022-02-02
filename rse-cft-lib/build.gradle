@@ -101,7 +101,6 @@ processResources {
         into 'am'
         include 'db/**', 'application.yaml'
     }
-//    exclude 'db/**'
 }
 
 shadowJar {

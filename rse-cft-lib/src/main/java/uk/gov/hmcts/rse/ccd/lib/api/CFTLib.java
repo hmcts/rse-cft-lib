@@ -41,7 +41,6 @@ public class CFTLib {
   @Autowired
   CFTLibConfigurer configurer;
 
-  private int countDown = 2;
   private DataSource amDB;
 
   @SneakyThrows
