@@ -39,12 +39,12 @@ dependencies {
         implementation 'uk.gov.hmcts.ccd.definition:excel-importer'
         implementation 'uk.gov.hmcts.ccd.definition:repository'
         implementation 'uk.gov.hmcts.ccd.definition:rest-api'
-        implementation 'uk.gov.hmcts.ccd:user-profile-api'
+        implementation project(path: ':ccd-user-profile-api-relocated', configuration: 'shadow')
+
         implementation 'uk.gov.hmcts.reform.roleassignment:am-role-assignment-service'
     }
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
     testImplementation 'org.springframework.security:spring-security-test'
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'

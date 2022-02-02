@@ -7,9 +7,7 @@
  */
 plugins {
     id 'java-library'
-    id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '6.1.0'
-    //  https://spring.io/guides/gs/multi-module/
     id 'org.springframework.boot' version '2.4.12' apply false
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
@@ -21,8 +19,8 @@ repositories {
     }
 }
 
-group = 'com.github.hmcts'
-version = '0.99.0'
+group = 'uk.gov.hmcts'
+version = '0.1.0'
 
 configurations {
     bundler {
@@ -41,41 +39,11 @@ configurations {
     }
 }
 
-java {
-    withSourcesJar()
-}
-
 configurations.compileClasspath.extendsFrom(configurations.bundler, configurations.bundlerTransitive)
 
 dependencies {
     // Bring in the ccd projects via Gradle's dependency substitution
-    bundler 'uk.gov.hmcts.ccd:ccd-data-store-api'
-
-    bundler 'uk.gov.hmcts.ccd.definition:application'
-    bundler 'uk.gov.hmcts.ccd.definition:domain'
-    bundler 'uk.gov.hmcts.ccd.definition:elastic-search-support'
-    bundler 'uk.gov.hmcts.ccd.definition:excel-importer'
-    bundler 'uk.gov.hmcts.ccd.definition:repository'
-    bundler 'uk.gov.hmcts.ccd.definition:rest-api'
-
-    bundler project(path: ':ccd-user-profile-api-relocated', configuration: 'shadow')
-    bundler 'uk.gov.hmcts.reform.roleassignment:am-role-assignment-service'
-
-    shadow 'org.zeroturnaround:zt-exec:1.12'
-
-    shadow 'net.ttddyy:datasource-proxy:1.7'
-
-    shadow group: 'org.elasticsearch', name: 'jna', version: '5.7.0-1'
-    shadow group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.3'
-
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.13.2'
-
-    compileOnly 'org.projectlombok:lombok:1.18.22'
-    annotationProcessor 'org.projectlombok:lombok:1.18.22'
-
-    testCompileOnly 'org.projectlombok:lombok:1.18.22'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+    bundler 'uk.gov.hmcts.ccd:user-profile-api'
 }
 
 dependencyManagement {
@@ -85,53 +53,11 @@ dependencyManagement {
     }
 }
 
-processResources {
-    from ('../ccd-data-store-api/src/main/resources') { into 'datastore' }
-    // Get the application.properties
-    from ('../ccd-definition-store-api/application/src/main/resources') { into 'definitionstore' }
-    // migrations
-    from ('../ccd-definition-store-api/repository/src/main/resources') { into 'definitionstore' }
-    from ('../ccd-definition-store-api/elastic-search-support/src/main/resources') {
-        rename('application.yml', 'cftlib-defstore-es.yml')
-    }
-
-    from ('../ccd-user-profile-api/src/main/resources') { into 'userprofile' }
-
-    from ('../am-role-assignment-service/src/main/resources') {
-        into 'am'
-        include 'db/**', 'application.yaml'
-    }
-}
-
 shadowJar {
     configurations = [project.configurations.bundler]
     // Remove the default 'all' suffix from the jar name for POM compatibility.
     archiveClassifier.set(null)
-    // We don't want to clobber these in consuming projects by having them collide on the classpath.
-    exclude 'application.yaml', 'application.yml', 'application.properties', 'db/**'
-}
-
-publishing {
-    publications {
-        shadow(MavenPublication) { publication ->
-            project.shadow.component(publication)
-            publication.artifact(project.tasks.sourcesJar)
-        }
-    }
-}
-
-tasks.sourcesJar {
-    doFirst {
-        from rootProject.fileTree('.') {
-            include '**/src/main/java/**'
-            includeEmptyDirs = false
-            eachFile { f ->
-                def i = f.relativePath.segments.findIndexOf{ it == "main" }
-                String[] segments = f.relativePath.segments.drop(i + 2)
-                f.relativePath = new RelativePath(true, segments)
-            }
-        }
-    }
+    relocate 'uk.gov.hmcts.ccd', 'uk.gov.hmcts.ccd.userprofile'
 }
 
 project.afterEvaluate {

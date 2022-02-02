@@ -1,8 +1,8 @@
 ---
 version: '3.5'
 services:
-  shared-database:
-    image: postgres
+  shared-database-pg12:
+    image: postgres:12.4
     environment:
       DB_USERNAME:
       DB_PASSWORD:
@@ -30,12 +30,53 @@ services:
     environment:
       - JAVA_TOOL_OPTIONS=-Xms128m -Xmx400m
       - XPACK_MONITORING_ENABLED=false
-      - DB_URL=jdbc:postgresql://shared-database:5432/postgres?stringtype=unspecified&ssl=false&currentSchema=datastore
+      - DB_URL=jdbc:postgresql://shared-database-pg12:5432/datastore?stringtype=unspecified&ssl=false
       - DB_USER=postgres
       - DB_PWD=postgres
       - ES_DATA_NODES_URL=http://ccd-elasticsearch:9200
       - LOG_LEVEL=warn
     depends_on:
       - ccd-elasticsearch
-      - shared-database
+      - shared-database-pg12
+
+  xui-manage-cases:
+    image: "${XUI_MANAGE_CASES_USE_LOCAL-hmctspublic.azurecr.io/}xui/webapp:${XUI_MANAGE_CASES_TAG:-latest}"
+    environment:
+      FEATURE_APP_INSIGHTS_ENABLED: "false"
+      FEATURE_SECURE_COOKIE_ENABLED: "false"
+      FEATURE_REDIS_ENABLED: "false"
+      JURISDICTIONS: "${XUI_JURISDICTIONS:-DIVORCE,PROBATE,SSCS,PRIVATELAW,PUBLICLAW,ADOPTION}"
+      MICROSERVICE: xui_webapp
+      PROTOCOL: http
+      XUI_ENV: local
+      DEBUG: '*:*'
+      SERVICES_DOCUMENTS_API: http://dm-store-aat.service.core-compute-aat.internal
+      SERVICES_PAYMENTS_URL: http://payment-api-aat.service.core-compute-aat.internal
+      SERVICES_EM_ANNO_API: http://host.docker.internal:4013
+      SERVICES_CCD_COMPONENT_API: http://host.docker.internal:4452
+      SERVICES_CCD_DATA_STORE_API: http://host.docker.internal:4452
+      SERVICES_IDAM_API_URL: https://idam-api.aat.platform.hmcts.net
+      SERVICES_IDAM_CLIENT_ID: xuiwebapp
+      SERVICES_IDAM_LOGIN_URL: https://idam-web-public.aat.platform.hmcts.net
+      SERVICES_IDAM_INDEX_URL: /
+      SERVICES_IDAM_OAUTH_CALLBACK_URL: /oauth2/callback
+      SERVICES_EM_DOCASSEMBLY_API: http://dg-docassembly-aat.service.core-compute-aat.internal
+      HEALTH_EM_DOCASSEMBLY_API: http://dg-docassembly-aat.service.core-compute-aat.internal/health
+      SERVICES_S2S: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+      SYSTEM_USER_NAME: "${XUI_SYSTEM_USER_NAME}"
+      SYSTEM_USER_PASSWORD: "${XUI_SYSTEM_USER_PASSWORD}"
+      REDISCLOUD_URL: http://localhost:6780
+      HEALTH_CCD_COMPONENT_API: http://host.docker.internal:4452/health
+      HEALTH_CCD_DATA_API: http://host.docker.internal:4452/health
+      SERVICES_PRD_API: http://rd-professional-api-aat.service.core-compute-aat.internal
+      APPINSIGHTS_INSTRUMENTATIONKEY: TESTVAR
+      IDAM_SECRET: "${XUI_OAUTH_SECRET}"
+      S2S_SECRET: "${XUI_SERVICE_KEY}"
+      LAUNCH_DARKLY_CLIENT_ID: "${XUI_LD_ID}"
+      SERVICES_ROLE_ASSIGNMENT_API: http://host.docker.internal:4096
+      HEALTH_ROLE_ASSIGNMENT_API: http://host.docker.internal:4096/health
+    ports:
+      - 3000:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 

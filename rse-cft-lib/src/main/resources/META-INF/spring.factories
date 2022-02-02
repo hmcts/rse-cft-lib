@@ -1,4 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  uk.gov.hmcts.rse.ccd.lib.CCDLibAutoConfigure
-org.springframework.context.ApplicationListener=uk.gov.hmcts.rse.ccd.lib.PropertiesInjector
-org.springframework.boot.SpringApplicationRunListener=uk.gov.hmcts.rse.ccd.lib.DBProxy.RunListener
+org.springframework.boot.SpringApplicationRunListener=uk.gov.hmcts.rse.ccd.lib.impl.ComposeRunner.RunListener
