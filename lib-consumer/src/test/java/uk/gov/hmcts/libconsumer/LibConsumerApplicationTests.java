@@ -68,13 +68,14 @@ class LibConsumerApplicationTests {
     }
   }
 
-  @Ignore
   @SneakyThrows
   @Test
   void isHealthy() {
     for (Project project : mockMVCs.keySet()) {
-      mockMVCs.get(project).perform(get("/health"))
-          .andExpect(status().is2xxSuccessful());
+      if (project != Project.Application && project != Project.AM) {
+        mockMVCs.get(project).perform(get("/health"))
+            .andExpect(status().is2xxSuccessful());
+      }
     }
   }
 
