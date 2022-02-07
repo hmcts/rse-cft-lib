@@ -62,7 +62,7 @@ public class ComposeRunner {
       var environment = Map.of("COMPOSE_FILE", f.getName());
       new ProcessExecutor().command("docker-compose", "up", "-d")
           .redirectOutput(Slf4jStream.of(log).asInfo())
-          .redirectError(Slf4jStream.of(log).asInfo())
+          .redirectError(Slf4jStream.of(log).asError())
           .directory(f.getParentFile())
           .environment(environment)
           .exitValueNormal()
