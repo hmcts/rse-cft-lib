@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGeneratorFactory;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 import uk.gov.hmcts.reform.authorisation.validators.ServiceAuthTokenValidator;
+import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 import uk.gov.hmcts.rse.ccd.lib.injected.Common;
 
@@ -35,6 +36,7 @@ import uk.gov.hmcts.rse.ccd.lib.injected.Common;
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
             uk.gov.hmcts.ccd.SecurityConfiguration.class,
             CoreCaseDataApplication.class,
+            CoreCaseDataClientAutoConfiguration.class,
             SwaggerConfiguration.class,
             // We exclude this since it enables an unwanted S2S feign client
             AuthClientsConfiguration.class
