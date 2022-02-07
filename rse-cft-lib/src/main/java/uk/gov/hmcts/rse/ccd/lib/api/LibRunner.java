@@ -86,6 +86,15 @@ public class LibRunner {
         tryAddProperties(sources, project.name() + "-baseyaml", project.name().toLowerCase() + "/application.yaml");
         tryAddProperties(sources, project.name() + "-rse", "rse/application.properties");
         tryAddProperties(sources, project.name() + "-specific", "rse/" + project.name().toLowerCase() + ".properties");
+        // TODO: Automatic autoconfiguration elimination.
+        if (project == Project.Datastore || project == Project.Definitionstore || project == Project.Userprofile) {
+          final Map<String, Object> properties = Map.of( "spring.autoconfigure.exclude",
+              "uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration" +
+              // Hystrix metrics not thread safe.
+              ",org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration"
+          );
+          environment.getPropertySources().addFirst( new MapPropertySource( "CCD autoconfig exclusions", properties ) );
+        }
       }
 
       sources.addFirst(new MapPropertySource("applicationOverrides", propertyOverrides));
