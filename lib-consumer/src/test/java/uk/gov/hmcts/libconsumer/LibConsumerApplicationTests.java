@@ -2,70 +2,29 @@ package uk.gov.hmcts.libconsumer;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Maps;
-import java.util.List;
-import java.util.Map;
-import javax.sql.DataSource;
 import lombok.SneakyThrows;
-import org.junit.Ignore;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.builder.ParentContextApplicationContextInitializer;
-import org.springframework.boot.test.autoconfigure.web.servlet.SpringBootMockMvcBuilderCustomizer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.env.MapPropertySource;
-import org.springframework.core.env.StandardEnvironment;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.ccd.domain.model.aggregated.JurisdictionDisplayProperties;
-import uk.gov.hmcts.rse.ccd.lib.api.LibRunner;
 import uk.gov.hmcts.rse.ccd.lib.impl.Project;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
-import uk.gov.hmcts.rse.ccd.lib.injected.DBWaiter;
-import uk.gov.hmcts.rse.ccd.lib.impl.BootAccessManagement;
-import uk.gov.hmcts.rse.ccd.lib.impl.BootData;
-import uk.gov.hmcts.rse.ccd.lib.impl.BootDef;
-import uk.gov.hmcts.rse.ccd.lib.impl.BootParent;
-import uk.gov.hmcts.rse.ccd.lib.impl.BootUserProfile;
-import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
 import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
+import uk.gov.hmcts.rse.ccd.lib.test.CftLibTest;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class LibConsumerApplicationTests {
+class LibConsumerApplicationTests extends CftLibTest {
 
-  Map<Project, MockMvc> mockMVCs = Maps.newHashMap();
-
-  @SneakyThrows
-  @BeforeAll
-  void setup() {
-    var contexts = new LibRunner(LibConsumerApplication.class, FakeS2S.class)
-        .run(Map.of(
-            // Disable default feign client in favour of our fake.
-           "idam.s2s-auth.url", "false"
-        ));
-
-    for (Project project : contexts.keySet()) {
-      var context = contexts.get(project);
-      var builder = MockMvcBuilders.webAppContextSetup(context);
-      new SpringBootMockMvcBuilderCustomizer(context).customize(builder);
-
-      mockMVCs.put(project, builder.apply(springSecurity())
-          .build());
-    }
+  @Override
+  protected Class getApplicationClass() {
+    return LibConsumerApplication.class;
   }
 
   @SneakyThrows

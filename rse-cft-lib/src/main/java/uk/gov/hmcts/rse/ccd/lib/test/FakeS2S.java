@@ -1,4 +1,4 @@
-package uk.gov.hmcts.libconsumer;
+package uk.gov.hmcts.rse.ccd.lib.test;
 
 import java.util.Map;
 import org.springframework.context.annotation.Primary;

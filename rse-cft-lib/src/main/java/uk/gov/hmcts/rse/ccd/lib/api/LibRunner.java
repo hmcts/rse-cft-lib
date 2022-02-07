@@ -1,10 +1,9 @@
 package uk.gov.hmcts.rse.ccd.lib.api;
 
 import com.google.common.collect.Maps;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.google.common.collect.Sets;
 import java.util.Map;
+import java.util.Set;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import org.springframework.boot.Banner;
@@ -12,7 +11,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.ParentContextApplicationContextInitializer;
 import org.springframework.boot.logging.LoggingSystem;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -34,23 +32,11 @@ import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 import uk.gov.hmcts.rse.ccd.lib.impl.YamlPropertySourceFactory;
 
 public class LibRunner {
-  private Map<Project, ConfigurableApplicationContext> contexts = Maps.newConcurrentMap();
-
-  private final Class application;
-  private final Class[] inject;
-  public LibRunner(Class application, Class... inject) {
-    this.application = application;
-    this.inject = inject;
+  public static Map<Project, WebApplicationContext> run(Class application) {
+    return run(application, Set.of(), Map.of());
   }
 
-  public Map<Project, WebApplicationContext> run() {
-    return run(Map.of());
-  }
-
-  public Map<Project, WebApplicationContext> run(Map<String, Object> propertyOverrides) {
-    var classes = new ArrayList<Class>();
-    classes.add(BootParent.class);
-    classes.addAll(Arrays.asList(inject));
+  public static Map<Project, WebApplicationContext> run(Class application, Set<Class> inject, Map<String, Object> propertyOverrides) {
 
     // Disable logback since by default we get a singleton LoggerContext for all spring contexts
     // which isn't thread safe when we start up all the contexts in parallel.
@@ -58,27 +44,32 @@ public class LibRunner {
     // context with its own instance.
     System.setProperty(LoggingSystem.SYSTEM_PROPERTY, LoggingSystem.NONE);
 
-    final SpringApplication parentApplication = new SpringApplication(classes.toArray(new Class[0]));
+
+    var parentClasses = Sets.union(Set.of(BootParent.class), inject);
+    final SpringApplication parentApplication = new SpringApplication(parentClasses.toArray(new Class[0]));
     parentApplication.setWebApplicationType(WebApplicationType.NONE);
     var parentContext = parentApplication.run( "" );
     final ParentContextApplicationContextInitializer parentContextApplicationContextInitializer = new ParentContextApplicationContextInitializer( parentContext );
 
-    Map<Project, List<Class>> childContexts = Map.of(
+    Map<Project, Set<Class>> siblingContexts = Map.of(
         // TODO - auto-auto spring security config.
-        Project.Application, List.of(application, CFTLib.class, PermissiveSecurity.class),
-        Project.AM, List.of(BootAccessManagement.class),
-        Project.Definitionstore, List.of(BootDef.class),
-        Project.Userprofile, List.of(BootUserProfile.class),
-        Project.Datastore, List.of(BootData.class)
+        Project.Application, Set.of(application, CFTLib.class, PermissiveSecurity.class),
+        Project.AM, Set.of(BootAccessManagement.class),
+        Project.Definitionstore, Set.of(BootDef.class),
+        Project.Userprofile, Set.of(BootUserProfile.class),
+        Project.Datastore, Set.of(BootData.class)
     );
 
     Map<Project, WebApplicationContext> contexts = Maps.newConcurrentMap();
-    childContexts.keySet().parallelStream().sorted().forEach(project -> {
+    siblingContexts.keySet().parallelStream().sorted().forEach(project -> {
       System.out.println("Starting " + project);
       var name = Thread.currentThread().getName();
       Thread.currentThread().setName("**** " + project);
-      final SpringApplication a = new SpringApplication(childContexts.get(project).toArray(new Class[0]));
-      a.addInitializers( parentContextApplicationContextInitializer );
+      var classes = project == Project.Application ?
+          siblingContexts.get(project)
+          : Sets.union(siblingContexts.get(project), inject);
+      final SpringApplication a = new SpringApplication(classes.toArray(new Class[0]));
+      a.addInitializers(parentContextApplicationContextInitializer);
       a.setBannerMode(Banner.Mode.OFF);
 
       final StandardEnvironment environment = new StandardEnvironment( );
@@ -116,14 +107,14 @@ public class LibRunner {
   }
 
   @SneakyThrows
-  void tryAddProperties(MutablePropertySources sources, String name, String path) {
+  static void tryAddProperties(MutablePropertySources sources, String name, String path) {
     if (new ClassPathResource(path).exists()) {
       sources.addFirst(loadClasspathProperties(name, path));
     }
   }
 
   @SneakyThrows
-  PropertySource<?> loadClasspathProperties(String name, String path) {
+  static PropertySource<?> loadClasspathProperties(String name, String path) {
     if (path.endsWith("yaml")) {
       return new YamlPropertySourceFactory().createPropertySource(name, new EncodedResource(new ClassPathResource(path)));
     }
