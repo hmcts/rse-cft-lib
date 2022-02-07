@@ -45,6 +45,12 @@ public class LibRunner {
     System.setProperty(LoggingSystem.SYSTEM_PROPERTY, LoggingSystem.NONE);
 
 
+    // Disable logback since by default we get a singleton LoggerContext for all spring contexts
+    // which isn't thread safe when we start up all the contexts in parallel.
+    // Alternative would be to use ContextJNDISelector or a custom ContextSelector to provide each
+    // context with its own instance.
+    System.setProperty(LoggingSystem.SYSTEM_PROPERTY, LoggingSystem.NONE);
+
     var parentClasses = Sets.union(Set.of(BootParent.class), inject);
     final SpringApplication parentApplication = new SpringApplication(parentClasses.toArray(new Class[0]));
     parentApplication.setWebApplicationType(WebApplicationType.NONE);
@@ -65,10 +71,7 @@ public class LibRunner {
       System.out.println("Starting " + project);
       var name = Thread.currentThread().getName();
       Thread.currentThread().setName("**** " + project);
-      var classes = project == Project.Application ?
-          siblingContexts.get(project)
-          : Sets.union(siblingContexts.get(project), inject);
-      final SpringApplication a = new SpringApplication(classes.toArray(new Class[0]));
+      final SpringApplication a = new SpringApplication(siblingContexts.get(project).toArray(new Class[0]));
       a.addInitializers(parentContextApplicationContextInitializer);
       a.setBannerMode(Banner.Mode.OFF);
 
