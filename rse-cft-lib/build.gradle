@@ -19,6 +19,7 @@ repositories {
     maven {
         url 'https://jitpack.io'
     }
+    jcenter()
 }
 
 group = 'com.github.hmcts'
@@ -65,7 +66,7 @@ dependencies {
 
     shadow 'net.ttddyy:datasource-proxy:1.7'
 
-    shadow group: 'org.elasticsearch', name: 'jna', version: '5.7.0-1'
+//    shadow group: 'org.elasticsearch', name: 'jna', version: '5.7.0-1'
     shadow group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.3'
     shadow 'org.springframework.boot:spring-boot-starter-test'
     shadow 'org.springframework.security:spring-security-test'
