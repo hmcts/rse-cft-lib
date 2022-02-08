@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,6 +23,14 @@ import uk.gov.hmcts.rse.ccd.lib.test.CftLibTest;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LibConsumerApplicationTests extends CftLibTest {
+
+  @Override
+  @BeforeAll
+  protected void setup() {
+    // Should override application.properties
+    System.setProperty("ccd.defaultPrintName", "overridden");
+    super.setup();
+  }
 
   @Override
   protected Class getApplicationClass() {
@@ -44,6 +54,13 @@ class LibConsumerApplicationTests extends CftLibTest {
     mockMVCs.get(Project.Datastore)
         .perform(get("/addresses"))
         .andExpect(status().is2xxSuccessful());
+  }
+
+  @Test
+  void systemPropertiesAndEnvVarsTakePrecedence() {
+    var prop = contexts.get(Project.Datastore).getEnvironment().getProperty("ccd.defaultPrintName");
+    // Should be overridden by system property we set.
+    Assertions.assertEquals("overridden", prop);
   }
 
   @SneakyThrows

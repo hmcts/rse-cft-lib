@@ -82,10 +82,19 @@ public class LibRunner {
         );
         environment.getPropertySources().addFirst( new MapPropertySource( "Autoconfig exclusions", properties ) );
       } else {
-        tryAddProperties(sources, project.name() + "-base", project.name().toLowerCase() + "/application.properties");
-        tryAddProperties(sources, project.name() + "-baseyaml", project.name().toLowerCase() + "/application.yaml");
-        tryAddProperties(sources, project.name() + "-rse", "rse/application.properties");
         tryAddProperties(sources, project.name() + "-specific", "rse/" + project.name().toLowerCase() + ".properties");
+        tryAddProperties(sources, project.name() + "-rse", "rse/application.properties");
+        tryAddProperties(sources, project.name() + "-baseyaml", project.name().toLowerCase() + "/application.yaml");
+        tryAddProperties(sources, project.name() + "-base", project.name().toLowerCase() + "/application.properties");
+        // TODO: Automatic autoconfiguration elimination.
+        if (project == Project.Datastore || project == Project.Definitionstore || project == Project.Userprofile) {
+          final Map<String, Object> properties = Map.of( "spring.autoconfigure.exclude",
+              "uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration" +
+              // Hystrix metrics not thread safe.
+              ",org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration"
+          );
+          environment.getPropertySources().addFirst( new MapPropertySource( "CCD autoconfig exclusions", properties ) );
+        }
       }
 
       sources.addFirst(new MapPropertySource("applicationOverrides", propertyOverrides));
@@ -105,7 +114,7 @@ public class LibRunner {
   @SneakyThrows
   static void tryAddProperties(MutablePropertySources sources, String name, String path) {
     if (new ClassPathResource(path).exists()) {
-      sources.addFirst(loadClasspathProperties(name, path));
+      sources.addLast(loadClasspathProperties(name, path));
     }
   }
 
