@@ -10,18 +10,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.test.autoconfigure.web.servlet.SpringBootMockMvcBuilderCustomizer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.rse.ccd.lib.api.LibRunner;
 import uk.gov.hmcts.rse.ccd.lib.impl.Project;
 
 public abstract class CftLibTest {
   protected Map<Project, MockMvc> mockMVCs = Maps.newHashMap();
-  protected Map<Project, WebApplicationContext> contexts;
 
   @SneakyThrows
   @BeforeAll
-  protected void setup() {
-    this.contexts = LibRunner.run(getApplicationClass(), getInjectedClasses(),Map.of(
+  void setup() {
+    var contexts = LibRunner.run(getApplicationClass(), getInjectedClasses(),Map.of(
             // Disable default feign client in favour of our fake.
             "idam.s2s-auth.url", "false"
         ));
