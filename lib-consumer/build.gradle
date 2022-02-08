@@ -8,21 +8,15 @@ group = 'uk.gov.hmcts'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+// Must override the version selected by spring boot dependency management plugin.
+ext['elasticsearch.version'] = '7.16.2'
+
 repositories {
     mavenCentral()
     maven {
         url 'https://jitpack.io'
     }
     jcenter()
-}
-
-dependencyManagement {
-    dependencies {
-//        dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '6.8.17'
-//        dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '6.5.0'
-//        dependency group: 'org.elasticsearch', name: 'elasticsearch', version: '6.8.17'
-//        dependency group: 'org.elasticsearch', name: 'jna', version: '5.5.0'
-    }
 }
 
 dependencies {
