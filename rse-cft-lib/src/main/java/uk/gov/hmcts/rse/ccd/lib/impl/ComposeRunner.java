@@ -2,6 +2,7 @@ package uk.gov.hmcts.rse.ccd.lib.impl;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Files;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Duration;
@@ -12,6 +13,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.io.inputstream.ZipInputStream;
 import org.apache.commons.io.FileUtils;
 import org.awaitility.Awaitility;
 import org.springframework.boot.SpringApplication;
@@ -25,7 +28,7 @@ import org.zeroturnaround.exec.stream.slf4j.Slf4jStream;
 @Component
 public class ComposeRunner {
   private static volatile Throwable DB_EXCEPTION;
-  private static CountDownLatch DB_READY = new CountDownLatch(1);
+  private static final CountDownLatch DB_READY = new CountDownLatch(1);
 
   @SneakyThrows
   public static void waitForDB() {
@@ -56,15 +59,15 @@ public class ComposeRunner {
     @SneakyThrows
     void dockerBoot() {
       var f = File.createTempFile("cftlib", "");
-      URL u = getClass().getResource("/rse/cftlib-docker-compose.yml");
+      URL u = getClass().getResource("/cftlib-compose.zip");
       FileUtils.copyURLToFile(u, f);
+      var dir = Files.createTempDirectory("cftlib");
+      new ZipFile(f).extractAll(dir.toString());
 
-      var environment = Map.of("COMPOSE_FILE", f.getName());
-      new ProcessExecutor().command("docker-compose", "up", "-d")
+      new ProcessExecutor().command("docker-compose", "-p", "cftlib", "up", "--build", "-d")
           .redirectOutput(Slf4jStream.of(log).asInfo())
           .redirectError(Slf4jStream.of(log).asError())
-          .directory(f.getParentFile())
-          .environment(environment)
+          .directory(dir.toFile())
           .exitValueNormal()
           .timeout(10, TimeUnit.MINUTES)
           .execute();

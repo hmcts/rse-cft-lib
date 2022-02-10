@@ -1,0 +1,63 @@
+input {
+    jdbc {
+        # CCD conf
+        jdbc_connection_string => "${DB_URL}"
+        jdbc_user => "${DB_USER}"
+        jdbc_password => "${DB_PWD}"
+        jdbc_validate_connection => true
+        jdbc_driver_library => "/usr/share/logstash/postgresql.jar"
+        jdbc_driver_class => "org.postgresql.Driver"
+
+        jdbc_page_size => "20000"
+        jdbc_default_timezone => "UTC"
+
+        use_column_value => false
+
+        statement => "UPDATE case_data SET marked_by_logstash = true WHERE marked_by_logstash = false RETURNING id, created_date, last_modified, jurisdiction, case_type_id, state, last_state_modified_date, data::TEXT as json_data, data_classification::TEXT as json_data_classification, reference, security_classification, supplementary_data::TEXT as json_supplementary_data"
+
+    	clean_run => false
+    	last_run_metadata_path => "/usr/share/logstash/data/.logstash_jdbc_last_run_ccd"
+
+	    # every second
+        schedule => "* * * * * *"
+	    # every 2 seconds
+        # schedule => "/2 * * * * *"
+    }
+}
+
+filter{
+	json{
+		source => "json_data"
+		target => "data"
+		remove_field => ["json_data"]
+	}
+	json{
+		source => "json_data_classification"
+		target => "data_classification"
+		remove_field => ["json_data_classification"]
+	}
+	json{
+        source => "json_supplementary_data"
+        target => "supplementary_data"
+        remove_field => ["json_supplementary_data"]
+    }
+	# mutate { remove_field => [ "@timestamp", "@version" ] }
+	mutate {
+    	add_field => { "index_id" => "%{case_type_id}_cases" }
+  	}
+	mutate {
+		lowercase => [ "index_id" ]
+	}
+}
+
+#TODO future releases of ES will use _doc as mapping type. When LS sets _doc as the default type, remove 'document_type'
+output {
+    elasticsearch {
+        hosts => ["${ES_DATA_NODES_URL}"]
+        sniffing => false
+        index => "%{[index_id]}"
+        document_type => "_doc"
+        document_id => "%{id}"
+        timeout => 60
+    }
+}

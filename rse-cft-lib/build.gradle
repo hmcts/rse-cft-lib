@@ -70,9 +70,9 @@ dependencies {
     shadow 'net.ttddyy:datasource-proxy:1.7'
 
     shadow group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.5'
-    shadow 'org.springframework.boot:spring-boot-starter-test'
-    shadow 'org.springframework.security:spring-security-test'
-
+    shadow 'org.springframework.boot:spring-boot-starter-test:2.4.12'
+    shadow 'org.springframework.security:spring-security-test:5.5.4'
+    shadow 'net.lingala.zip4j:zip4j:2.9.1'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13.2'
@@ -91,6 +91,11 @@ dependencyManagement {
     }
 }
 
+task zipCompose(type: Zip) {
+    from project.file('compose')
+    archiveFileName = 'cftlib-compose.zip'
+}
+
 processResources {
     from ('../ccd-data-store-api/src/main/resources') { into 'datastore' }
     // Get the application.properties
@@ -107,6 +112,8 @@ processResources {
         into 'am'
         include 'db/**', 'application.yaml'
     }
+
+    from zipCompose
 }
 
 shadowJar {
