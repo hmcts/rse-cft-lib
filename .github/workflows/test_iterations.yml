@@ -1,6 +1,7 @@
 name: Flakey test finder
 
 on:
+  push:
   pull_request:
     branches:
       - main
