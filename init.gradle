@@ -1,0 +1,15 @@
+allprojects {
+    afterEvaluate { project ->
+        // We are consuming spring boot projects as libraries.
+        // By default spring boot switches off jar generation
+        // so we need to turn it back on in each cft project.
+        if (project.hasProperty('jar')) {
+            configure(project) {
+                jar {
+                    enabled = true
+                }
+            }
+        }
+    }
+}
+

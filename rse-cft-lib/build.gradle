@@ -19,10 +19,14 @@ repositories {
     maven {
         url 'https://jitpack.io'
     }
+    jcenter()
 }
 
 group = 'com.github.hmcts'
-version = '0.99.0'
+version = '0.101.0'
+
+// Must override the version selected by spring boot dependency management plugin.
+ext['elasticsearch.version'] = '7.16.2'
 
 configurations {
     bundler {
@@ -63,13 +67,10 @@ dependencies {
 
     shadow 'org.zeroturnaround:zt-exec:1.12'
 
-    shadow 'net.ttddyy:datasource-proxy:1.7'
-
-    shadow group: 'org.elasticsearch', name: 'jna', version: '5.7.0-1'
     shadow group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.5'
-    shadow 'org.springframework.boot:spring-boot-starter-test'
-    shadow 'org.springframework.security:spring-security-test'
-
+    shadow 'org.springframework.boot:spring-boot-starter-test:2.4.12'
+    shadow 'org.springframework.security:spring-security-test:5.5.4'
+    shadow 'net.lingala.zip4j:zip4j:2.9.1'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13.2'
@@ -88,6 +89,11 @@ dependencyManagement {
     }
 }
 
+task zipCompose(type: Zip) {
+    from project.file('compose')
+    archiveFileName = 'cftlib-compose.zip'
+}
+
 processResources {
     from ('../ccd-data-store-api/src/main/resources') { into 'datastore' }
     // Get the application.properties
@@ -104,6 +110,8 @@ processResources {
         into 'am'
         include 'db/**', 'application.yaml'
     }
+
+    from zipCompose
 }
 
 shadowJar {
@@ -154,7 +162,9 @@ project.afterEvaluate {
         it.children.findAll({ ResolvedDependency dep -> !isBundled(dep) })
                 .forEach { ResolvedDependency dep ->
                     // Springfox generates json based docs, which we don't need for integration testing.
-                    if (dep.moduleGroup != "io.springfox") {
+                    if (dep.moduleGroup != "io.springfox"
+                            // idam-client became idam-java-client on 2.0 so filter the old to avoid duplicate classes.
+                            && dep.moduleName != 'idam-client') {
                         project.dependencies.add('shadow', [group: dep.moduleGroup, name: dep.moduleName, version: dep.moduleVersion]) {
                             exclude group: 'uk.gov.hmcts.reform', module: 'java-logging-spring'
                         }

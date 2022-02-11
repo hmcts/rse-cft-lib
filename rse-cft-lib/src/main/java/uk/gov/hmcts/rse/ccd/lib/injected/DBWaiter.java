@@ -1,57 +1,23 @@
 package uk.gov.hmcts.rse.ccd.lib.injected;
 
-import javax.sql.DataSource;
-import lombok.SneakyThrows;
-import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventListenerAdapter;
-import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.rse.ccd.lib.impl.ComposeRunner;
 
+@Aspect
 @Component
-public class DBWaiter implements BeanPostProcessor {
+public class DBWaiter {
 
-  @Override
-  public Object postProcessAfterInitialization(final Object bean, final String beanName) throws
-      BeansException {
-    if (bean instanceof DataSource) {
-      ProxyFactory factory = new ProxyFactory(bean);
-      factory.setProxyTargetClass(true);
-      factory.addAdvice(new ProxyDataSourceInterceptor((DataSource) bean));
-      return factory.getProxy();
-    }
-    return bean;
+  // Block any database access until ready for use.
+  @Before("execution(* javax.sql.DataSource.*(..))")
+  public void waitForDB() {
+    ComposeRunner.waitForDB();
   }
 
-  private static class ProxyDataSourceInterceptor extends JdbcLifecycleEventListenerAdapter
-      implements MethodInterceptor {
-    private final DataSource dataSource;
-
-    public ProxyDataSourceInterceptor(final DataSource dataSource) {
-      this.dataSource = ProxyDataSourceBuilder
-          .create(dataSource)
-          .listener(this)
-          .build();
-    }
-
-
-    @Override
-    public Object invoke(final MethodInvocation invocation) throws Throwable {
-      checkDBIsReady();
-      return invocation.proceed();
-    }
-
-    @SneakyThrows
-    private void checkDBIsReady() {
-      if (!initialised) {
-        ComposeRunner.waitForDB();
-        initialised = true;
-      }
-    }
-    boolean initialised;
+  // Block any use of ElasticSearch until ready for use.
+  @Before("execution(* uk.gov.hmcts.ccd.definition.store.elastic.client.*.*(..))")
+  public void waitForES() {
+    ComposeRunner.waitForES();
   }
 }

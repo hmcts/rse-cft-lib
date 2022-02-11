@@ -28,3 +28,7 @@ A Postgres DB will be started for you by testcontainers as well.
 ### Tests
 
 Take a look at the [lib-consumer](lib-consumer) project to see tests that show the full workflow for creating a case done completely in a Spring web context.
+
+### :warning: Modified Gradle wrapper :warning:
+
+This repository features a Gradle init script to customise the included CFT projects. gradlew has been modified to invoke this script so any upgrade to the gradle wrapper must preserve this modification.
