@@ -17,6 +17,7 @@ repositories {
     maven {
         url 'https://jitpack.io'
     }
+    jcenter()
 }
 
 group = 'uk.gov.hmcts'
