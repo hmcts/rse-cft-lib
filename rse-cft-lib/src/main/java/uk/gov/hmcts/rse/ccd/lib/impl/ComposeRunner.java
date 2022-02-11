@@ -38,9 +38,11 @@ public class ComposeRunner {
     }
   }
 
-  private static boolean booted;
+  private static volatile boolean booted;
   public static class RunListener implements SpringApplicationRunListener {
     public RunListener(SpringApplication app, String[] args) {
+      // Constructors are synchronized in Java,
+      // so this is thread-safe.
       if (!booted) {
         booted = true;
         new Thread(this::startBoot).start();
