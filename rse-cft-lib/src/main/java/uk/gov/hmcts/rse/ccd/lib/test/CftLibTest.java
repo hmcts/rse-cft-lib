@@ -16,13 +16,17 @@ import uk.gov.hmcts.rse.ccd.lib.impl.Project;
 public abstract class CftLibTest {
   protected Map<Project, MockMvc> mockMVCs = Maps.newHashMap();
 
+  protected Map<String, Object> getPropertyOverrides() {
+    return Map.of(
+        // Disable default feign client in favour of our fake.
+        "idam.s2s-auth.url", "false"
+    );
+  }
+
   @SneakyThrows
   @BeforeAll
   void setup() {
-    var contexts = LibRunner.run(getApplicationClass(), getInjectedClasses(),Map.of(
-            // Disable default feign client in favour of our fake.
-            "idam.s2s-auth.url", "false"
-        ));
+    var contexts = LibRunner.run(getApplicationClass(), getInjectedClasses(), getPropertyOverrides());
 
     for (Project project : contexts.keySet()) {
       var context = contexts.get(project);

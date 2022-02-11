@@ -7,7 +7,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.SneakyThrows;
+import org.elasticsearch.common.util.set.Sets;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,6 +24,15 @@ import uk.gov.hmcts.rse.ccd.lib.test.CftLibTest;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LibConsumerApplicationTests extends CftLibTest {
+
+  @Override
+  protected Map<String, Object> getPropertyOverrides() {
+    var result = new HashMap<>(super.getPropertyOverrides());
+    // Definition imports can take longer than 30 seconds on
+    // github runners leading to flakey tests.
+    result.put("ccd.tx-timeout.default", "120");
+    return result;
+  }
 
   @Override
   protected Class getApplicationClass() {
