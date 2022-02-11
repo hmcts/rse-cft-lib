@@ -1,0 +1,17 @@
+name: Flakey test finder
+
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  test-iteration-1:
+    uses: ./.github/workflows/gradle.yml
+  test-iteration-2:
+    uses: ./.github/workflows/gradle.yml
+  test-iteration-3:
+    uses: ./.github/workflows/gradle.yml
+  test-iteration-4:
+    uses: ./.github/workflows/gradle.yml
+  test-iteration-5:
+    uses: ./.github/workflows/gradle.yml
