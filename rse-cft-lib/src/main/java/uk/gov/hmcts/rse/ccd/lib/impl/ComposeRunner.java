@@ -126,7 +126,6 @@ public class ComposeRunner {
 
     @SneakyThrows
     private boolean esReady() {
-      Thread.currentThread().setName("****SDFSDFDFDFDF");
       try {
         var c = (HttpURLConnection) new URL("http://localhost:9200/_cat/health")
             .openConnection();

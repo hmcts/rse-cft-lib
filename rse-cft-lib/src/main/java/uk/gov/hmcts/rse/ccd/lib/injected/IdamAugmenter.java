@@ -30,8 +30,4 @@ class IdamAugmenter {
     return (UserInfo) p.proceed();
   }
 
-  @Before("execution(* uk.gov.hmcts.ccd.definition.store.elastic.client.*.*(..))")
-  public void checkES() {
-    ComposeRunner.waitForES();
-  }
 }
