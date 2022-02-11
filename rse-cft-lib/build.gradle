@@ -164,7 +164,9 @@ project.afterEvaluate {
         it.children.findAll({ ResolvedDependency dep -> !isBundled(dep) })
                 .forEach { ResolvedDependency dep ->
                     // Springfox generates json based docs, which we don't need for integration testing.
-                    if (dep.moduleGroup != "io.springfox") {
+                    if (dep.moduleGroup != "io.springfox"
+                            // idam-client became idam-java-client on 2.0 so filter the old to avoid duplicate classes.
+                            && dep.moduleName != 'idam-client') {
                         project.dependencies.add('shadow', [group: dep.moduleGroup, name: dep.moduleName, version: dep.moduleVersion]) {
                             exclude group: 'uk.gov.hmcts.reform', module: 'java-logging-spring'
                         }
