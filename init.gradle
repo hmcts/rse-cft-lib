@@ -15,6 +15,11 @@ allprojects {
 
       // Configure publishing
       if (components.hasProperty('java')) {
+        configure(project) {
+          java {
+            withSourcesJar()
+          }
+        }
         // Disable gradle module metadata resolution and rely on maven pom
         tasks.withType(GenerateModuleMetadata) {
           enabled = false

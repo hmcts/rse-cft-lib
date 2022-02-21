@@ -8,10 +8,8 @@ group = 'uk.gov.hmcts'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
-// Must override the version selected by spring boot dependency management plugin.
-ext['elasticsearch.version'] = '7.16.2'
-
 repositories {
+    mavenLocal()
     mavenCentral()
     maven {
         url 'https://jitpack.io'
@@ -22,22 +20,7 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
 
-    implementation project(path: ':rse-cft-lib', configuration: 'shadow')
-
-    // https://github.com/johnrengelman/shadow/issues/264
-    // Need these dependencies for intellij intellisense to work.
-    if (System.getProperty("idea.sync.active")) {
-        implementation 'uk.gov.hmcts.ccd:ccd-data-store-api'
-        implementation 'uk.gov.hmcts.ccd.definition:application'
-        implementation 'uk.gov.hmcts.ccd.definition:domain'
-        implementation 'uk.gov.hmcts.ccd.definition:elastic-search-support'
-        implementation 'uk.gov.hmcts.ccd.definition:excel-importer'
-        implementation 'uk.gov.hmcts.ccd.definition:repository'
-        implementation 'uk.gov.hmcts.ccd.definition:rest-api'
-        implementation project(path: ':ccd-user-profile-api-relocated', configuration: 'shadow')
-
-        implementation 'uk.gov.hmcts.reform.roleassignment:am-role-assignment-service'
-    }
+    implementation project(':rse-cft-lib')
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
@@ -50,4 +33,36 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+
+def userProfile = project.configurations.detachedConfiguration(
+        project.dependencies.create('uk.gov.hmcts.ccd:user-profile-api-lib:1.2.0-SNAPSHOT'),
+)
+
+def file = layout.buildDirectory.file('manifest')
+
+task writeManifest(dependsOn: gradle.includedBuild('ccd-user-profile-api').task(':publishToMavenLocal')) {
+    outputs.file(file)
+    doLast {
+        def f = file.get().asFile
+        f.delete()
+        f.createNewFile()
+        userProfile.resolvedConfiguration.files.each {
+            f << it.path << '\n'
+        }
+    }
+}
+
+def lib = project.configurations.detachedConfiguration(
+        project.dependencies.create(project(':rse-cft-lib')),
+)
+lib.resolvedConfiguration.files.each {
+    println it
+}
+
+task runUp(type:JavaExec, dependsOn: [writeManifest]) {
+    classpath lib
+    mainClass = 'uk.gov.hmcts.rse.ccd.lib.LibRunner'
+    args file.get().asFile.path
 }
