@@ -1,26 +1,67 @@
 allprojects {
-  afterEvaluate { project ->
-    if (System.env.RSE_LOCAL_BUILD) {
-      // Speed up the build when working locally
-      if (project.hasProperty('dependencyManagement')) {
+  apply plugin: "maven-publish"
+    afterEvaluate { project ->
+      if (System.env.RSE_LOCAL_BUILD) {
+        // Speed up the build when working locally
+        if (project.hasProperty('dependencyManagement')) {
+          configure(project) {
+            dependencyManagement {
+              applyMavenExclusions = false
+            }
+          }
+        }
+      }
+
+
+      // Configure publishing
+      if (components.hasProperty('java')) {
+        // Disable gradle module metadata resolution and rely on maven pom
+        tasks.withType(GenerateModuleMetadata) {
+          enabled = false
+        }
+        publishing {
+          publications {
+            mavenJava(MavenPublication) {
+              artifactId = "${artifactId}-lib"
+                from components.java
+
+                // We need to be able to reproduce the exact runtime classpath of each project.
+                // To do this we replace the pom dependencies with the complete runtime classpath.
+                // ie. making every dependency direct, including transient dependencies.
+                // We can also then disable transient dependencies with an exclusion, since they
+                // will now be direct dependencies.
+                pom.withXml {
+                  asNode().dependencies.replaceNode {}
+                  asNode().dependencyManagement.replaceNode {}
+
+                  def dependenciesNode = asNode().appendNode('dependencies')
+
+                    configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each {
+                      def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.moduleVersion.id.group)
+                        dependencyNode.appendNode('artifactId', it.moduleVersion.id.name)
+                        dependencyNode.appendNode('version', it.moduleVersion.id.version)
+
+                        def exclusion = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                        exclusion.appendNode('groupId', '*')
+                        exclusion.appendNode('artifactId', '*')
+                    }
+                }
+            }
+          }
+        }
+      }
+
+      // We are consuming spring boot projects as libraries.
+      // By default spring boot switches off jar generation
+      // so we need to turn it back on in each cft project.
+      if (project.hasProperty('jar')) {
         configure(project) {
-          dependencyManagement {
-            applyMavenExclusions = false
+          jar {
+            enabled = true
           }
         }
       }
     }
-
-    // We are consuming spring boot projects as libraries.
-    // By default spring boot switches off jar generation
-    // so we need to turn it back on in each cft project.
-    if (project.hasProperty('jar')) {
-      configure(project) {
-        jar {
-          enabled = true
-        }
-      }
-    }
-  }
 }
 
