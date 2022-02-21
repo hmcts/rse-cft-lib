@@ -7,9 +7,17 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 
+import uk.gov.hmcts.rse.ccd.lib.impl.ComposeRunner;
+
 public class LibRunner {
     public static void main(String[] args) throws Exception {
+        launchCompose();
         launchApp(args[0], args);
+        System.exit(0);
+    }
+
+    private static void launchCompose() {
+        new ComposeRunner.RunListener();
     }
 
     private static void launchApp(String classpathFile, String[] args) throws Exception {

@@ -59,12 +59,16 @@ writeManifest.dependsOn(':runtime:assemble')
 def lib = project.configurations.detachedConfiguration(
         project.dependencies.create(project(':rse-cft-lib')),
 )
-lib.resolvedConfiguration.files.each {
-    println it
-}
 
 task runUp(type:JavaExec, dependsOn: [writeManifest]) {
     classpath lib
     mainClass = 'uk.gov.hmcts.rse.ccd.lib.LibRunner'
     args file.get().asFile.path
+    environment('USER_PROFILE_DB_PORT', 6432)
+    environment('USER_PROFILE_DB_USERNAME', 'postgres')
+    environment('USER_PROFILE_DB_PASSWORD', 'postgres')
+    environment('USER_PROFILE_DB_NAME', 'userprofile')
+    environment('APPINSIGHTS_INSTRUMENTATIONKEY', 'key')
 }
+
+tasks.test.dependsOn(runUp)
