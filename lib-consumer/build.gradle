@@ -37,6 +37,7 @@ test {
 
 
 def userProfile = project.configurations.detachedConfiguration(
+        project.dependencies.create(project(':runtime')),
         project.dependencies.create('uk.gov.hmcts.ccd:user-profile-api-lib:1.2.0-SNAPSHOT'),
 )
 
@@ -53,6 +54,7 @@ task writeManifest(dependsOn: gradle.includedBuild('ccd-user-profile-api').task(
         }
     }
 }
+writeManifest.dependsOn(':runtime:assemble')
 
 def lib = project.configurations.detachedConfiguration(
         project.dependencies.create(project(':rse-cft-lib')),

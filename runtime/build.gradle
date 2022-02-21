@@ -18,6 +18,11 @@ java {
 }
 
 dependencies {
+    compileOnly project(':rse-cft-lib')
+    compileOnly 'org.springframework.security:spring-security-config:5.4.7'
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+    compileOnly 'org.aspectj:aspectjweaver:1.9.7'
+
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13.2'
 
@@ -26,13 +31,4 @@ dependencies {
 
     testCompileOnly 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
-}
-
-task zipCompose(type: Zip) {
-    from project.file('compose')
-    archiveFileName = 'cftlib-compose.zip'
-}
-
-processResources {
-    from zipCompose
 }

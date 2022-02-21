@@ -1,77 +1,83 @@
-//package uk.gov.hmcts.rse.ccd.lib.impl;
-//
-//import java.io.File;
-//import java.net.HttpURLConnection;
-//import java.net.URL;
-//import java.nio.file.Files;
-//import java.sql.DriverManager;
-//import java.sql.SQLException;
-//import java.time.Duration;
-//import java.util.List;
-//import java.util.concurrent.CountDownLatch;
-//import java.util.concurrent.TimeUnit;
+package uk.gov.hmcts.rse.ccd.lib.impl;
+
+import java.io.File;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.file.Files;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 //import lombok.SneakyThrows;
-//import lombok.extern.slf4j.Slf4j;
 //import net.lingala.zip4j.ZipFile;
-//import org.apache.commons.io.FileUtils;
 //import org.awaitility.Awaitility;
 //import org.zeroturnaround.exec.ProcessExecutor;
-//import org.zeroturnaround.exec.stream.slf4j.Slf4jStream;
-//
-//@Slf4j
-//public class ComposeRunner {
-//  private static volatile Throwable INIT_EXCEPTION;
-//  private static final CountDownLatch DB_READY = new CountDownLatch(1);
-//  private static final CountDownLatch ES_READY = new CountDownLatch(1);
-//
-//  @SneakyThrows
-//  public static void waitForDB() {
-//    DB_READY.await();
-//    if (INIT_EXCEPTION != null) {
-//      throw INIT_EXCEPTION;
-//    }
-//  }
-//
-//  @SneakyThrows
-//  public static void waitForES() {
-//    ES_READY.await();
-//    if (INIT_EXCEPTION != null) {
-//      throw INIT_EXCEPTION;
-//    }
-//  }
-//
-//  private static volatile boolean booted;
-//  public static class RunListener {
-//    public RunListener() {
-//      // Constructors are synchronized in Java,
-//      // so this is thread-safe.
-//      if (!booted) {
-//        booted = true;
-//        new Thread(this::startBoot).start();
-//      }
-//    }
-//
-//    void startBoot() {
-//      try {
+
+public class ComposeRunner {
+  private static volatile Throwable INIT_EXCEPTION;
+  private static final CountDownLatch DB_READY = new CountDownLatch(1);
+  private static final CountDownLatch ES_READY = new CountDownLatch(1);
+
+  public static void waitForDB() {
+      try {
+          DB_READY.await();
+          if (INIT_EXCEPTION != null) {
+              throw INIT_EXCEPTION;
+          }
+      } catch (Throwable e) {
+          throw new RuntimeException(e);
+      }
+  }
+
+  public static void waitForES() {
+      try {
+          ES_READY.await();
+          if (INIT_EXCEPTION != null) {
+              throw INIT_EXCEPTION;
+          }
+      } catch (Throwable t) {
+          throw new RuntimeException(t);
+      }
+  }
+
+  private static volatile boolean booted;
+  public static class RunListener {
+    public RunListener() {
+      // Constructors are synchronized in Java,
+      // so this is thread-safe.
+      if (!booted) {
+        booted = true;
+        new Thread(this::startBoot).start();
+      }
+    }
+
+    void startBoot() {
+      try {
 //        dockerBoot();
-//      } catch (Exception e) {
-//        INIT_EXCEPTION = e;
-//        DB_READY.countDown();
-//        ES_READY.countDown();
-//      }
-//    }
-//
+      } catch (Exception e) {
+        INIT_EXCEPTION = e;
+        DB_READY.countDown();
+        ES_READY.countDown();
+      }
+    }
+
 //    @SneakyThrows
 //    void dockerBoot() {
 //      var f = File.createTempFile("cftlib", "");
 //      URL u = getClass().getResource("/cftlib-compose.zip");
-//      FileUtils.copyURLToFile(u, f);
+//      try (InputStream i = u.openStream()) {
+//          Files.copy(i, f.toPath());
+//      }
 //      var dir = Files.createTempDirectory("cftlib");
 //      new ZipFile(f).extractAll(dir.toString());
 //
 //      new ProcessExecutor().command("docker-compose", "-p", "cftlib", "up", "--build", "-d")
-//          .redirectOutput(Slf4jStream.of(log).asInfo())
-//          .redirectError(Slf4jStream.of(log).asError())
+//          .redirectOutput(System.out)
+//          .redirectError(System.err)
 //          .directory(dir.toFile())
 //          .exitValueNormal()
 //          .timeout(10, TimeUnit.MINUTES)
@@ -114,7 +120,7 @@
 //          }
 //        }
 //      } catch (SQLException s) {
-//        log.info("DB not yet available...");
+//        System.out.println("DB not yet available...");
 //        throw s;
 //      }
 //      return true;
@@ -129,10 +135,10 @@
 //          return false;
 //        }
 //      } catch (Exception e){
-//        log.info("ES not yet available...");
+//        System.out.println("ES not yet available...");
 //        throw e;
 //      }
 //      return true;
 //    }
-//  }
-//}
+  }
+}
