@@ -44,7 +44,9 @@ def userProfile = project.configurations.detachedConfiguration(
 
 def file = layout.buildDirectory.file('manifest')
 
-task writeManifest(dependsOn: gradle.includedBuild('ccd-user-profile-api').task(':publishToMavenLocal')) {
+task writeManifest(
+        dependsOn: gradle.includedBuild('ccd-user-profile-api').task(':publishToMavenLocal')
+) {
     outputs.file(file)
     doLast {
         def f = file.get().asFile

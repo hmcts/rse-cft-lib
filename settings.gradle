@@ -5,10 +5,10 @@ pluginManagement {
     }
 }
 
-includeBuild 'ccd-definition-store-api'
-includeBuild 'ccd-data-store-api'
-includeBuild 'ccd-user-profile-api'
-includeBuild 'am-role-assignment-service'
+includeBuild 'projects/am-role-assignment-service'
+includeBuild 'projects/ccd-definition-store-api'
+includeBuild 'projects/ccd-data-store-api'
+includeBuild 'projects/ccd-user-profile-api'
 includeBuild 'rse-cft-lib-plugin'
 include 'rse-cft-lib'
 include 'lib-consumer'
