@@ -67,7 +67,7 @@ dependencies {
 
     shadow 'org.zeroturnaround:zt-exec:1.12'
 
-    shadow group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.5'
+    shadow group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.6'
     shadow 'org.springframework.boot:spring-boot-starter-test:2.4.12'
     shadow 'org.springframework.security:spring-security-test:5.5.4'
     shadow 'net.lingala.zip4j:zip4j:2.9.1'
