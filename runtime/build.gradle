@@ -17,6 +17,14 @@ java {
     withSourcesJar()
 }
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
 dependencies {
     compileOnly project(':rse-cft-lib')
     compileOnly 'org.springframework.security:spring-security-config:5.4.7'

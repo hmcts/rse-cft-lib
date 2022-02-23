@@ -29,6 +29,7 @@ def configureImportedProject(p) {
                 publishing {
                     publications {
                         mavenJava(MavenPublication) {
+                            group 'com.github.hmcts'
                             artifactId = "${artifactId}-lib"
                             from components.java
 
@@ -84,6 +85,9 @@ allprojects {
     def name = project.parent?.name ?: project.name
     if (importedProjects.contains(name)) {
         configureImportedProject(project)
+    }
+    afterEvaluate {
+        version = 'DEV-SNAPSHOT'
     }
 }
 

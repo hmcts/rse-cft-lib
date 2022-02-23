@@ -1,2 +1,11 @@
 apply plugin: 'idea'
 
+task publish
+gradle.includedBuilds.each {
+    if (it.name != "rse-cft-lib-plugin") {
+        publish.dependsOn it.task(':publishToMavenLocal')
+    }
+}
+
+publish.dependsOn 'rse-cft-lib:publishToMavenLocal'
+publish.dependsOn 'runtime:publishToMavenLocal'
