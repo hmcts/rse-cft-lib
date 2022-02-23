@@ -24,7 +24,7 @@ public class CftLibPlugin implements Plugin<Project> {
 
     final Map<String, String> projects = Map.of(
 //        "am-role-assignment-service-lib", "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication",
-//        "ccd-data-store-api-lib", "uk.gov.hmcts.ccd.CoreCaseDataApplication"
+        "ccd-data-store-api-lib", "uk.gov.hmcts.ccd.CoreCaseDataApplication",
 //        "case-definition-store-api-lib", "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication"
         "user-profile-api-lib", "uk.gov.hmcts.ccd.UserProfileApplication"
     );
@@ -60,6 +60,23 @@ public class CftLibPlugin implements Plugin<Project> {
       j.environment("USER_PROFILE_DB_NAME", "userprofile");
       j.environment("APPINSIGHTS_INSTRUMENTATIONKEY", "key");
 
+      j.environment("DATA_STORE_DB_PORT", 6432);
+      j.environment("DATA_STORE_DB_USERNAME", "postgres");
+      j.environment("DATA_STORE_DB_PASSWORD", "postgres");
+      j.environment("DATA_STORE_DB_NAME", "datastore");
+
+
+      j.environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
+          "https://idam-web-public.aat.platform.hmcts.net/o");
+
+      {
+          var file = project.getLayout().getBuildDirectory().file("runtime")
+              .get().getAsFile();
+          j.dependsOn(createManifestTask(project, "runtime", "uk.gov.hmcts.rse.ccd.lib.ComposeRunner", file));
+          j.args(file.getAbsolutePath());
+      }
+
+
       for(var e: projects.entrySet()) {
           var file = project.getLayout().getBuildDirectory().file(e.getKey())
                   .get().getAsFile();
@@ -78,6 +95,9 @@ public class CftLibPlugin implements Plugin<Project> {
           Configuration classpath = project.getConfigurations().detachedConfiguration(deps);
           j.classpath(classpath);
       });
+
+      j.jvmArgs("-Xverify:none");
+      j.jvmArgs("-XX:TieredStopAtLevel=1");
   }
 
   private Task createManifestTask(Project project, String depName, String mainClass, File file) {
@@ -91,7 +111,7 @@ public class CftLibPlugin implements Plugin<Project> {
     private void writeManifest(Project project, String name, String mainClass, File file) {
         Configuration classpath = project.getConfigurations().detachedConfiguration(
             project.getDependencies().create("com.github.hmcts:" + name + ":" + getLibVersion(project)),
-            project.getDependencies().create("com.github.hmcts:runtime:" + getLibVersion(project))
+            project.getDependencies().create("com.github.hmcts:injected:" + getLibVersion(project))
         );
 
         var deps = new ArrayList<String>();

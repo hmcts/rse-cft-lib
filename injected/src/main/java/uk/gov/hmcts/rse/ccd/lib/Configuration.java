@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd;
+package uk.gov.hmcts.rse.ccd.lib;
 
 import org.springframework.context.annotation.ComponentScan;
 

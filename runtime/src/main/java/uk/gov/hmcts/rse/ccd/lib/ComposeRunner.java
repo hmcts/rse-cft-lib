@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib.impl;
+package uk.gov.hmcts.rse.ccd.lib;
 
 import java.io.File;
 import java.io.InputStream;
@@ -10,59 +10,26 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import lombok.SneakyThrows;
 import net.lingala.zip4j.ZipFile;
 import org.awaitility.Awaitility;
 import org.zeroturnaround.exec.ProcessExecutor;
+import uk.gov.hmcts.rse.ccd.lib.impl.Project;
 
 public class ComposeRunner {
-  private static volatile Throwable INIT_EXCEPTION;
-  private static final CountDownLatch DB_READY = new CountDownLatch(1);
-  private static final CountDownLatch ES_READY = new CountDownLatch(1);
 
-  public static void waitForDB() {
-      try {
-          DB_READY.await();
-          if (INIT_EXCEPTION != null) {
-              throw INIT_EXCEPTION;
-          }
-      } catch (Throwable e) {
-          throw new RuntimeException(e);
-      }
-  }
-
-  public static void waitForES() {
-      try {
-          ES_READY.await();
-          if (INIT_EXCEPTION != null) {
-              throw INIT_EXCEPTION;
-          }
-      } catch (Throwable t) {
-          throw new RuntimeException(t);
-      }
-  }
-
-  private static volatile boolean booted;
-  public static class RunListener {
-    public RunListener() {
-      // Constructors are synchronized in Java,
-      // so this is thread-safe.
-      if (!booted) {
-        booted = true;
-        new Thread(this::startBoot).start();
-      }
+    public static void main(String[] args) {
+        new ComposeRunner().startBoot();
     }
 
     void startBoot() {
       try {
         dockerBoot();
       } catch (Exception e) {
-        INIT_EXCEPTION = e;
-        DB_READY.countDown();
-        ES_READY.countDown();
+          ControlPlane.setDBError(e);
+          ControlPlane.setESError(e);
       }
     }
 
@@ -92,7 +59,7 @@ public class ComposeRunner {
           .timeout(10, TimeUnit.MINUTES)
           .until(this::dbReady);
 
-      DB_READY.countDown();
+      ControlPlane.setDBReady();
 
       // Wait for elasticsearch
       Awaitility.await()
@@ -103,7 +70,7 @@ public class ComposeRunner {
           .timeout(10, TimeUnit.MINUTES)
           .until(this::esReady);
 
-      ES_READY.countDown();
+      ControlPlane.setESReady();
     }
 
     @SneakyThrows
@@ -141,5 +108,4 @@ public class ComposeRunner {
       }
       return true;
     }
-  }
 }

@@ -9,3 +9,4 @@ gradle.includedBuilds.each {
 
 publish.dependsOn 'rse-cft-lib:publishToMavenLocal'
 publish.dependsOn 'runtime:publishToMavenLocal'
+publish.dependsOn 'injected:publishToMavenLocal'

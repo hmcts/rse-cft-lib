@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-uk.gov.hmcts.rse.ccd.Configuration
+uk.gov.hmcts.rse.ccd.lib.Configuration
