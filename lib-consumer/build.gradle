@@ -38,5 +38,9 @@ test {
     useJUnitPlatform()
 }
 
-writeManifest.dependsOn(rootProject.tasks.publish)
+tasks.each {
+    if (it.name.contains("writeManifest")) {
+        it.dependsOn(rootProject.tasks.publish)
+    }
+}
 tasks.test.dependsOn(bootWithCCD)

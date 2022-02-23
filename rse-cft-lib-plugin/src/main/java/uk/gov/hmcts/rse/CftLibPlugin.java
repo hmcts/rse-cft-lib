@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.Map;
+import java.util.Set;
 
 import lombok.SneakyThrows;
 import org.apache.tools.ant.taskdefs.Java;
@@ -17,6 +19,13 @@ import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSetContainer;
 
 public class CftLibPlugin implements Plugin<Project> {
+
+    final Map<String, String> projects = Map.of(
+//        "am-role-assignment-service-lib", "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication",
+//        "ccd-data-store-api-lib", "uk.gov.hmcts.ccd.CoreCaseDataApplication"
+//        "case-definition-store-api-lib", "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication"
+        "user-profile-api-lib", "uk.gov.hmcts.ccd.UserProfileApplication"
+    );
 
   public void apply(Project project) {
 
@@ -40,14 +49,7 @@ public class CftLibPlugin implements Plugin<Project> {
               .extendsFrom(p.getConfigurations().getByName("runtimeOnly"));
       });
 
-      final var file = project.getLayout().getBuildDirectory().file("manifest").get().getAsFile();
-      var writeManifest = project.task("writeManifest")
-          .doFirst(x -> {
-              writeManifest(project, file);
-          });
-
       JavaExec j = project.getTasks().create("bootWithCCD", JavaExec.class);
-      j.dependsOn(writeManifest);
       j.setMain("uk.gov.hmcts.rse.ccd.lib.LibRunner");
 
       j.environment("USER_PROFILE_DB_PORT", 6432);
@@ -55,9 +57,16 @@ public class CftLibPlugin implements Plugin<Project> {
       j.environment("USER_PROFILE_DB_PASSWORD", "postgres");
       j.environment("USER_PROFILE_DB_NAME", "userprofile");
       j.environment("APPINSIGHTS_INSTRUMENTATIONKEY", "key");
-      j.args(file.getAbsolutePath());
 
-      j.doFirst(x -> {
+      for(var e: projects.entrySet()) {
+          var file = project.getLayout().getBuildDirectory().file(e.getKey())
+                  .get().getAsFile();
+          j.dependsOn(createManifestTask(project, e.getKey(), e.getValue(), file));
+          j.args(file.getAbsolutePath());
+      }
+
+      // This needs to happen after evaluation so the lib version is set in the build.gradle.
+      project.afterEvaluate(x -> {
           // Resolve the configuration as a detached configuration for isolation from
           // the project's build (eg. to prevent interference from spring boot's dependency mgmt plugin)
           var deps = project.getConfigurations().getByName("cftlibImplementation")
@@ -69,16 +78,24 @@ public class CftLibPlugin implements Plugin<Project> {
       });
   }
 
+  private Task createManifestTask(Project project, String depName, String mainClass, File file) {
+      return project.task("writeManifest" + depName)
+          .doFirst(x -> {
+              writeManifest(project, depName, mainClass, file);
+          });
+  }
 
     @SneakyThrows
-    private void writeManifest(Project project, File file) {
+    private void writeManifest(Project project, String name, String mainClass, File file) {
         Configuration classpath = project.getConfigurations().detachedConfiguration(
-            project.getDependencies().create("com.github.hmcts:user-profile-api-lib:" + getLibVersion(project))
+            project.getDependencies().create("com.github.hmcts:" + name + ":" + getLibVersion(project)),
+            project.getDependencies().create("com.github.hmcts:runtime:" + getLibVersion(project))
         );
 
         project.getLayout().getBuildDirectory().getAsFile().get().mkdir();
         file.createNewFile();
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+            writer.println(mainClass);
             for (ResolvedArtifact resolvedArtifact : classpath.getResolvedConfiguration().getResolvedArtifacts()) {
                 writer.println(resolvedArtifact.getFile().getAbsolutePath());
             }

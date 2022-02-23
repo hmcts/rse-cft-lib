@@ -21,11 +21,13 @@ public class LibRunner {
     }
 
     private static void launchApp(String classpathFile, String[] args) throws Exception {
-        var jars = Files.readAllLines(new File(classpathFile).toPath());
+        var lines = Files.readAllLines(new File(classpathFile).toPath());
+        var main = lines.get(0);
+        var jars = lines.subList(1, lines.size());
         var urls = jars.stream().map(LibRunner::toURL).toArray(URL[]::new);
         ClassLoader classLoader = new URLClassLoader(urls);
         Thread.currentThread().setContextClassLoader(classLoader);
-        Class<?> mainClass = classLoader.loadClass("uk.gov.hmcts.ccd.UserProfileApplication");
+        Class<?> mainClass = classLoader.loadClass(main);
         Method mainMethod = mainClass.getMethod("main", String[].class);
         mainMethod.invoke(null, new Object[] {new String[0]});
     }
