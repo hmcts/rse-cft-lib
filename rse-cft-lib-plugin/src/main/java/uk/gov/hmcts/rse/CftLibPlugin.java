@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,7 +68,7 @@ public class CftLibPlugin implements Plugin<Project> {
       }
 
       // This needs to happen after evaluation so the lib version is set in the build.gradle.
-      project.afterEvaluate(x -> {
+      j.doFirst(x -> {
           // Resolve the configuration as a detached configuration for isolation from
           // the project's build (eg. to prevent interference from spring boot's dependency mgmt plugin)
           var deps = project.getConfigurations().getByName("cftlibImplementation")
@@ -92,12 +94,18 @@ public class CftLibPlugin implements Plugin<Project> {
             project.getDependencies().create("com.github.hmcts:runtime:" + getLibVersion(project))
         );
 
+        var deps = new ArrayList<String>();
+        for (ResolvedArtifact resolvedArtifact : classpath.getResolvedConfiguration().getResolvedArtifacts()) {
+            deps.add(resolvedArtifact.getFile().getAbsolutePath());
+        }
+        Collections.sort(deps);
+
         project.getLayout().getBuildDirectory().getAsFile().get().mkdir();
         file.createNewFile();
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
             writer.println(mainClass);
-            for (ResolvedArtifact resolvedArtifact : classpath.getResolvedConfiguration().getResolvedArtifacts()) {
-                writer.println(resolvedArtifact.getFile().getAbsolutePath());
+            for (var path : deps) {
+                writer.println(path);
             }
         }
     }
