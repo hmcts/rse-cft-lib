@@ -21,7 +21,7 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
 
-    implementation project(':rse-cft-lib')
+    implementation project(':lib:rse-cft-lib')
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
