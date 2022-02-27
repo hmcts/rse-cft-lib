@@ -17,4 +17,4 @@ jobs:
         java-version: '11'
         cache: 'gradle'
     - name: Build
-      run: ./gradlew lib-consumer:check -i
+      run: ./gradlew lib:lib-consumer:check -i
