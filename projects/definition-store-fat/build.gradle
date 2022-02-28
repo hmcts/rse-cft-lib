@@ -29,14 +29,6 @@ configurations {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_API))
         }
     }
-
-    bundlerTransitive {
-        extendsFrom bundler
-        transitive = true
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_API))
-        }
-    }
 }
 
 java {
@@ -68,28 +60,26 @@ publishing {
     }
 }
 
-// project.afterEvaluate {
-//     def isBundled = { ResolvedDependency dep ->
-//         def onBundler = configurations.bundler.dependencies.any {
-//             dep.moduleGroup == it.group && dep.moduleName == it.name
-//         }
-//         // Def store bundled transitive
-//         return onBundler || dep.moduleGroup.startsWith("uk.gov.hmcts.ccd.definition")
-//     }
+def b = gradle.includedBuild('ccd-definition-store-api')
+def t = b.task(':generatePomFileForMavenJavaPublication')
 
-//     // Gather the dependencies of the subprojects.
-//     configurations.bundlerTransitive.resolvedConfiguration.firstLevelModuleDependencies.forEach {
-
-//         // Iterate each subproject's dependencies and add to the shadow configuration, where they will be declared in
-//         // the POM manifest but not shaded inside the jar.
-//         it.children.findAll({ ResolvedDependency dep -> !isBundled(dep) })
-//                 .forEach { ResolvedDependency dep ->
-//                     // Springfox generates json based docs, which we don't need for integration testing.
-//                     if (dep.moduleGroup != "io.springfox") {
-//                         project.dependencies.add('shadow', [group: dep.moduleGroup, name: dep.moduleName, version: dep.moduleVersion]) {
-//                             exclude group: 'uk.gov.hmcts.reform', module: 'java-logging-spring'
-//                         }
-//                     }
-//                 }
-//     }
-// }
+// TODO - a cleaner way
+task doPublish(type:Copy, dependsOn: [t, tasks.publishShadowPublicationToMavenLocal] ) {
+    from new File(b.projectDir, "build/publications/mavenJava/pom-default.xml")
+    def dest = new File(repositories.mavenLocal().getUrl().path, "com/github/hmcts/definition-store-fat/${project.version}")
+    into dest
+    rename { f ->
+        "definition-store-fat-${project.version}.pom"
+    }
+    doLast {
+        def xmlFile = new File(dest, "definition-store-fat-${project.version}.pom")
+        def xml = new XmlParser().parse(xmlFile)
+        xml.groupId.replaceNode {
+            groupId('com.github.hmcts')
+        }
+        xml.artifactId.replaceNode {
+            artifactId('definition-store-fat')
+        }
+        new XmlNodePrinter(new PrintWriter(new FileWriter(xmlFile))).print(xml)
+    }
+}

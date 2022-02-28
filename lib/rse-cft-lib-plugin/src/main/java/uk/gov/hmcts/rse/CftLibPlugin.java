@@ -25,7 +25,7 @@ public class CftLibPlugin implements Plugin<Project> {
     final Map<String, String> projects = Map.of(
         "am-role-assignment-service-lib", "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication",
         "ccd-data-store-api-lib", "uk.gov.hmcts.ccd.CoreCaseDataApplication",
-//        "case-definition-store-api-lib", "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication"
+        "definition-store-fat", "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication",
         "user-profile-api-lib", "uk.gov.hmcts.ccd.UserProfileApplication"
     );
 
@@ -64,6 +64,11 @@ public class CftLibPlugin implements Plugin<Project> {
       j.environment("DATA_STORE_DB_USERNAME", "postgres");
       j.environment("DATA_STORE_DB_PASSWORD", "postgres");
       j.environment("DATA_STORE_DB_NAME", "datastore");
+
+      j.environment("DEFINITION_STORE_DB_PORT", 6432);
+      j.environment("DEFINITION_STORE_DB_USERNAME", "postgres");
+      j.environment("DEFINITION_STORE_DB_PASSWORD", "postgres");
+      j.environment("DEFINITION_STORE_DB_NAME", "definitionstore");
 
       j.environment("ROLE_ASSIGNMENT_DB_HOST", "localhost");
       j.environment("ROLE_ASSIGNMENT_DB_PORT", "6432");

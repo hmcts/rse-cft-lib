@@ -1,50 +1,40 @@
 
-def configureImportedProject(p) {
+def configurePublishing(p) {
     p.configure(p, {
-        apply plugin: "maven-publish"
-        afterEvaluate { project ->
-            if (System.env.RSE_LOCAL_BUILD) {
-                // Speed up the build when working locally
-                if (project.hasProperty('dependencyManagement')) {
-                    configure(project) {
-                        dependencyManagement {
-                            applyMavenExclusions = false
-                        }
-                    }
+        apply plugin: 'maven-publish'
+        p.afterEvaluate { project ->
+
+        // Configure publishing
+        if (components.hasProperty('java')) {
+            configure(project) {
+                java {
+                    withSourcesJar()
                 }
             }
+            // Disable gradle module metadata resolution and rely on maven pom
+            tasks.withType(GenerateModuleMetadata) {
+                enabled = false
+            }
+            publishing {
+                publications {
+                    mavenJava(MavenPublication) {
+                        artifactId = "${artifactId}-lib"
+                        from components.java
 
+                        // We need to be able to reproduce the exact runtime classpath of each project.
+                        // To do this we replace the pom dependencies with the complete runtime classpath.
+                        // ie. making every dependency direct, including transient dependencies.
+                        // We can also then disable transient dependencies with an exclusion, since they
+                        // will now be direct dependencies.
+                        pom.withXml {
+                            asNode().dependencies.replaceNode {}
+                            asNode().dependencyManagement.replaceNode {}
 
-            // Configure publishing
-            if (components.hasProperty('java')) {
-                configure(project) {
-                    java {
-                        withSourcesJar()
-                    }
-                }
-                // Disable gradle module metadata resolution and rely on maven pom
-                tasks.withType(GenerateModuleMetadata) {
-                    enabled = false
-                }
-                publishing {
-                    publications {
-                        mavenJava(MavenPublication) {
-                            group 'com.github.hmcts'
-                            artifactId = "${artifactId}-lib"
-                            from components.java
+                            def dependenciesNode = asNode().appendNode('dependencies')
 
-                            // We need to be able to reproduce the exact runtime classpath of each project.
-                            // To do this we replace the pom dependencies with the complete runtime classpath.
-                            // ie. making every dependency direct, including transient dependencies.
-                            // We can also then disable transient dependencies with an exclusion, since they
-                            // will now be direct dependencies.
-                            pom.withXml {
-                                asNode().dependencies.replaceNode {}
-                                asNode().dependencyManagement.replaceNode {}
-
-                                def dependenciesNode = asNode().appendNode('dependencies')
-
-                                configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each {
+                            configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each {
+                                // Project dependencies will be at DEV-SNAPSHOT and should be excluded
+                                if (it.moduleVersion.id.version != 'DEV-SNAPSHOT') {
                                     def dependencyNode = dependenciesNode.appendNode('dependency')
                                     dependencyNode.appendNode('groupId', it.moduleVersion.id.group)
                                     dependencyNode.appendNode('artifactId', it.moduleVersion.id.name)
@@ -59,14 +49,34 @@ def configureImportedProject(p) {
                     }
                 }
             }
+        }
 
-            // We are consuming spring boot projects as libraries.
-            // By default spring boot switches off jar generation
-            // so we need to turn it back on in each cft project.
-            if (project.hasProperty('jar')) {
-                configure(project) {
-                    jar {
-                        enabled = true
+        // We are consuming spring boot projects as libraries.
+        // By default spring boot switches off jar generation
+        // so we need to turn it back on in each cft project.
+        if (project.hasProperty('jar')) {
+            configure(project) {
+                jar {
+                    enabled = true
+                }
+            }
+        }
+    }
+    })
+}
+
+def configureImportedProject(p) {
+    configurePublishing(p)
+    p.configure(p, {
+        afterEvaluate { project ->
+            project.group 'com.github.hmcts'
+            if (System.env.RSE_LOCAL_BUILD) {
+                // Speed up the build when working locally
+                if (project.hasProperty('dependencyManagement')) {
+                    configure(project) {
+                        dependencyManagement {
+                            applyMavenExclusions = false
+                        }
                     }
                 }
             }
@@ -84,6 +94,9 @@ allprojects {
     def name = project.parent?.name ?: project.name
     if (importedProjects.contains(name)) {
         configureImportedProject(project)
+    } else if (name.equals('case-definition-store-api')) {
+        // We currently specialcase definition store, preserving its group for reference in the fatjar project.
+        configurePublishing(project)
     }
     afterEvaluate {
         version = 'DEV-SNAPSHOT'
