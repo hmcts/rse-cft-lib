@@ -23,7 +23,7 @@ import org.gradle.api.tasks.SourceSetContainer;
 public class CftLibPlugin implements Plugin<Project> {
 
     final Map<String, String> projects = Map.of(
-//        "am-role-assignment-service-lib", "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication",
+        "am-role-assignment-service-lib", "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication",
         "ccd-data-store-api-lib", "uk.gov.hmcts.ccd.CoreCaseDataApplication",
 //        "case-definition-store-api-lib", "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication"
         "user-profile-api-lib", "uk.gov.hmcts.ccd.UserProfileApplication"
@@ -65,6 +65,11 @@ public class CftLibPlugin implements Plugin<Project> {
       j.environment("DATA_STORE_DB_PASSWORD", "postgres");
       j.environment("DATA_STORE_DB_NAME", "datastore");
 
+      j.environment("ROLE_ASSIGNMENT_DB_HOST", "localhost");
+      j.environment("ROLE_ASSIGNMENT_DB_PORT", "6432");
+      j.environment("ROLE_ASSIGNMENT_DB_NAME", "am");
+      j.environment("ROLE_ASSIGNMENT_DB_USERNAME", "postgres");
+      j.environment("ROLE_ASSIGNMENT_DB_PASSWORD", "postgres");
 
       j.environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
           "https://idam-web-public.aat.platform.hmcts.net/o");
