@@ -30,26 +30,21 @@ public class CftLibPlugin implements Plugin<Project> {
     );
 
   public void apply(Project project) {
+      project.getPlugins().apply("java");
 
-      // Create the configurations first so they are available to the build script.
-      project.getConfigurations().create("cftlibImplementation");
-      project.getConfigurations().create("cftlibRuntimeOnly");
+      // SourceSetContainer now available.
+      SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
+      s.add(s.create("cftlib", x -> {
+          var main = s.getByName("main").getOutput();
+          x.getCompileClasspath().plus(main);
+          x.getRuntimeClasspath().plus(main);
+      }));
 
-      project.beforeEvaluate(p -> {
-          // SourceSetContainer now available.
-          SourceSetContainer s = p.getExtensions().getByType(SourceSetContainer.class);
-          s.create("cftlib", x -> {
-              var main = s.getByName("main").getOutput();
-              x.getCompileClasspath().plus(main);
-              x.getRuntimeClasspath().plus(main);
-          });
+      project.getConfigurations().getByName("cftlibImplementation")
+          .extendsFrom(project.getConfigurations().getByName("implementation"));
 
-          p.getConfigurations().getByName("cftlibImplementation")
-              .extendsFrom(p.getConfigurations().getByName("implementation"));
-
-          p.getConfigurations().getByName("cftlibRuntimeOnly")
-              .extendsFrom(p.getConfigurations().getByName("runtimeOnly"));
-      });
+      project.getConfigurations().getByName("cftlibRuntimeOnly")
+          .extendsFrom(project.getConfigurations().getByName("runtimeOnly"));
 
       JavaExec j = project.getTasks().create("bootWithCCD", JavaExec.class);
       j.setMain("uk.gov.hmcts.rse.ccd.lib.LibRunner");
