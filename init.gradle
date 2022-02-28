@@ -75,7 +75,6 @@ def configureImportedProject(p) {
 }
 
 def importedProjects = [
-        'case-definition-store-api',
         'ccd-data-store-api',
         'user-profile-api',
         'am-role-assignment-service'
