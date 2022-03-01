@@ -46,4 +46,8 @@ public class ControlPlane {
         INIT_EXCEPTION = t;
         ES_READY.countDown();
     }
+
+    public static void waitForBoot() {
+
+    }
 }

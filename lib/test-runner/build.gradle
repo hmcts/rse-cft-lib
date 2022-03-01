@@ -1,0 +1,44 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://jitpack.io'
+    }
+}
+
+group = 'com.github.hmcts'
+version = '0.101.0'
+
+java {
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+dependencies {
+    compileOnly project(':lib:rse-cft-lib')
+    compileOnly 'org.springframework.security:spring-security-config:5.4.7'
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+    compileOnly 'org.aspectj:aspectjweaver:1.9.7'
+    // Will be put on the runtime classpath by the gradle plugin.
+    compileOnly project(':lib:rse-cft-lib')
+
+    implementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
+
+
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.22'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+}
