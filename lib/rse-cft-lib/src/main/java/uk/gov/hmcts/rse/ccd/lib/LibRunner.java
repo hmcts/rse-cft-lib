@@ -30,7 +30,6 @@ public class LibRunner {
     @SneakyThrows
     private static void launchApp(String classpathFile) {
         var lines = Files.readAllLines(new File(classpathFile).toPath());
-        var main = lines.get(0);
         var jars = lines.subList(1, lines.size());
         var urls = jars.stream().map(LibRunner::toURL).toArray(URL[]::new);
         ClassLoader classLoader = new URLClassLoader(urls);
@@ -38,9 +37,12 @@ public class LibRunner {
 
         fixTomcat(classLoader);
 
+        var cmd = lines.get(0).split("\\s+");
+        var main = cmd[0];
+        var args = Arrays.copyOfRange(cmd, 1, cmd.length);
         Class<?> mainClass = classLoader.loadClass(main);
         Method mainMethod = mainClass.getMethod("main", String[].class);
-        mainMethod.invoke(null, new Object[] {new String[0]});
+        mainMethod.invoke(null, new Object[] {args});
     }
 
     // TomcatURLStreamHandlerFactory registers a handler by calling
@@ -56,11 +58,8 @@ public class LibRunner {
         }
     }
 
+    @SneakyThrows
     private static URL toURL(String s) {
-        try {
-            return new File(s).toURI().toURL();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+        return new File(s).toURI().toURL();
     }
 }

@@ -6,7 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class LibConsumerApplication {
 
-  public static void main(String[] args) {
-      SpringApplication.run(LibConsumerApplication.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(LibConsumerApplication.class, args);
+        System.out.println("Lib consumer test app running!");
+    }
 }

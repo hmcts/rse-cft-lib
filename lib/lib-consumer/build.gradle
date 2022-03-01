@@ -37,7 +37,6 @@ dependencies {
 
     cftlibTestImplementation group: 'org.junit.platform', name: 'junit-platform-console-standalone', version: '1.8.2'
 
-
 }
 
 test {
@@ -56,3 +55,7 @@ tasks.each {
     }
 }
 tasks.test.dependsOn(bootWithCCD)
+tasks.test.dependsOn(cftlibTest)
+
+bootWithCCD.dependsOn(rootProject.tasks.publish)
+cftlibTest.dependsOn(rootProject.tasks.publish)

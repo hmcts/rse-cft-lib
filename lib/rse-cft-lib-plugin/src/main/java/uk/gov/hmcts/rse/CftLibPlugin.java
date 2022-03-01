@@ -4,19 +4,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Joiner;
 import lombok.SneakyThrows;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.artifacts.ResolvedArtifact;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSetContainer;
 
@@ -37,8 +39,8 @@ public class CftLibPlugin implements Plugin<Project> {
         SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
         s.add(s.create("cftlib", x -> {
             var main = s.getByName("main").getOutput();
-            x.getCompileClasspath().plus(main);
-            x.getRuntimeClasspath().plus(main);
+            x.setCompileClasspath(x.getCompileClasspath().plus(main));
+            x.setRuntimeClasspath(x.getRuntimeClasspath().plus(main));
         }));
 
         project.getConfigurations().getByName("cftlibImplementation")
@@ -48,9 +50,14 @@ public class CftLibPlugin implements Plugin<Project> {
             .extendsFrom(project.getConfigurations().getByName("runtimeOnly"));
 
         s.add(s.create("cftlibTest", x -> {
-            var main = s.getByName("cftlib").getOutput();
-            x.getCompileClasspath().plus(main);
-            x.getRuntimeClasspath().plus(main);
+            var cftlib = s.getByName("cftlib").getOutput();
+
+            x.setCompileClasspath(x.getCompileClasspath().plus(cftlib));
+            x.setRuntimeClasspath(x.getRuntimeClasspath().plus(cftlib));
+
+            var main = s.getByName("main").getOutput();
+            x.setCompileClasspath(x.getCompileClasspath().plus(main));
+            x.setRuntimeClasspath(x.getRuntimeClasspath().plus(main));
         }));
 
         project.getConfigurations().getByName("cftlibTestImplementation")
@@ -68,12 +75,31 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
     private void createBootWithCCDTask(Project project) {
-        var exec = createRunTask(project, "bootWithCCD", "cftlibImplementation");
+        SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
+        var lib = s.getByName("cftlib");
+
+        var exec = createRunTask(project, "bootWithCCD");
+        var file = project.getLayout().getBuildDirectory().file("application").get().getAsFile();
+        exec.doFirst(t -> {
+            JavaExec e = (JavaExec) project.getTasks().getByName("bootRun");
+            writeManifest(project, lib.getRuntimeClasspath(), e.getMainClass().get(), file);
+        });
+
+        exec.dependsOn(project.getTasks().getByName("bootRunMainClassName"));
+        exec.args(file);
     }
 
     private void createTestTask(Project project) {
-        var exec = createRunTask(project, "cftlibTest", "cftlibImplementation");
-        exec.setMain("org.junit.platform.console.ConsoleLauncher");
+        SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
+        var lib = s.getByName("cftlibTest");
+
+        var exec = createRunTask(project, "cftlibTest");
+        var file = project.getLayout().getBuildDirectory().file("libTest").get().getAsFile();
+        var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(), "org.junit.platform.console.ConsoleLauncher", file, "--select-package=uk.gov.hmcts.libconsumer");
+        exec.dependsOn(app);
+        exec.dependsOn("cftlibTestClasses");
+        exec.args(file);
+
     }
 
     private void createManifestTasks(Project project) {
@@ -92,7 +118,67 @@ public class CftLibPlugin implements Plugin<Project> {
         }
     }
 
-    private JavaExec createRunTask(Project project, String name, String configurationName) {
+    private Task createCFTManifestTask(Project project, String depName, String mainClass, File file) {
+        return project.task("writeManifest" + depName)
+            .doFirst(x -> {
+                Configuration classpath = cftConfiguration(project, depName);
+                writeManifest(project, classpath, mainClass, file);
+            });
+    }
+
+    private Task createManifestTask(Project project, String name, FileCollection configuration, String mainClass, File file, String... args) {
+        return project.task(name)
+            .doFirst(x -> {
+                writeManifest(project, configuration, mainClass, file, args);
+            });
+    }
+
+    private Configuration cftConfiguration(Project project, String name) {
+        return configuration(project,
+            "com.github.hmcts:" + name + ":" + getLibVersion(project),
+            "com.github.hmcts:injected:" + getLibVersion(project)
+        );
+    }
+
+    private Configuration configuration(Project project, String... dependencies) {
+        var deps = Arrays.stream(dependencies).map(
+            x -> project.getDependencies().create(x)
+        ).toArray(Dependency[]::new);
+
+        return project.getConfigurations().detachedConfiguration(deps);
+    }
+
+    @SneakyThrows
+    private void writeManifest(Project project, FileCollection classpath, String mainClass, File file, String... args) {
+        var deps = new ArrayList<String>();
+        for (File f : classpath) {
+            deps.add(f.getAbsolutePath());
+        }
+        Collections.sort(deps);
+
+        project.getLayout().getBuildDirectory().getAsFile().get().mkdir();
+        file.createNewFile();
+        try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+            writer.println(mainClass + " " + Joiner.on(" ").join(args));
+            for (var path : deps) {
+                writer.println(path);
+            }
+        }
+    }
+
+    private String getLibVersion(Project project) {
+        var dep = project.getConfigurations()
+            .getByName("cftlibImplementation")
+            .getDependencies()
+            .stream().
+            filter(x -> x.getGroup().equals("com.github.hmcts")
+                && x.getName().equals("rse-cft-lib"))
+            .findFirst()
+            .orElseThrow();
+        return dep.getVersion();
+    }
+
+    private JavaExec createRunTask(Project project, String name) {
         JavaExec j = project.getTasks().create(name, JavaExec.class);
         j.setMain("uk.gov.hmcts.rse.ccd.lib.LibRunner");
 
@@ -141,51 +227,6 @@ public class CftLibPlugin implements Plugin<Project> {
         j.args(manifests);
         j.dependsOn(manifestTasks);
         return j;
-    }
-
-    private Task createCFTManifestTask(Project project, String depName, String mainClass, File file) {
-        return project.task("writeManifest" + depName)
-            .doFirst(x -> {
-                Configuration classpath = configurationWithDependency(project, depName);
-                writeManifest(project, classpath, mainClass, file);
-            });
-    }
-
-    private Configuration configurationWithDependency(Project project, String name) {
-        return project.getConfigurations().detachedConfiguration(
-            project.getDependencies().create("com.github.hmcts:" + name + ":" + getLibVersion(project)),
-            project.getDependencies().create("com.github.hmcts:injected:" + getLibVersion(project))
-        );
-    }
-
-    @SneakyThrows
-    private void writeManifest(Project project, Configuration classpath, String mainClass, File file) {
-        var deps = new ArrayList<String>();
-        for (ResolvedArtifact resolvedArtifact : classpath.getResolvedConfiguration().getResolvedArtifacts()) {
-            deps.add(resolvedArtifact.getFile().getAbsolutePath());
-        }
-        Collections.sort(deps);
-
-        project.getLayout().getBuildDirectory().getAsFile().get().mkdir();
-        file.createNewFile();
-        try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
-            writer.println(mainClass);
-            for (var path : deps) {
-                writer.println(path);
-            }
-        }
-    }
-
-    private String getLibVersion(Project project) {
-        var dep = project.getConfigurations()
-            .getByName("cftlibImplementation")
-            .getDependencies()
-            .stream().
-            filter(x -> x.getGroup().equals("com.github.hmcts")
-                && x.getName().equals("rse-cft-lib"))
-            .findFirst()
-            .orElseThrow();
-        return dep.getVersion();
     }
 
 }
