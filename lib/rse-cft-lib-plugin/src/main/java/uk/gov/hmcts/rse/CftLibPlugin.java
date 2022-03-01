@@ -51,13 +51,10 @@ public class CftLibPlugin implements Plugin<Project> {
 
         s.add(s.create("cftlibTest", x -> {
             var cftlib = s.getByName("cftlib").getOutput();
-
-            x.setCompileClasspath(x.getCompileClasspath().plus(cftlib));
-            x.setRuntimeClasspath(x.getRuntimeClasspath().plus(cftlib));
-
             var main = s.getByName("main").getOutput();
-            x.setCompileClasspath(x.getCompileClasspath().plus(main));
-            x.setRuntimeClasspath(x.getRuntimeClasspath().plus(main));
+
+            x.setCompileClasspath(x.getCompileClasspath().plus(cftlib).plus(main));
+            x.setRuntimeClasspath(x.getRuntimeClasspath().plus(cftlib).plus(main));
         }));
 
         project.getConfigurations().getByName("cftlibTestImplementation")
@@ -97,7 +94,7 @@ public class CftLibPlugin implements Plugin<Project> {
         var file = project.getLayout().getBuildDirectory().file("libTest").get().getAsFile();
         var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(), "org.junit.platform.console.ConsoleLauncher", file, "--select-package=uk.gov.hmcts.libconsumer");
         exec.dependsOn(app);
-        exec.dependsOn("cftlibTestClasses");
+        exec.dependsOn("assemble");
         exec.args(file);
 
     }

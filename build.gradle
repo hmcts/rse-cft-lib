@@ -9,7 +9,6 @@ gradle.includedBuilds.each {
 
 publish.dependsOn ':projects:definition-store-fat:doPublish'
 publish.dependsOn ':lib:rse-cft-lib:publishToMavenLocal'
-publish.dependsOn ':lib:rse-cft-lib:publishToMavenLocal'
 publish.dependsOn ':lib:runtime:publishToMavenLocal'
 publish.dependsOn ':lib:injected:publishToMavenLocal'
 publish.dependsOn ':lib:test-runner:publishToMavenLocal'

@@ -55,7 +55,8 @@ tasks.each {
     }
 }
 tasks.test.dependsOn(bootWithCCD)
-tasks.test.dependsOn(cftlibTest)
-
 bootWithCCD.dependsOn(rootProject.tasks.publish)
+
+tasks.test.dependsOn(cftlibTest)
 cftlibTest.dependsOn(rootProject.tasks.publish)
+cftlibTestClasses.dependsOn(rootProject.tasks.publish)
