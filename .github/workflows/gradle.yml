@@ -16,5 +16,7 @@ jobs:
         distribution: 'temurin'
         java-version: '11'
         cache: 'gradle'
+    - name: LocalPublish
+      run: ./gradlew -i publish
     - name: Build
       run: ./gradlew lib:lib-consumer:check -i

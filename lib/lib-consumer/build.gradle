@@ -60,3 +60,4 @@ bootWithCCD.dependsOn(rootProject.tasks.publish)
 tasks.test.dependsOn(cftlibTest)
 cftlibTest.dependsOn(rootProject.tasks.publish)
 cftlibTestClasses.dependsOn(rootProject.tasks.publish)
+
