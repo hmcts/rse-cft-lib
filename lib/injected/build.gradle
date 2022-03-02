@@ -30,6 +30,7 @@ dependencies {
     compileOnly 'org.springframework.security:spring-security-config:5.4.7'
     compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
     compileOnly 'org.aspectj:aspectjweaver:1.9.7'
+    compileOnly 'org.springframework.boot:spring-boot:2.4.12'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13.2'

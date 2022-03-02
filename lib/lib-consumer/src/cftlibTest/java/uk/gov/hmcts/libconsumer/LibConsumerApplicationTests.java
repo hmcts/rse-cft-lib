@@ -1,22 +1,32 @@
 package uk.gov.hmcts.libconsumer;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class LibConsumerApplicationTests {
+class LibConsumerApplicationTests extends CftlibTest {
 
     @Autowired
     MockMvc mockMvc;
 
+    @SneakyThrows
     @Test
     void foo() {
-        System.out.println();
+        mockMvc.perform(get("/index"))
+            .andExpect(status().is2xxSuccessful())
+            .andExpect(content().string(containsString("Hello world!")));
     }
 }

@@ -70,16 +70,6 @@ def configureImportedProject(p) {
     p.configure(p, {
         afterEvaluate { project ->
             project.group 'com.github.hmcts'
-            if (System.env.RSE_LOCAL_BUILD) {
-                // Speed up the build when working locally
-                if (project.hasProperty('dependencyManagement')) {
-                    configure(project) {
-                        dependencyManagement {
-                            applyMavenExclusions = false
-                        }
-                    }
-                }
-            }
         }
     })
 }
@@ -91,6 +81,18 @@ def importedProjects = [
 ]
 
 allprojects {
+
+  if (System.env.RSE_LOCAL_BUILD) {
+    // Speed up the build when working locally
+    if (project.hasProperty('dependencyManagement')) {
+      configure(project) {
+        dependencyManagement {
+          applyMavenExclusions = false
+        }
+      }
+    }
+  }
+
     def name = project.parent?.name ?: project.name
     if (importedProjects.contains(name)) {
         configureImportedProject(project)

@@ -26,7 +26,7 @@ dependencies {
     cftlibTestCompileOnly 'org.projectlombok:lombok:1.18.22'
     cftlibTestAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 
-    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 
     cftlibImplementation 'com.github.hmcts:rse-cft-lib:DEV-SNAPSHOT'
 

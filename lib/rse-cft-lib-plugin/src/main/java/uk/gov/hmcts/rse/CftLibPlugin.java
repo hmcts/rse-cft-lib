@@ -57,18 +57,23 @@ public class CftLibPlugin implements Plugin<Project> {
             x.setRuntimeClasspath(x.getRuntimeClasspath().plus(cftlib).plus(main));
         }));
 
-        project.getConfigurations().getByName("cftlibTestImplementation")
-            .extendsFrom(project.getConfigurations().getByName("cftlibImplementation"));
-
-        project.getConfigurations().getByName("cftlibTestRuntimeOnly")
-            .extendsFrom(project.getConfigurations().getByName("cftlibRuntimeOnly"));
-
-        project.getConfigurations().getByName("cftlibTestImplementation")
-                .getDependencies().add(project.getDependencies().create("org.junit.platform:junit-platform-console-standalone:1.8.2"));
+        createTestSourceSet(project);
 
         createManifestTasks(project);
         createBootWithCCDTask(project);
         createTestTask(project);
+    }
+
+    private void createTestSourceSet(Project project) {
+        var impl = project.getConfigurations().getByName("cftlibTestImplementation");
+        impl.extendsFrom(project.getConfigurations().getByName("cftlibImplementation"));
+
+        project.getConfigurations().getByName("cftlibTestRuntimeOnly")
+            .extendsFrom(project.getConfigurations().getByName("cftlibRuntimeOnly"));
+
+        impl.getDependencies().add(project.getDependencies().create("org.junit.platform:junit-platform-console-standalone:1.8.2"));
+        // Wait until build script evaluation to get lib version.
+        project.afterEvaluate(x -> impl.getDependencies().add(project.getDependencies().create("com.github.hmcts:test-runner:" + getLibVersion(project))));
     }
 
     private void createBootWithCCDTask(Project project) {
@@ -85,6 +90,9 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.dependsOn("cftlibClasses");
         exec.dependsOn(project.getTasks().getByName("bootRunMainClassName"));
         exec.args(file);
+
+        // Wait until build script evaluation to get lib version.
+        project.afterEvaluate(x -> project.getConfigurations().getByName("cftlibImplementation").getDependencies().add(project.getDependencies().create("com.github.hmcts:injected:" + getLibVersion(project))));
     }
 
     private void createTestTask(Project project) {
