@@ -8,6 +8,9 @@ dependencies {
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.3'
     implementation 'org.zeroturnaround:zt-exec:1.12'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+    implementation 'javax.xml.bind:jaxb-api:2.1'
+
 
 
     // Use JUnit test framework

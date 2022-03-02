@@ -46,6 +46,12 @@ public class CftLibPlugin implements Plugin<Project> {
         project.getConfigurations().getByName("cftlibImplementation")
             .extendsFrom(project.getConfigurations().getByName("implementation"));
 
+        project.afterEvaluate(x -> {
+            project.getConfigurations().getByName("cftlibImplementation")
+                .getDependencies().add(
+                    project.getDependencies().create("com.github.hmcts:app-runtime:" + getLibVersion(project)));
+        });
+
         project.getConfigurations().getByName("cftlibRuntimeOnly")
             .extendsFrom(project.getConfigurations().getByName("runtimeOnly"));
 

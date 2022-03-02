@@ -36,9 +36,14 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.TextCodec;
 import lombok.SneakyThrows;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
@@ -64,22 +69,23 @@ public class CFTLibApiImpl implements CFTLib {
 
   @SneakyThrows
   public void createProfile(String id, String jurisdiction, String caseType, String state) {
-      var json = new Gson().toJson(Map.of(
+      var json = new Gson().toJson(List.of(Map.of(
           "id", id,
           "work_basket_default_jurisdiction", jurisdiction,
           "work_basket_default_case_type", caseType,
           "work_basket_default_state", state
-      ));
+      )));
       var request = HttpRequest.newBuilder()
           .uri(URI.create("http://localhost:4453/user-profile/users"))
           .header("content-type", "application/json")
-              .POST(HttpRequest.BodyPublishers.ofString(json))
+          .header("ServiceAuthorization", generateDummyS2SToken("ccd_data"))
+              .PUT(HttpRequest.BodyPublishers.ofString(json))
           .build();
 
       var client = HttpClient.newHttpClient();
       var response = client.send(request, HttpResponse.BodyHandlers.ofString());
       if (!String.valueOf(response.statusCode()).startsWith("2")) {
-          throw new RuntimeException("Failed to create user profile");
+          throw new RuntimeException("Failed to create user profile: HTTP " + response.statusCode());
       }
 //    var p = new UserProfile();
 //    p.setId(id);
@@ -101,6 +107,16 @@ public class CFTLibApiImpl implements CFTLib {
 //        .postForEntity("http://localhost:4451/import", requestEntity, String.class);
 //
   }
+
+    public static String generateDummyS2SToken(String serviceName) {
+        return Jwts.builder()
+            .setSubject(serviceName)
+            .setIssuedAt(new Date())
+            .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.encode("AA"))
+            .compact();
+
+  }
+
 //
 //  public void createRoles(String... roles) {
 //    for (String role : roles) {
