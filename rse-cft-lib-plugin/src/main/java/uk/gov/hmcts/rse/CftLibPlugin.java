@@ -219,12 +219,7 @@ public class CftLibPlugin implements Plugin<Project> {
         j.doFirst(x -> {
             // Resolve the configuration as a detached configuration for isolation from
             // the project's build (eg. to prevent interference from spring boot's dependency mgmt plugin)
-            // Copy only the direct dependencies, ie. the lib control plane.
-            var deps = project.getConfigurations().getByName("cftlibImplementation")
-                .getDependencies()
-                .toArray(Dependency[]::new);
-
-            Configuration classpath = project.getConfigurations().detachedConfiguration(deps);
+            Configuration classpath = configuration(project, "com.github.hmcts:rse-cft-lib:" + getLibVersion(project));
             j.classpath(classpath);
         });
 
