@@ -27,15 +27,14 @@ publishing {
 
 dependencies {
     compileOnly project(':lib:rse-cft-lib')
-    compileOnly 'org.springframework.security:spring-security-config:5.4.7'
-    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
-    compileOnly 'org.aspectj:aspectjweaver:1.9.7'
 
     implementation group: 'org.awaitility', name: 'awaitility', version: '4.1.1'
     implementation group: 'net.lingala.zip4j', name: 'zip4j', version: '2.9.1'
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.3'
     implementation 'org.zeroturnaround:zt-exec:1.12'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13.2'

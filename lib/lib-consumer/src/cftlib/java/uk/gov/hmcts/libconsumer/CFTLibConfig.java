@@ -8,7 +8,7 @@ import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 public class CFTLibConfig implements CFTLibConfigurer {
   @Override
   public void configure(CFTLib lib) {
-//    lib.createProfile("a@b.com","DIVORCE", "NO_FAULT_DIVORCE", "Submitted");
+    lib.createProfile("a@b.com","DIVORCE", "NO_FAULT_DIVORCE", "Submitted");
 //    lib.createRoles(
 //        "caseworker-divorce-courtadmin_beta",
 //        "caseworker-divorce-superuser",

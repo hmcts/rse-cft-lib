@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib.api;
+package uk.gov.hmcts.rse.ccd.lib;
 
 //import com.auth0.jwt.JWT;
 //import com.auth0.jwt.algorithms.Algorithm;
@@ -32,9 +32,74 @@ package uk.gov.hmcts.rse.ccd.lib.api;
 //import uk.gov.hmcts.ccd.userprofile.domain.model.UserProfile;
 //import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Map;
+
+import com.google.gson.Gson;
+import lombok.SneakyThrows;
+import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
+
 //@Component
-public interface CFTLib {
-  void createProfile(String id, String jurisdiction, String caseType, String state);
+public class CFTLibApi implements CFTLib {
+//
+//  UserRoleController roleController;
+//  UserProfileEndpoint userProfile;
+//
+//  @Autowired
+//  CFTLibConfigurer configurer;
+//
+//  private DataSource amDB;
+//
+//  @SneakyThrows
+//  public void init(UserRoleController role, UserProfileEndpoint profile, DataSource amDB) {
+//    this.roleController = role;
+//    this.userProfile = profile;
+//    this.amDB = amDB;
+//    configurer.configure(this);
+//  }
+//
+  @SneakyThrows
+  public void createProfile(String id, String jurisdiction, String caseType, String state) {
+      var json = new Gson().toJson(Map.of(
+          "id", id,
+          "work_basket_default_jurisdiction", jurisdiction,
+          "work_basket_default_case_type", caseType,
+          "work_basket_default_state", state
+      ));
+      var request = HttpRequest.newBuilder()
+          .uri(URI.create("http://localhost:4453/user-profile/users"))
+          .header("content-type", "application/json")
+              .POST(HttpRequest.BodyPublishers.ofString(json))
+          .build();
+
+      var client = HttpClient.newHttpClient();
+      var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+      if (!String.valueOf(response.statusCode()).startsWith("2")) {
+          throw new RuntimeException("Failed to create user profile");
+      }
+//    var p = new UserProfile();
+//    p.setId(id);
+//    p.setId(id);
+//    p.setWorkBasketDefaultJurisdiction(jurisdiction);
+//    p.setWorkBasketDefaultCaseType(caseType);
+//    p.setWorkBasketDefaultState(state);
+//    userProfile.populateUserProfiles(List.of(p), "banderous");
+//
+//          HttpHeaders headers = new HttpHeaders();
+//    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+//    headers.setBearerAuth(buildJwt());
+//
+//    HttpEntity<MultiValueMap<String, Object>> requestEntity
+//        = new HttpEntity<>(body, headers);
+//
+//    RestTemplate restTemplate = new RestTemplate();
+//    ResponseEntity<String> response = restTemplate
+//        .postForEntity("http://localhost:4451/import", requestEntity, String.class);
+//
+  }
 //
 //  public void createRoles(String... roles) {
 //    for (String role : roles) {
