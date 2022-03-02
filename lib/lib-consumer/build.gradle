@@ -34,19 +34,10 @@ dependencies {
     cftlibTestImplementation 'org.springframework.security:spring-security-test'
 
     cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.4'
-
-    cftlibTestImplementation group: 'org.junit.platform', name: 'junit-platform-console-standalone', version: '1.8.2'
-
 }
 
 test {
     useJUnitPlatform()
-}
-
-task fooTest(type: JavaExec) {
-    classpath tasks.test.classpath
-    main = 'org.junit.platform.console.ConsoleLauncher'
-    args '--scan-classpath'
 }
 
 tasks.each {

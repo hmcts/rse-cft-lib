@@ -24,7 +24,7 @@ class LibConsumerApplicationTests extends CftlibTest {
 
     @SneakyThrows
     @Test
-    void foo() {
+    void testController() {
         mockMvc.perform(get("/index"))
             .andExpect(status().is2xxSuccessful())
             .andExpect(content().string(containsString("Hello world!")));
