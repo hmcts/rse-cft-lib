@@ -217,6 +217,7 @@ public class CftLibPlugin implements Plugin<Project> {
         j.environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
             "https://idam-web-public.aat.platform.hmcts.net/o");
 
+//        j.environment("LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY", "DEBUG");
 
         j.jvmArgs("-Xverify:none");
         j.jvmArgs("-XX:TieredStopAtLevel=1");

@@ -36,10 +36,14 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.google.gson.Gson;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -117,15 +121,33 @@ public class CFTLibApiImpl implements CFTLib {
 
   }
 
-//
-//  public void createRoles(String... roles) {
-//    for (String role : roles) {
-//      UserRole r = new UserRole();
-//      r.setRole(role);
-//      r.setSecurityClassification(SecurityClassification.PUBLIC);
-//      roleController.userRolePut(r);
-//    }
-//  }
+
+  @SneakyThrows
+  public void createRoles(String... roles) {
+    for (String role : roles) {
+        var json = new Gson().toJson(Map.of(
+            "role", role,
+            "security_classification", "PUBLIC"
+        ));
+
+        var request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:4451/api/user-role"))
+            .header("content-type", "application/json")
+            .header("Authorization", "Bearer " + buildJwt())
+            .header("ServiceAuthorization", generateDummyS2SToken("ccd_data"))
+            .PUT(HttpRequest.BodyPublishers.ofString(json))
+            .build();
+
+        var client = HttpClient.newHttpClient();
+        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (!String.valueOf(response.statusCode()).startsWith("2")) {
+            throw new RuntimeException("Failed to create role: HTTP " + response.statusCode());
+        }
+    }
+
+
+
+  }
 //
 //  @SneakyThrows
 //  public void configureRoleAssignments(String json){
@@ -165,15 +187,15 @@ public class CFTLibApiImpl implements CFTLib {
 //        .postForEntity("http://localhost:4451/import", requestEntity, String.class);
 //  }
 //
-//  public static String buildJwt() {
-//    return JWT.create()
-//        .withSubject("banderous")
-//        .withNotBefore(new Date())
-//        .withIssuedAt(new Date())
-//        .withClaim("tokenName", "access_token")
-//        .withExpiresAt(Date.from(LocalDateTime.now().plusDays(100).toInstant(ZoneOffset.UTC)))
-//        .sign(Algorithm.HMAC256("a secret"));
-//  }
+  public static String buildJwt() {
+    return JWT.create()
+        .withSubject("banderous")
+        .withNotBefore(new Date())
+        .withIssuedAt(new Date())
+        .withClaim("tokenName", "access_token")
+        .withExpiresAt(Date.from(LocalDateTime.now().plusDays(100).toInstant(ZoneOffset.UTC)))
+        .sign(Algorithm.HMAC256("a secret"));
+  }
 //
 //  public static String generateDummyS2SToken(String serviceName) {
 //    return Jwts.builder()

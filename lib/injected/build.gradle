@@ -8,6 +8,9 @@ dependencies {
     compileOnly 'org.aspectj:aspectjweaver:1.9.7'
     compileOnly 'org.springframework.boot:spring-boot:2.4.12'
     compileOnly 'org.springframework.boot:spring-boot-autoconfigure:2.4.12'
+    compileOnly 'com.github.hmcts:service-auth-provider-java-client:4.0.2'
+    compileOnly 'org.springframework.security:spring-security-oauth2-jose:5.4.9'
+
 
     compileOnly ('com.github.hmcts:idam-java-client:2.0.1') {
         transitive = false

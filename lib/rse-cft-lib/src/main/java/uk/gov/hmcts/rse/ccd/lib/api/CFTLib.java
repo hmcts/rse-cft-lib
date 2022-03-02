@@ -32,18 +32,9 @@ package uk.gov.hmcts.rse.ccd.lib.api;
 //import uk.gov.hmcts.ccd.userprofile.domain.model.UserProfile;
 //import uk.gov.hmcts.ccd.userprofile.endpoint.userprofile.UserProfileEndpoint;
 
-//@Component
 public interface CFTLib {
   void createProfile(String id, String jurisdiction, String caseType, String state);
-//
-//  public void createRoles(String... roles) {
-//    for (String role : roles) {
-//      UserRole r = new UserRole();
-//      r.setRole(role);
-//      r.setSecurityClassification(SecurityClassification.PUBLIC);
-//      roleController.userRolePut(r);
-//    }
-//  }
+  void createRoles(String... roles);
 //
 //  @SneakyThrows
 //  public void configureRoleAssignments(String json){
