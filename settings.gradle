@@ -9,7 +9,7 @@ includeBuild 'projects/am-role-assignment-service'
 includeBuild 'projects/ccd-definition-store-api'
 includeBuild 'projects/ccd-data-store-api'
 includeBuild 'projects/ccd-user-profile-api'
-includeBuild 'lib/rse-cft-lib-plugin'
+includeBuild 'rse-cft-lib-plugin'
 include 'projects:definition-store-fat'
 
 new File(rootDir, "lib").listFiles().each {
