@@ -11,8 +11,9 @@ includeBuild 'projects/ccd-data-store-api'
 includeBuild 'projects/ccd-user-profile-api'
 includeBuild 'lib/rse-cft-lib-plugin'
 include 'projects:definition-store-fat'
-include 'lib:rse-cft-lib'
-include 'lib:lib-consumer'
-include 'lib:runtime'
-include 'lib:injected'
-include 'lib:test-runner'
+
+new File(rootDir, "lib").listFiles().each {
+  if (it.isDirectory()) {
+    include ":lib:${it.name}"
+  }
+}
