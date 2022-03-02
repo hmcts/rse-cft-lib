@@ -26,7 +26,7 @@ public class ComposeRunner {
 
     void startBoot() {
       try {
-        ControlPlane.setApi(new CFTLibApi());
+        ControlPlane.setApi(new CFTLibApiImpl());
         dockerBoot();
       } catch (Exception e) {
           ControlPlane.setDBError(e);

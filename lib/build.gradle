@@ -33,4 +33,6 @@ subprojects {
         testCompileOnly 'org.projectlombok:lombok:1.18.22'
         testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
     }
+
+    rootProject.tasks.publish.dependsOn(project.tasks.publishToMavenLocal)
 }

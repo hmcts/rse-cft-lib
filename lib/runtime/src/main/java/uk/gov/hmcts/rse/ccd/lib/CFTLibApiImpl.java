@@ -41,9 +41,9 @@ import java.util.Map;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
+import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 
-//@Component
-public class CFTLibApi implements CFTLib {
+public class CFTLibApiImpl implements CFTLib {
 //
 //  UserRoleController roleController;
 //  UserProfileEndpoint userProfile;
@@ -61,6 +61,7 @@ public class CFTLibApi implements CFTLib {
 //    configurer.configure(this);
 //  }
 //
+
   @SneakyThrows
   public void createProfile(String id, String jurisdiction, String caseType, String state) {
       var json = new Gson().toJson(Map.of(

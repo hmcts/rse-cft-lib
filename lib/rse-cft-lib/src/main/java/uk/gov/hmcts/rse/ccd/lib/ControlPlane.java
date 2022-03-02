@@ -68,7 +68,8 @@ public class ControlPlane {
     }
 
     @SneakyThrows
-    private static CFTLib getApi() {
+    public static CFTLib getApi() {
+        waitForBoot();
         API_READY.await();
         return api;
     }

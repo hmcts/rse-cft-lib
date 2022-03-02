@@ -11,6 +11,7 @@ includeBuild 'projects/ccd-data-store-api'
 includeBuild 'projects/ccd-user-profile-api'
 includeBuild 'rse-cft-lib-plugin'
 include 'projects:definition-store-fat'
+include 'lib-consumer'
 
 new File(rootDir, "lib").listFiles().each {
   if (it.isDirectory()) {
