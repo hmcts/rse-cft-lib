@@ -14,14 +14,12 @@ public class LibAgent {
   @Before("execution(* javax.sql.DataSource.*(..))")
   public void waitForDB() {
     ControlPlane.waitForDB();
-      throw new RuntimeException();
   }
 
   // Block any use of ElasticSearch until ready for use.
   @Before("execution(* uk.gov.hmcts.ccd.definition.store.elastic.client.*.*(..))")
   public void waitForES() {
     ControlPlane.waitForES();
-    throw new RuntimeException();
   }
 
   @EventListener(ApplicationReadyEvent.class)

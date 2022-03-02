@@ -9,8 +9,8 @@ public class ControlPlane {
     private static volatile Throwable INIT_EXCEPTION;
     private static final CountDownLatch DB_READY = new CountDownLatch(1);
     private static final CountDownLatch ES_READY = new CountDownLatch(1);
-    // We wait for all services to be ready.
-    private static final CountDownLatch APPS_READY = new CountDownLatch(Project.values().length);
+    // We wait for all services to be ready, except app under test which is coordinated by spring test.
+    private static final CountDownLatch APPS_READY = new CountDownLatch(Project.values().length - 1);
 
     @SneakyThrows
     public static void waitForDB() {

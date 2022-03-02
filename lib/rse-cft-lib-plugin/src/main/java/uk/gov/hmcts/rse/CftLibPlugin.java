@@ -90,9 +90,6 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.dependsOn("cftlibClasses");
         exec.dependsOn(project.getTasks().getByName("bootRunMainClassName"));
         exec.args(file);
-
-        // Wait until build script evaluation to get lib version.
-        project.afterEvaluate(x -> project.getConfigurations().getByName("cftlibImplementation").getDependencies().add(project.getDependencies().create("com.github.hmcts:injected:" + getLibVersion(project))));
     }
 
     private void createTestTask(Project project) {
