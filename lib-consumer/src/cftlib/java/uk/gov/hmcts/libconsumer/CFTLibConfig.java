@@ -1,11 +1,16 @@
 package uk.gov.hmcts.libconsumer;
 
+import java.nio.charset.StandardCharsets;
+
+import com.google.common.io.Resources;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 
 @Component
 public class CFTLibConfig implements CFTLibConfigurer {
+  @SneakyThrows
   @Override
   public void configure(CFTLib lib) {
     lib.createProfile("a@b.com","DIVORCE", "NO_FAULT_DIVORCE", "Submitted");
@@ -21,9 +26,8 @@ public class CFTLibConfig implements CFTLibConfigurer {
         "caseworker-caa",
         "citizen"
     );
-//    ResourceLoader resourceLoader = new DefaultResourceLoader();
-//    var json = IOUtils.toString(resourceLoader.getResource("classpath:cftlib-am-role-assignments.json").getInputStream(), Charset.defaultCharset());
-//    lib.configureRoleAssignments(json);
+    var json = Resources.toString(Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8);
+    lib.configureRoleAssignments(json);
 //
 //    var def = getClass().getClassLoader().getResourceAsStream("NFD-dev.xlsx").readAllBytes();
 //    lib.importDefinition(def);

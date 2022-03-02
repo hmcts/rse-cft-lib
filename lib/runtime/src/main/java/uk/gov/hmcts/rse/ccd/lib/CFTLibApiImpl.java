@@ -36,6 +36,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -44,6 +48,7 @@ import java.util.Map;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -51,6 +56,7 @@ import io.jsonwebtoken.impl.TextCodec;
 import lombok.SneakyThrows;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
+import uk.gov.hmcts.rse.ccd.lib.impl.Project;
 
 public class CFTLibApiImpl implements CFTLib {
 //
@@ -148,23 +154,25 @@ public class CFTLibApiImpl implements CFTLib {
 
 
   }
-//
-//  @SneakyThrows
-//  public void configureRoleAssignments(String json){
-//    try (Connection c = amDB.getConnection()) {
-//      // To use the uuid generation function.
-//      c.createStatement().execute(
-//          "create extension if not exists pgcrypto"
-//      );
-//
-//      ResourceLoader resourceLoader = new DefaultResourceLoader();
-//      var sql = IOUtils.toString(resourceLoader.getResource("classpath:rse/cftlib-populate-am.sql").getInputStream(), Charset.defaultCharset());
-//      var p = c.prepareStatement(sql);
-//      p.setString(1, json);
-//      p.executeQuery();
-//    }
-//  }
-//
+
+  @SneakyThrows
+  public void configureRoleAssignments(String json){
+      try (var c = DriverManager.getConnection(
+          "jdbc:postgresql://localhost:6432/am",
+          "postgres", "postgres")) {
+          // To use the uuid generation function.
+          c.createStatement().execute(
+              "create extension if not exists pgcrypto"
+          );
+
+          var url = CFTLibApiImpl.class.getClassLoader().getResource("cftlib-populate-am.sql");
+          var sql = Resources.toString(url, StandardCharsets.UTF_8);
+          var p = c.prepareStatement(sql);
+          p.setString(1, json);
+          p.executeQuery();
+      }
+  }
+
 //  public void importDefinition(byte[] def) {
 //    MultiValueMap<String, Object> body
 //        = new LinkedMultiValueMap<>();

@@ -35,23 +35,8 @@ package uk.gov.hmcts.rse.ccd.lib.api;
 public interface CFTLib {
   void createProfile(String id, String jurisdiction, String caseType, String state);
   void createRoles(String... roles);
-//
-//  @SneakyThrows
-//  public void configureRoleAssignments(String json){
-//    try (Connection c = amDB.getConnection()) {
-//      // To use the uuid generation function.
-//      c.createStatement().execute(
-//          "create extension if not exists pgcrypto"
-//      );
-//
-//      ResourceLoader resourceLoader = new DefaultResourceLoader();
-//      var sql = IOUtils.toString(resourceLoader.getResource("classpath:rse/cftlib-populate-am.sql").getInputStream(), Charset.defaultCharset());
-//      var p = c.prepareStatement(sql);
-//      p.setString(1, json);
-//      p.executeQuery();
-//    }
-//  }
-//
+  void configureRoleAssignments(String json);
+
 //  public void importDefinition(byte[] def) {
 //    MultiValueMap<String, Object> body
 //        = new LinkedMultiValueMap<>();

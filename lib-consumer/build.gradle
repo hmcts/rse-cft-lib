@@ -23,10 +23,14 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
+    cftlibCompileOnly 'org.projectlombok:lombok:1.18.22'
+    cftlibAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+
     cftlibTestCompileOnly 'org.projectlombok:lombok:1.18.22'
     cftlibTestAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
 
     cftlibImplementation 'com.github.hmcts:rse-cft-lib:DEV-SNAPSHOT'
 
