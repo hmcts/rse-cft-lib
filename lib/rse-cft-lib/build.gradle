@@ -1,42 +1,9 @@
-plugins {
-    id 'java-library'
-    id 'maven-publish'
-}
-
-repositories {
-    mavenCentral()
-    maven {
-        url 'https://jitpack.io'
-    }
-}
-
-group = 'com.github.hmcts'
-version = '0.1.0'
-
-java {
-    withSourcesJar()
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-}
-
 dependencies {
 
     // Dependency free to avoid polluting the system classloader.
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13.2'
-
-    compileOnly 'org.projectlombok:lombok:1.18.22'
-    annotationProcessor 'org.projectlombok:lombok:1.18.22'
-
-    testCompileOnly 'org.projectlombok:lombok:1.18.22'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 }
 
 task zipCompose(type: Zip) {
