@@ -16,7 +16,6 @@ import lombok.SneakyThrows;
 import net.lingala.zip4j.ZipFile;
 import org.awaitility.Awaitility;
 import org.zeroturnaround.exec.ProcessExecutor;
-import uk.gov.hmcts.rse.ccd.lib.impl.Project;
 
 public class ComposeRunner {
 

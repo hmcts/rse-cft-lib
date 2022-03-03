@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib.impl;
+package uk.gov.hmcts.rse.ccd.lib;
 
 public enum Project {
   Datastore,

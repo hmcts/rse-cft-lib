@@ -4,7 +4,6 @@ import java.util.concurrent.CountDownLatch;
 
 import lombok.SneakyThrows;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
-import uk.gov.hmcts.rse.ccd.lib.impl.Project;
 
 public class ControlPlane {
     private static volatile Throwable INIT_EXCEPTION;
