@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -26,6 +27,7 @@ import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,13 +51,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     @SneakyThrows
     @Test
     void listJurisdictions() {
-        var request = new HttpGet("http://localhost:4452/aggregated/caseworkers/banderous/jurisdictions?access=read");
-        request.addHeader("Accept", "application/json");
-        request.addHeader("Content-Type", "application/json");
-        request.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
-        request.addHeader("Authorization", "Bearer " + buildJwt());
-
-
+        var request = buildGet("http://localhost:4452/aggregated/caseworkers/banderous/jurisdictions?access=read");
         var response = HttpClientBuilder.create().build().execute(request);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
 
@@ -63,6 +59,30 @@ class LibConsumerApplicationTests extends CftlibTest {
         var list = new Gson().fromJson(entity, List.class);
 
         assertThat(list.size(), equalTo(1));
+    }
+
+    @SneakyThrows
+    @Test
+    void getWorkbasketInputs() {
+        var request = buildGet("http://localhost:4452/data/internal/case-types/NFD/work-basket-inputs");
+        request.addHeader("experimental", "true");
+
+        var response = HttpClientBuilder.create().build().execute(request);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+
+        var entity = EntityUtils.toString(response.getEntity());
+        var m = new Gson().fromJson(entity, Map.class);
+        List l = (List) m.get("workbasketInputs");
+
+        assertThat(l.size(), greaterThan(0));
+    }
+
+    HttpGet buildGet(String url) {
+        var request = new HttpGet(url);
+        request.addHeader("Content-Type", "application/json");
+        request.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
+        request.addHeader("Authorization", "Bearer " + buildJwt());
+        return request;
     }
 
     public static String generateDummyS2SToken(String serviceName) {
