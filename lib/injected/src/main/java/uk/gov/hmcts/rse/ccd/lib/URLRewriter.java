@@ -67,7 +67,7 @@ public class URLRewriter extends OncePerRequestFilter {
 
         private String substituteUserId(String url) {
             var req = (HttpServletRequest) getRequest();
-            var auth = req.getHeader("Authorization").replace("Bearer ", "");
+            var auth = req.getHeader("Authorization");
             var info = idam.retrieveUserInfo(auth);
             return url.replace(":uid", info.getUid());
         }
