@@ -219,6 +219,9 @@ public class CftLibPlugin implements Plugin<Project> {
         j.environment("ELASTICSEARCH_ENABLED", "true");
         j.environment("ELASTICSEARCH_FAILIMPORTIFERROR", "true");
 
+        // Allow more time for definitions to import to reduce test flakeyness
+        j.environment("CCD_TX-TIMEOUT_DEFAULT", "120");
+
 
         j.environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
             "https://idam-web-public.aat.platform.hmcts.net/o");
