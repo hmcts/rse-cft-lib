@@ -65,6 +65,10 @@ class LibConsumerApplicationTests extends CftlibTest {
     @Test
     void listJurisdictions() {
         var request = buildGet("http://localhost:4452/aggregated/caseworkers/banderous/jurisdictions?access=read");
+        // Test xui talking direct to ccd without the gateway.
+        // The s2s subject should be rewritten to ccd_gw by the lib.
+        request.removeHeaders("ServiceAuthorization");
+        request.addHeader("ServiceAuthorization", generateDummyS2SToken("xui_webapp"));
         var response = HttpClientBuilder.create().build().execute(request);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
 
