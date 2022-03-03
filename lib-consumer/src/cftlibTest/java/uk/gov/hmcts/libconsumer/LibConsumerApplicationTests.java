@@ -28,6 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,6 +47,18 @@ class LibConsumerApplicationTests extends CftlibTest {
         mockMvc.perform(get("/index"))
             .andExpect(status().is2xxSuccessful())
             .andExpect(content().string(containsString("Hello world!")));
+    }
+
+    @SneakyThrows
+    @Test
+    void addressLookup() {
+        var request = buildGet("http://localhost:4452/addresses");
+        var response = HttpClientBuilder.create().build().execute(request);
+
+        var entity = EntityUtils.toString(response.getEntity());
+        var m = new Gson().fromJson(entity, Map.class);
+
+        assertThat(m.containsKey("header"), is(true));
     }
 
     @SneakyThrows

@@ -23,8 +23,6 @@ public class LibRunner {
         for (Thread thread : threads) {
             thread.join();
         }
-
-        System.exit(0);
     }
 
     @SneakyThrows
