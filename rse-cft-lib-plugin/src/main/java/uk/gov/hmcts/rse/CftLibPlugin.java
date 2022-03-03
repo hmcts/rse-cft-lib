@@ -214,6 +214,12 @@ public class CftLibPlugin implements Plugin<Project> {
         j.environment("ROLE_ASSIGNMENT_DB_USERNAME", "postgres");
         j.environment("ROLE_ASSIGNMENT_DB_PASSWORD", "postgres");
 
+        j.environment("SEARCH_ELASTIC_HOSTS", "http://localhost:9200");
+        j.environment("SEARCH_ELASTIC_DATA_HOSTS", "http://localhost:9200");
+        j.environment("ELASTICSEARCH_ENABLED", "true");
+        j.environment("ELASTICSEARCH_FAILIMPORTIFERROR", "true");
+
+
         j.environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
             "https://idam-web-public.aat.platform.hmcts.net/o");
 
