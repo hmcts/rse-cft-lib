@@ -28,8 +28,8 @@ public class CFTLibConfig implements CFTLibConfigurer {
     );
     var json = Resources.toString(Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8);
     lib.configureRoleAssignments(json);
-//
-//    var def = getClass().getClassLoader().getResourceAsStream("NFD-dev.xlsx").readAllBytes();
-//    lib.importDefinition(def);
+
+    var def = getClass().getClassLoader().getResourceAsStream("NFD-dev.xlsx").readAllBytes();
+    lib.importDefinition(def);
   }
 }

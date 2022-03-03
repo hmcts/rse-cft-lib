@@ -98,7 +98,9 @@ allprojects {
         configureImportedProject(project)
     } else if (name.equals('case-definition-store-api')) {
         // We currently specialcase definition store, preserving its group for reference in the fatjar project.
-        configurePublishing(project)
+        if (project.name.equals('application')) {
+            configurePublishing(project)
+        }
     }
     afterEvaluate {
         version = 'DEV-SNAPSHOT'
