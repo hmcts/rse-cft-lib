@@ -6,17 +6,32 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+
+import com.auth0.jwt.JWT;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import uk.gov.hmcts.reform.idam.client.IdamApi;
 
 /**
  * Implements URL remappings handled by the CCD API Gateway.
  */
 @Order(value= Ordered.HIGHEST_PRECEDENCE)
+@ConditionalOnClass(IdamApi.class)
 @Component
 public class URLRewriter extends OncePerRequestFilter {
+
+    @Autowired
+    private final IdamApi idam;
+
+    @Autowired
+    public URLRewriter(IdamApi idam) {
+        this.idam = idam;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
@@ -39,10 +54,22 @@ public class URLRewriter extends OncePerRequestFilter {
         }
 
         private String process(String url) {
+            // CCD Gateway strips this path.
             if (url.startsWith("/data")) {
                 return url.replaceFirst("/data", "");
             }
+            // Gateway replaces placeholder userIDs.
+            if (url.contains("/:uid/")) {
+                return substituteUserId(url);
+            }
             return url;
+        }
+
+        private String substituteUserId(String url) {
+            var req = (HttpServletRequest) getRequest();
+            var auth = req.getHeader("Authorization").replace("Bearer ", "");
+            var info = idam.retrieveUserInfo(auth);
+            return url.replace(":uid", info.getUid());
         }
     }
 }

@@ -64,7 +64,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     @SneakyThrows
     @Test
     void listJurisdictions() {
-        var request = buildGet("http://localhost:4452/aggregated/caseworkers/banderous/jurisdictions?access=read");
+        var request = buildGet("http://localhost:4452/aggregated/caseworkers/:uid/jurisdictions?access=read");
         // Test xui talking direct to ccd without the gateway.
         // The s2s subject should be rewritten to ccd_gw by the lib.
         request.removeHeaders("ServiceAuthorization");

@@ -30,8 +30,8 @@ class IdamAugmenter implements BeanPostProcessor, MethodInterceptor {
       return UserInfo.builder()
           .givenName("A")
           .familyName("Dev")
-          .uid("banderous")
-          .sub("a@b.com")
+          .uid("12345")
+          .sub("banderous")
           .roles(List.of("ccd-import", "caseworker", "caseworker-divorce-solicitor"))
           .build();
     }
