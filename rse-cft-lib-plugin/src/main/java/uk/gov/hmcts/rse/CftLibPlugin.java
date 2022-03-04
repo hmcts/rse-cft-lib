@@ -235,8 +235,7 @@ public class CftLibPlugin implements Plugin<Project> {
 
 //        j.environment("LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY", "DEBUG");
 
-        j.jvmArgs("-Xverify:none");
-        j.jvmArgs("-XX:TieredStopAtLevel=1");
+        setJvmArgs(j);
 
         // This needs to happen after evaluation so the lib version is set in the build.gradle.
         j.doFirst(x -> {
@@ -249,6 +248,19 @@ public class CftLibPlugin implements Plugin<Project> {
         j.args(manifests);
         j.dependsOn(manifestTasks);
         return j;
+    }
+
+    void setJvmArgs(JavaExec j) {
+        j.jvmArgs("-Xverify:none");
+        j.jvmArgs("-XX:TieredStopAtLevel=1");
+
+        // Required by Access Management for Java 17.
+        // https://github.com/x-stream/xstream/issues/101
+        List.of("java.lang", "java.util", "java.lang.reflect", "java.text", "java.awt.font").forEach(x -> {
+            j.jvmArgs("--add-opens", "java.base/" + x + "=ALL-UNNAMED");
+        });
+        j.jvmArgs("--add-opens", "java.desktop/java.awt.font=ALL-UNNAMED");
+        j.jvmArgs("-XX:ReservedCodeCacheSize=64m");
     }
 
 }
