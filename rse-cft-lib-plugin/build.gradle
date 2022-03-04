@@ -9,14 +9,16 @@
 plugins {
     // Apply the Java Gradle plugin development plugin to add support for developing Gradle plugins
     id 'java-gradle-plugin'
+    id 'maven-publish'
     id 'com.gradle.plugin-publish' version '0.20.0'
 }
 
-group 'uk.gov.hmcts.reform'
+group 'com.github.hmcts'
 
 repositories {
   mavenCentral()
   maven { url 'https://jitpack.io' }
+  mavenLocal()
 }
 
 dependencies {
@@ -38,7 +40,7 @@ gradlePlugin {
     // Define the plugin
     plugins {
         greeting {
-            id = 'uk.gov.hmcts.rse.cft.lib'
+            id = 'com.github.hmcts.rse.cft.lib'
             displayName = 'todo'
             description = 'todo'
             implementationClass = 'uk.gov.hmcts.rse.CftLibPlugin'

@@ -48,15 +48,19 @@ class S2SLib {
         this.stubOutbound = stubOutbound;
     }
 
+    @SneakyThrows
     @Around("execution(* uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi.getServiceName(..)) && args(authHeader)")
     public Object getServiceName(ProceedingJoinPoint p, String authHeader) {
-        var subject = JWT.decode(authHeader.replace("Bearer ", "")).getSubject();
+        if (null != authHeader) {
+            var subject = JWT.decode(authHeader.replace("Bearer ", "")).getSubject();
 
-        // Allow XUI to talk direct to CCD by making xui appear to be the ccd gateway to ccd data store.
-        if (this.service.equals("ccd_data") && subject.equals("xui_webapp")) {
-            return "ccd_gw";
+            // Allow XUI to talk direct to CCD by making xui appear to be the ccd gateway to ccd data store.
+            if (this.service.equals("ccd_data") && subject.equals("xui_webapp")) {
+                return "ccd_gw";
+            }
+            return subject;
         }
-        return subject;
+       return p.proceed();
     }
 
     @SneakyThrows

@@ -2,7 +2,7 @@ apply plugin: 'idea'
 
 task publish
 gradle.includedBuilds.each {
-    if (it.name != "rse-cft-lib-plugin" && it.name != 'ccd-definition-store-api') {
+    if (it.name != 'ccd-definition-store-api') {
         publish.dependsOn it.task(':publishToMavenLocal')
     }
 }
