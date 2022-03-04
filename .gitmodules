@@ -1,12 +1,12 @@
 [submodule "ccd-data-store-api"]
-	path = ccd-data-store-api
-	url = git@github.com:banderous/ccd-data-store-api.git
+	path = projects/ccd-data-store-api
+	url = git@github.com:hmcts/ccd-data-store-api.git
 [submodule "ccd-definition-store-api"]
-	path = ccd-definition-store-api
+	path = projects/ccd-definition-store-api
 	url = git@github.com:hmcts/ccd-definition-store-api.git
 [submodule "ccd-user-profile-api"]
-	path = ccd-user-profile-api
+	path = projects/ccd-user-profile-api
 	url = git@github.com:hmcts/ccd-user-profile-api.git
 [submodule "am-role-assignment-service"]
-	path = am-role-assignment-service
-	url = git@github.com:banderous/am-role-assignment-service.git
+	path = projects/am-role-assignment-service
+	url = git@github.com:hmcts/am-role-assignment-service.git

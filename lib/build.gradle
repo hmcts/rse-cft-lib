@@ -1,0 +1,38 @@
+
+
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://jitpack.io'
+        }
+    }
+
+    group = 'com.github.hmcts'
+    version = '0.101.0'
+
+    java {
+        withSourcesJar()
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.22'
+        annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+        testCompileOnly 'org.projectlombok:lombok:1.18.22'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+    }
+
+    rootProject.tasks.publish.dependsOn(project.tasks.publishToMavenLocal)
+}

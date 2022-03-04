@@ -1,20 +1,15 @@
 package uk.gov.hmcts.libconsumer;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
-import uk.gov.hmcts.reform.idam.client.IdamApi;
-import uk.gov.hmcts.rse.ccd.lib.api.LibRunner;
 
-@EnableFeignClients(
-    basePackageClasses = {
-        IdamApi.class
-    }
-)
 @SpringBootApplication
 public class LibConsumerApplication {
 
-  public static void main(String[] args) {
-    LibRunner.run(LibConsumerApplication.class);
-  }
-
+    public static void main(String[] args) {
+        SpringApplication.run(LibConsumerApplication.class, args);
+        System.out.println("Lib consumer test app running!");
+        // Show down so we can run in automated test.
+        System.exit(0);
+    }
 }

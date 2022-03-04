@@ -1,2 +1,11 @@
 apply plugin: 'idea'
 
+task publish
+gradle.includedBuilds.each {
+    if (it.name != 'ccd-definition-store-api') {
+        publish.dependsOn it.task(':publishToMavenLocal')
+    }
+}
+
+
+publish.dependsOn ':projects:definition-store-fat:doPublish'

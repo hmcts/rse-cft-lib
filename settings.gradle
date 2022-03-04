@@ -5,10 +5,16 @@ pluginManagement {
     }
 }
 
-includeBuild 'ccd-definition-store-api'
-includeBuild 'ccd-data-store-api'
-includeBuild 'ccd-user-profile-api'
-includeBuild 'am-role-assignment-service'
-include 'rse-cft-lib'
+includeBuild 'projects/am-role-assignment-service'
+includeBuild 'projects/ccd-definition-store-api'
+includeBuild 'projects/ccd-data-store-api'
+includeBuild 'projects/ccd-user-profile-api'
+includeBuild 'rse-cft-lib-plugin'
+include 'projects:definition-store-fat'
 include 'lib-consumer'
-include 'ccd-user-profile-api-relocated'
+
+new File(rootDir, "lib").listFiles().each {
+  if (it.isDirectory()) {
+    include ":lib:${it.name}"
+  }
+}

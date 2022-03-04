@@ -2,16 +2,15 @@ plugins {
     id 'org.springframework.boot' version '2.4.12'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id 'com.github.hmcts.rse.cft.lib'
 }
 
 group = 'uk.gov.hmcts'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
-// Must override the version selected by spring boot dependency management plugin.
-ext['elasticsearch.version'] = '7.16.2'
-
 repositories {
+    mavenLocal()
     mavenCentral()
     maven {
         url 'https://jitpack.io'
@@ -20,34 +19,48 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
 
-    implementation project(path: ':rse-cft-lib', configuration: 'shadow')
-
-    // https://github.com/johnrengelman/shadow/issues/264
-    // Need these dependencies for intellij intellisense to work.
-    if (System.getProperty("idea.sync.active")) {
-        implementation 'uk.gov.hmcts.ccd:ccd-data-store-api'
-        implementation 'uk.gov.hmcts.ccd.definition:application'
-        implementation 'uk.gov.hmcts.ccd.definition:domain'
-        implementation 'uk.gov.hmcts.ccd.definition:elastic-search-support'
-        implementation 'uk.gov.hmcts.ccd.definition:excel-importer'
-        implementation 'uk.gov.hmcts.ccd.definition:repository'
-        implementation 'uk.gov.hmcts.ccd.definition:rest-api'
-        implementation project(path: ':ccd-user-profile-api-relocated', configuration: 'shadow')
-
-        implementation 'uk.gov.hmcts.reform.roleassignment:am-role-assignment-service'
-    }
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
-    testCompileOnly 'org.projectlombok:lombok:1.18.22'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+    cftlibCompileOnly 'org.projectlombok:lombok:1.18.22'
+    cftlibAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+    cftlibTestCompileOnly 'org.projectlombok:lombok:1.18.22'
+    cftlibTestAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
+
+    cftlibImplementation 'com.github.hmcts:rse-cft-lib:DEV-SNAPSHOT'
+
+    cftlibTestImplementation 'org.springframework.boot:spring-boot-starter-test'
+    cftlibTestImplementation 'org.springframework.security:spring-security-test'
+
+    cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.4'
+    cftlibTestImplementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+    cftlibTestImplementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+    cftlibTestImplementation 'com.auth0:java-jwt:3.12.0'
+    cftlibTestImplementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+}
+
+bootWithCCD {
+    environment("RSE_LIB_STUB_S2S", "true");
 }
 
 test {
     useJUnitPlatform()
 }
+
+tasks.each {
+    if (it.name.contains("writeManifest")) {
+        it.dependsOn(rootProject.tasks.publish)
+    }
+}
+tasks.test.dependsOn(bootWithCCD)
+bootWithCCD.dependsOn(rootProject.tasks.publish)
+
+tasks.test.dependsOn(cftlibTest)
+cftlibTest.dependsOn(rootProject.tasks.publish)
+cftlibTestClasses.dependsOn(rootProject.tasks.publish)
+
