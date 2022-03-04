@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import lombok.SneakyThrows;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -37,10 +38,14 @@ class NonValidatingS2SParser {
 class S2SLib {
 
     private final String service;
+    private final boolean stubOutbound;
 
     @Autowired
-    public S2SLib(@Value("${idam.s2s-auth.microservice}") String service) {
+    public S2SLib(@Value("${idam.s2s-auth.microservice}") String service,
+                  @Value("${rse.lib.stub.s2s:false}") boolean stubOutbound
+                  ) {
         this.service = service;
+        this.stubOutbound = stubOutbound;
     }
 
     @Around("execution(* uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi.getServiceName(..)) && args(authHeader)")
@@ -54,8 +59,12 @@ class S2SLib {
         return subject;
     }
 
+    @SneakyThrows
     @Around("execution(* uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi.serviceToken(..)) && args(signIn)")
     public Object serviceToken(ProceedingJoinPoint p, Map<String, String> signIn) {
+        if (!stubOutbound) {
+            return p.proceed();
+        }
        var j = JWT.create()
             .withSubject(signIn.get("microservice"))
             .withIssuedAt(new Date())

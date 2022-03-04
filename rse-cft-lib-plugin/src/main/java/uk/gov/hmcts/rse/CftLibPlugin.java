@@ -109,6 +109,7 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.dependsOn("cftlibClasses");
         exec.dependsOn("cftlibTestClasses");
         exec.args(file);
+        exec.environment("RSE_LIB_STUB_S2S", "true");
 
     }
 
@@ -123,16 +124,22 @@ public class CftLibPlugin implements Plugin<Project> {
         for(var e: projects.entrySet()) {
             var file = project.getLayout().getBuildDirectory().file(e.getKey())
                 .get().getAsFile();
-            manifestTasks.add(createCFTManifestTask(project, e.getKey(), e.getValue(), file));
+            String[] args = new String[0];
+            if (e.getKey().equals("ccd-data-store-api-lib")) {
+                args = new String[] {
+                    "--idam.client.secret=${IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET:}"
+                };
+            }
+            manifestTasks.add(createCFTManifestTask(project, e.getKey(), e.getValue(), file, args));
             manifests.add(file);
         }
     }
 
-    private Task createCFTManifestTask(Project project, String depName, String mainClass, File file) {
+    private Task createCFTManifestTask(Project project, String depName, String mainClass, File file, String... args) {
         return project.task("writeManifest" + depName)
             .doFirst(x -> {
                 Configuration classpath = cftConfiguration(project, depName);
-                writeManifest(project, classpath, mainClass, file);
+                writeManifest(project, classpath, mainClass, file, args);
             });
     }
 
