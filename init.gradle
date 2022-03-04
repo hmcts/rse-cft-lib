@@ -69,7 +69,7 @@ def configureImportedProject(p) {
     configurePublishing(p)
     p.configure(p, {
         afterEvaluate { project ->
-            project.group 'com.github.hmcts'
+            project.group 'com.github.hmcts.rse-cft-lib'
         }
     })
 }

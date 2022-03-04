@@ -68,7 +68,7 @@ def t = b.task(':application:generatePomFileForMavenJavaPublication')
 // TODO - a cleaner way
 task doPublish(type:Copy, dependsOn: [t, tasks.publishShadowPublicationToMavenLocal] ) {
     from new File(b.projectDir, "application/build/publications/mavenJava/pom-default.xml")
-    def dest = new File(repositories.mavenLocal().getUrl().path, "com/github/hmcts/definition-store-fat/${project.version}")
+    def dest = new File(repositories.mavenLocal().getUrl().path, "com/github/hmcts/rse-cft-lib/definition-store-fat/${project.version}")
     into dest
     rename { f ->
         "definition-store-fat-${project.version}.pom"
@@ -77,7 +77,7 @@ task doPublish(type:Copy, dependsOn: [t, tasks.publishShadowPublicationToMavenLo
         def xmlFile = new File(dest, "definition-store-fat-${project.version}.pom")
         def xml = new XmlParser().parse(xmlFile)
         xml.groupId.replaceNode {
-            groupId('com.github.hmcts')
+            groupId('com.github.hmcts.rse-cft-lib')
         }
         xml.artifactId.replaceNode {
             artifactId('definition-store-fat')

@@ -49,7 +49,7 @@ public class CftLibPlugin implements Plugin<Project> {
         project.afterEvaluate(x -> {
             project.getConfigurations().getByName("cftlibImplementation")
                 .getDependencies().add(
-                    project.getDependencies().create("com.github.hmcts:app-runtime:" + getLibVersion(project)));
+                    project.getDependencies().create("com.github.hmcts.rse-cft-lib:app-runtime:" + getLibVersion(project)));
         });
 
         project.getConfigurations().getByName("cftlibRuntimeOnly")
@@ -79,7 +79,7 @@ public class CftLibPlugin implements Plugin<Project> {
 
         impl.getDependencies().add(project.getDependencies().create("org.junit.platform:junit-platform-console-standalone:1.8.2"));
         // Wait until build script evaluation to get lib version.
-        project.afterEvaluate(x -> impl.getDependencies().add(project.getDependencies().create("com.github.hmcts:test-runner:" + getLibVersion(project))));
+        project.afterEvaluate(x -> impl.getDependencies().add(project.getDependencies().create("com.github.hmcts.rse-cft-lib:test-runner:" + getLibVersion(project))));
     }
 
     private void createBootWithCCDTask(Project project) {
@@ -152,8 +152,8 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private Configuration cftConfiguration(Project project, String name) {
         return configuration(project,
-            "com.github.hmcts:" + name + ":" + getLibVersion(project),
-            "com.github.hmcts:injected:" + getLibVersion(project)
+            "com.github.hmcts.rse-cft-lib:" + name + ":" + getLibVersion(project),
+            "com.github.hmcts.rse-cft-lib:injected:" + getLibVersion(project)
         );
     }
 
@@ -188,7 +188,7 @@ public class CftLibPlugin implements Plugin<Project> {
             .getByName("cftlibImplementation")
             .getDependencies()
             .stream().
-            filter(x -> x.getGroup().equals("com.github.hmcts")
+            filter(x -> x.getGroup().equals("com.github.hmcts.rse-cft-lib")
                 && x.getName().equals("rse-cft-lib"))
             .findFirst()
             .orElseThrow();
@@ -241,7 +241,7 @@ public class CftLibPlugin implements Plugin<Project> {
         j.doFirst(x -> {
             // Resolve the configuration as a detached configuration for isolation from
             // the project's build (eg. to prevent interference from spring boot's dependency mgmt plugin)
-            Configuration classpath = configuration(project, "com.github.hmcts:rse-cft-lib:" + getLibVersion(project));
+            Configuration classpath = configuration(project, "com.github.hmcts.rse-cft-lib:rse-cft-lib:" + getLibVersion(project));
             j.classpath(classpath);
         });
 
