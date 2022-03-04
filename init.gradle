@@ -69,7 +69,7 @@ def configureImportedProject(p) {
     configurePublishing(p)
     p.configure(p, {
         afterEvaluate { project ->
-            project.group 'com.github.hmcts'
+            project.group 'com.github.hmcts.rse-cft-lib'
         }
     })
 }
@@ -95,6 +95,14 @@ allprojects {
 
     def name = project.parent?.name ?: project.name
     if (importedProjects.contains(name)) {
+        // Still needs this to build locally
+        if (name == "user-profile-api") {
+            project.configure(project, {
+                repositories {
+                    jcenter()
+                }
+            })
+        }
         configureImportedProject(project)
     } else if (name.equals('case-definition-store-api')) {
         // We currently specialcase definition store, preserving its group for reference in the fatjar project.
