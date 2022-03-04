@@ -21,7 +21,7 @@ repositories {
     jcenter()
 }
 
-group = 'com.github.hmcts'
+group = 'com.github.hmcts.rse-cft-lib'
 version = 'DEV-SNAPSHOT'
 
 configurations {
