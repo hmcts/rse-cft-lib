@@ -40,7 +40,7 @@ gradlePlugin {
     // Define the plugin
     plugins {
         greeting {
-            id = 'com.github.hmcts.rse.cft.lib'
+            id = 'com.github.hmcts.rse-cft-lib'
             displayName = 'todo'
             description = 'todo'
             implementationClass = 'uk.gov.hmcts.rse.CftLibPlugin'
