@@ -36,13 +36,19 @@ dependencies {
 ext['gradle.publish.key'] = System.getenv('GRADLE_PLUGIN_PORTAL_KEY')
 ext['gradle.publish.secret'] = System.getenv('GRADLE_PLUGIN_PORTAL_SECRET')
 
+pluginBundle {
+    website = 'https://github.com/hmcts/rse-cft-lib'
+    vcsUrl = 'https://github.com/hmcts/rse-cft-lib'
+    tags = ['hmcts']
+}
+
 gradlePlugin {
     // Define the plugin
     plugins {
         greeting {
-            id = 'com.github.hmcts.rse.cft.lib'
-            displayName = 'todo'
-            description = 'todo'
+            id = 'com.github.hmcts.rse-cft-lib'
+            displayName = 'HMCTS CFT development SDK'
+            description = 'SDK for local development and testing'
             implementationClass = 'uk.gov.hmcts.rse.CftLibPlugin'
         }
     }

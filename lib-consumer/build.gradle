@@ -2,7 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.4.12'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
-    id 'com.github.hmcts.rse.cft.lib'
+    id 'com.github.hmcts.rse-cft-lib'
 }
 
 group = 'uk.gov.hmcts'
