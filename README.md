@@ -1,33 +1,38 @@
-# PoC
+# RSE CFT lib
+
+## Run multiple HMCTS services in a single JVM
+
+* Simple setup - ```./gradlew bootWithCCD```
+* Reduced RAM requirements & improved performance
+* Improved testability
+* Improved debugging
+  * Set a breakpoint anywhere
+
 
 ## Prerequisites
 
 - Java 11
 - Docker
 
+
 ## Getting started
 
-Dependencies of this project are using Git submodules, fetch them with:
+Add to the plugins section of your build:
 
-```shell
-git submodule update --init
+```gradle
+plugins {
+  id 'com.github.hmcts.rse-cft-lib' version '...'
+}
+
 ```
 
-You can then start the application with:
-
-```shell
-./gradlew bootRun
+```gradle
+./gradlew bootWithCCD
 ```
 
-This may take quite awhile the first time as there's lots of dependencies to be downloaded across the sub-projects.
 
-You'll eventually get an application running on `http://localhost:8234/`.
+XUI will be launched on http://localhost:3000
 
-A Postgres DB will be started for you by testcontainers as well.
-
-### Tests
-
-Take a look at the [lib-consumer](lib-consumer) project to see tests that show the full workflow for creating a case done completely in a Spring web context.
 
 ### :warning: Modified Gradle wrapper :warning:
 
