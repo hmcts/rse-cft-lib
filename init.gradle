@@ -110,7 +110,7 @@ allprojects {
             configurePublishing(project)
         }
     }
-    afterEvaluate {
+    beforeEvaluate {
         version = 'DEV-SNAPSHOT'
     }
 }
