@@ -13,7 +13,7 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.20.0'
 }
 
-group 'com.github.hmcts.rse-cft-lib'
+group 'io.github.hmcts.rse-cft-lib'
 version System.getenv('RELEASE_VERSION')?.replace('refs/tags/', '') ?: 'DEV-SNAPSHOT'
 
 repositories {
