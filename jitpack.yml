@@ -1,4 +1,5 @@
-jdk:
-  - openjdk11
+before_install:
+  - sdk install java 11.0.13-open
+  - sdk use java 11.0.13-open
 install:
   - ./gradlew -is :publish
