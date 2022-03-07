@@ -17,6 +17,7 @@ jobs:
   test-iteration-5:
     uses: ./.github/workflows/check.yml
   release:
+    if: startsWith(github.ref, 'refs/tags')
     needs: [test-iteration-1, test-iteration-2, test-iteration-3, test-iteration-4, test-iteration-5]
     runs-on: ubuntu-latest
     steps:
@@ -37,5 +38,4 @@ jobs:
           GRADLE_PLUGIN_PORTAL_SECRET: ${{ secrets.GRADLE_PLUGIN_PORTAL_SECRET }}
           RELEASE_VERSION: ${{ github.ref }}
         run: ./gradlew :rse-cft-lib-plugin:publishPlugins
-        if: startsWith(github.ref, 'refs/tags')
 
