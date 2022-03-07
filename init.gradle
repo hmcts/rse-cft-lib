@@ -30,8 +30,8 @@ def configurePublishing(p) {
                     // We can also then disable transient dependencies with an exclusion, since they
                     // will now be direct dependencies.
                     pom.withXml {
-                        asNode().dependencies.replaceNode {}
-                        asNode().dependencyManagement.replaceNode {}
+                        asNode().dependencies?.replaceNode {}
+                        asNode().dependencyManagement?.replaceNode {}
 
                         def dependenciesNode = asNode().appendNode('dependencies')
 
