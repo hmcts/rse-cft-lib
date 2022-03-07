@@ -47,7 +47,7 @@ gradlePlugin {
     // Define the plugin
     plugins {
         greeting {
-            id = 'com.github.hmcts.rse-cft-lib'
+            id = 'io.github.hmcts.rse-cft-lib'
             displayName = 'HMCTS CFT development SDK'
             description = 'SDK for local development and testing'
             implementationClass = 'uk.gov.hmcts.rse.CftLibPlugin'
