@@ -1,5 +1,5 @@
 before_install:
-  - sdk install java 11.0.13-open
-  - sdk use java 11.0.13-open
+  - sdk install java 11.0.14-ms
+  - sdk use java 11.0.14-ms
 install:
   - ./gradlew -is :publish
