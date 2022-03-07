@@ -184,15 +184,15 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
     private String getLibVersion(Project project) {
-        var dep = project.getConfigurations()
-            .getByName("cftlibImplementation")
+        return project.getBuildscript().getConfigurations()
+            .getByName("classpath")
             .getDependencies()
             .stream().
             filter(x -> x.getGroup().equals("com.github.hmcts.rse-cft-lib")
-                && x.getName().equals("rse-cft-lib"))
+                && x.getName().equals("com.github.hmcts.rse-cft-lib.gradle.plugin"))
             .findFirst()
-            .orElseThrow();
-        return dep.getVersion();
+            .map(Dependency::getVersion)
+            .orElse("DEV-SNAPSHOT");
     }
 
     private JavaExec createRunTask(Project project, String name) {
