@@ -66,6 +66,7 @@ def configurePublishing(p) {
 }
 
 def configureImportedProject(p) {
+    println 'Configuring imported project: ' + p.name
     configurePublishing(p)
     p.configure(p, {
         afterEvaluate { project ->
@@ -109,6 +110,8 @@ allprojects {
         if (project.name.equals('application')) {
             configurePublishing(project)
         }
+    } else {
+        println 'Not configuring project ' + project.name
     }
     afterEvaluate {
         // Override except for the Gradle plugin which sets a version during publish
