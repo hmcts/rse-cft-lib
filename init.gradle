@@ -31,8 +31,13 @@ def configurePublishing(p) {
                     // will now be direct dependencies.
                     pom.withXml {
                         println asString()
-                        asNode().dependencies.replaceNode {}
-                        asNode().dependencyManagement.replaceNode {}
+
+                        if(asNode().dependencies.size() > 0) {
+                            asNode().dependencies.replaceNode {}
+                        }
+                        if(asNode().dependencyManagement.size() > 0) {
+                            asNode().dependencyManagement.replaceNode {}
+                        }
 
                         def dependenciesNode = asNode().appendNode('dependencies')
 
