@@ -23,7 +23,7 @@ def configurePublishing(p) {
                 mavenJava(MavenPublication) {
                     artifactId = "${artifactId}-lib"
                     from components.java
-                    println artifactId
+
                     // We need to be able to reproduce the exact runtime classpath of each project.
                     // To do this we replace the pom dependencies with the complete runtime classpath.
                     // ie. making every dependency direct, including transient dependencies.
@@ -31,12 +31,8 @@ def configurePublishing(p) {
                     // will now be direct dependencies.
                     pom.withXml {
 
-                        if(asNode().dependencies.size() > 0) {
-                            asNode().dependencies.replaceNode {}
-                        }
-                        if(asNode().dependencyManagement.size() > 0) {
-                            asNode().dependencyManagement.replaceNode {}
-                        }
+                        asNode().dependencies.replaceNode {}
+                        asNode().dependencyManagement.replaceNode {}
 
                         def dependenciesNode = asNode().appendNode('dependencies')
 
