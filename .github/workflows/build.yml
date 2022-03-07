@@ -7,15 +7,15 @@ on:
       - main
 jobs:
   test-iteration-1:
-    uses: ./.github/workflows/gradle.yml
+    uses: ./.github/workflows/check.yml
   test-iteration-2:
-    uses: ./.github/workflows/gradle.yml
+    uses: ./.github/workflows/check.yml
   test-iteration-3:
-    uses: ./.github/workflows/gradle.yml
+    uses: ./.github/workflows/check.yml
   test-iteration-4:
-    uses: ./.github/workflows/gradle.yml
+    uses: ./.github/workflows/check.yml
   test-iteration-5:
-    uses: ./.github/workflows/gradle.yml
+    uses: ./.github/workflows/check.yml
   release:
     needs: [test-iteration-1, test-iteration-2, test-iteration-3, test-iteration-4, test-iteration-5]
     runs-on: ubuntu-latest
