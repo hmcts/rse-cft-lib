@@ -1,6 +1,7 @@
 
 def configurePublishing(p) {
     p.configure(p, {
+        apply plugin: 'java'
         apply plugin: 'maven-publish'
         p.afterEvaluate { project ->
 
