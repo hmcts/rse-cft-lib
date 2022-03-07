@@ -110,8 +110,11 @@ allprojects {
             configurePublishing(project)
         }
     }
-    beforeEvaluate {
-        version = 'DEV-SNAPSHOT'
+    afterEvaluate {
+        // Override except for the Gradle plugin which sets a version during publish
+        if (name != 'rse-cft-lib-plugin') {
+            version = 'DEV-SNAPSHOT'
+        }
     }
 }
 
