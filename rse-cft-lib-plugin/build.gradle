@@ -13,7 +13,7 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.20.0'
 }
 
-group 'io.github.hmcts.rse-cft-lib'
+group 'com.github.hmcts.rse-cft-lib'
 version System.getenv('RELEASE_VERSION')?.replace('refs/tags/', '') ?: 'DEV-SNAPSHOT'
 
 repositories {
@@ -47,7 +47,7 @@ gradlePlugin {
     // Define the plugin
     plugins {
         greeting {
-            id = 'io.github.hmcts.rse-cft-lib'
+            id = 'com.github.hmcts.rse-cft-lib'
             displayName = 'HMCTS CFT development SDK'
             description = 'SDK for local development and testing'
             implementationClass = 'uk.gov.hmcts.rse.CftLibPlugin'

@@ -1,4 +1,4 @@
-[submodule "am-role-assignment-service"]
+[submodule "projects/am-role-assignment-service"]
 	path = projects/am-role-assignment-service
 	url = git@github.com:hmcts/am-role-assignment-service.git
 [submodule "projects/ccd-definition-store-api"]
