@@ -48,8 +48,10 @@ public class CftLibPlugin implements Plugin<Project> {
 
         project.afterEvaluate(x -> {
             project.getConfigurations().getByName("cftlibImplementation")
-                .getDependencies().add(
-                    project.getDependencies().create("com.github.hmcts.rse-cft-lib:app-runtime:" + getLibVersion(project)));
+                .getDependencies().addAll(List.of(
+                    project.getDependencies().create("com.github.hmcts.rse-cft-lib:app-runtime:" + getLibVersion(project)),
+                    project.getDependencies().create("com.github.hmcts.rse-cft-lib:rse-cft-lib:" + getLibVersion(project))
+                ));
         });
 
         project.getConfigurations().getByName("cftlibRuntimeOnly")
