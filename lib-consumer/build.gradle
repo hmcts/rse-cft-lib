@@ -32,7 +32,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
 
-    cftlibImplementation 'com.github.hmcts.rse-cft-lib:rse-cft-lib:DEV-SNAPSHOT'
+    cftlibImplementation 'com.github.hmcts.rse-cft-lib:rse-cft-lib:0.12.14'
 
     cftlibTestImplementation 'org.springframework.boot:spring-boot-starter-test'
     cftlibTestImplementation 'org.springframework.security:spring-security-test'
