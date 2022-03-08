@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -92,7 +93,9 @@ public class CftLibPlugin implements Plugin<Project> {
         var file = project.getLayout().getBuildDirectory().file("application").get().getAsFile();
         exec.doFirst(t -> {
             JavaExec e = (JavaExec) project.getTasks().getByName("bootRun");
-            writeManifest(project, lib.getRuntimeClasspath(), e.getMainClass().get(), file);
+
+            var name = "--rse.lib.service_name=" + project.getName();
+            writeManifest(project, lib.getRuntimeClasspath(), e.getMainClass().get(), file, name);
         });
 
         exec.dependsOn("cftlibClasses");
@@ -126,13 +129,13 @@ public class CftLibPlugin implements Plugin<Project> {
         for(var e: projects.entrySet()) {
             var file = project.getLayout().getBuildDirectory().file(e.getKey())
                 .get().getAsFile();
-            String[] args = new String[0];
+            var args = Lists.newArrayList(
+                "--rse.lib.service_name=" + e.getKey()
+            );
             if (e.getKey().equals("ccd-data-store-api-lib")) {
-                args = new String[] {
-                    "--idam.client.secret=${IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET:}"
-                };
+                args.add("--idam.client.secret=${IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET:}");
             }
-            manifestTasks.add(createCFTManifestTask(project, e.getKey(), e.getValue(), file, args));
+            manifestTasks.add(createCFTManifestTask(project, e.getKey(), e.getValue(), file, args.toArray(String[]::new)));
             manifests.add(file);
         }
     }
