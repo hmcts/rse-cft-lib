@@ -16,9 +16,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.TextCodec;
 import lombok.SneakyThrows;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -54,11 +51,10 @@ public class CFTLibApiImpl implements CFTLib {
   }
 
     public static String generateDummyS2SToken(String serviceName) {
-        return Jwts.builder()
-            .setSubject(serviceName)
-            .setIssuedAt(new Date())
-            .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.encode("AA"))
-            .compact();
+        return JWT.create()
+            .withSubject(serviceName)
+            .withIssuedAt(new Date())
+            .sign(Algorithm.HMAC256("secret"));
   }
 
 
@@ -132,8 +128,8 @@ public class CFTLibApiImpl implements CFTLib {
         .withSubject("banderous")
         .withNotBefore(new Date())
         .withIssuedAt(new Date())
-        .withClaim("tokenName", "access_token")
         .withExpiresAt(Date.from(LocalDateTime.now().plusDays(100).toInstant(ZoneOffset.UTC)))
-        .sign(Algorithm.HMAC256("a secret"));
+        .withClaim("tokenName", "access_token")
+        .sign(Algorithm.HMAC256("secret"));
   }
 }
