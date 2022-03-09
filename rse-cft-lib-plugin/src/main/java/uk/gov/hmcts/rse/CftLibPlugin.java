@@ -109,7 +109,7 @@ public class CftLibPlugin implements Plugin<Project> {
 
         var exec = createRunTask(project, "cftlibTest");
         var file = project.getLayout().getBuildDirectory().file("libTest").get().getAsFile();
-        var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(), "org.junit.platform.console.ConsoleLauncher", file, "--select-package=uk.gov.hmcts.libconsumer");
+        var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(), "org.junit.platform.console.ConsoleLauncher", file, "--select-package=uk.gov.hmcts");
         exec.dependsOn(app);
         exec.dependsOn("cftlibClasses");
         exec.dependsOn("cftlibTestClasses");
