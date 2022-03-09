@@ -19,6 +19,7 @@ import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.file.Directory;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSetContainer;
@@ -90,7 +91,7 @@ public class CftLibPlugin implements Plugin<Project> {
         var lib = s.getByName("cftlib");
 
         var exec = createRunTask(project, "bootWithCCD");
-        var file = project.getLayout().getBuildDirectory().file("application").get().getAsFile();
+        var file = getBuildDir(project).file("application").getAsFile();
         exec.doFirst(t -> {
             JavaExec e = (JavaExec) project.getTasks().getByName("bootRun");
 
@@ -108,7 +109,7 @@ public class CftLibPlugin implements Plugin<Project> {
         var lib = s.getByName("cftlibTest");
 
         var exec = createRunTask(project, "cftlibTest");
-        var file = project.getLayout().getBuildDirectory().file("libTest").get().getAsFile();
+        var file = getBuildDir(project).file("libTest").getAsFile();
         var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(), "org.junit.platform.console.ConsoleLauncher", file, "--select-package=uk.gov.hmcts");
         exec.dependsOn(app);
         exec.dependsOn("cftlibClasses");
@@ -120,15 +121,13 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private void createManifestTasks(Project project) {
         {
-            var file = project.getLayout().getBuildDirectory().file("runtime")
-                .get().getAsFile();
+            var file = getBuildDir(project).file("runtime").getAsFile();
             manifestTasks.add(createCFTManifestTask(project, "runtime", "uk.gov.hmcts.rse.ccd.lib.ComposeRunner", file));
             manifests.add(file);
         }
 
         for(var e: projects.entrySet()) {
-            var file = project.getLayout().getBuildDirectory().file(e.getKey())
-                .get().getAsFile();
+            var file = getBuildDir(project).file(e.getKey()).getAsFile();
             var args = Lists.newArrayList(
                 "--rse.lib.service_name=" + e.getKey()
             );
@@ -178,8 +177,7 @@ public class CftLibPlugin implements Plugin<Project> {
         }
         Collections.sort(deps);
 
-        project.getLayout().getBuildDirectory().getAsFile().get().mkdir();
-        file.createNewFile();
+        getBuildDir(project).getAsFile().mkdirs();
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
             writer.println(mainClass + " " + Joiner.on(" ").join(args));
             for (var path : deps) {
@@ -268,4 +266,7 @@ public class CftLibPlugin implements Plugin<Project> {
         j.jvmArgs("-XX:ReservedCodeCacheSize=64m");
     }
 
+    Directory getBuildDir(Project project) {
+        return project.getLayout().getBuildDirectory().dir("cftlib").get();
+    }
 }
