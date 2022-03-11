@@ -1,6 +1,6 @@
 # RSE CFT lib ![Java CI](https://github.com/hmcts/rse-cft-lib/workflows/Java%20CI/badge.svg) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hmcts/rse-cft-lib?label=release)
 
-## Run multiple HMCTS services in a single JVM
+## Run your application + CCD in a single JVM
 
 ### Rationale
 
@@ -29,7 +29,7 @@ Improved local development and robust automated tests:
 
 ## Getting started
 
-### Add Jitpack as a plugin repository
+### Add Jitpack as a Gradle plugin repository
 
 The plugin is hosted on [jitpack](https://jitpack.io/) so you must add the following to your project's `settings.gradle`; 
 
@@ -52,8 +52,6 @@ plugins {
 }
 ```
 
-
-
 This will define the following in your Gradle build:
 
 - A ```bootwithCCD``` task
@@ -73,7 +71,7 @@ This will define the following in your Gradle build:
 
 ### 2. Define your CFTLib configuration
 
-A Java API is provided for interacting with CFT services and performing common tasks such as creating roles and importing CCD definitions.
+A Java API is provided for interacting with CFT services to perform common tasks such as creating roles and importing CCD definitions.
 
 This API is accessed by providing an implementation of the [CFTLibConfigurer](https://github.com/hmcts/rse-cft-lib/blob/main/lib/rse-cft-lib/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) interface in the cftlib sourceset, which will be invoked by the library during startup once all CFT services are ready.
 
@@ -133,4 +131,6 @@ Tests must be placed in the `cftlibTest` sourceset.
 
 ### :warning: Note to maintainers :warning:
 
-This repository features a Gradle init script to customise the included CFT projects. gradlew has been modified to invoke this script so **any upgrade to the gradle wrapper must preserve this modification**.
+This repository features a modified `gradlew`!
+
+A Gradle init script is used to customise the included CFT projects. gradlew has been modified to invoke this script so **any upgrade to the gradle wrapper must preserve this modification**.
