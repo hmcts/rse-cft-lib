@@ -1,4 +1,4 @@
-# RSE CFT lib
+# RSE CFT lib ![Java CI](https://github.com/hmcts/rse-cft-lib/workflows/Java%20CI/badge.svg) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hmcts/rse-cft-lib?label=release)
 
 ## Run multiple HMCTS services in a single JVM
 
@@ -6,7 +6,7 @@
 * Reduced RAM requirements & improved performance
 * Improved testability
 * Improved debugging
-  * Set a breakpoint anywhere
+  * Set a breakpoint anywhere in included CFT service
 
 
 ## Prerequisites
@@ -21,7 +21,7 @@ Add to the plugins section of your spring boot project:
 
 ```gradle
 plugins {
-  id 'com.github.hmcts.rse-cft-lib' version '...'
+  id 'com.github.hmcts.rse-cft-lib' version '[@top of page]'
 }
 
 ```
@@ -36,7 +36,7 @@ This will launch (in a single JVM):
 * CCD data, definition & user profile applications
 * AM role assignment service
 
-Plus docker containers:
+Plus (in docker):
 
 * CCD & AM dependencies (postgres, logstash & elastic search
 * XUI, available on http://localhost:3000
