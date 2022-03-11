@@ -81,14 +81,18 @@ public class CFTLibConfig implements CFTLibConfigurer {
 
   @Override
   public void configure(CFTLib lib) {
+    // Create a CCD user profile
     lib.createProfile("banderous","DIVORCE", "NO_FAULT_DIVORCE", "Submitted");
+    // Create roles
     lib.createRoles(
         "caseworker-divorce",
         ...
     );
+    // Configure the AM role assignment service
     var json = Resources.toString(Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8);
     lib.configureRoleAssignments(json);
-
+    
+    // Import a CCD definition xlsx
     var def = getClass().getClassLoader().getResourceAsStream("NFD-dev.xlsx").readAllBytes();
     lib.importDefinition(def);
   }
