@@ -6,7 +6,11 @@
 * Reduced RAM requirements & improved performance
 * Improved testability
 * Improved debugging
-  * Set a breakpoint anywhere in included CFT service
+  * Set a breakpoint anywhere in any included CFT service
+* A Java API for:
+  * Definition imports
+  * Role creation
+* Includes a test runner for automated integration tests
 
 
 ## Prerequisites
@@ -14,18 +18,50 @@
 - Java 11
 - Docker
 
+## Example integrations
+
+- [No fault divorce](https://github.com/hmcts/nfdiv-case-api)
+- [Adoption](https://github.com/hmcts/adoption-cos-api)
+
 
 ## Getting started
 
-Add to the plugins section of your spring boot project:
+### 1. Integrate the Gradle plugin
 
 ```gradle
 plugins {
   id 'com.github.hmcts.rse-cft-lib' version '[@top of page]'
 }
-
 ```
-## Launching your application + CCD
+
+### 2. Define your Java CFTLib configuration
+
+An API is provided for interacting with CFT services, which your application accesses by implementing the [CFTLibConfigurer](https://github.com/hmcts/rse-cft-lib/blob/main/lib/rse-cft-lib/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) interface.
+
+This will be invoked by the library during startup once all CFT services are ready, and provides a way to do common configuration such as role creation and definition import.
+
+```java
+@Component
+public class CFTLibConfig implements CFTLibConfigurer {
+
+  @Override
+  public void configure(CFTLib lib) {
+    lib.createProfile("banderous","DIVORCE", "NO_FAULT_DIVORCE", "Submitted");
+    lib.createRoles(
+        "caseworker-divorce",
+        ...
+    );
+    var json = Resources.toString(Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8);
+    lib.configureRoleAssignments(json);
+
+    var def = getClass().getClassLoader().getResourceAsStream("NFD-dev.xlsx").readAllBytes();
+    lib.importDefinition(def);
+  }
+}
+```
+
+
+### 3. Launch your application + CCD
 ```gradle
 ./gradlew bootWithCCD
 ```
@@ -33,7 +69,7 @@ plugins {
 This will launch (in a single JVM):
 
 * Your application
-* CCD data, definition & user profile applications
+* CCD data, definition & user profile services
 * AM role assignment service
 
 Plus (in docker):
