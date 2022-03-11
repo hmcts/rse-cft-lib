@@ -2,15 +2,18 @@
 
 ## Run multiple HMCTS services in a single JVM
 
-* Simple setup - ```./gradlew bootWithCCD```
+### Rationale
+
+Improved local development and robust automated tests:
+
 * Reduced RAM requirements & improved performance
-* Improved testability
 * Improved debugging
   * Set a breakpoint anywhere in any included CFT service
 * A Java API for:
   * Definition imports
   * Role creation
 * Includes a test runner for automated integration tests
+* Simple setup
 
 
 ## Prerequisites
@@ -34,9 +37,25 @@ plugins {
 }
 ```
 
-### 2. Define your Java CFTLib configuration
+This will define the following in your Gradle build:
 
-An API is provided for interacting with CFT services, which your application accesses by implementing the [CFTLibConfigurer](https://github.com/hmcts/rse-cft-lib/blob/main/lib/rse-cft-lib/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) interface.
+- A ```bootwithCCD``` task
+- Sourcesets
+  - `cftlib`
+    - For code that should run when running with CCD 
+  - `cftlibTest`
+    - For integration tests
+- Dependency configurations
+  - `cftlibImplementation`
+    - For dependencies you need when running with CCD
+  - `cftlibTestImplementation`
+    - For integration test dependencies
+
+### 2. Define your CFTLib configuration
+
+A Java API is provided for interacting with CFT services and performing common tasks such as creating roles and importing CCD definitions.
+
+This API is accessed by providing an implementation of the [CFTLibConfigurer](https://github.com/hmcts/rse-cft-lib/blob/main/lib/rse-cft-lib/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) interface in the cftlib sourceset.
 
 This will be invoked by the library during startup once all CFT services are ready, and provides a way to do common configuration such as role creation and definition import.
 
@@ -60,6 +79,7 @@ public class CFTLibConfig implements CFTLibConfigurer {
 }
 ```
 
+Note that your CFTLibConfigurer implementation must be in the cftlib sourceset.
 
 ### 3. Launch your application + CCD
 ```gradle
