@@ -29,13 +29,30 @@ Improved local development and robust automated tests:
 
 ## Getting started
 
-### 1. Integrate the Gradle plugin
+### Add Jitpack as a plugin repository
+
+The plugin is hosted on [jitpack](https://jitpack.io/) so you must add the following to your project's `settings.gradle`; 
+
+```gradle
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            url "https://jitpack.io"
+        }
+    }
+}
+```
+
+### 1. Integrate the Gradle plugin in your build script
 
 ```gradle
 plugins {
   id 'com.github.hmcts.rse-cft-lib' version '[@top of page]'
 }
 ```
+
+
 
 This will define the following in your Gradle build:
 
