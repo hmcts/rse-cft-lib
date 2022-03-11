@@ -40,6 +40,9 @@ plugins {
 This will define the following in your Gradle build:
 
 - A ```bootwithCCD``` task
+  - Launches your Application + CCD + Access Management
+- A `cftlibTest` task
+  - Run automated CCD integration tests  
 - Sourcesets
   - `cftlib`
     - For code that should run when running with CCD 
@@ -55,9 +58,7 @@ This will define the following in your Gradle build:
 
 A Java API is provided for interacting with CFT services and performing common tasks such as creating roles and importing CCD definitions.
 
-This API is accessed by providing an implementation of the [CFTLibConfigurer](https://github.com/hmcts/rse-cft-lib/blob/main/lib/rse-cft-lib/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) interface in the cftlib sourceset.
-
-This will be invoked by the library during startup once all CFT services are ready, and provides a way to do common configuration such as role creation and definition import.
+This API is accessed by providing an implementation of the [CFTLibConfigurer](https://github.com/hmcts/rse-cft-lib/blob/main/lib/rse-cft-lib/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) interface in the cftlib sourceset, which will be invoked by the library during startup once all CFT services are ready.
 
 ```java
 @Component
@@ -97,6 +98,21 @@ Plus (in docker):
 * CCD & AM dependencies (postgres, logstash & elastic search
 * XUI, available on http://localhost:3000
 
+### 4. Writing integration tests
+
+A `CftlibTest` junit base class is provided for writing robust automated integration tests that test your application end-to-end with CCD.
+
+```java
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class TestWithCCD extends CftlibTest {
+    @Test
+    public void bootsWithCCD() {
+    }
+}
+```
+
+Tests must be placed in the `cftlibTest` sourceset.
 
 ### :warning: Note to maintainers :warning:
 
