@@ -46,15 +46,11 @@ public class CftLibPlugin implements Plugin<Project> {
         }));
 
         project.getConfigurations().getByName("cftlibImplementation")
-            .extendsFrom(project.getConfigurations().getByName("implementation"));
-
-        project.afterEvaluate(x -> {
-            project.getConfigurations().getByName("cftlibImplementation")
-                .getDependencies().addAll(List.of(
-                    project.getDependencies().create("com.github.hmcts.rse-cft-lib:app-runtime:" + getLibVersion(project)),
-                    project.getDependencies().create("com.github.hmcts.rse-cft-lib:rse-cft-lib:" + getLibVersion(project))
-                ));
-        });
+            .extendsFrom(project.getConfigurations().getByName("implementation"))
+            .getDependencies().addAll(List.of(
+                project.getDependencies().create("com.github.hmcts.rse-cft-lib:app-runtime:" + getLibVersion(project)),
+                project.getDependencies().create("com.github.hmcts.rse-cft-lib:rse-cft-lib:" + getLibVersion(project))
+            ));
 
         project.getConfigurations().getByName("cftlibRuntimeOnly")
             .extendsFrom(project.getConfigurations().getByName("runtimeOnly"));
