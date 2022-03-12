@@ -38,13 +38,16 @@ public class CftLibPlugin implements Plugin<Project> {
     public void apply(Project project) {
         project.getPlugins().apply("java");
 
-        SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
-        s.add(s.create("cftlib", x -> {
-            var main = s.getByName("main").getOutput();
-            x.setCompileClasspath(x.getCompileClasspath().plus(main));
-            x.setRuntimeClasspath(x.getRuntimeClasspath().plus(main));
-        }));
 
+        createSourceSets(project);
+        createConfigurations(project);
+
+        createManifestTasks(project);
+        createBootWithCCDTask(project);
+        createTestTask(project);
+    }
+
+    private void createConfigurations(Project project) {
         project.getConfigurations().getByName("cftlibImplementation")
             .extendsFrom(project.getConfigurations().getByName("implementation"))
             .getDependencies().addAll(List.of(
@@ -54,23 +57,6 @@ public class CftLibPlugin implements Plugin<Project> {
 
         project.getConfigurations().getByName("cftlibRuntimeOnly")
             .extendsFrom(project.getConfigurations().getByName("runtimeOnly"));
-
-        s.add(s.create("cftlibTest", x -> {
-            var cftlib = s.getByName("cftlib").getOutput();
-            var main = s.getByName("main").getOutput();
-
-            x.setCompileClasspath(x.getCompileClasspath().plus(cftlib).plus(main));
-            x.setRuntimeClasspath(x.getRuntimeClasspath().plus(cftlib).plus(main));
-        }));
-
-        createTestSourceSet(project);
-
-        createManifestTasks(project);
-        createBootWithCCDTask(project);
-        createTestTask(project);
-    }
-
-    private void createTestSourceSet(Project project) {
         project.getConfigurations().getByName("cftlibTestImplementation")
             .extendsFrom(project.getConfigurations().getByName("cftlibImplementation"))
             .getDependencies().addAll(List.of(
@@ -80,6 +66,24 @@ public class CftLibPlugin implements Plugin<Project> {
 
         project.getConfigurations().getByName("cftlibTestRuntimeOnly")
             .extendsFrom(project.getConfigurations().getByName("cftlibRuntimeOnly"));
+    }
+
+    private void createSourceSets(Project project) {
+        SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
+        s.add(s.create("cftlib", x -> {
+            var main = s.getByName("main").getOutput();
+            x.setCompileClasspath(x.getCompileClasspath().plus(main));
+            x.setRuntimeClasspath(x.getRuntimeClasspath().plus(main));
+        }));
+
+
+        s.add(s.create("cftlibTest", x -> {
+            var cftlib = s.getByName("cftlib").getOutput();
+            var main = s.getByName("main").getOutput();
+
+            x.setCompileClasspath(x.getCompileClasspath().plus(cftlib).plus(main));
+            x.setRuntimeClasspath(x.getRuntimeClasspath().plus(cftlib).plus(main));
+        }));
     }
 
     private void createBootWithCCDTask(Project project) {
