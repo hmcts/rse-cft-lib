@@ -138,12 +138,9 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
     private Task createCFTManifestTask(Project project, String depName, String mainClass, File file, String... args) {
-        return project.task("writeManifest" + depName)
-            .doFirst(x -> {
-                Configuration classpath = project.getConfigurations().detachedConfiguration(
-                    libDependencies(project, depName, "injected"));
-                writeManifest(project, classpath, mainClass, file, args);
-            });
+        Configuration classpath = project.getConfigurations().detachedConfiguration(
+            libDependencies(project, depName, "injected"));
+        return createManifestTask(project, "writeManifest" + depName, classpath, mainClass, file, args);
     }
 
     private Task createManifestTask(Project project, String name, FileCollection configuration, String mainClass, File file, String... args) {
