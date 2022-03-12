@@ -52,7 +52,7 @@ public class CftLibPlugin implements Plugin<Project> {
     private void createConfigurations(Project project) {
         project.getConfigurations().getByName("cftlibImplementation")
             .extendsFrom(project.getConfigurations().getByName("implementation"))
-            .getDependencies().addAll(libDependencies(project, "app-runtime", "rse-cft-lib"));
+            .getDependencies().addAll(List.of(libDependencies(project, "app-runtime", "rse-cft-lib")));
 
         project.getConfigurations().getByName("cftlibRuntimeOnly")
             .extendsFrom(project.getConfigurations().getByName("runtimeOnly"));
@@ -74,7 +74,6 @@ public class CftLibPlugin implements Plugin<Project> {
             x.setCompileClasspath(x.getCompileClasspath().plus(main));
             x.setRuntimeClasspath(x.getRuntimeClasspath().plus(main));
         }));
-
 
         s.add(s.create("cftlibTest", x -> {
             var cftlib = s.getByName("cftlib").getOutput();
@@ -141,10 +140,9 @@ public class CftLibPlugin implements Plugin<Project> {
     private Task createCFTManifestTask(Project project, String depName, String mainClass, File file, String... args) {
         return project.task("writeManifest" + depName)
             .doFirst(x -> {
-                Configuration classpath = configuration(project,
-                    "com.github.hmcts.rse-cft-lib:" + depName + ":" + getLibVersion(project),
-                    "com.github.hmcts.rse-cft-lib:injected:" + getLibVersion(project)
-                );                writeManifest(project, classpath, mainClass, file, args);
+                Configuration classpath = project.getConfigurations().detachedConfiguration(
+                    libDependencies(project, depName, "injected"));
+                writeManifest(project, classpath, mainClass, file, args);
             });
     }
 
@@ -153,14 +151,6 @@ public class CftLibPlugin implements Plugin<Project> {
             .doFirst(x -> {
                 writeManifest(project, configuration, mainClass, file, args);
             });
-    }
-
-    private Configuration configuration(Project project, String... dependencies) {
-        var deps = Arrays.stream(dependencies).map(
-            x -> project.getDependencies().create(x)
-        ).toArray(Dependency[]::new);
-
-        return project.getConfigurations().detachedConfiguration(deps);
     }
 
     @SneakyThrows
@@ -236,8 +226,7 @@ public class CftLibPlugin implements Plugin<Project> {
         j.doFirst(x -> {
             // Resolve the configuration as a detached configuration for isolation from
             // the project's build (eg. to prevent interference from spring boot's dependency mgmt plugin)
-            Configuration classpath = configuration(project, "com.github.hmcts.rse-cft-lib:rse-cft-lib:" + getLibVersion(project));
-            j.classpath(classpath);
+            j.classpath(project.getConfigurations().detachedConfiguration(libDependencies(project, "rse-cft-lib")));
         });
 
         j.args(manifests);
@@ -258,10 +247,10 @@ public class CftLibPlugin implements Plugin<Project> {
         j.jvmArgs("-XX:ReservedCodeCacheSize=64m");
     }
 
-    Collection<Dependency> libDependencies(Project project, String... libDeps) {
+    Dependency[] libDependencies(Project project, String... libDeps) {
         return Arrays.stream(libDeps)
             .map(d -> project.getDependencies().create("com.github.hmcts.rse-cft-lib:" + d + ":" + getLibVersion(project)))
-            .collect(Collectors.toList());
+            .toArray(Dependency[]::new);
     }
 
     Directory getBuildDir(Project project) {
