@@ -228,15 +228,13 @@ public class CftLibPlugin implements Plugin<Project> {
         // Allow more time for definitions to import to reduce test flakeyness
         j.environment("CCD_TX-TIMEOUT_DEFAULT", "120");
 
-
         j.environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
             "https://idam-web-public.aat.platform.hmcts.net/o");
 
 //        j.environment("LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY", "DEBUG");
 
-        setJvmArgs(j);
+        setRequiredJvmArgs(j);
 
-        // This needs to happen after evaluation so the lib version is set in the build.gradle.
         j.doFirst(x -> {
             // Resolve the configuration as a detached configuration for isolation from
             // the project's build (eg. to prevent interference from spring boot's dependency mgmt plugin)
@@ -249,7 +247,7 @@ public class CftLibPlugin implements Plugin<Project> {
         return j;
     }
 
-    void setJvmArgs(JavaExec j) {
+    void setRequiredJvmArgs(JavaExec j) {
         j.jvmArgs("-Xverify:none");
         j.jvmArgs("-XX:TieredStopAtLevel=1");
 
