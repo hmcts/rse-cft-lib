@@ -71,15 +71,15 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
     private void createTestSourceSet(Project project) {
-        var impl = project.getConfigurations().getByName("cftlibTestImplementation");
-        impl.extendsFrom(project.getConfigurations().getByName("cftlibImplementation"));
+        project.getConfigurations().getByName("cftlibTestImplementation")
+            .extendsFrom(project.getConfigurations().getByName("cftlibImplementation"))
+            .getDependencies().addAll(List.of(
+                project.getDependencies().create("org.junit.platform:junit-platform-console-standalone:1.8.2"),
+                project.getDependencies().create("com.github.hmcts.rse-cft-lib:test-runner:" + getLibVersion(project))
+            ));
 
         project.getConfigurations().getByName("cftlibTestRuntimeOnly")
             .extendsFrom(project.getConfigurations().getByName("cftlibRuntimeOnly"));
-
-        impl.getDependencies().add(project.getDependencies().create("org.junit.platform:junit-platform-console-standalone:1.8.2"));
-        // Wait until build script evaluation to get lib version.
-        project.afterEvaluate(x -> impl.getDependencies().add(project.getDependencies().create("com.github.hmcts.rse-cft-lib:test-runner:" + getLibVersion(project))));
     }
 
     private void createBootWithCCDTask(Project project) {
