@@ -5,11 +5,13 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -50,10 +52,7 @@ public class CftLibPlugin implements Plugin<Project> {
     private void createConfigurations(Project project) {
         project.getConfigurations().getByName("cftlibImplementation")
             .extendsFrom(project.getConfigurations().getByName("implementation"))
-            .getDependencies().addAll(List.of(
-                project.getDependencies().create("com.github.hmcts.rse-cft-lib:app-runtime:" + getLibVersion(project)),
-                project.getDependencies().create("com.github.hmcts.rse-cft-lib:rse-cft-lib:" + getLibVersion(project))
-            ));
+            .getDependencies().addAll(libDependencies(project, "app-runtime", "rse-cft-lib"));
 
         project.getConfigurations().getByName("cftlibRuntimeOnly")
             .extendsFrom(project.getConfigurations().getByName("runtimeOnly"));
@@ -257,6 +256,12 @@ public class CftLibPlugin implements Plugin<Project> {
         });
         j.jvmArgs("--add-opens", "java.desktop/java.awt.font=ALL-UNNAMED");
         j.jvmArgs("-XX:ReservedCodeCacheSize=64m");
+    }
+
+    Collection<Dependency> libDependencies(Project project, String... libDeps) {
+        return Arrays.stream(libDeps)
+            .map(d -> project.getDependencies().create("com.github.hmcts.rse-cft-lib:" + d + ":" + getLibVersion(project)))
+            .collect(Collectors.toList());
     }
 
     Directory getBuildDir(Project project) {
