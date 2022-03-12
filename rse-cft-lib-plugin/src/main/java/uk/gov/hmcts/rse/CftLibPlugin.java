@@ -138,8 +138,10 @@ public class CftLibPlugin implements Plugin<Project> {
     private Task createCFTManifestTask(Project project, String depName, String mainClass, File file, String... args) {
         return project.task("writeManifest" + depName)
             .doFirst(x -> {
-                Configuration classpath = cftConfiguration(project, depName);
-                writeManifest(project, classpath, mainClass, file, args);
+                Configuration classpath = configuration(project,
+                    "com.github.hmcts.rse-cft-lib:" + depName + ":" + getLibVersion(project),
+                    "com.github.hmcts.rse-cft-lib:injected:" + getLibVersion(project)
+                );                writeManifest(project, classpath, mainClass, file, args);
             });
     }
 
@@ -148,13 +150,6 @@ public class CftLibPlugin implements Plugin<Project> {
             .doFirst(x -> {
                 writeManifest(project, configuration, mainClass, file, args);
             });
-    }
-
-    private Configuration cftConfiguration(Project project, String name) {
-        return configuration(project,
-            "com.github.hmcts.rse-cft-lib:" + name + ":" + getLibVersion(project),
-            "com.github.hmcts.rse-cft-lib:injected:" + getLibVersion(project)
-        );
     }
 
     private Configuration configuration(Project project, String... dependencies) {
