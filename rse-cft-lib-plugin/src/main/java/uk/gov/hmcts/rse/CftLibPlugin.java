@@ -113,7 +113,7 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.dependsOn("cftlibClasses");
         exec.dependsOn("cftlibTestClasses");
         exec.args(file);
-        exec.environment("RSE_LIB_STUB_S2S", "true");
+        exec.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
 
     }
 
