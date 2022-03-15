@@ -42,7 +42,7 @@ class S2SLib {
 
     @Autowired
     public S2SLib(@Value("${idam.s2s-auth.microservice}") String service,
-                  @Value("${rse.lib.stub.s2s:false}") boolean stubOutbound
+                  @Value("${rse.lib.stub.auth.outbound:false}") boolean stubOutbound
                   ) {
         this.service = service;
         this.stubOutbound = stubOutbound;

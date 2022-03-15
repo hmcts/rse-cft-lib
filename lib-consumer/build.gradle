@@ -43,7 +43,7 @@ dependencies {
 }
 
 bootWithCCD {
-    environment("RSE_LIB_STUB_S2S", "true");
+    environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
 }
 
 test {
