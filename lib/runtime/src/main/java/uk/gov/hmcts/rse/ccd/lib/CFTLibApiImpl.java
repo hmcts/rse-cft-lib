@@ -24,6 +24,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 
 public class CFTLibApiImpl implements CFTLib {
@@ -77,7 +78,7 @@ public class CFTLibApiImpl implements CFTLib {
         var client = HttpClient.newHttpClient();
         var response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (!String.valueOf(response.statusCode()).startsWith("2")) {
-            throw new RuntimeException("Failed to create role: HTTP " + response.statusCode());
+            throw new RuntimeException("Failed to create role: HTTP " + response.statusCode() + " " + response.body());
         }
     }
   }
@@ -119,7 +120,8 @@ public class CFTLibApiImpl implements CFTLib {
       CloseableHttpResponse response = httpClient.execute(uploadFile);
 
       if (!String.valueOf(response.getStatusLine().getStatusCode()).startsWith("2")) {
-          throw new RuntimeException("Failed to import definition: HTTP " + response.getStatusLine().getStatusCode());
+          var body = EntityUtils.toString(response.getEntity());
+          throw new RuntimeException("Failed to import definition: HTTP " + response.getStatusLine().getStatusCode() + " " + body);
       }
   }
 
