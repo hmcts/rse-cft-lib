@@ -1,3 +1,7 @@
+java {
+    withJavadocJar()
+}
+
 dependencies {
 
     // Dependency free to avoid polluting the system classloader.
