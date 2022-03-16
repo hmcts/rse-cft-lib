@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.JWT;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -27,15 +28,25 @@ public class URLRewriter extends OncePerRequestFilter {
     @Autowired
     private final IdamApi idam;
 
+    private final String name;
+
     @Autowired
-    public URLRewriter(IdamApi idam) {
+    public URLRewriter(IdamApi idam,
+      @Value("${rse.lib.service_name:***CFT lib***}") String name) {
         this.idam = idam;
+        this.name = name;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
+      String name = Thread.currentThread().getName();
+      try {
+        Thread.currentThread().setName("*** " + this.name);
         filterChain.doFilter(new Rewriter(request), response);
+      } finally {
+        Thread.currentThread().setName(name);
+      }
     }
 
     class Rewriter extends HttpServletRequestWrapper {
