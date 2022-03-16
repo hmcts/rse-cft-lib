@@ -23,15 +23,14 @@ import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 @Aspect
 class NonValidatingS2SParser {
 
-
     // Intercept S2S validation requests and parse the token locally without validating the signature.
     // This allows self-signed s2s tokens and breaks the dependency on s2s.
     @Around("execution(* uk.gov.hmcts.reform.auth.parser.idam.core.service.token.ServiceTokenParser.parse(..)) && args(jwt)")
     public Object parse(ProceedingJoinPoint p, String jwt) throws Throwable {
         return JWT.decode(jwt.replace("Bearer ", "")).getSubject();
     }
-
 }
+
 @Component
 @ConditionalOnClass(ServiceAuthorisationApi.class)
 @Aspect
@@ -66,14 +65,14 @@ class S2SLib {
     @SneakyThrows
     @Around("execution(* uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi.serviceToken(..)) && args(signIn)")
     public Object serviceToken(ProceedingJoinPoint p, Map<String, String> signIn) {
-        if (!stubOutbound) {
-            return p.proceed();
-        }
-       var j = JWT.create()
+        if (stubOutbound) {
+          // Return a self-signed JWT.
+          return JWT.create()
             .withSubject(signIn.get("microservice"))
             .withIssuedAt(new Date())
             .sign(Algorithm.HMAC256("secret"));
+        }
 
-        return j;
+      return p.proceed();
     }
 }
