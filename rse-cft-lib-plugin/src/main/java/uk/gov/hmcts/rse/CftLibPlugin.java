@@ -187,42 +187,6 @@ public class CftLibPlugin implements Plugin<Project> {
         LibRunnerTask j = project.getTasks().create(name, LibRunnerTask.class);
         j.setMain("uk.gov.hmcts.rse.ccd.lib.LibRunner");
 
-        j.environment("USER_PROFILE_DB_PORT", 6432);
-        j.environment("USER_PROFILE_DB_USERNAME", "postgres");
-        j.environment("USER_PROFILE_DB_PASSWORD", "postgres");
-        j.environment("USER_PROFILE_DB_NAME", "userprofile");
-        j.environment("APPINSIGHTS_INSTRUMENTATIONKEY", "key");
-
-        j.environment("DATA_STORE_DB_PORT", 6432);
-        j.environment("DATA_STORE_DB_USERNAME", "postgres");
-        j.environment("DATA_STORE_DB_PASSWORD", "postgres");
-        j.environment("DATA_STORE_DB_NAME", "datastore");
-
-        j.environment("DEFINITION_STORE_DB_PORT", 6432);
-        j.environment("DEFINITION_STORE_DB_USERNAME", "postgres");
-        j.environment("DEFINITION_STORE_DB_PASSWORD", "postgres");
-        j.environment("DEFINITION_STORE_DB_NAME", "definitionstore");
-
-        j.environment("ROLE_ASSIGNMENT_DB_HOST", "localhost");
-        j.environment("ROLE_ASSIGNMENT_DB_PORT", "6432");
-        j.environment("ROLE_ASSIGNMENT_DB_NAME", "am");
-        j.environment("ROLE_ASSIGNMENT_DB_USERNAME", "postgres");
-        j.environment("ROLE_ASSIGNMENT_DB_PASSWORD", "postgres");
-
-        j.environment("SEARCH_ELASTIC_HOSTS", "http://localhost:9200");
-        j.environment("SEARCH_ELASTIC_DATA_HOSTS", "http://localhost:9200");
-        j.environment("ELASTICSEARCH_ENABLED", "true");
-        j.environment("ELASTICSEARCH_FAILIMPORTIFERROR", "true");
-
-        // Allow more time for definitions to import to reduce test flakeyness
-        j.environment("CCD_TX-TIMEOUT_DEFAULT", "120");
-
-        j.environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
-            "https://idam-web-public.aat.platform.hmcts.net/o");
-
-//        j.environment("LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY", "DEBUG");
-
-        setRequiredJvmArgs(j);
 
         j.doFirst(x -> {
             // Resolve the configuration as a detached configuration for isolation from
@@ -235,18 +199,6 @@ public class CftLibPlugin implements Plugin<Project> {
         return j;
     }
 
-    void setRequiredJvmArgs(JavaExec j) {
-        j.jvmArgs("-Xverify:none");
-        j.jvmArgs("-XX:TieredStopAtLevel=1");
-
-        // Required by Access Management for Java 17.
-        // https://github.com/x-stream/xstream/issues/101
-        List.of("java.lang", "java.util", "java.lang.reflect", "java.text", "java.awt.font").forEach(x -> {
-            j.jvmArgs("--add-opens", "java.base/" + x + "=ALL-UNNAMED");
-        });
-        j.jvmArgs("--add-opens", "java.desktop/java.awt.font=ALL-UNNAMED");
-        j.jvmArgs("-XX:ReservedCodeCacheSize=64m");
-    }
 
     Dependency[] libDependencies(Project project, String... libDeps) {
         return Arrays.stream(libDeps)
