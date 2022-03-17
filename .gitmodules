@@ -10,3 +10,6 @@
 [submodule "projects/ccd-user-profile-api"]
 	path = projects/ccd-user-profile-api
 	url = git@github.com:hmcts/ccd-user-profile-api.git
+[submodule "projects/rse-idam-simulator"]
+	path = projects/rse-idam-simulator
+	url = git@github.com:hmcts/rse-idam-simulator.git

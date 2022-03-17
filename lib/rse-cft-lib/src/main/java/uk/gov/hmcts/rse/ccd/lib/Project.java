@@ -5,5 +5,6 @@ public enum Project {
   Definitionstore,
   Userprofile,
   AM,
-  Application
+  Application,
+  IdamSimulator
 }
