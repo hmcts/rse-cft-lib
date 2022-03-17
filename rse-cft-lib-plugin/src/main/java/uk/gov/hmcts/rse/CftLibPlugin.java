@@ -120,7 +120,10 @@ public class CftLibPlugin implements Plugin<Project> {
     private void createManifestTasks(Project project) {
         {
             var file = getBuildDir(project).file("runtime").getAsFile();
-            manifestTasks.add(createCFTManifestTask(project, "runtime", "uk.gov.hmcts.rse.ccd.lib.ComposeRunner", file));
+            Configuration classpath = project.getConfigurations().detachedConfiguration(
+            libDependencies(project, "runtime"));
+            var task = createManifestTask(project, "writeManifestRuntime", classpath, "uk.gov.hmcts.rse.ccd.lib.Application", file);
+            manifestTasks.add(task);
             manifests.add(file);
         }
 

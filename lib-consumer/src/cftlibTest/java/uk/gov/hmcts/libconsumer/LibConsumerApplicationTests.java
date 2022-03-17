@@ -44,15 +44,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LibConsumerApplicationTests extends CftlibTest {
 
-    @Autowired
-    MockMvc mockMvc;
-
     @SneakyThrows
     @Test
     void testController() {
-        mockMvc.perform(get("/index"))
-            .andExpect(status().is2xxSuccessful())
-            .andExpect(content().string(containsString("Hello world!")));
+      var request = buildGet("http://localhost:4013/index");
+      var response = HttpClientBuilder.create().build().execute(request);
+      assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
     }
 
     @SneakyThrows
@@ -67,8 +64,8 @@ class LibConsumerApplicationTests extends CftlibTest {
         assertThat(m.containsKey("header"), is(true));
     }
 
-    @SneakyThrows
-    @Test
+  @SneakyThrows
+  @Test
     void listJurisdictions() {
         var request = buildGet("http://localhost:4452/aggregated/caseworkers/:uid/jurisdictions?access=read");
         // Test xui talking direct to ccd without the gateway.

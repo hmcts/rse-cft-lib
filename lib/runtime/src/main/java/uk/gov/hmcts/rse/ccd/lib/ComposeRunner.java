@@ -19,10 +19,6 @@ import org.zeroturnaround.exec.ProcessExecutor;
 
 public class ComposeRunner {
 
-    public static void main(String[] args) {
-        new ComposeRunner().startBoot();
-    }
-
     void startBoot() {
       try {
         ControlPlane.setApi(new CFTLibApiImpl());
