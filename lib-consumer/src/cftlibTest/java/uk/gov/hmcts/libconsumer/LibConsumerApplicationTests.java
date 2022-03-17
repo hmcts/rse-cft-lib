@@ -97,6 +97,15 @@ class LibConsumerApplicationTests extends CftlibTest {
         assertThat(l.size(), greaterThan(0));
     }
 
+    @SneakyThrows
+    @Test
+    void getPaginationMetadata() {
+      var request = buildGet("http://localhost:4452/data/caseworkers/:uid/jurisdictions/DIVORCE/case-types/NFD/cases/pagination_metadata");
+
+      var response = HttpClientBuilder.create().build().execute(request);
+      assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+    }
+
     @Test
     void caseCreation() throws IOException {
         var request = buildGet("http://localhost:4452/data/internal/case-types/NFD/event-triggers/create-test-application?ignore-warning=false");
