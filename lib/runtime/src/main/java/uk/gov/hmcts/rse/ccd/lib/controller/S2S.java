@@ -1,10 +1,15 @@
 package uk.gov.hmcts.rse.ccd.lib.controller;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Base64;
+import java.util.Date;
 import java.util.Map;
 
 import static org.springframework.http.ResponseEntity.ok;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +26,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class S2S {
   @PostMapping("/lease")
   @ResponseBody
-  public ResponseEntity<String> lease(@RequestBody Map signIn) {
-    return ok("");
+  public ResponseEntity<String> lease(@RequestBody Map map) {
+      return ok(JWT.create()
+        .withSubject(map.get("microservice").toString())
+        .withNotBefore(new Date())
+        .withIssuedAt(new Date())
+        .withExpiresAt(Date.from(LocalDateTime.now().plusDays(100).toInstant(ZoneOffset.UTC)))
+        .sign(Algorithm.HMAC256("a secret")));
+    }
+
+    @GetMapping("/health")
+  public ResponseEntity<Map> health() {
+    return ok (Map.of("status", "UP"));
   }
 
   @GetMapping("/details")

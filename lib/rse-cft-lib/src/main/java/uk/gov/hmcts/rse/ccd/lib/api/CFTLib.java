@@ -2,6 +2,12 @@ package uk.gov.hmcts.rse.ccd.lib.api;
 
 public interface CFTLib {
   /**
+   * Create an IDAM user.
+   * Password 'password'.
+   */
+  void createIdamUser(String email, String... roles);
+
+  /**
    * Create a CCD User Profile
    */
   void createProfile(String id, String jurisdiction, String caseType, String state);

@@ -19,11 +19,28 @@ public class LibRunnerTask extends JavaExec {
     if (authMode == AuthMode.Local) {
       // S2S simulator
       environment("IDAM_S2S-AUTH_URL", "http://localhost:8489");
-      // Idam simulator
+      environment("XUI_S2S_URL", "http://host.docker.internal:8489");
+
       environment("IDAM_API_URL", "http://localhost:5556");
-      environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
-        "http://localhost:5556/o");
+      environment("XUI_IDAM_API_URL", "http://host.docker.internal:5556");
+      environment("XUI_IDAM_LOGIN_URL", "http://localhost:5556");
+
+      environment("XUI_SYSTEM_USER_NAME","cwd_system@mailinator.com");
+      environment("XUI_SYSTEM_USER_PASSWORD","password");
+      environment("XUI_SERVICE_KEY","AAAAAAAAAAAAAAAA");
+      environment("XUI_OAUTH_SECRET","AAAAAAAAAAAAAAA");
+      environment("XUI_LD_ID","aaaaaaaaaaaaaaaaaaaaa");
+
+      // TODO: placeholder to pass health checks
+      environment("XUI_EM_DOCASSEMBLY_API", "http://host.docker.internal:5556");
+      environment("XUI_DOCUMENTS_API", "http://host.docker.internal:5556");
+      environment("XUI_DOCUMENTS_API_V2", "http://host.docker.internal:5556");
+
+      // Sets data store
+      environment("CASE_DOCUMENT_AM_URL", "http://localhost:5556");
     }
+
+
     // Always set to allow boot.
     environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
       "https://idam-web-public.aat.platform.hmcts.net/o");
