@@ -23,10 +23,10 @@ public class LibRunnerTask extends JavaExec {
       environment("IDAM_API_URL", "http://localhost:5556");
       environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
         "http://localhost:5556/o");
-    } else {
-      environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
-        "https://idam-web-public.aat.platform.hmcts.net/o");
     }
+    // Always set to allow boot.
+    environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
+      "https://idam-web-public.aat.platform.hmcts.net/o");
 
 //    environment("LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY", "DEBUG");
   }
