@@ -1,3 +1,5 @@
+import uk.gov.hmcts.rse.AuthMode
+
 plugins {
     id 'org.springframework.boot' version '2.4.12'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
@@ -44,6 +46,7 @@ dependencies {
 }
 
 bootWithCCD {
+    authMode = AuthMode.Local
     environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
 }
 

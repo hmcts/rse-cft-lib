@@ -148,7 +148,7 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
     private Task createManifestTask(Project project, String name, FileCollection configuration, String mainClass, File file, String... args) {
-        return project.task(name)
+        return project.getTasks().create(name)
             .doFirst(x -> {
                 writeManifest(project, configuration, mainClass, file, args);
             });
@@ -183,8 +183,8 @@ public class CftLibPlugin implements Plugin<Project> {
             .orElse("DEV-SNAPSHOT");
     }
 
-    private JavaExec createRunTask(Project project, String name) {
-        JavaExec j = project.getTasks().create(name, JavaExec.class);
+    private LibRunnerTask createRunTask(Project project, String name) {
+        LibRunnerTask j = project.getTasks().create(name, LibRunnerTask.class);
         j.setMain("uk.gov.hmcts.rse.ccd.lib.LibRunner");
 
         j.environment("USER_PROFILE_DB_PORT", 6432);
