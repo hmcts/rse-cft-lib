@@ -1,6 +1,8 @@
 package uk.gov.hmcts.libconsumer;
 
 import java.io.IOException;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -28,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.rse.ccd.lib.Project;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,15 +47,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LibConsumerApplicationTests extends CftlibTest {
 
-    @Autowired
-    MockMvc mockMvc;
-
     @SneakyThrows
     @Test
     void testController() {
-        mockMvc.perform(get("/index"))
-            .andExpect(status().is2xxSuccessful())
-            .andExpect(content().string(containsString("Hello world!")));
+      var request = buildGet("http://localhost:4013/index");
+      var response = HttpClientBuilder.create().build().execute(request);
+      assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
     }
 
     @SneakyThrows
@@ -67,8 +67,8 @@ class LibConsumerApplicationTests extends CftlibTest {
         assertThat(m.containsKey("header"), is(true));
     }
 
-    @SneakyThrows
-    @Test
+  @SneakyThrows
+  @Test
     void listJurisdictions() {
         var request = buildGet("http://localhost:4452/aggregated/caseworkers/:uid/jurisdictions?access=read");
         // Test xui talking direct to ccd without the gateway.
@@ -98,6 +98,15 @@ class LibConsumerApplicationTests extends CftlibTest {
         List l = (List) m.get("workbasketInputs");
 
         assertThat(l.size(), greaterThan(0));
+    }
+
+    @SneakyThrows
+    @Test
+    void getPaginationMetadata() {
+      var request = buildGet("http://localhost:4452/data/caseworkers/:uid/jurisdictions/DIVORCE/case-types/NFD/cases/pagination_metadata");
+
+      var response = HttpClientBuilder.create().build().execute(request);
+      assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
     }
 
     @Test

@@ -9,8 +9,12 @@ import java.nio.file.StandardCopyOption;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import lombok.SneakyThrows;
 import net.lingala.zip4j.ZipFile;
@@ -18,10 +22,6 @@ import org.awaitility.Awaitility;
 import org.zeroturnaround.exec.ProcessExecutor;
 
 public class ComposeRunner {
-
-    public static void main(String[] args) {
-        new ComposeRunner().startBoot();
-    }
 
     void startBoot() {
       try {
@@ -52,6 +52,16 @@ public class ComposeRunner {
           .execute();
 
       Awaitility.await()
+        .pollInSameThread()
+        .pollInterval(Duration.ofMillis(100))
+        .pollDelay(Duration.ZERO)
+        .ignoreExceptions()
+        .timeout(10, TimeUnit.MINUTES)
+        .until(this::authReady);
+
+      ControlPlane.setAuthReady();
+
+      Awaitility.await()
           .pollInSameThread()
           .pollInterval(Duration.ofMillis(100))
           .pollDelay(Duration.ZERO)
@@ -73,14 +83,41 @@ public class ComposeRunner {
       ControlPlane.setESReady();
     }
 
-    @SneakyThrows
+  @SneakyThrows
+  private boolean authReady() {
+    if ("localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
+      try {
+        // Wait for Idam Simulator to come up.
+        var c = (HttpURLConnection) new URL("http://localhost:5556/health")
+          .openConnection();
+        if (c.getResponseCode() != 200) {
+          throw new RuntimeException();
+        }
+      } catch (Exception e) {
+        System.out.println("Idam not ready...");
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @SneakyThrows
     boolean dbReady() {
       try (var c = DriverManager.getConnection(
           "jdbc:postgresql://localhost:6432/postgres",
           "postgres", "postgres")) {
 
+        var dbs = List.of(Project.Datastore, Project.Definitionstore, Project.Userprofile, Project.AM)
+          .stream().map(Objects::toString)
+          .collect(Collectors.toCollection(ArrayList::new));
+
+        var additionalDbs = System.getenv("RSE_LIB_ADDITIONAL_DATABASES");
+        if (additionalDbs != null) {
+          dbs.addAll(List.of(additionalDbs.split(",")));
+        }
+
         // Create the databases if necessary.
-        for (var db : List.of(Project.Datastore, Project.Definitionstore, Project.Userprofile, Project.AM)) {
+        for (var db : dbs) {
           var s = c.prepareStatement(String.format("SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower('%s')", db));
           s.execute();
           if (!s.getResultSet().next()) {
