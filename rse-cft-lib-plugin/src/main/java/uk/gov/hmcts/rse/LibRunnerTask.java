@@ -17,6 +17,10 @@ public class LibRunnerTask extends JavaExec {
     setRequiredJvmArgs();
     setStandardEnvVars();
     if (authMode == AuthMode.Local) {
+      environment("RSE_LIB_AUTH-MODE", "localAuth");
+      // Enable idam simulator
+      environment("COMPOSE_PROFILES", "localAuth");
+
       // S2S simulator
       environment("IDAM_S2S-AUTH_URL", "http://localhost:8489");
       environment("XUI_S2S_URL", "http://host.docker.internal:8489");
@@ -38,12 +42,16 @@ public class LibRunnerTask extends JavaExec {
 
       // Sets data store
       environment("CASE_DOCUMENT_AM_URL", "http://localhost:5556");
+
+      environment("OIDC_ISSUER", "http://localhost:5556");
+      environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
+        "http://localhost:5556/o");
+    } else {
+      environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
+        "https://idam-web-public.aat.platform.hmcts.net/o");
     }
 
 
-    // Always set to allow boot.
-    environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
-      "https://idam-web-public.aat.platform.hmcts.net/o");
 
 //    environment("LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY", "DEBUG");
   }

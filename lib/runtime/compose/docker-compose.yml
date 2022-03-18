@@ -46,7 +46,7 @@ services:
       FEATURE_APP_INSIGHTS_ENABLED: "false"
       FEATURE_SECURE_COOKIE_ENABLED: "false"
       FEATURE_REDIS_ENABLED: "false"
-      JURISDICTIONS: "${XUI_JURISDICTIONS:-DIVORCE,PROBATE,SSCS,PRIVATELAW,PUBLICLAW,ADOPTION}"
+      JURISDICTIONS: "${XUI_JURISDICTIONS:-DIVORCE,PROBATE,SSCS,PRIVATELAW,PUBLICLAW,ADOPTION,CIVIL}"
       MICROSERVICE: xui_webapp
       PROTOCOL: http
       XUI_ENV: local
@@ -83,3 +83,8 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  rse-idam-simulator:
+    image: "hmctspublic.azurecr.io/hmcts/rse/rse-idam-simulator:latest"
+    profiles: ["localAuth"]
+    ports:
+      - 5556:5556

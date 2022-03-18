@@ -32,8 +32,7 @@ public class CftLibPlugin implements Plugin<Project> {
         "am-role-assignment-service-lib", "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication",
         "ccd-data-store-api-lib", "uk.gov.hmcts.ccd.CoreCaseDataApplication",
         "definition-store-fat", "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication",
-        "user-profile-api-lib", "uk.gov.hmcts.ccd.UserProfileApplication",
-        "rse-idam-simulator-lib", "uk.gov.hmcts.reform.rse.idam.simulator.Application"
+        "user-profile-api-lib", "uk.gov.hmcts.ccd.UserProfileApplication"
     );
     private List<File> manifests = new ArrayList<>();
     private Set<Task> manifestTasks = new HashSet<>();
@@ -120,6 +119,7 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private void createManifestTasks(Project project) {
         {
+            // Runtime is always the first manifest
             var file = getBuildDir(project).file("runtime").getAsFile();
             Configuration classpath = project.getConfigurations().detachedConfiguration(
             libDependencies(project, "runtime"));
