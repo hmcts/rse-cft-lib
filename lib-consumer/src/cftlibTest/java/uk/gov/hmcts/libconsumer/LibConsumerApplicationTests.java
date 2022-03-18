@@ -1,6 +1,8 @@
 package uk.gov.hmcts.libconsumer;
 
 import java.io.IOException;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -28,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.rse.ccd.lib.Project;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;

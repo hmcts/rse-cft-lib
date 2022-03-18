@@ -34,6 +34,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.github.hmcts:service-auth-provider-java-client:4.0.3'
     implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
+    cftlibTestImplementation group: 'org.postgresql', name: 'postgresql', version: '42.3.3'
 
     cftlibTestImplementation 'org.springframework.boot:spring-boot-starter-test'
     cftlibTestImplementation 'org.springframework.security:spring-security-test'
@@ -48,6 +49,10 @@ dependencies {
 bootWithCCD {
     authMode = AuthMode.Local
     environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
+}
+
+cftlibTest {
+    environment("RSE_LIB_ADDITIONAL_DATABASES", "mydb")
 }
 
 test {
