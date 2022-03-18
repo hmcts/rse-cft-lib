@@ -80,8 +80,7 @@ def configureImportedProject(p) {
 def importedProjects = [
         'ccd-data-store-api',
         'user-profile-api',
-        'am-role-assignment-service',
-        'rse-idam-simulator'
+        'am-role-assignment-service'
 ]
 
 allprojects {
