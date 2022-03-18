@@ -9,7 +9,8 @@ public class ControlPlane {
     private static volatile Throwable INIT_EXCEPTION;
     private static final CountDownLatch DB_READY = new CountDownLatch(1);
     private static final CountDownLatch ES_READY = new CountDownLatch(1);
-    // We wait for all services to be ready, except app under test which is coordinated by spring test.
+    private static final CountDownLatch AUTH_READY = new CountDownLatch(1);
+  // We wait for all services to be ready, except app under test which is coordinated by spring test.
     private static final CountDownLatch APPS_READY = new CountDownLatch(Project.values().length - 1);
 
     // Wait for the API to be provided from the runtime
@@ -56,7 +57,12 @@ public class ControlPlane {
         APPS_READY.await();
     }
 
-    // Signal that an application has booted.
+    @SneakyThrows
+    public static void waitForAuthServer() {
+        AUTH_READY.await();
+    }
+
+  // Signal that an application has booted.
     public static void appReady() {
         APPS_READY.countDown();
     }
@@ -72,4 +78,8 @@ public class ControlPlane {
         API_READY.await();
         return api;
     }
+
+  public static void setAuthReady() {
+    AUTH_READY.countDown();
+  }
 }

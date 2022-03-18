@@ -8,9 +8,11 @@ import java.nio.charset.StandardCharsets;
 import java.sql.DriverManager;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -28,6 +30,29 @@ import org.apache.http.util.EntityUtils;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 
 public class CFTLibApiImpl implements CFTLib {
+
+  @SneakyThrows
+  @Override
+  public void createIdamUser(String email, String... roles) {
+    var json = new Gson().toJson(Map.of(
+      "email", email,
+         "forename", "A",
+      "surname", "User",
+      "password", "password",
+      "roles", Arrays.stream(roles).map(x -> Map.of("code", x)).collect(Collectors.toList())
+      ));
+    var request = HttpRequest.newBuilder()
+      .uri(URI.create("http://localhost:5556/testing-support/accounts"))
+      .header("content-type", "application/json")
+      .POST(HttpRequest.BodyPublishers.ofString(json))
+      .build();
+
+    var client = HttpClient.newHttpClient();
+    var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    if (!String.valueOf(response.statusCode()).startsWith("2")) {
+      throw new RuntimeException("Failed to create idam account" + response.statusCode());
+    }
+  }
 
   @SneakyThrows
   public void createProfile(String id, String jurisdiction, String caseType, String state) {

@@ -67,11 +67,11 @@ public class URLRewriter extends OncePerRequestFilter {
         private String process(String url) {
             // CCD Gateway strips this path.
             if (url.startsWith("/data")) {
-                return url.replaceFirst("/data", "");
+              url = url.replaceFirst("/data", "");
             }
             // Gateway replaces placeholder userIDs.
             if (url.contains("/:uid/")) {
-                return substituteUserId(url);
+                url = substituteUserId(url);
             }
             return url;
         }

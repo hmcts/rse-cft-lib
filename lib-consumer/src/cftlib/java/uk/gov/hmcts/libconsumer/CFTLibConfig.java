@@ -13,6 +13,7 @@ public class CFTLibConfig implements CFTLibConfigurer {
   @SneakyThrows
   @Override
   public void configure(CFTLib lib) {
+    lib.createIdamUser("a@b.com", "caseworker", "caseworker-divorce", "caseworker-divorce-solicitor");
     lib.createProfile("banderous","DIVORCE", "NO_FAULT_DIVORCE", "Submitted");
     lib.createRoles(
         "caseworker-divorce-courtadmin_beta",

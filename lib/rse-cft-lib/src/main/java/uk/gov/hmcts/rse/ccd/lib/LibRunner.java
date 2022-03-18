@@ -12,18 +12,31 @@ import java.util.Arrays;
 import lombok.SneakyThrows;
 
 public class LibRunner {
-    public static void main(String[] args) throws Exception {
-        var threads = new ArrayList<Thread>();
-        Arrays.stream(args).forEach(f -> {
-            var t = new Thread(() -> launchApp(f));
-            t.setName(f);
-            threads.add(t);
-            t.start();
-        });
-        for (Thread thread : threads) {
-            thread.join();
-        }
+  public static void main(String[] args) throws Exception {
+    Thread.currentThread().setName("**** cftlib bootstrap");
+    var threads = new ArrayList<Thread>();
+    {
+      var runtime = args[0];
+      var t = new Thread(() -> launchApp(runtime));
+      t.setName("runtime");
+      t.start();
+      threads.add(t);
     }
+
+    // Cannot start spring boot apps until Oauth server ready.
+    ControlPlane.waitForAuthServer();
+
+    var rest = Arrays.copyOfRange(args, 1, args.length);
+    Arrays.stream(rest).forEach(f -> {
+      var t = new Thread(() -> launchApp(f));
+      t.start();
+      t.setName(f);
+      threads.add(t);
+    });
+    for (Thread thread : threads) {
+      thread.join();
+    }
+  }
 
     @SneakyThrows
     private static void launchApp(String classpathFile) {
