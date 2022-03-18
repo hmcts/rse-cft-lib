@@ -90,14 +90,25 @@ public class CftLibPlugin implements Plugin<Project> {
         var exec = createRunTask(project, "bootWithCCD");
         var file = getBuildDir(project).file("application").getAsFile();
         exec.doFirst(t -> {
-            JavaExec e = (JavaExec) project.getTasks().getByName("bootRun");
+          JavaExec e = (JavaExec) project.getTasks().getByName("bootRun");
+          String clazz = "";
 
-            var name = "--rse.lib.service_name=" + project.getName();
-            writeManifest(project, lib.getRuntimeClasspath(), e.getMainClass().get(), file, name);
+          if (e.getMainClass().isPresent()) {
+            clazz = e.getMainClass().get();
+          } else {
+            clazz = project.getProperties().get("mainClassName").toString();
+          }
+
+            var args = "--rse.lib.service_name=" + project.getName();
+            writeManifest(project, lib.getRuntimeClasspath(), clazz, file, args);
         });
 
+
         exec.dependsOn("cftlibClasses");
-        exec.dependsOn(project.getTasks().getByName("bootRunMainClassName"));
+
+        if (null != project.getTasks().findByName("bootRunMainClassName")) {
+          exec.dependsOn(project.getTasks().getByName("bootRunMainClassName"));
+        }
         exec.args(file);
     }
 
