@@ -42,8 +42,13 @@ public class ComposeRunner {
       }
       var dir = Files.createTempDirectory("cftlib");
       new ZipFile(f).extractAll(dir.toString());
+      var args = new ArrayList<String>(List.of("docker-compose", "-p", "cftlib", "up", "--build", "-d"));
+      // When running on a CI server ensure clean container builds.
+      if (null != System.getenv("CI")) {
+        args.add("--force-recreate");
+      }
 
-      new ProcessExecutor().command("docker-compose", "-p", "cftlib", "up", "--build", "-d")
+      new ProcessExecutor().command(args)
           .redirectOutput(System.out)
           .redirectError(System.err)
           .directory(dir.toFile())
