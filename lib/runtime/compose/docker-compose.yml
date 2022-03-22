@@ -55,9 +55,9 @@ services:
       SERVICES_DOCUMENTS_API_V2: "${XUI_DOCUMENTS_API_V2:-http://dm-store-aat.service.core-compute-aat.internal}"
 
       SERVICES_PAYMENTS_URL: http://payment-api-aat.service.core-compute-aat.internal
-      SERVICES_EM_ANNO_API: http://host.docker.internal:4452
-      SERVICES_CCD_COMPONENT_API: http://host.docker.internal:4452
-      SERVICES_CCD_DATA_STORE_API: http://host.docker.internal:4452
+      SERVICES_EM_ANNO_API: http://${JVM_HOST:-host.docker.internal}:4452
+      SERVICES_CCD_COMPONENT_API: http://${JVM_HOST:-host.docker.internal}:4452
+      SERVICES_CCD_DATA_STORE_API: http://${JVM_HOST:-host.docker.internal}:4452
       SERVICES_IDAM_API_URL: "${XUI_IDAM_API_URL:-https://idam-api.aat.platform.hmcts.net}"
       SERVICES_IDAM_CLIENT_ID: xuiwebapp
       SERVICES_IDAM_LOGIN_URL: "${XUI_IDAM_LOGIN_URL:-https://idam-web-public.aat.platform.hmcts.net}"
@@ -69,15 +69,15 @@ services:
       SYSTEM_USER_NAME: "${XUI_SYSTEM_USER_NAME}"
       SYSTEM_USER_PASSWORD: "${XUI_SYSTEM_USER_PASSWORD}"
       REDISCLOUD_URL: http://localhost:6780
-      HEALTH_CCD_COMPONENT_API: http://host.docker.internal:4452/health
-      HEALTH_CCD_DATA_API: http://host.docker.internal:4452/health
+      HEALTH_CCD_COMPONENT_API: http://${JVM_HOST:-host.docker.internal}:4452/health
+      HEALTH_CCD_DATA_API: http://${JVM_HOST:-host.docker.internal}:4452/health
       SERVICES_PRD_API: http://rd-professional-api-aat.service.core-compute-aat.internal
       APPINSIGHTS_INSTRUMENTATIONKEY: TESTVAR
       IDAM_SECRET: "${XUI_OAUTH_SECRET}"
       S2S_SECRET: "${XUI_SERVICE_KEY}"
       LAUNCH_DARKLY_CLIENT_ID: "${XUI_LD_ID}"
-      SERVICES_ROLE_ASSIGNMENT_API: http://host.docker.internal:4096
-      HEALTH_ROLE_ASSIGNMENT_API: http://host.docker.internal:4096/health
+      SERVICES_ROLE_ASSIGNMENT_API: http://${JVM_HOST:-host.docker.internal}:4096
+      HEALTH_ROLE_ASSIGNMENT_API: http://${JVM_HOST:-host.docker.internal}:4096/health
     ports:
       - 3000:3000
     extra_hosts:
