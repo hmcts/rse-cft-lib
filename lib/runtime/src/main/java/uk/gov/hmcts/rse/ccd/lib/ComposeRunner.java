@@ -10,8 +10,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -49,6 +49,7 @@ public class ComposeRunner {
       }
 
       new ProcessExecutor().command(args)
+        .environment(getEnvironmentVars())
           .redirectOutput(System.out)
           .redirectError(System.err)
           .directory(dir.toFile())
@@ -87,6 +88,27 @@ public class ComposeRunner {
 
       ControlPlane.setESReady();
     }
+
+  private Map<String, String> getEnvironmentVars() {
+      if ("localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
+        var hostEnv = System.getenv("JVM_HOST");
+        var host = "http://" + (
+          hostEnv != null
+          ? hostEnv
+          : "host.docker.internal");
+        var runtime = host + ":5556";
+        return Map.of(
+        "XUI_S2S_URL", host + ":8489",
+        "XUI_IDAM_API_URL", runtime,
+        "XUI_IDAM_LOGIN_URL", "http://localhost:5556",
+        // TODO: placeholder to pass health checks
+        "XUI_EM_DOCASSEMBLY_API", runtime,
+        "XUI_DOCUMENTS_API", runtime,
+        "XUI_DOCUMENTS_API_V2", runtime
+        );
+      }
+    return Map.of();
+  }
 
   @SneakyThrows
   private boolean authReady() {
