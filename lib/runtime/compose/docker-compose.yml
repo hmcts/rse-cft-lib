@@ -79,7 +79,7 @@ services:
       SERVICES_ROLE_ASSIGNMENT_API: http://${JVM_HOST:-host.docker.internal}:4096
       HEALTH_ROLE_ASSIGNMENT_API: http://${JVM_HOST:-host.docker.internal}:4096/health
     ports:
-      - 3000:3000
+      - ${XUI_PORT:-3000}:3000
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
