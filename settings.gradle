@@ -5,7 +5,6 @@ pluginManagement {
     }
 }
 
-includeBuild 'projects/am-role-assignment-service'
 includeBuild 'projects/ccd-definition-store-api'
 includeBuild 'projects/ccd-data-store-api'
 includeBuild 'projects/ccd-user-profile-api'
