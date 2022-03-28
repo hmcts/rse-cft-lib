@@ -25,6 +25,10 @@ public class ComposeRunner {
 
     void startBoot() {
       try {
+        // Start our monitoring of the dependencies before we run docker-compose up,
+        // since docker-compose up can take a few seconds and we don't want to block
+        // boot if the dependencies are already running.
+        new Thread(this::monitorStartingServices).start();
         ControlPlane.setApi(new CFTLibApiImpl());
         dockerBoot();
       } catch (Exception e) {
@@ -35,6 +39,7 @@ public class ComposeRunner {
 
     @SneakyThrows
     void dockerBoot() {
+
       var f = File.createTempFile("cftlib", "");
       URL u = getClass().getResource("/cftlib-compose.zip");
       try (InputStream i = u.openStream()) {
@@ -57,6 +62,9 @@ public class ComposeRunner {
           .timeout(10, TimeUnit.MINUTES)
           .execute();
 
+    }
+
+    private void monitorStartingServices() {
       Awaitility.await()
         .pollInSameThread()
         .pollInterval(Duration.ofMillis(100))
@@ -68,23 +76,23 @@ public class ComposeRunner {
       ControlPlane.setAuthReady();
 
       Awaitility.await()
-          .pollInSameThread()
-          .pollInterval(Duration.ofMillis(100))
-          .pollDelay(Duration.ZERO)
-          .ignoreExceptions()
-          .timeout(10, TimeUnit.MINUTES)
-          .until(this::dbReady);
+        .pollInSameThread()
+        .pollInterval(Duration.ofMillis(100))
+        .pollDelay(Duration.ZERO)
+        .ignoreExceptions()
+        .timeout(10, TimeUnit.MINUTES)
+        .until(this::dbReady);
 
       ControlPlane.setDBReady();
 
       // Wait for elasticsearch
       Awaitility.await()
-          .pollInSameThread()
-          .pollInterval(Duration.ofMillis(250))
-          .pollDelay(Duration.ZERO)
-          .ignoreExceptions()
-          .timeout(10, TimeUnit.MINUTES)
-          .until(this::esReady);
+        .pollInSameThread()
+        .pollInterval(Duration.ofMillis(250))
+        .pollDelay(Duration.ZERO)
+        .ignoreExceptions()
+        .timeout(10, TimeUnit.MINUTES)
+        .until(this::esReady);
 
       ControlPlane.setESReady();
     }
