@@ -1,4 +1,3 @@
-
 def configurePublishing(p) {
     p.configure(p, {
         apply plugin: 'java'

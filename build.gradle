@@ -7,5 +7,14 @@ gradle.includedBuilds.each {
     }
 }
 
+// TODO: rework all included projects away from composite builds.
+task publishAM(type: Exec) {
+    workingDir project.file('projects/am-role-assignment-service').path
+    commandLine './gradlew', '-i', '-I', project.file('init.gradle').path, 'publishToMavenLocal'
+    doFirst {
+        // Gradle requires this in nested builds.
+        project.file('projects/am-role-assignment-service/settings.gradle').createNewFile()
+    }
+}
 
-publish.dependsOn ':projects:definition-store-fat:doPublish'
+publish.dependsOn ':projects:definition-store-fat:doPublish', publishAM
