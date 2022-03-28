@@ -42,7 +42,7 @@ public class CFTLibApiImpl implements CFTLib {
       "roles", Arrays.stream(roles).map(x -> Map.of("code", x)).collect(Collectors.toList())
       ));
     var request = HttpRequest.newBuilder()
-      .uri(URI.create("http://localhost:5556/testing-support/accounts"))
+      .uri(URI.create("http://localhost:5000/testing-support/accounts"))
       .header("content-type", "application/json")
       .POST(HttpRequest.BodyPublishers.ofString(json))
       .build();
