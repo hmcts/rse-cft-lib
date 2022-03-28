@@ -24,7 +24,7 @@ public class LibRunnerTask extends JavaExec {
       // S2S simulator
       environment("IDAM_S2S-AUTH_URL", "http://localhost:8489");
 
-      environment("IDAM_API_URL", "http://localhost:5556");
+      environment("IDAM_API_URL", "http://localhost:5000");
 
       environment("XUI_SYSTEM_USER_NAME","cwd_system@mailinator.com");
       environment("XUI_SYSTEM_USER_PASSWORD","password");
@@ -33,11 +33,11 @@ public class LibRunnerTask extends JavaExec {
       environment("XUI_LD_ID","aaaaaaaaaaaaaaaaaaaaa");
 
       // Sets data store
-      environment("CASE_DOCUMENT_AM_URL", "http://localhost:5556");
+      environment("CASE_DOCUMENT_AM_URL", "http://localhost:5000");
 
-      environment("OIDC_ISSUER", "http://localhost:5556");
+      environment("OIDC_ISSUER", "http://localhost:5000");
       environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
-        "http://localhost:5556/o");
+        "http://localhost:5000/o");
     } else {
       environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
         "https://idam-web-public.aat.platform.hmcts.net/o");

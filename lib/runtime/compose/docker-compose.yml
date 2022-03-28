@@ -87,4 +87,8 @@ services:
     image: "hmctspublic.azurecr.io/hmcts/rse/rse-idam-simulator:latest"
     profiles: ["localAuth"]
     ports:
-      - 5556:5556
+      - 5000:5556
+    environment:
+      SIMULATOR_JWT_ISSUER: http://localhost:5000
+      SIMULATOR_OPENID_BASE-URL: http://localhost:5000
+
