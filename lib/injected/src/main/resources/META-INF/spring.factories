@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 uk.gov.hmcts.rse.ccd.lib.LibAgent
+org.springframework.boot.diagnostics.FailureAnalyzer=\
+  uk.gov.hmcts.rse.ccd.lib.FailFast
