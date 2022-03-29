@@ -133,6 +133,12 @@ public class TestWithCCD extends CftlibTest {
 
 Tests must be placed in the `cftlibTest` sourceset.
 
+### 5. Configuration
+
+#### XUI LaunchDarkly client ID
+
+XUI requires a valid LD client ID to function, which should be provided by setting the `XUI_LD_ID` environment variable.
+
 ### :warning: Note to maintainers :warning:
 
 This repository features a modified `gradlew`!
