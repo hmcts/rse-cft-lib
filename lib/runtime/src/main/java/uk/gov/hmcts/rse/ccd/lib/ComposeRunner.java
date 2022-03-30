@@ -28,9 +28,20 @@ public class ComposeRunner {
         // Start our monitoring of the dependencies before we run docker-compose up,
         // since docker-compose up can take a few seconds and we don't want to block
         // boot if the dependencies are already running.
-        new Thread(this::monitorStartingServices).start();
         ControlPlane.setApi(new CFTLibApiImpl());
-        dockerBoot();
+        if (null != System.getenv("CI")) {
+          // On CNP jenkins it is possible for daemonised containers to be left running
+          // in between builds.
+          // If we're running in CI we therefore re-create any existing containers
+          // and cannot start monitoring them until after this restart.
+          dockerBoot();
+          new Thread(this::monitorStartingServices).start();
+        } else {
+          // If not in CI boot as fast as possible by immediately checking to
+          // see if our dependencies are already up.
+          new Thread(this::monitorStartingServices).start();
+          dockerBoot();
+        }
       } catch (Exception e) {
           ControlPlane.setDBError(e);
           ControlPlane.setESError(e);
