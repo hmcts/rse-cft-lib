@@ -5,13 +5,11 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -51,9 +49,27 @@ public class CftLibPlugin implements Plugin<Project> {
         createManifestTasks(project);
         createBootWithCCDTask(project);
         createTestTask(project);
+        surfaceSourcesToIDE(project);
     }
 
-    private void createConfigurations(Project project) {
+  /**
+   *  Ensure the source/bytecode of the cft services is picked up by the IDE,
+   *  since we resolve these dependencies in detached configurations that
+   *  the IDE would not otherwise find.
+   *
+   *  We do this by creating an otherwise unused 'cftlibIDE' sourceset and associated
+   *  dependency configuration.
+   */
+  private void surfaceSourcesToIDE(Project project) {
+    project.getExtensions().getByType(SourceSetContainer.class)
+      .create("cftlibIDE");
+    var config = project.getConfigurations().getByName("cftlibIDEImplementation");
+    config.getDependencies().addAll(Arrays.asList(
+      libDependencies(project, projects.keySet().toArray(String[]::new))
+    ));
+  }
+
+  private void createConfigurations(Project project) {
         project.getConfigurations().getByName("cftlibImplementation")
             .extendsFrom(project.getConfigurations().getByName("implementation"))
             .getDependencies().addAll(List.of(libDependencies(project, "app-runtime", "rse-cft-lib")));
@@ -88,7 +104,7 @@ public class CftLibPlugin implements Plugin<Project> {
         }));
     }
 
-    private void createBootWithCCDTask(Project project) {
+  private void createBootWithCCDTask(Project project) {
         SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
         var lib = s.getByName("cftlib");
 
