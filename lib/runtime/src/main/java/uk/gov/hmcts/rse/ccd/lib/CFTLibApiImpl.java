@@ -34,6 +34,10 @@ public class CFTLibApiImpl implements CFTLib {
   @SneakyThrows
   @Override
   public void createIdamUser(String email, String... roles) {
+    // TODO: Allow creation of augmented accounts.
+    if (!"localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
+      return;
+    }
     var json = new Gson().toJson(Map.of(
       "email", email,
          "forename", "A",
