@@ -139,6 +139,21 @@ Tests must be placed in the `cftlibTest` sourceset.
 
 XUI requires a valid LD client ID to function, which should be provided by setting the `XUI_LD_ID` environment variable.
 
+#### Ports
+
+Services run on the following default ports:
+
+| Service | Port |
+| ------- | ---- |
+| CCD definition store | 4451 |
+| CCD data store | 4452 |
+| CCD user profile | 4453 |
+| AM role assignment service | 4096 |
+| IDAM Simulator* | 5000 |
+| S2S Simulator* | 8489 |
+
+\* When running AuthMode.Local
+
 ### :warning: Note to maintainers :warning:
 
 This repository features a modified `gradlew`!
