@@ -29,7 +29,6 @@ public class LibRunner {
     Arrays.stream(rest).forEach(f -> {
       var t = new Thread(() -> launchApp(f));
       t.start();
-      t.setName(f);
       threads.add(t);
     });
     for (Thread thread : threads) {
@@ -39,6 +38,9 @@ public class LibRunner {
 
     @SneakyThrows
     private static void launchApp(String classpathFile) {
+        // We must initially use a thread name of 'main' for spring boot devtools to work.
+        Thread.currentThread().setName("main");
+
         var lines = Files.readAllLines(new File(classpathFile).toPath());
         var jars = lines.subList(1, lines.size());
         var urls = jars.stream().map(LibRunner::toURL).toArray(URL[]::new);
@@ -53,6 +55,9 @@ public class LibRunner {
         Class<?> mainClass = classLoader.loadClass(main);
         Method mainMethod = mainClass.getMethod("main", String[].class);
         mainMethod.invoke(null, new Object[] {args});
+
+        // Once initialised we can rename the main thread without breaking spring boot devtools.
+        Thread.currentThread().setName(classpathFile);
     }
 
     // TomcatURLStreamHandlerFactory registers a handler by calling
