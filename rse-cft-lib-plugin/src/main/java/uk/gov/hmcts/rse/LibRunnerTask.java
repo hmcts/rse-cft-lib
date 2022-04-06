@@ -36,11 +36,12 @@ public class LibRunnerTask extends JavaExec {
       environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
         "https://idam-web-public.aat.platform.hmcts.net/o");
     }
-//    environment("LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY", "DEBUG");
   }
 
   private void setStandardEnvVars() {
 
+    // We use a URLClassLoader for running spring applications so we must set this for spring's devtools to activate (if used).
+    systemProperty("spring.devtools.restart.enabled", true);
     environment("USER_PROFILE_DB_PORT", 6432);
     environment("USER_PROFILE_DB_USERNAME", "postgres");
     environment("USER_PROFILE_DB_PASSWORD", "postgres");

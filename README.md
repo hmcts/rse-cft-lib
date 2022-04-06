@@ -154,6 +154,20 @@ Services run on the following default ports:
 
 \* When running AuthMode.Local
 
+
+### Live reload
+
+Spring boot's devtools can be used to fast-reload your application whilst leaving other CFT services running, significantly 
+improving the edit-compile-test cycle.
+
+```groovy
+dependencies {
+  cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
+}
+```
+
+With spring devtools on the classpath your application will automatically reload as you edit and build your java classes.
+
 ### :warning: Note to maintainers :warning:
 
 This repository features a modified `gradlew`!
