@@ -14,6 +14,7 @@ Improved local development and robust automated tests:
   * Role creation
 * Includes a test runner for automated integration tests
 * Simple setup
+* Fast reload your application with [spring boot devtools](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools) for productive development
 
 
 ## Prerequisites
@@ -157,7 +158,7 @@ Services run on the following default ports:
 
 ### Live reload
 
-Spring boot's devtools can be used to fast-reload your application whilst leaving other CFT services running, significantly 
+[Spring boot's devtools](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools) can be used to fast-reload your application whilst leaving other CFT services running, significantly 
 improving the edit-compile-test cycle.
 
 ```groovy
