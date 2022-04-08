@@ -25,6 +25,9 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
+    // Enable live reload of just our application
+    cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
+
     cftlibCompileOnly 'org.projectlombok:lombok:1.18.22'
     cftlibAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 
