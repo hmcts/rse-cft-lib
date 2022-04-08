@@ -5,6 +5,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.sql.DriverManager;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -27,9 +28,12 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.springframework.util.DigestUtils;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 
 public class CFTLibApiImpl implements CFTLib {
+
+  private String lastImportHash;
 
   @SneakyThrows
   @Override
@@ -132,6 +136,15 @@ public class CFTLibApiImpl implements CFTLib {
 
   @SneakyThrows
   public void importDefinition(byte[] def) {
+      // Track the last imported definition and skip the import if there is no change.
+      var hash = DigestUtils.md5DigestAsHex(def);
+      if (lastImportHash != null) {
+          if (hash.equals(lastImportHash)) {
+              System.out.println("Definition up to date, no import necessary!");
+              return;
+          }
+      }
+      lastImportHash = hash;
       CloseableHttpClient httpClient = HttpClients.createDefault();
       HttpPost uploadFile = new HttpPost("http://localhost:4451/import");
       uploadFile.addHeader("Authorization", "Bearer " + buildJwt());
