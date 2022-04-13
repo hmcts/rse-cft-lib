@@ -136,6 +136,29 @@ Tests must be placed in the `cftlibTest` sourceset.
 
 ### 5. Configuration
 
+#### IDAM & S2S
+
+Use either AAT's IDAM & S2S or local simulators, configurable via the ```authMode``` gradle task property.
+
+Local
+
+```groovy
+bootWithCCD {
+    // IDAM simulator will be started on port 5000,
+    // S2S simulator on port 8489
+    authMode = uk.gov.hmcts.rse.AuthMode.Local
+}
+```
+
+AAT
+
+```groovy
+bootWithCCD {
+    // No idam or s2s simulators will be started and services will be configured to point to AAT idam & s2s.
+    authMode = uk.gov.hmcts.rse.AuthMode.AAT
+}
+```
+
 #### XUI LaunchDarkly client ID
 
 XUI requires a valid LD client ID to function, which should be provided by setting the `XUI_LD_ID` environment variable.
