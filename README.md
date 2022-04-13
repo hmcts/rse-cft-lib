@@ -75,7 +75,7 @@ This will define the following in your Gradle build:
 A Java API is provided for interacting with CFT services to perform common tasks such as creating roles and importing CCD definitions.
 
 This API is accessed by providing an implementation of the [CFTLibConfigurer](https://github.com/hmcts/rse-cft-lib/blob/main/lib/rse-cft-lib/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) interface in the cftlib sourceset, which will be invoked by the library during startup once all CFT services are ready.
-d
+
 ```java
 @Component
 public class CFTLibConfig implements CFTLibConfigurer {
