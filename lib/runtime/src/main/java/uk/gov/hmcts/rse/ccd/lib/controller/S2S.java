@@ -24,7 +24,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Component
 @Controller
 public class S2S {
-  @PostMapping("/lease")
+  @PostMapping({
+    "/lease",
+    "testing-support/lease",
+  })
   @ResponseBody
   public ResponseEntity<String> lease(@RequestBody Map map) {
       return ok(JWT.create()
