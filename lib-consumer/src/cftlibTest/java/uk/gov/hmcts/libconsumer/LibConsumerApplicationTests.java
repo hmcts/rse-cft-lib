@@ -109,6 +109,21 @@ class LibConsumerApplicationTests extends CftlibTest {
       assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
     }
 
+    // S2S tokens should be leasable by s2s simulator under two endpoints
+    @SneakyThrows
+    @Test
+    void leaseS2SToken() {
+      var request = buildRequest("http://localhost:8489/lease", HttpPost::new);
+      request.setEntity(new StringEntity(new Gson().toJson(Map.of("microservice", "foo")), ContentType.APPLICATION_JSON));
+
+      var response = HttpClientBuilder.create().build().execute(request);
+      assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+      request = buildRequest("http://localhost:8489/testing-support/lease", HttpPost::new);
+      request.setEntity(new StringEntity(new Gson().toJson(Map.of("microservice", "foo")), ContentType.APPLICATION_JSON));
+      response = HttpClientBuilder.create().build().execute(request);
+      assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+    }
+
     @Test
     void caseCreation() throws IOException {
         var request = buildGet("http://localhost:4452/data/internal/case-types/NFD/event-triggers/create-test-application?ignore-warning=false");
