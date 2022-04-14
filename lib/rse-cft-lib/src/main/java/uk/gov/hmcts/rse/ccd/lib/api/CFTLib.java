@@ -1,5 +1,7 @@
 package uk.gov.hmcts.rse.ccd.lib.api;
 
+import java.io.File;
+
 public interface CFTLib {
   /**
    * Create an IDAM user.
@@ -28,4 +30,10 @@ public interface CFTLib {
    * @param def A Microsoft xlsx file
    */
   void importDefinition(byte[] def);
+
+  /**
+   * Import a CCD definition spreadsheet.
+   * @param def A Microsoft xlsx file
+   */
+  void importDefinition(File def);
 }
