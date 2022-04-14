@@ -91,16 +91,16 @@ public class CftLibPlugin implements Plugin<Project> {
         SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
         s.add(s.create("cftlib", x -> {
             var main = s.getByName("main").getOutput();
-            x.setCompileClasspath(x.getCompileClasspath().plus(main));
-            x.setRuntimeClasspath(x.getRuntimeClasspath().plus(main));
+            x.setCompileClasspath(main.plus(x.getCompileClasspath()));
+            x.setRuntimeClasspath(main.plus(x.getRuntimeClasspath()));
         }));
 
         s.add(s.create("cftlibTest", x -> {
             var cftlib = s.getByName("cftlib").getOutput();
             var main = s.getByName("main").getOutput();
 
-            x.setCompileClasspath(x.getCompileClasspath().plus(cftlib).plus(main));
-            x.setRuntimeClasspath(x.getRuntimeClasspath().plus(cftlib).plus(main));
+            x.setCompileClasspath(main.plus(cftlib).plus(x.getCompileClasspath()));
+            x.setRuntimeClasspath(main.plus(cftlib).plus(x.getRuntimeClasspath()));
         }));
     }
 
@@ -191,7 +191,6 @@ public class CftLibPlugin implements Plugin<Project> {
         for (File f : classpath) {
             deps.add(f.getAbsolutePath());
         }
-        Collections.sort(deps);
 
         getBuildDir(project).getAsFile().mkdirs();
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
