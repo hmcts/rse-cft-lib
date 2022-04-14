@@ -1,10 +1,12 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
+import java.io.File;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.sql.DriverManager;
 import java.time.LocalDateTime;
@@ -165,6 +167,12 @@ public class CFTLibApiImpl implements CFTLib {
           var body = EntityUtils.toString(response.getEntity());
           throw new RuntimeException("Failed to import definition: HTTP " + response.getStatusLine().getStatusCode() + " " + body);
       }
+  }
+
+  @SneakyThrows
+  @Override
+  public void importDefinition(File def) {
+    importDefinition(Files.readAllBytes(def.toPath()));
   }
 
   public static String buildJwt() {

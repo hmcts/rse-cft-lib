@@ -1,5 +1,6 @@
 package uk.gov.hmcts.libconsumer;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 import com.google.common.io.Resources;
@@ -30,7 +31,6 @@ public class CFTLibConfig implements CFTLibConfigurer {
     var json = Resources.toString(Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8);
     lib.configureRoleAssignments(json);
 
-    var def = getClass().getClassLoader().getResourceAsStream("NFD-dev.xlsx").readAllBytes();
-    lib.importDefinition(def);
+    lib.importDefinition(new File("src/cftlib/resources/NFD-dev.xlsx"));
   }
 }
