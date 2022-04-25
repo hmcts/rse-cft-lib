@@ -122,7 +122,7 @@ public class CFTLibApiImpl implements CFTLib {
 
   @SneakyThrows
   public void configureRoleAssignments(String json){
-      var port = getenv("CFT_LIB_DB_HOST") != null ? 6432 : 5432;
+      var port = getenv("CFT_LIB_DB_HOST") != null ? 5432 : 6432;
       var host = getenv("CFT_LIB_DB_HOST") != null ? getenv("CFT_LIB_DB_HOST") : "localhost";
 
       try (var c = DriverManager.getConnection(
