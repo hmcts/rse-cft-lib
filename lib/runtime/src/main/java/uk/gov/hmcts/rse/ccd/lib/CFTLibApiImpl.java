@@ -33,6 +33,8 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.util.DigestUtils;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 
+import static java.lang.System.getenv;
+
 public class CFTLibApiImpl implements CFTLib {
 
   private String lastImportHash;
@@ -120,8 +122,11 @@ public class CFTLibApiImpl implements CFTLib {
 
   @SneakyThrows
   public void configureRoleAssignments(String json){
+      var port = getenv("CFT_LIB_DB_HOST") != null ? 6432 : 5432;
+      var host = getenv("CFT_LIB_DB_HOST") != null ? getenv("CFT_LIB_DB_HOST") : "localhost";
+
       try (var c = DriverManager.getConnection(
-          "jdbc:postgresql://localhost:6432/am",
+          "jdbc:postgresql://" + host + ":" + port + "/am",
           "postgres", "postgres")) {
           // To use the uuid generation function.
           c.createStatement().execute(
