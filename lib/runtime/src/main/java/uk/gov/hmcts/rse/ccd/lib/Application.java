@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Application {
   public static void main(String[] args) {
-    if (System.getenv("CFT_LIB_NO_DOCKER") != null) {
+    if (System.getenv("CFT_LIB_NO_DOCKER") == null) {
       new Thread(new ComposeRunner()::startBoot).start();
     } else {
       ControlPlane.setDBReady();
