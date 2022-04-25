@@ -10,8 +10,8 @@ public class Application {
       new Thread(new ComposeRunner()::startBoot).start();
     } else {
       ControlPlane.setDBReady();
-      ControlPlane.setESReady();
       ControlPlane.setAuthReady();
+      ControlPlane.setESReady();
     }
 
     SpringApplication.run(Application.class, args);
