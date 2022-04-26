@@ -9,6 +9,7 @@ public class Application {
     if (System.getenv("CFT_LIB_NO_DOCKER") == null) {
       new Thread(new ComposeRunner()::startBoot).start();
     } else {
+      ControlPlane.setApi(new CFTLibApiImpl());
       ControlPlane.setDBReady();
       ControlPlane.setAuthReady();
       ControlPlane.setESReady();
