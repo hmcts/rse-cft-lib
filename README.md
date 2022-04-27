@@ -163,6 +163,21 @@ bootWithCCD {
 
 XUI requires a valid LD client ID to function, which should be provided by setting the `XUI_LD_ID` environment variable.
 
+#### Accessing databases
+
+Postgres is started on port 6432 and can be accessed with user `postgres` password `postgres`
+
+##### Database names
+
+| Service | Database name |
+| ------- | ---- |
+| CCD definition store | definitionstore |
+| CCD data store | datastore |
+| CCD user profile | userprofile |
+| AM role assignment service | am |
+
+eg. to connect to ccd data store db ```psql postgresql://localhost:6432/datastore```
+
 #### Ports
 
 Services run on the following default ports:
