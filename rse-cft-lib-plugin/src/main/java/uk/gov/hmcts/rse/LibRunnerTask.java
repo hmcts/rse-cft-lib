@@ -83,6 +83,6 @@ public class LibRunnerTask extends JavaExec {
       jvmArgs("--add-opens", "java.base/" + x + "=ALL-UNNAMED");
     });
     jvmArgs("--add-opens", "java.desktop/java.awt.font=ALL-UNNAMED");
-    jvmArgs("-XX:ReservedCodeCacheSize=64m");
+    jvmArgs("-XX:ReservedCodeCacheSize=128m");
   }
 }
