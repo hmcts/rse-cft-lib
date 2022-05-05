@@ -73,8 +73,10 @@ public class LibRunnerTask extends JavaExec {
     environment("ROLE_ASSIGNMENT_DB_USERNAME", "postgres");
     environment("ROLE_ASSIGNMENT_DB_PASSWORD", "postgres");
 
-    environment("SEARCH_ELASTIC_HOSTS", "http://localhost:9200");
-    environment("SEARCH_ELASTIC_DATA_HOSTS", "http://localhost:9200");
+    var esHost = getenv("SEARCH_ELASTIC_HOSTS") != null ? getenv("SEARCH_ELASTIC_HOSTS") : "http://localhost:9200";
+
+    environment("SEARCH_ELASTIC_HOSTS", esHost);
+    environment("SEARCH_ELASTIC_DATA_HOSTS", esHost);
     environment("ELASTICSEARCH_ENABLED", "true");
     environment("ELASTICSEARCH_FAILIMPORTIFERROR", "true");
 
