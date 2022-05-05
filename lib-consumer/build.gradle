@@ -1,5 +1,6 @@
 import uk.gov.hmcts.rse.AuthMode
 
+
 plugins {
     id 'org.springframework.boot' version '2.4.12'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
@@ -74,3 +75,12 @@ tasks.test.dependsOn(cftlibTest)
 cftlibTest.dependsOn(rootProject.tasks.publish)
 cftlibTestClasses.dependsOn(rootProject.tasks.publish)
 
+task testGigaJar(type: uk.gov.hmcts.rse.LibRunnerTask, dependsOn: cftlibExecutableJar) {
+    workingDir project.layout.buildDirectory.dir('gigatest')
+    outputs.dir workingDir
+    authMode = AuthMode.Local
+    main = "-jar"
+    args cftlibExecutableJar.archiveFile.get()
+}
+
+tasks.test.dependsOn(testGigaJar)

@@ -3,26 +3,32 @@ package uk.gov.hmcts.rse;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.ObjectArrays;
 import lombok.SneakyThrows;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.file.Directory;
+import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.file.RelativePath;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSetContainer;
+import org.gradle.api.tasks.bundling.Zip;
+import org.gradle.api.tasks.bundling.ZipEntryCompression;
+import org.gradle.jvm.tasks.Jar;
 
 public class CftLibPlugin implements Plugin<Project> {
 
@@ -33,7 +39,7 @@ public class CftLibPlugin implements Plugin<Project> {
         "user-profile-api-lib", "uk.gov.hmcts.ccd.UserProfileApplication"
     );
     private List<File> manifests = new ArrayList<>();
-    private Set<Task> manifestTasks = new HashSet<>();
+    private List<ManifestTask> manifestTasks = Lists.newArrayList();
 
     public void apply(Project project) {
         project.getPlugins().apply("java");
@@ -50,7 +56,68 @@ public class CftLibPlugin implements Plugin<Project> {
         createBootWithCCDTask(project);
         createTestTask(project);
         surfaceSourcesToIDE(project);
+        createCftlibJarTask(project);
+        createExecutableJarTask(project,
+          createZipRuntimeTask(project));
     }
+
+  @SneakyThrows
+  private Zip createZipRuntimeTask(Project project) {
+    var zip = project.getTasks().create("cftlibRuntimeArchive", Zip.class);
+    zip.getArchiveFileName().set("cftlib-runtime.zip");
+    // Jars are already compressed so switch off compression.
+    zip.setEntryCompression(ZipEntryCompression.STORED);
+    zip.setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE);
+    zip.from("build/cftlib", z -> {
+      z.include("**/*_packed");
+      z.exclude("**/*libTest*");
+      });
+
+    zip.eachFile(f -> {
+      f.setRelativePath(zipPath(project, f.getFile()));
+    });
+
+    for (ManifestTask manifestTask : manifestTasks) {
+      zip.from(manifestTask.classpath, x -> x.into("lib"));
+      zip.dependsOn(manifestTask);
+    }
+    return zip;
+  }
+
+  @SneakyThrows
+  private RelativePath zipPath(Project project, File f) {
+      var projectRoot = project.getProjectDir().getCanonicalPath();
+    if (f.getCanonicalPath().startsWith(projectRoot)) {
+      var relativePath = Paths.get(projectRoot).relativize(f.toPath());
+      return RelativePath.parse(true, relativePath.toString());
+    } else {
+      var p = RelativePath.parse(true, f.getPath());
+      var tail = Arrays.copyOfRange(p.getSegments(), p.getSegments().length - 4, p.getSegments().length);
+      var result = ObjectArrays.concat("lib", tail);
+      return new RelativePath(true, result);
+    }
+  }
+
+  private void createCftlibJarTask(Project project) {
+    var jar = project.getTasks().create("cftlibJar", Jar.class);
+    jar.getArchiveFileName().set("cftlib-application.jar");
+    SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
+    jar.from(s.getByName("main").getOutput().plus(s.getByName("cftlib").getOutput()));
+  }
+
+  private void createExecutableJarTask(Project project, Zip archive) {
+
+    var jar = project.getTasks().create("cftlibExecutableJar", Jar.class);
+    jar.dependsOn(manifestTasks);
+    jar.manifest(x -> x.attributes(Map.of("Main-Class", "uk.gov.hmcts.rse.ccd.lib.LibRunner")));
+    jar.getArchiveFileName().set("cftlib-executable.jar");
+
+    jar.setEntryCompression(ZipEntryCompression.STORED);
+    jar.doFirst(t -> {
+      jar.from(project.zipTree(project.getConfigurations().detachedConfiguration(libDependencies(project, "rse-cft-lib")).getSingleFile()));
+    });
+    jar.from(archive);
+  }
 
   /**
    *  Ensure the source/bytecode of the cft services is picked up by the IDE,
@@ -104,13 +171,16 @@ public class CftLibPlugin implements Plugin<Project> {
         }));
     }
 
+
+
   private void createBootWithCCDTask(Project project) {
         SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
         var lib = s.getByName("cftlib");
 
         var exec = createRunTask(project, "bootWithCCD");
         var file = getBuildDir(project).file("application").getAsFile();
-        exec.doFirst(t -> {
+        var manifest = project.getTasks().create("createManifestApplication", ManifestTask.class);
+        manifest.doFirst( m -> {
           JavaExec e = (JavaExec) project.getTasks().getByName("bootRun");
           String clazz = "";
 
@@ -120,16 +190,18 @@ public class CftLibPlugin implements Plugin<Project> {
             clazz = project.getProperties().get("mainClassName").toString();
           }
 
-            var args = "--rse.lib.service_name=" + project.getName();
-            writeManifest(project, lib.getRuntimeClasspath(), clazz, file, args);
+          var args = "--rse.lib.service_name=" + project.getName();
+          writeManifests(project, lib.getRuntimeClasspath(), clazz, file, args);
         });
-
+        manifest.classpath = lib.getRuntimeClasspath();
+        if (null != project.getTasks().findByName("bootRunMainClassName")) {
+          manifest.dependsOn(project.getTasks().getByName("bootRunMainClassName"));
+        }
+    manifestTasks.add(manifest);
+        exec.dependsOn(manifest);
 
         exec.dependsOn("cftlibClasses");
 
-        if (null != project.getTasks().findByName("bootRunMainClassName")) {
-          exec.dependsOn(project.getTasks().getByName("bootRunMainClassName"));
-        }
         exec.args(file);
     }
 
@@ -172,36 +244,39 @@ public class CftLibPlugin implements Plugin<Project> {
         }
     }
 
-    private Task createCFTManifestTask(Project project, String depName, String mainClass, File file, String... args) {
+    private ManifestTask createCFTManifestTask(Project project, String depName, String mainClass, File file, String... args) {
         Configuration classpath = project.getConfigurations().detachedConfiguration(
             libDependencies(project, depName, "injected"));
         return createManifestTask(project, "writeManifest" + depName, classpath, mainClass, file, args);
     }
 
-    private Task createManifestTask(Project project, String name, FileCollection configuration, String mainClass, File file, String... args) {
-        return project.getTasks().create(name)
-            .doFirst(x -> {
-                writeManifest(project, configuration, mainClass, file, args);
-            });
+  private ManifestTask createManifestTask(Project project, String name, FileCollection configuration, String mainClass, File file, String... args) {
+    var result = project.getTasks().create(name, ManifestTask.class);
+    result.classpath = configuration;
+    result.doFirst(x -> {
+      writeManifests(project, configuration, mainClass, file, args);
+    });
+    return result;
+  }
+
+    @SneakyThrows
+    private void writeManifests(Project project, FileCollection classpath, String mainClass, File file, String... args) {
+        getBuildDir(project).getAsFile().mkdirs();
+        writeManifest(file, mainClass, classpath, File::getAbsolutePath, args);
+        writeManifest(new File(file.getPath() + "_packed"), mainClass, classpath, x -> zipPath(project, x).getPathString(), args);
     }
 
     @SneakyThrows
-    private void writeManifest(Project project, FileCollection classpath, String mainClass, File file, String... args) {
-        var deps = new ArrayList<String>();
-        for (File f : classpath) {
-            deps.add(f.getAbsolutePath());
+    private void writeManifest(File file, String mainClass, FileCollection classpath, Function<File, String>  pathResolver, String... args) {
+      try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+        writer.println(mainClass + " " + Joiner.on(" ").join(args));
+        for (var f : classpath) {
+          writer.println(pathResolver.apply(f));
         }
-
-        getBuildDir(project).getAsFile().mkdirs();
-        try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
-            writer.println(mainClass + " " + Joiner.on(" ").join(args));
-            for (var path : deps) {
-                writer.println(path);
-            }
-        }
+      }
     }
 
-    private String getLibVersion(Project project) {
+  private String getLibVersion(Project project) {
         return project.getBuildscript().getConfigurations()
             .getByName("classpath")
             .getDependencies()
