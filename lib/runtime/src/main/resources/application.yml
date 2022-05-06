@@ -1,3 +1,19 @@
 server:
   port:
     8489
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: definitionstore
+          uri: http://localhost:4451
+          predicates:
+            - Path=/import
+        - id: datastore
+          uri: http://localhost:4452
+          predicates:
+            - Path=/aggregated/**,/data/**
+        - id: application
+          uri: http://localhost:4013
+          predicates:
+            - Path=/**

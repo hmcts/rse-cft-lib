@@ -148,7 +148,7 @@ public class CFTLibApiImpl implements CFTLib {
       }
       lastImportHash = hash;
       CloseableHttpClient httpClient = HttpClients.createDefault();
-      HttpPost uploadFile = new HttpPost("http://localhost:4451/import");
+      HttpPost uploadFile = new HttpPost("http://localhost:8489/import");
       uploadFile.addHeader("Authorization", "Bearer " + buildJwt());
       uploadFile.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
       MultipartEntityBuilder builder = MultipartEntityBuilder.create();
