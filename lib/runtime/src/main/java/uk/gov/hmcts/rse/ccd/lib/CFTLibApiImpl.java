@@ -124,7 +124,7 @@ public class CFTLibApiImpl implements CFTLib {
   public void configureRoleAssignments(String json){
       var port = getenv("CFT_LIB_DB_HOST") != null ? 5432 : 6432;
       var host = getenv("CFT_LIB_DB_HOST") != null ? getenv("CFT_LIB_DB_HOST") : "localhost";
-      Class.forName("org.postgresql.Driver");
+
       try (var c = DriverManager.getConnection(
           "jdbc:postgresql://" + host + ":" + port + "/am",
           "postgres", "postgres")) {
