@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -83,7 +82,7 @@ public class LibRunner {
         var lines = Files.readAllLines(new File(classpathFile).toPath());
         var jars = lines.subList(1, lines.size());
         var urls = jars.stream().map(LibRunner::toURL).toArray(URL[]::new);
-        ClassLoader classLoader = new URLClassLoader(urls);
+        ClassLoader classLoader = new URLClassLoader(classpathFile, urls, ClassLoader.getSystemClassLoader());
         Thread.currentThread().setContextClassLoader(classLoader);
 
         fixTomcat(classLoader);
