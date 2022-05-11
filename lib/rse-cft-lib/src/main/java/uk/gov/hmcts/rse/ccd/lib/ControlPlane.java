@@ -82,4 +82,11 @@ public class ControlPlane {
   public static void setAuthReady() {
     AUTH_READY.countDown();
   }
+
+  public static String getEnvVar(String var, Object defaultIfNull) {
+      var v = System.getenv(var);
+      return v == null
+        ? defaultIfNull.toString()
+        : v;
+  }
 }

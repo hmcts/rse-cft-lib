@@ -170,7 +170,9 @@ XUI requires a valid LD client ID to function, which should be provided by setti
 
 #### Accessing databases
 
-Postgres is started on port 6432 and can be accessed with user `postgres` password `postgres`
+Postgres is started on port 6432 (default) and can be accessed with user `postgres` password `postgres`
+
+The default postgres port can be overridden by setting the `RSE_LIB_DB_PORT` environment variable.
 
 ##### Database names
 

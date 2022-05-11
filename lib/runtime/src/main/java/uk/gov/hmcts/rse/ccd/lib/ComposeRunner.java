@@ -117,14 +117,8 @@ public class ComposeRunner {
           : "host.docker.internal");
         var runtime = host + ":5000";
 
-        var s2sPort = System.getenv("RSE_LIB_S2S_PORT");
-        var s2sUrl = host + ":" + (
-          s2sPort == null
-          ? "8489"
-          : s2sPort);
-
         return Map.of(
-        "XUI_S2S_URL", s2sUrl,
+        "XUI_S2S_URL", host + ":" + ControlPlane.getEnvVar("RSE_LIB_S2S_PORT", 8489),
         "XUI_IDAM_API_URL", runtime,
         "XUI_IDAM_LOGIN_URL", "http://localhost:5000",
         // TODO: placeholder to pass health checks
@@ -157,7 +151,7 @@ public class ComposeRunner {
   @SneakyThrows
     boolean dbReady() {
       try (var c = DriverManager.getConnection(
-          "jdbc:postgresql://localhost:6432/postgres",
+          "jdbc:postgresql://localhost:" + ControlPlane.getEnvVar("RSE_LIB_DB_PORT", 6432) + "/postgres",
           "postgres", "postgres")) {
 
         var dbs = List.of(Project.Datastore, Project.Definitionstore, Project.Userprofile, Project.AM)
