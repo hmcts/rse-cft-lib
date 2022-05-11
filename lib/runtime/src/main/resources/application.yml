@@ -14,13 +14,13 @@ spring:
         - id: datastore
           uri: http://localhost:4452
           predicates:
-            - Path=/aggregated/**,
-            - Path=/data/**,
-            - Path=/case-types/**,
-            - Path=/searchCases,
-            - Path=/cases/**,
-            - Path=/case-users,
-            - Path=/caseworkers/**,
+            - Path=/aggregated/**
+            - Path=/data/**
+            - Path=/case-types/**
+            - Path=/searchCases
+            - Path=/cases/**
+            - Path=/case-users
+            - Path=/caseworkers/**
             - Path=/citizens/**
         - id: am
           uri: http://localhost:4096
