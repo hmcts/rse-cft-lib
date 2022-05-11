@@ -9,10 +9,24 @@ spring:
           uri: http://localhost:4451
           predicates:
             - Path=/import
+            - Path=/api/import-audits
+            - Path=/api/user-role
         - id: datastore
           uri: http://localhost:4452
           predicates:
-            - Path=/aggregated/**,/data/**
+            - Path=/aggregated/**,
+            - Path=/data/**,
+            - Path=/case-types/**,
+            - Path=/searchCases,
+            - Path=/cases/**,
+            - Path=/case-users,
+            - Path=/caseworkers/**,
+            - Path=/citizens/**
+        - id: am
+          uri: http://localhost:4096
+          predicates:
+            - Path=/case-assignments
+            - Path=/noc/**
         - id: application
           uri: http://localhost:4013
           predicates:
