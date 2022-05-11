@@ -116,8 +116,15 @@ public class ComposeRunner {
           ? hostEnv
           : "host.docker.internal");
         var runtime = host + ":5000";
+
+        var s2sPort = System.getenv("RSE_LIB_S2S_PORT");
+        var s2sUrl = host + ":" + (
+          s2sPort == null
+          ? "8489"
+          : s2sPort);
+
         return Map.of(
-        "XUI_S2S_URL", host + ":8489",
+        "XUI_S2S_URL", s2sUrl,
         "XUI_IDAM_API_URL", runtime,
         "XUI_IDAM_LOGIN_URL", "http://localhost:5000",
         // TODO: placeholder to pass health checks
