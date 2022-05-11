@@ -121,7 +121,7 @@ public class CFTLibApiImpl implements CFTLib {
   @SneakyThrows
   public void configureRoleAssignments(String json){
       try (var c = DriverManager.getConnection(
-          "jdbc:postgresql://localhost:6432/am",
+          "jdbc:postgresql://localhost:" + ControlPlane.getEnvVar("RSE_LIB_DB_PORT", 6432) + "/am",
           "postgres", "postgres")) {
           // To use the uuid generation function.
           c.createStatement().execute(

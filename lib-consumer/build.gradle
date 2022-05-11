@@ -58,6 +58,7 @@ cftlibTest {
     environment("RSE_LIB_ADDITIONAL_DATABASES", "mydb")
     // Check that we are able to override the default port.
     environment 'RSE_LIB_S2S_PORT', '7431'
+    environment 'RSE_LIB_DB_PORT', '8432'
 }
 
 test {

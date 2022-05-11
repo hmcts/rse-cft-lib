@@ -43,24 +43,24 @@ public class LibRunnerTask extends JavaExec {
 
     // We use a URLClassLoader for running spring applications so we must set this for spring's devtools to activate (if used).
     systemProperty("spring.devtools.restart.enabled", true);
-    environment("USER_PROFILE_DB_PORT", 6432);
+    environment("USER_PROFILE_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
     environment("USER_PROFILE_DB_USERNAME", "postgres");
     environment("USER_PROFILE_DB_PASSWORD", "postgres");
     environment("USER_PROFILE_DB_NAME", "userprofile");
     environment("APPINSIGHTS_INSTRUMENTATIONKEY", "key");
 
-    environment("DATA_STORE_DB_PORT", 6432);
+    environment("DATA_STORE_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
     environment("DATA_STORE_DB_USERNAME", "postgres");
     environment("DATA_STORE_DB_PASSWORD", "postgres");
     environment("DATA_STORE_DB_NAME", "datastore");
 
-    environment("DEFINITION_STORE_DB_PORT", 6432);
+    environment("DEFINITION_STORE_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
     environment("DEFINITION_STORE_DB_USERNAME", "postgres");
     environment("DEFINITION_STORE_DB_PASSWORD", "postgres");
     environment("DEFINITION_STORE_DB_NAME", "definitionstore");
 
     environment("ROLE_ASSIGNMENT_DB_HOST", "localhost");
-    environment("ROLE_ASSIGNMENT_DB_PORT", "6432");
+    environment("ROLE_ASSIGNMENT_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
     environment("ROLE_ASSIGNMENT_DB_NAME", "am");
     environment("ROLE_ASSIGNMENT_DB_USERNAME", "postgres");
     environment("ROLE_ASSIGNMENT_DB_PASSWORD", "postgres");
