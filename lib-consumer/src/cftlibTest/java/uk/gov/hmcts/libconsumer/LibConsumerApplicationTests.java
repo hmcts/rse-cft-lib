@@ -113,12 +113,12 @@ class LibConsumerApplicationTests extends CftlibTest {
     @SneakyThrows
     @Test
     void leaseS2SToken() {
-      var request = buildRequest("http://localhost:8489/lease", HttpPost::new);
+      var request = buildRequest("http://localhost:7431/lease", HttpPost::new);
       request.setEntity(new StringEntity(new Gson().toJson(Map.of("microservice", "foo")), ContentType.APPLICATION_JSON));
 
       var response = HttpClientBuilder.create().build().execute(request);
       assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
-      request = buildRequest("http://localhost:8489/testing-support/lease", HttpPost::new);
+      request = buildRequest("http://localhost:7431/testing-support/lease", HttpPost::new);
       request.setEntity(new StringEntity(new Gson().toJson(Map.of("microservice", "foo")), ContentType.APPLICATION_JSON));
       response = HttpClientBuilder.create().build().execute(request);
       assertThat(response.getStatusLine().getStatusCode(), equalTo(200));

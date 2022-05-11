@@ -22,7 +22,8 @@ public class LibRunnerTask extends JavaExec {
       environment("COMPOSE_PROFILES", "localAuth");
 
       // S2S simulator
-      environment("IDAM_S2S-AUTH_URL", "http://localhost:8489");
+      environment("IDAM_S2S-AUTH_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
+
       // Idam simulator
       environment("IDAM_API_URL", "http://localhost:5000");
 
