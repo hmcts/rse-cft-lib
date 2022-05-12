@@ -29,7 +29,11 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 @Component
-@ConditionalOnClass(UserInfo.class)
+@ConditionalOnClass({
+  UserInfo.class,
+  JWT.class,
+  JwtDecoder.class
+})
 @Aspect
 class IdamAugmenter implements BeanPostProcessor, MethodInterceptor {
 
@@ -103,7 +107,10 @@ class IdamAugmenter implements BeanPostProcessor, MethodInterceptor {
 }
 
 @Component
-@ConditionalOnClass(UserInfo.class)
+@ConditionalOnClass({
+  UserInfo.class,
+  JWT.class
+})
 @ConditionalOnProperty("rse.lib.stub.auth.outbound")
 @Aspect
 class IdamInterceptor {

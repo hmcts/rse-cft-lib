@@ -10,8 +10,8 @@ public class ControlPlane {
     private static final CountDownLatch DB_READY = new CountDownLatch(1);
     private static final CountDownLatch ES_READY = new CountDownLatch(1);
     private static final CountDownLatch AUTH_READY = new CountDownLatch(1);
-  // We wait for all services to be ready, except app under test which is coordinated by spring test.
-    private static final CountDownLatch APPS_READY = new CountDownLatch(Project.values().length - 1);
+    // Used to wait for all services to be ready
+    private static final CountDownLatch APPS_READY = new CountDownLatch(Project.values().length);
 
     // Wait for the API to be provided from the runtime
     private static final CountDownLatch API_READY = new CountDownLatch(1);
