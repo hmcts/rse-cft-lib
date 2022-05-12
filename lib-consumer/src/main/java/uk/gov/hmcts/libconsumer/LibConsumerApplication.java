@@ -21,6 +21,6 @@ public class LibConsumerApplication {
         SpringApplication.run(LibConsumerApplication.class, args);
         System.out.println("Lib consumer test app running!");
         // Shut down so we can run in automated test.
-        System.exit(0);
+        Runtime.getRuntime().halt(0);
     }
 }
