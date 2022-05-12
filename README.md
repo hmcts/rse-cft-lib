@@ -27,7 +27,6 @@ Improved local development and robust automated tests:
 - [No fault divorce](https://github.com/hmcts/nfdiv-case-api)
 - [Adoption](https://github.com/hmcts/adoption-cos-api)
 
-
 ## Getting started
 
 ### Add Jitpack as a Gradle plugin repository
