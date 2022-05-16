@@ -13,6 +13,8 @@ import lombok.SneakyThrows;
 public class LibRunner {
   public static void main(String[] args) throws Exception {
     Thread.currentThread().setName("**** cftlib bootstrap");
+    setStandardSystemProperties();
+
     var threads = new ArrayList<Thread>();
     {
       var runtime = args[0];
@@ -77,4 +79,36 @@ public class LibRunner {
     private static URL toURL(String s) {
         return new File(s).toURI().toURL();
     }
+
+  private static void setStandardSystemProperties() {
+    System.setProperty("USER_PROFILE_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
+    System.setProperty("USER_PROFILE_DB_USERNAME", "postgres");
+    System.setProperty("USER_PROFILE_DB_PASSWORD", "postgres");
+    System.setProperty("USER_PROFILE_DB_NAME", "userprofile");
+    System.setProperty("APPINSIGHTS_INSTRUMENTATIONKEY", "key");
+
+    System.setProperty("DATA_STORE_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
+    System.setProperty("DATA_STORE_DB_USERNAME", "postgres");
+    System.setProperty("DATA_STORE_DB_PASSWORD", "postgres");
+    System.setProperty("DATA_STORE_DB_NAME", "datastore");
+
+    System.setProperty("DEFINITION_STORE_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
+    System.setProperty("DEFINITION_STORE_DB_USERNAME", "postgres");
+    System.setProperty("DEFINITION_STORE_DB_PASSWORD", "postgres");
+    System.setProperty("DEFINITION_STORE_DB_NAME", "definitionstore");
+
+    System.setProperty("ROLE_ASSIGNMENT_DB_HOST", "localhost");
+    System.setProperty("ROLE_ASSIGNMENT_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
+    System.setProperty("ROLE_ASSIGNMENT_DB_NAME", "am");
+    System.setProperty("ROLE_ASSIGNMENT_DB_USERNAME", "postgres");
+    System.setProperty("ROLE_ASSIGNMENT_DB_PASSWORD", "postgres");
+
+    System.setProperty("SEARCH_ELASTIC_HOSTS", "http://localhost:9200");
+    System.setProperty("SEARCH_ELASTIC_DATA_HOSTS", "http://localhost:9200");
+    System.setProperty("ELASTICSEARCH_ENABLED", "true");
+    System.setProperty("ELASTICSEARCH_FAILIMPORTIFERROR", "true");
+
+    // Allow more time for definitions to import to reduce test flakeyness
+    System.setProperty("CCD_TX-TIMEOUT_DEFAULT", "120");
+  }
 }
