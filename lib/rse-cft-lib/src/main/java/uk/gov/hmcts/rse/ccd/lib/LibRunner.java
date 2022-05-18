@@ -22,7 +22,7 @@ import lombok.SneakyThrows;
 public class LibRunner {
   public static void main(String[] args) throws Exception {
     Thread.currentThread().setName("**** cftlib bootstrap");
-    setStandardConfigProperties();
+    setConfigProperties();
     if (args.length == 0) {
       args = extractRuntime();
     }
@@ -49,7 +49,7 @@ public class LibRunner {
     }
   }
 
-  private static void setStandardConfigProperties() {
+  private static void setConfigProperties() {
     var dbHost = getenv("CFT_LIB_DB_HOST") != null ? getenv("CFT_LIB_DB_HOST") : "localhost";
     var dbPort = "${RSE_LIB_DB_PORT:6432}";
 
@@ -58,12 +58,14 @@ public class LibRunner {
     System.setProperty("USER_PROFILE_DB_USERNAME", "postgres");
     System.setProperty("USER_PROFILE_DB_PASSWORD", "postgres");
     System.setProperty("USER_PROFILE_DB_NAME", "userprofile");
+    System.setProperty("USER_PROFILE_DB_OPTIONS", "?stringtype=unspecified");
 
     System.setProperty("DATA_STORE_DB_HOST", dbHost);
     System.setProperty("DATA_STORE_DB_PORT", dbPort);
     System.setProperty("DATA_STORE_DB_USERNAME", "postgres");
     System.setProperty("DATA_STORE_DB_PASSWORD", "postgres");
     System.setProperty("DATA_STORE_DB_NAME", "datastore");
+    System.setProperty("DATA_STORE_DB_OPTIONS", "?stringtype=unspecified");
 
     System.setProperty("DEFINITION_STORE_DB_HOST", dbHost);
     System.setProperty("DEFINITION_STORE_DB_PORT", dbPort);
@@ -86,6 +88,11 @@ public class LibRunner {
 
     // Allow more time for definitions to import to reduce test flakeyness
     System.setProperty("CCD_TX-TIMEOUT_DEFAULT", "120");
+
+    System.setProperty("ROLE_ASSIGNMENT_URL", "http://localhost:4096");
+    System.setProperty("DEFINITION_STORE_HOST", "http://localhost:4451");
+    System.setProperty("CASE_DATA_STORE_BASEURL", "http://localhost:4452");
+    System.setProperty("USER_PROFILE_HOST", "http://localhost:4453");
   }
 
   @SneakyThrows
