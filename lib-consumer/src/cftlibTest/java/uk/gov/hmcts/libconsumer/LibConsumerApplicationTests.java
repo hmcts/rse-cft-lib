@@ -50,7 +50,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     @SneakyThrows
     @Test
     void testController() {
-      var request = buildGet("http://localhost:8489/index");
+      var request = buildGet("http://localhost:7431/index");
       var response = HttpClientBuilder.create().build().execute(request);
       assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
     }
@@ -70,7 +70,7 @@ class LibConsumerApplicationTests extends CftlibTest {
   @SneakyThrows
   @Test
     void listJurisdictions() {
-        var request = buildGet("http://localhost:8489/aggregated/caseworkers/:uid/jurisdictions?access=read");
+        var request = buildGet("http://localhost:7431/aggregated/caseworkers/:uid/jurisdictions?access=read");
         // Test xui talking direct to ccd without the gateway.
         // The s2s subject should be rewritten to ccd_gw by the lib.
         request.removeHeaders("ServiceAuthorization");
@@ -87,7 +87,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     @SneakyThrows
     @Test
     void getWorkbasketInputs() {
-        var request = buildGet("http://localhost:8489/data/internal/case-types/NFD/work-basket-inputs");
+        var request = buildGet("http://localhost:7431/data/internal/case-types/NFD/work-basket-inputs");
         request.addHeader("experimental", "true");
 
         var response = HttpClientBuilder.create().build().execute(request);
@@ -103,7 +103,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     @SneakyThrows
     @Test
     void getPaginationMetadata() {
-      var request = buildGet("http://localhost:8489/data/caseworkers/:uid/jurisdictions/DIVORCE/case-types/NFD/cases/pagination_metadata");
+      var request = buildGet("http://localhost:7431/data/caseworkers/:uid/jurisdictions/DIVORCE/case-types/NFD/cases/pagination_metadata");
 
       var response = HttpClientBuilder.create().build().execute(request);
       assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
@@ -113,12 +113,12 @@ class LibConsumerApplicationTests extends CftlibTest {
     @SneakyThrows
     @Test
     void leaseS2SToken() {
-      var request = buildRequest("http://localhost:8489/lease", HttpPost::new);
+      var request = buildRequest("http://localhost:7431/lease", HttpPost::new);
       request.setEntity(new StringEntity(new Gson().toJson(Map.of("microservice", "foo")), ContentType.APPLICATION_JSON));
 
       var response = HttpClientBuilder.create().build().execute(request);
       assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
-      request = buildRequest("http://localhost:8489/testing-support/lease", HttpPost::new);
+      request = buildRequest("http://localhost:7431/testing-support/lease", HttpPost::new);
       request.setEntity(new StringEntity(new Gson().toJson(Map.of("microservice", "foo")), ContentType.APPLICATION_JSON));
       response = HttpClientBuilder.create().build().execute(request);
       assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
@@ -126,7 +126,7 @@ class LibConsumerApplicationTests extends CftlibTest {
 
     @Test
     void caseCreation() throws IOException {
-        var request = buildGet("http://localhost:8489/data/internal/case-types/NFD/event-triggers/create-test-application?ignore-warning=false");
+        var request = buildGet("http://localhost:7431/data/internal/case-types/NFD/event-triggers/create-test-application?ignore-warning=false");
         request.addHeader("experimental", "true");
         request.addHeader("Accept", "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-start-case-trigger.v2+json;charset=UTF-8");
 

@@ -24,7 +24,8 @@ public class LibRunnerTask extends JavaExec {
       environment("COMPOSE_PROFILES", "localAuth");
 
       // S2S simulator
-      environment("IDAM_S2S-AUTH_URL", "http://localhost:8489");
+      environment("IDAM_S2S-AUTH_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
+
       // Idam simulator
       environment("IDAM_API_URL", "http://localhost:5000");
 
@@ -45,30 +46,29 @@ public class LibRunnerTask extends JavaExec {
     // We use a URLClassLoader for running spring applications so we must set this for spring's devtools to activate (if used).
     systemProperty("spring.devtools.restart.enabled", true);
 
-    var port = getenv("CFT_LIB_NO_DOCKER") != null ? 5432 : 6432;
     var host = getenv("CFT_LIB_DB_HOST") != null ? getenv("CFT_LIB_DB_HOST") : "localhost";
 
     environment("USER_PROFILE_DB_HOST", host);
-    environment("USER_PROFILE_DB_PORT", port);
+    environment("USER_PROFILE_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
     environment("USER_PROFILE_DB_USERNAME", "postgres");
     environment("USER_PROFILE_DB_PASSWORD", "postgres");
     environment("USER_PROFILE_DB_NAME", "userprofile");
     environment("APPINSIGHTS_INSTRUMENTATIONKEY", "key");
 
     environment("DATA_STORE_DB_HOST", host);
-    environment("DATA_STORE_DB_PORT", port);
+    environment("DATA_STORE_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
     environment("DATA_STORE_DB_USERNAME", "postgres");
     environment("DATA_STORE_DB_PASSWORD", "postgres");
     environment("DATA_STORE_DB_NAME", "datastore");
 
     environment("DEFINITION_STORE_DB_HOST", host);
-    environment("DEFINITION_STORE_DB_PORT", port);
+    environment("DEFINITION_STORE_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
     environment("DEFINITION_STORE_DB_USERNAME", "postgres");
     environment("DEFINITION_STORE_DB_PASSWORD", "postgres");
     environment("DEFINITION_STORE_DB_NAME", "definitionstore");
 
     environment("ROLE_ASSIGNMENT_DB_HOST", host);
-    environment("ROLE_ASSIGNMENT_DB_PORT", port);
+    environment("ROLE_ASSIGNMENT_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
     environment("ROLE_ASSIGNMENT_DB_NAME", "am");
     environment("ROLE_ASSIGNMENT_DB_USERNAME", "postgres");
     environment("ROLE_ASSIGNMENT_DB_PASSWORD", "postgres");
@@ -94,6 +94,6 @@ public class LibRunnerTask extends JavaExec {
       jvmArgs("--add-opens", "java.base/" + x + "=ALL-UNNAMED");
     });
     jvmArgs("--add-opens", "java.desktop/java.awt.font=ALL-UNNAMED");
-    jvmArgs("-XX:ReservedCodeCacheSize=64m");
+    jvmArgs("-XX:ReservedCodeCacheSize=128m");
   }
 }

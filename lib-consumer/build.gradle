@@ -38,7 +38,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.github.hmcts:service-auth-provider-java-client:4.0.3'
     implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
-    cftlibTestImplementation group: 'org.postgresql', name: 'postgresql', version: '42.3.4'
+    cftlibTestImplementation group: 'org.postgresql', name: 'postgresql', version: '42.3.5'
 
     cftlibTestImplementation 'org.springframework.boot:spring-boot-starter-test'
     cftlibTestImplementation 'org.springframework.security:spring-security-test'
@@ -46,7 +46,7 @@ dependencies {
     cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.7'
     cftlibTestImplementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     cftlibTestImplementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-    cftlibTestImplementation 'com.auth0:java-jwt:3.19.1'
+    cftlibTestImplementation 'com.auth0:java-jwt:3.19.2'
     cftlibTestImplementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
 }
 
@@ -57,6 +57,9 @@ bootWithCCD {
 
 cftlibTest {
     environment("RSE_LIB_ADDITIONAL_DATABASES", "mydb")
+    // Check that we are able to override the default port.
+    environment 'RSE_LIB_S2S_PORT', '7431'
+    environment 'RSE_LIB_DB_PORT', '8432'
 }
 
 test {
@@ -70,6 +73,7 @@ tasks.each {
 }
 tasks.test.dependsOn(bootWithCCD)
 bootWithCCD.dependsOn(rootProject.tasks.publish)
+bootWithCCD.mustRunAfter cftlibTest
 
 tasks.test.dependsOn(cftlibTest)
 cftlibTest.dependsOn(rootProject.tasks.publish)

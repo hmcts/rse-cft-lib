@@ -2,7 +2,7 @@ server:
   port: 4013
 idam:
   s2s-auth:
-    url: http://localhost:8489
+    url: http://localhost:7431
     totp_secret: AAAAAAAAAAAAAAAC
     microservice: ccd_gw
   s2s-authorised:

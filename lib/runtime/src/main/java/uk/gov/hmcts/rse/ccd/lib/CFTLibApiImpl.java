@@ -122,8 +122,8 @@ public class CFTLibApiImpl implements CFTLib {
 
   @SneakyThrows
   public void configureRoleAssignments(String json){
-      var port = getenv("CFT_LIB_DB_HOST") != null ? 5432 : 6432;
-      var host = getenv("CFT_LIB_DB_HOST") != null ? getenv("CFT_LIB_DB_HOST") : "localhost";
+      var port = ControlPlane.getEnvVar("RSE_LIB_DB_PORT", 6432);
+      var host = ControlPlane.getEnvVar("RSE_LIB_DB_HOST", "localhost");
       try (var c = DriverManager.getConnection(
           "jdbc:postgresql://" + host + ":" + port + "/am",
           "postgres", "postgres")) {
@@ -152,7 +152,9 @@ public class CFTLibApiImpl implements CFTLib {
       }
       lastImportHash = hash;
       CloseableHttpClient httpClient = HttpClients.createDefault();
-      HttpPost uploadFile = new HttpPost("http://localhost:8489/import");
+      // Our port is overridable
+      var port = ControlPlane.getEnvVar("RSE_LIB_S2S_PORT", 8489);
+      HttpPost uploadFile = new HttpPost("http://localhost:" + port + "/import");
       uploadFile.addHeader("Authorization", "Bearer " + buildJwt());
       uploadFile.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
       MultipartEntityBuilder builder = MultipartEntityBuilder.create();

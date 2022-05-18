@@ -158,9 +158,31 @@ bootWithCCD {
 }
 ```
 
+##### Overriding default S2S & IDAM ports
+
+The default S2S port can be overridden by setting the `RSE_LIB_S2S_PORT` environment variable.
+
+
 #### XUI LaunchDarkly client ID
 
 XUI requires a valid LD client ID to function, which should be provided by setting the `XUI_LD_ID` environment variable.
+
+#### Accessing databases
+
+Postgres is started on port 6432 (default) and can be accessed with user `postgres` password `postgres`
+
+The default postgres port can be overridden by setting the `RSE_LIB_DB_PORT` environment variable.
+
+##### Database names
+
+| Service | Database name |
+| ------- | ---- |
+| CCD definition store | definitionstore |
+| CCD data store | datastore |
+| CCD user profile | userprofile |
+| AM role assignment service | am |
+
+eg. to connect to ccd data store db ```psql postgresql://localhost:6432/datastore```
 
 #### Ports
 

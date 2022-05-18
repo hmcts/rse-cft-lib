@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -139,7 +138,7 @@ public class CftLibPlugin implements Plugin<Project> {
   private void createConfigurations(Project project) {
         project.getConfigurations().getByName("cftlibImplementation")
             .extendsFrom(project.getConfigurations().getByName("implementation"))
-            .getDependencies().addAll(List.of(libDependencies(project, "app-runtime", "rse-cft-lib")));
+            .getDependencies().addAll(List.of(libDependencies(project, "rse-cft-lib", "injected")));
 
         project.getConfigurations().getByName("cftlibRuntimeOnly")
             .extendsFrom(project.getConfigurations().getByName("runtimeOnly"));
