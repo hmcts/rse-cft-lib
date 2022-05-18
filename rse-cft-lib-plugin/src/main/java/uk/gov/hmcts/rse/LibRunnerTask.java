@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.gradle.api.tasks.JavaExec;
 
-import static java.lang.System.getenv;
-
 public class LibRunnerTask extends JavaExec {
   public AuthMode authMode = AuthMode.AAT;
 
@@ -42,46 +40,9 @@ public class LibRunnerTask extends JavaExec {
   }
 
   private void setStandardEnvVars() {
-
     // We use a URLClassLoader for running spring applications so we must set this for spring's devtools to activate (if used).
     systemProperty("spring.devtools.restart.enabled", true);
-
-    var host = getenv("CFT_LIB_DB_HOST") != null ? getenv("CFT_LIB_DB_HOST") : "localhost";
-
-    environment("USER_PROFILE_DB_HOST", host);
-    environment("USER_PROFILE_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
-    environment("USER_PROFILE_DB_USERNAME", "postgres");
-    environment("USER_PROFILE_DB_PASSWORD", "postgres");
-    environment("USER_PROFILE_DB_NAME", "userprofile");
     environment("APPINSIGHTS_INSTRUMENTATIONKEY", "key");
-
-    environment("DATA_STORE_DB_HOST", host);
-    environment("DATA_STORE_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
-    environment("DATA_STORE_DB_USERNAME", "postgres");
-    environment("DATA_STORE_DB_PASSWORD", "postgres");
-    environment("DATA_STORE_DB_NAME", "datastore");
-
-    environment("DEFINITION_STORE_DB_HOST", host);
-    environment("DEFINITION_STORE_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
-    environment("DEFINITION_STORE_DB_USERNAME", "postgres");
-    environment("DEFINITION_STORE_DB_PASSWORD", "postgres");
-    environment("DEFINITION_STORE_DB_NAME", "definitionstore");
-
-    environment("ROLE_ASSIGNMENT_DB_HOST", host);
-    environment("ROLE_ASSIGNMENT_DB_PORT", "${RSE_LIB_DB_PORT:6432}");
-    environment("ROLE_ASSIGNMENT_DB_NAME", "am");
-    environment("ROLE_ASSIGNMENT_DB_USERNAME", "postgres");
-    environment("ROLE_ASSIGNMENT_DB_PASSWORD", "postgres");
-
-    var esHost = getenv("SEARCH_ELASTIC_HOSTS") != null ? getenv("SEARCH_ELASTIC_HOSTS") : "http://localhost:9200";
-
-    environment("SEARCH_ELASTIC_HOSTS", esHost);
-    environment("SEARCH_ELASTIC_DATA_HOSTS", esHost);
-    environment("ELASTICSEARCH_ENABLED", "true");
-    environment("ELASTICSEARCH_FAILIMPORTIFERROR", "true");
-
-    // Allow more time for definitions to import to reduce test flakeyness
-    environment("CCD_TX-TIMEOUT_DEFAULT", "120");
   }
 
   private void setRequiredJvmArgs() {

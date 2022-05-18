@@ -15,11 +15,14 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static java.lang.System.getenv;
+
 import lombok.SneakyThrows;
 
 public class LibRunner {
   public static void main(String[] args) throws Exception {
     Thread.currentThread().setName("**** cftlib bootstrap");
+    setStandardConfigProperties();
     if (args.length == 0) {
       args = extractRuntime();
     }
@@ -44,6 +47,45 @@ public class LibRunner {
     for (Thread thread : threads) {
       thread.join();
     }
+  }
+
+  private static void setStandardConfigProperties() {
+    var dbHost = getenv("CFT_LIB_DB_HOST") != null ? getenv("CFT_LIB_DB_HOST") : "localhost";
+    var dbPort = "${RSE_LIB_DB_PORT:6432}";
+
+    System.setProperty("USER_PROFILE_DB_HOST", dbHost);
+    System.setProperty("USER_PROFILE_DB_PORT", dbPort);
+    System.setProperty("USER_PROFILE_DB_USERNAME", "postgres");
+    System.setProperty("USER_PROFILE_DB_PASSWORD", "postgres");
+    System.setProperty("USER_PROFILE_DB_NAME", "userprofile");
+
+    System.setProperty("DATA_STORE_DB_HOST", dbHost);
+    System.setProperty("DATA_STORE_DB_PORT", dbPort);
+    System.setProperty("DATA_STORE_DB_USERNAME", "postgres");
+    System.setProperty("DATA_STORE_DB_PASSWORD", "postgres");
+    System.setProperty("DATA_STORE_DB_NAME", "datastore");
+
+    System.setProperty("DEFINITION_STORE_DB_HOST", dbHost);
+    System.setProperty("DEFINITION_STORE_DB_PORT", dbPort);
+    System.setProperty("DEFINITION_STORE_DB_USERNAME", "postgres");
+    System.setProperty("DEFINITION_STORE_DB_PASSWORD", "postgres");
+    System.setProperty("DEFINITION_STORE_DB_NAME", "definitionstore");
+
+    System.setProperty("ROLE_ASSIGNMENT_DB_HOST", dbHost);
+    System.setProperty("ROLE_ASSIGNMENT_DB_PORT", dbPort);
+    System.setProperty("ROLE_ASSIGNMENT_DB_NAME", "am");
+    System.setProperty("ROLE_ASSIGNMENT_DB_USERNAME", "postgres");
+    System.setProperty("ROLE_ASSIGNMENT_DB_PASSWORD", "postgres");
+
+    var esHost = getenv("SEARCH_ELASTIC_HOSTS") != null ? getenv("SEARCH_ELASTIC_HOSTS") : "http://localhost:9200";
+
+    System.setProperty("SEARCH_ELASTIC_HOSTS", esHost);
+    System.setProperty("SEARCH_ELASTIC_DATA_HOSTS", esHost);
+    System.setProperty("ELASTICSEARCH_ENABLED", "true");
+    System.setProperty("ELASTICSEARCH_FAILIMPORTIFERROR", "true");
+
+    // Allow more time for definitions to import to reduce test flakeyness
+    System.setProperty("CCD_TX-TIMEOUT_DEFAULT", "120");
   }
 
   @SneakyThrows
