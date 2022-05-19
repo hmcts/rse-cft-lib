@@ -97,6 +97,8 @@ public class LibRunner {
 
   @SneakyThrows
   public static String[] extractRuntime() throws IOException {
+    // Turn off devtools when packaged as a jar.
+    System.setProperty("spring.devtools.restart.enabled", "false");
     var is = LibRunner.class.getResourceAsStream("/cftlib-runtime.zip");
 
     if (null != is) {
