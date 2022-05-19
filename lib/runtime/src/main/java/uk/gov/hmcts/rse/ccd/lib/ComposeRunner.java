@@ -29,7 +29,7 @@ public class ComposeRunner {
         // since docker-compose up can take a few seconds and we don't want to block
         // boot if the dependencies are already running.
         ControlPlane.setApi(new CFTLibApiImpl());
-        if (null != System.getenv("CI")) {
+        if (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT")) {
           // On CNP jenkins it is possible for daemonised containers to be left running
           // in between builds.
           // If we're running in CI we therefore re-create any existing containers
@@ -60,7 +60,7 @@ public class ComposeRunner {
       new ZipFile(f).extractAll(dir.toString());
       var args = new ArrayList<String>(List.of("docker-compose", "-p", "cftlib", "up", "--build", "-d"));
       // When running on a CI server ensure clean container builds.
-      if (null != System.getenv("CI")) {
+      if (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT")) {
         args.add("--force-recreate");
       }
 
