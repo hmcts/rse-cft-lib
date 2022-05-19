@@ -50,7 +50,7 @@ public class LibRunner {
   }
 
   private static void setConfigProperties() {
-    var dbHost = getenv("CFT_LIB_DB_HOST") != null ? getenv("CFT_LIB_DB_HOST") : "localhost";
+    var dbHost = "${RSE_LIB_DB_HOST:localhost}";
     var dbPort = "${RSE_LIB_DB_PORT:6432}";
 
     System.setProperty("USER_PROFILE_DB_HOST", dbHost);
