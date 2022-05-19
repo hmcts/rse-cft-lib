@@ -200,6 +200,9 @@ Services run on the following default ports:
 
 \* When running AuthMode.Local
 
+### Clean boot
+
+For a clean boot define the RSE_LIB_CLEAN_BOOT environment variable, which will force recreate all docker containers upon boot.
 
 ### Live reload
 
