@@ -157,6 +157,8 @@ public class LibRunner {
         try {
             var c = classLoader.loadClass("org.apache.catalina.webresources.TomcatURLStreamHandlerFactory");
             Method disable = c.getMethod("disable");
+
+
             disable.invoke(null);
         } catch (ClassNotFoundException c) {
             // Fine if not using tomcat

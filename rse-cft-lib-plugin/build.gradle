@@ -11,6 +11,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
     id 'com.gradle.plugin-publish' version '0.20.0'
+    id 'uk.gov.hmcts.java' version '0.12.24'
 }
 
 group 'com.github.hmcts.rse-cft-lib'
