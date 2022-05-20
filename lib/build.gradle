@@ -1,6 +1,6 @@
 
 plugins {
-    id 'uk.gov.hmcts.java' version '0.12.23' apply false
+    id 'uk.gov.hmcts.java' version '0.12.24' apply false
 }
 
 subprojects {
