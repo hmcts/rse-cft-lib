@@ -62,6 +62,7 @@ public class ComposeRunner {
       // When running on a CI server ensure clean container builds.
       if (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT")) {
         args.add("--force-recreate");
+        args.add("--renew-anon-volumes");
       }
 
       new ProcessExecutor().command(args)
