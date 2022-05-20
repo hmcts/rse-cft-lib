@@ -6,16 +6,14 @@ import lombok.SneakyThrows;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 
 public class ControlPlane {
-    private static volatile Throwable INIT_EXCEPTION;
     private static final CountDownLatch DB_READY = new CountDownLatch(1);
     private static final CountDownLatch ES_READY = new CountDownLatch(1);
     private static final CountDownLatch AUTH_READY = new CountDownLatch(1);
     // Used to wait for all services to be ready
     private static final CountDownLatch APPS_READY = new CountDownLatch(Project.values().length);
-
     // Wait for the API to be provided from the runtime
     private static final CountDownLatch API_READY = new CountDownLatch(1);
-
+    private static volatile Throwable INIT_EXCEPTION;
     private static volatile CFTLib api;
 
     @SneakyThrows
@@ -62,14 +60,9 @@ public class ControlPlane {
         AUTH_READY.await();
     }
 
-  // Signal that an application has booted.
+    // Signal that an application has booted.
     public static void appReady() {
         APPS_READY.countDown();
-    }
-
-    public static void setApi(CFTLib api) {
-        ControlPlane.api = api;
-        API_READY.countDown();
     }
 
     @SneakyThrows
@@ -79,14 +72,19 @@ public class ControlPlane {
         return api;
     }
 
-  public static void setAuthReady() {
-    AUTH_READY.countDown();
-  }
+    public static void setApi(CFTLib api) {
+        ControlPlane.api = api;
+        API_READY.countDown();
+    }
 
-  public static String getEnvVar(String var, Object defaultIfNull) {
-      var v = System.getenv(var);
-      return v == null
-        ? defaultIfNull.toString()
-        : v;
-  }
+    public static void setAuthReady() {
+        AUTH_READY.countDown();
+    }
+
+    public static String getEnvVar(String var, Object defaultIfNull) {
+        var v = System.getenv(var);
+        return v == null
+            ? defaultIfNull.toString()
+            : v;
+    }
 }

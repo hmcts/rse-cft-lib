@@ -10,7 +10,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 
 // Injected into the classpath of the applications we start
@@ -21,28 +20,28 @@ import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 @ComponentScan
 public class LibAgent {
 
-  @Autowired
-  private Optional<CFTLibConfigurer> configurer;
+    @Autowired
+    private Optional<CFTLibConfigurer> configurer;
 
-  // Block any database access until ready for use.
-  @Before("execution(* javax.sql.DataSource.*(..))")
-  public void waitForDB() {
-    ControlPlane.waitForDB();
-  }
+    // Block any database access until ready for use.
+    @Before("execution(* javax.sql.DataSource.*(..))")
+    public void waitForDB() {
+        ControlPlane.waitForDB();
+    }
 
-  // Block any use of ElasticSearch until ready for use.
-  @Before("execution(* uk.gov.hmcts.ccd.definition.store.elastic.client.*.*(..))")
-  public void waitForES() {
-    ControlPlane.waitForES();
-  }
+    // Block any use of ElasticSearch until ready for use.
+    @Before("execution(* uk.gov.hmcts.ccd.definition.store.elastic.client.*.*(..))")
+    public void waitForES() {
+        ControlPlane.waitForES();
+    }
 
-  @SneakyThrows
-  @EventListener(ApplicationReadyEvent.class)
-  public void onReady() {
-      ControlPlane.appReady();
-      // If this application defines a cftlib config then execute it once fully booted up.
-      if (configurer.isPresent()) {
-        configurer.get().configure(ControlPlane.getApi());
-      }
-  }
+    @SneakyThrows
+    @EventListener(ApplicationReadyEvent.class)
+    public void onReady() {
+        ControlPlane.appReady();
+        // If this application defines a cftlib config then execute it once fully booted up.
+        if (configurer.isPresent()) {
+            configurer.get().configure(ControlPlane.getApi());
+        }
+    }
 }

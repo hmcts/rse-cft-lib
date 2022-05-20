@@ -20,4 +20,4 @@ jobs:
     - name: LocalPublish
       run: ./gradlew -i publish
     - name: Build
-      run: ./gradlew lib-consumer:check -i
+      run: ./gradlew check -i
