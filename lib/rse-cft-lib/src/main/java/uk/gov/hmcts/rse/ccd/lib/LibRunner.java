@@ -83,8 +83,8 @@ public class LibRunner {
 
     System.setProperty("SEARCH_ELASTIC_HOSTS", esHost);
     System.setProperty("SEARCH_ELASTIC_DATA_HOSTS", esHost);
-    System.setProperty("ELASTICSEARCH_ENABLED", "true");
-    System.setProperty("ELASTICSEARCH_FAILIMPORTIFERROR", "true");
+    System.setProperty("elasticsearch.enabled", "true");
+    System.setProperty("elasticsearch.failimportiferror", "true");
 
     // Allow more time for definitions to import to reduce test flakeyness
     System.setProperty("CCD_TX-TIMEOUT_DEFAULT", "120");

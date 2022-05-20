@@ -24,6 +24,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,6 +125,7 @@ class LibConsumerApplicationTests extends CftlibTest {
       assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
     }
 
+    @Order(1)
     @Test
     void caseCreation() throws IOException {
         var request = buildGet("http://localhost:7431/data/internal/case-types/NFD/event-triggers/create-test-application?ignore-warning=false");
@@ -162,8 +164,24 @@ class LibConsumerApplicationTests extends CftlibTest {
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
     }
 
-    HttpGet buildGet(String url) {
-        return buildRequest(url, HttpGet::new);
+    @Order(2)
+    @SneakyThrows
+    @Test
+    void searchCases() {
+      // Give logstash some time to index the case created by the previous test
+      Thread.sleep(3000);
+      var request = buildRequest("http://localhost:4452/data/internal/searchCases?ctid=NFD&use_case=WORKBASKET&view=WORKBASKET&page=1", HttpPost::new);
+      var query = "{\"native_es_query\":{\"from\":0,\"query\":{\"bool\":{\"must\":[]}},\"size\":25,\"sort\":[]},\"supplementary_data\":[\"*\"]}";
+      request.setEntity(new StringEntity(query, ContentType.APPLICATION_JSON));
+      var response = HttpClientBuilder.create().build().execute(request);
+      assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+      var total = (int) Double.parseDouble(new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class)
+        .get("total").toString());
+      assertThat(total, greaterThan(0));
+    }
+
+  HttpGet buildGet(String url) {
+    return buildRequest(url, HttpGet::new);
     }
 
     <T extends HttpRequestBase> T buildRequest(String url, Function<String, T> ctor) {
