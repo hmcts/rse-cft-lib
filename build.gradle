@@ -1,4 +1,5 @@
 apply plugin: 'idea'
+apply plugin: 'base'
 
 task publish
 gradle.includedBuilds.each {
@@ -18,3 +19,5 @@ task publishAM(type: Exec) {
 }
 
 publish.dependsOn ':projects:definition-store-fat:doPublish', publishAM
+
+tasks.check.dependsOn gradle.includedBuild('rse-cft-lib-plugin').task(':check')
