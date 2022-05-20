@@ -24,32 +24,33 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Component
 @Controller
 public class S2S {
-  @PostMapping({
-    "/lease",
-    "testing-support/lease",
-  })
-  @ResponseBody
-  public ResponseEntity<String> lease(@RequestBody Map map) {
-      return ok(JWT.create()
-        .withSubject(map.get("microservice").toString())
-        .withNotBefore(new Date())
-        .withIssuedAt(new Date())
-        .withExpiresAt(Date.from(LocalDateTime.now().plusDays(100).toInstant(ZoneOffset.UTC)))
-        .sign(Algorithm.HMAC256("a secret")));
+    @PostMapping({
+        "/lease",
+        "testing-support/lease",
+    })
+    @ResponseBody
+    public ResponseEntity<String> lease(@RequestBody Map map) {
+        return ok(JWT.create()
+            .withSubject(map.get("microservice").toString())
+            .withNotBefore(new Date())
+            .withIssuedAt(new Date())
+            .withExpiresAt(Date.from(LocalDateTime.now().plusDays(100).toInstant(ZoneOffset.UTC)))
+            .sign(Algorithm.HMAC256("a secret")));
     }
 
     @GetMapping("/health")
-  public ResponseEntity<Map> health() {
-    return ok (Map.of("status", "UP"));
-  }
+    public ResponseEntity<Map> health() {
+        return ok(Map.of("status", "UP"));
+    }
 
-  @GetMapping("/details")
-  @ResponseBody
-  public ResponseEntity<String> authCheck(@RequestHeader(name = "Authorization") String bearerToken) throws JsonProcessingException {
-    bearerToken = bearerToken.replace("Bearer ", "");
-    var payload = bearerToken.substring(bearerToken.indexOf(".") + 1, bearerToken.lastIndexOf("."));
-    var json = new String(Base64.getDecoder().decode(payload));
-    var token = new ObjectMapper().readValue(json, Map.class);
-    return ok(token.get("sub").toString());
-  }
+    @GetMapping("/details")
+    @ResponseBody
+    public ResponseEntity<String> authCheck(@RequestHeader(name = "Authorization") String bearerToken)
+        throws JsonProcessingException {
+        bearerToken = bearerToken.replace("Bearer ", "");
+        var payload = bearerToken.substring(bearerToken.indexOf(".") + 1, bearerToken.lastIndexOf("."));
+        var json = new String(Base64.getDecoder().decode(payload));
+        var token = new ObjectMapper().readValue(json, Map.class);
+        return ok(token.get("sub").toString());
+    }
 }

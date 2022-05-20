@@ -1,6 +1,7 @@
 package uk.gov.hmcts.libconsumer;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -162,19 +164,26 @@ class LibConsumerApplicationTests extends CftlibTest {
     @SneakyThrows
     @Test
     void searchCases() {
-      // Give logstash some time to index the case created by the previous test
-      Thread.sleep(3000);
-      var request = buildRequest("http://localhost:4452/data/internal/searchCases?ctid=NFD&use_case=WORKBASKET&view=WORKBASKET&page=1", HttpPost::new);
-      var query = "{\"native_es_query\":{\"from\":0,\"query\":{\"bool\":{\"must\":[]}},\"size\":25,\"sort\":[]},\"supplementary_data\":[\"*\"]}";
-      request.setEntity(new StringEntity(query, ContentType.APPLICATION_JSON));
-      var response = HttpClientBuilder.create().build().execute(request);
-      assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
-      var total = (int) Double.parseDouble(new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class)
-        .get("total").toString());
-      assertThat(total, greaterThan(0));
+        // Give logstash some time to index the case created by the previous test
+        Thread.sleep(3000);
+        await()
+            .timeout(Duration.ofSeconds(20))
+            .until(this::caseAppearsInSearch);
     }
 
-  HttpGet buildGet(String url) {
+    @SneakyThrows
+    private Boolean caseAppearsInSearch() {
+        var request = buildRequest("http://localhost:4452/data/internal/searchCases?ctid=NFD&use_case=WORKBASKET&view=WORKBASKET&page=1", HttpPost::new);
+        var query = "{\"native_es_query\":{\"from\":0,\"query\":{\"bool\":{\"must\":[]}},\"size\":25,\"sort\":[]},\"supplementary_data\":[\"*\"]}";
+        request.setEntity(new StringEntity(query, ContentType.APPLICATION_JSON));
+        var response = HttpClientBuilder.create().build().execute(request);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+        var total = (int) Double.parseDouble(new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class)
+            .get("total").toString());
+        return total > 0;
+    }
+
+    HttpGet buildGet(String url) {
     return buildRequest(url, HttpGet::new);
     }
 

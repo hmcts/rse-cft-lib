@@ -1,8 +1,12 @@
 
+plugins {
+    id 'uk.gov.hmcts.java' version '0.12.24' apply false
+}
 
 subprojects {
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
+    apply plugin: 'uk.gov.hmcts.java'
 
     repositories {
         mavenCentral()
