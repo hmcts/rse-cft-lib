@@ -48,6 +48,7 @@ dependencies {
     cftlibTestImplementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
     cftlibTestImplementation 'com.auth0:java-jwt:3.19.2'
     cftlibTestImplementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+    cftlibTestImplementation 'org.awaitility:awaitility:4.2.0'
 }
 
 bootWithCCD {
