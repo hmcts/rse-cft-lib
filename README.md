@@ -27,7 +27,6 @@ Improved local development and robust automated tests:
 - [No fault divorce](https://github.com/hmcts/nfdiv-case-api)
 - [Adoption](https://github.com/hmcts/adoption-cos-api)
 
-
 ## Getting started
 
 ### Add Jitpack as a Gradle plugin repository
@@ -222,3 +221,4 @@ With spring devtools on the classpath your application will automatically reload
 This repository features a modified `gradlew`!
 
 A Gradle init script is used to customise the included CFT projects. gradlew has been modified to invoke this script so **any upgrade to the gradle wrapper must preserve this modification**.
+

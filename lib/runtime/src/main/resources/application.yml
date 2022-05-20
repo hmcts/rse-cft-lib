@@ -1,3 +1,23 @@
 server:
   port:
     ${RSE_LIB_S2S_PORT:8489}
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: definitionstore
+          uri: http://localhost:4451
+          predicates:
+            - Path=/import,/api/import-audits,/api/user-role
+        - id: datastore
+          uri: http://localhost:4452
+          predicates:
+            - Path=/aggregated/**,/data/**,/case-types/**,/searchCases,/cases/**,/case-users,/caseworkers/**,/citizens/**
+        - id: am
+          uri: http://localhost:4096
+          predicates:
+            - Path=/case-assignments,/noc/**
+        - id: application
+          uri: http://localhost:4013
+          predicates:
+            - Path=/**

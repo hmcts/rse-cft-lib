@@ -33,6 +33,8 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.util.DigestUtils;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 
+import static java.lang.System.getenv;
+
 public class CFTLibApiImpl implements CFTLib {
 
   private String lastImportHash;
@@ -120,8 +122,10 @@ public class CFTLibApiImpl implements CFTLib {
 
   @SneakyThrows
   public void configureRoleAssignments(String json){
+      var port = ControlPlane.getEnvVar("RSE_LIB_DB_PORT", 6432);
+      var host = ControlPlane.getEnvVar("RSE_LIB_DB_HOST", "localhost");
       try (var c = DriverManager.getConnection(
-          "jdbc:postgresql://localhost:" + ControlPlane.getEnvVar("RSE_LIB_DB_PORT", 6432) + "/am",
+          "jdbc:postgresql://" + host + ":" + port + "/am",
           "postgres", "postgres")) {
           // To use the uuid generation function.
           c.createStatement().execute(
@@ -148,7 +152,9 @@ public class CFTLibApiImpl implements CFTLib {
       }
       lastImportHash = hash;
       CloseableHttpClient httpClient = HttpClients.createDefault();
-      HttpPost uploadFile = new HttpPost("http://localhost:4451/import");
+      // Our port is overridable
+      var port = ControlPlane.getEnvVar("RSE_LIB_S2S_PORT", 8489);
+      HttpPost uploadFile = new HttpPost("http://localhost:" + port + "/import");
       uploadFile.addHeader("Authorization", "Bearer " + buildJwt());
       uploadFile.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
       MultipartEntityBuilder builder = MultipartEntityBuilder.create();

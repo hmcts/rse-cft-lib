@@ -1,5 +1,6 @@
 import uk.gov.hmcts.rse.AuthMode
 
+
 plugins {
     id 'org.springframework.boot' version '2.4.12'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
@@ -74,8 +75,20 @@ tasks.each {
 }
 tasks.test.dependsOn(bootWithCCD)
 bootWithCCD.dependsOn(rootProject.tasks.publish)
+bootWithCCD.mustRunAfter cftlibTest
 
 tasks.test.dependsOn(cftlibTest)
 cftlibTest.dependsOn(rootProject.tasks.publish)
 cftlibTestClasses.dependsOn(rootProject.tasks.publish)
 
+// Relies on bootWithCCD starting up the dockerised dependencies.
+task testGigaJar(type: uk.gov.hmcts.rse.LibRunnerTask, dependsOn: [cftlibExecutableJar, bootWithCCD]) {
+    workingDir project.layout.buildDirectory.dir('gigatest')
+    outputs.dir workingDir
+    authMode = AuthMode.Local
+    main = "-jar"
+    environment 'CFT_LIB_NO_DOCKER', true
+    args cftlibExecutableJar.archiveFile.get()
+}
+
+tasks.test.dependsOn(testGigaJar)
