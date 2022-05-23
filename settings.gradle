@@ -8,6 +8,7 @@ pluginManagement {
 includeBuild 'projects/ccd-definition-store-api'
 includeBuild 'projects/ccd-data-store-api'
 includeBuild 'projects/ccd-user-profile-api'
+includeBuild 'projects/aac-manage-case-assignment'
 includeBuild 'rse-cft-lib-plugin'
 include 'projects:definition-store-fat'
 include 'lib-consumer'

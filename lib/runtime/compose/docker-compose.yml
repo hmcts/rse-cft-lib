@@ -83,6 +83,52 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  xui-manage-org:
+    image: hmctspublic.azurecr.io/xui/mo-webapp:latest
+    environment:
+      DEBUG: '*:*'
+      IDAM_API_SERVICE: "${XUI_IDAM_API_URL:-https://idam-api.aat.platform.hmcts.net}"
+      IDAM_WEB_SERVICE: "${XUI_IDAM_LOGIN_URL:-https://idam-web-public.aat.platform.hmcts.net}"
+      RD_PROFESSIONAL_API_SERVICE: http://rd-professional-api-aat.service.core-compute-aat.internal
+      S2S_SERVICE: "${XUI_S2S_URL:-http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}"
+      FEE_AND_PAY_API: http://payment-api-aat.service.core-compute-aat.internal
+
+      SERVICES_CCD_DATA_STORE_API: http://${JVM_HOST:-host.docker.internal}:4452
+
+      ACA_SERVICE_API_BASEURL: http://${JVM_HOST:-host.docker.internal}:4454
+      SERVICES_MCA_PROXY_API: http://${JVM_HOST:-host.docker.internal}:4454
+#      SERVICES_IDAM_ISS_URL: http://fr-am:8080/openam/oauth2/realms/root/realms/hmcts
+      APPINSIGHTS_INSTRUMENTATIONKEY: "AAAAAAAAAAAAAAAC"
+      IDAM_SECRET: "AAAAAAAAAAAAAAAA"
+      S2S_SECRET: "AAAAAAAAAAAAAAAA"
+      LAUNCH_DARKLY_CLIENT_ID: "${XUI_LD_ID}"
+      APPINSIGHTS_INSTRUMENTATIONKEY_MO: "AAAAAAAAAAAAAAAC"
+      MO_S2S_CLIENT_SECRET: "AAAAAAAAAAAAAAAA"
+      GOOGLE_ANALYTICS_KEY: "AAAAAAAAAAAAAAAC"
+      REDISCLOUD_URL: "AAAAAAAAAAAAAAAC"
+      NODE_CONFIG_ENV: local
+      IDAM_CLIENT: xui_mo_webapp
+      MICROSERVICE: xui_webapp
+      OAUTH_CALLBACK_URL: /oauth2/callback
+      LOGIN_ROLE_MATCHER:
+      PROTOCOL: "http"
+      SERVICES_TERMS_AND_CONDITIONS_API_SERVICE:
+      MANAGE_CASE_LINK:
+      MANAGE_ORG_LINK:
+      SESSION_SECRET:
+      CASE_TYPES: "${XUI_MANAGE_ORGANISATIONS_CASETYPES:-NFD,Caveat,GrantOfRepresentation}"
+      FEATURE_APP_INSIGHTS_ENABLED: "false"
+      FEATURE_PROXY_ENABLED: "false"
+      FEATURE_SECURE_COOKIE_ENABLED: "false"
+      FEATURE_TERMS_AND_CONDITIONS_ENABLED: "false"
+      FEATURE_HELMET_ENABLED: "false"
+      FEATURE_REDIS_ENABLED: "false"
+      FEATURE_OIDC_ENABLED: "false"
+      LOGGING: debug
+      PORT: 3001
+    ports:
+      - 3001:3001
+
   rse-idam-simulator:
     image: "hmctspublic.azurecr.io/hmcts/rse/rse-idam-simulator:latest"
     profiles: ["localAuth"]

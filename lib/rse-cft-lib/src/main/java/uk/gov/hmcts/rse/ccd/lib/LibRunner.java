@@ -93,6 +93,10 @@ public class LibRunner {
         System.setProperty("DEFINITION_STORE_HOST", "http://localhost:4451");
         System.setProperty("CASE_DATA_STORE_BASEURL", "http://localhost:4452");
         System.setProperty("USER_PROFILE_HOST", "http://localhost:4453");
+
+        // Used by AAC manage case assignment
+        System.setProperty("CASE_DATA_STORE_BASE_URL", "http://localhost:4452");
+        System.setProperty("CCD_DEFINITION_STORE_API_BASE_URL", "http://localhost:4451");
     }
 
     @SneakyThrows
