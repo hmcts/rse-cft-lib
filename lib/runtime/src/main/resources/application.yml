@@ -16,7 +16,7 @@ spring:
         - id: am
           uri: http://localhost:4096
           predicates:
-            - Path=/case-assignments,/noc/**
+            - Path=/am/**
         - id: application
           uri: http://localhost:4013
           predicates:
