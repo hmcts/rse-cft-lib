@@ -84,6 +84,18 @@ def importedProjects = [
 
 allprojects {
 
+    // We're downgrading AM here to maintain java 11 compatibility
+    // but this will break if AM adopt java 17 features.
+    // TODO - make java 17 required.
+    if (project.name == 'am-role-assignment-service') {
+        project.afterEvaluate {
+            java {
+                toolchain {
+                    languageVersion = JavaLanguageVersion.of(11)
+                }
+            }
+        }
+    }
   if (System.env.RSE_LOCAL_BUILD) {
     // Speed up the build when working locally
     if (project.hasProperty('dependencyManagement')) {
