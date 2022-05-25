@@ -38,7 +38,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.github.hmcts:service-auth-provider-java-client:4.0.3'
     implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
-    cftlibTestImplementation group: 'org.postgresql', name: 'postgresql', version: '42.3.5'
+    cftlibTestImplementation group: 'org.postgresql', name: 'postgresql', version: '42.3.6'
 
     cftlibTestImplementation 'org.springframework.boot:spring-boot-starter-test'
     cftlibTestImplementation 'org.springframework.security:spring-security-test'
