@@ -107,8 +107,8 @@ services:
       GOOGLE_ANALYTICS_KEY: "AAAAAAAAAAAAAAAC"
       REDISCLOUD_URL: "AAAAAAAAAAAAAAAC"
       NODE_CONFIG_ENV: local
-      IDAM_CLIENT: xui_mo_webapp
-      MICROSERVICE: xui_webapp
+      IDAM_CLIENT: xuimowebapp
+      MICROSERVICE: xuimowebapp
       OAUTH_CALLBACK_URL: /oauth2/callback
       LOGIN_ROLE_MATCHER:
       PROTOCOL: "http"
