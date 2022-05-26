@@ -65,8 +65,8 @@ public class CftLibPlugin implements Plugin<Project> {
     private void registerDependencyRepositories(Project project) {
         // We do this after evaluation to ensure these repositories are registered after those in the build script.
         project.afterEvaluate(p -> {
-            p.getRepositories().maven(m -> m.setUrl("https://jitpack.io"));
             p.getRepositories().mavenCentral();
+            p.getRepositories().maven(m -> m.setUrl("https://jitpack.io"));
         });
     }
 
