@@ -108,7 +108,7 @@ services:
       REDISCLOUD_URL: "AAAAAAAAAAAAAAAC"
       NODE_CONFIG_ENV: local
       IDAM_CLIENT: xuimowebapp
-      MICROSERVICE: xuimowebapp
+      MICROSERVICE: xui_webapp
       OAUTH_CALLBACK_URL: /oauth2/callback
       LOGIN_ROLE_MATCHER:
       PROTOCOL: "http"
