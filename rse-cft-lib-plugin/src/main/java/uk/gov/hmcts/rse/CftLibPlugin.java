@@ -51,13 +51,24 @@ public class CftLibPlugin implements Plugin<Project> {
         createSourceSets(project);
         createConfigurations(project);
 
+        registerDependencyRepositories(project);
         createManifestTasks(project);
         createBootWithCCDTask(project);
         createTestTask(project);
         surfaceSourcesToIDE(project);
         createCftlibJarTask(project);
-        createExecutableJarTask(project,
-            createZipRuntimeTask(project));
+        createExecutableJarTask(project, createZipRuntimeTask(project));
+    }
+
+    /**
+     * Register the repositories that host the libraries used by the cftlib.
+     */
+    private void registerDependencyRepositories(Project project) {
+        // We do this after evaluation to ensure these repositories are registered after those in the build script.
+        project.afterEvaluate(p -> {
+            p.getRepositories().mavenCentral();
+            p.getRepositories().maven(m -> m.setUrl("https://jitpack.io"));
+        });
     }
 
     @SneakyThrows
