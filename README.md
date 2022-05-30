@@ -54,8 +54,12 @@ plugins {
 
 This will define the following in your Gradle build:
 
-- A ```bootwithCCD``` task
-  - Launches your Application + CCD + Access Management
+- A ```bootwithCCD``` task which launches
+  - (in one JVM) your Application + CCD + Access Management + assign access to a case
+  - (in docker)
+    - Required dependencies (postgres, elasticsearch etc)
+    - XUI Manage cases
+    - XUI Manage org
 - A `cftlibTest` task
   - Run automated CCD integration tests  
 - Sourcesets
@@ -111,11 +115,13 @@ This will launch (in a single JVM):
 * Your application
 * CCD data, definition & user profile services
 * AM role assignment service
+* Assign access to a case
 
 Plus (in docker):
 
 * CCD & AM dependencies (postgres, logstash & elastic search
-* XUI, available on http://localhost:3000
+* XUI manage cases, available on http://localhost:3000
+* XUI manage org, available on http://localhost:3001
 
 ### 4. Writing integration tests
 
@@ -194,6 +200,9 @@ Services run on the following default ports:
 | CCD data store | 4452 |
 | CCD user profile | 4453 |
 | AM role assignment service | 4096 |
+| AAC assign access to a case | 4454 |
+| XUI Manage cases | 4454 |
+| XUI Manage org | 4454 |
 | IDAM Simulator* | 5000 |
 | S2S Simulator* | 8489 |
 
