@@ -1,7 +1,9 @@
 package uk.gov.hmcts.rse;
 
+import java.io.FileOutputStream;
 import java.util.List;
 
+import lombok.SneakyThrows;
 import org.gradle.api.tasks.JavaExec;
 
 public class LibRunnerTask extends JavaExec {
@@ -34,8 +36,29 @@ public class LibRunnerTask extends JavaExec {
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
                 "http://localhost:5000/o");
         } else {
+            // AAT
+            fetchAATSecrets();
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
                 "https://idam-web-public.aat.platform.hmcts.net/o");
+        }
+    }
+
+    @SneakyThrows
+    private void fetchAATSecrets() {
+        // Cannot pull secrets running on continuous integration
+        if (System.getenv("CI") != null) {
+            return;
+        }
+
+        var env = getProject().file("build/cftlib/.aat-env");
+        if (!env.exists()) {
+            try (var os = new FileOutputStream(getProject().file(env))) {
+                getProject().exec(x -> {
+                    x.commandLine("az", "keyvault", "secret", "show", "-o", "tsv", "--query", "value", "--id",
+                        "https://rse-cft-lib.vault.azure.net/secrets/aat-env");
+                    x.setStandardOutput(os);
+                });
+            }
         }
     }
 
