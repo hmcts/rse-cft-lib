@@ -89,7 +89,7 @@ services:
       DEBUG: '*:*'
       IDAM_API_SERVICE: "${XUI_IDAM_API_URL:-https://idam-api.aat.platform.hmcts.net}"
       IDAM_WEB_SERVICE: "${XUI_IDAM_LOGIN_URL:-https://idam-web-public.aat.platform.hmcts.net}"
-      RD_PROFESSIONAL_API_SERVICE: http://rd-professional-api-aat.service.core-compute-aat.internal
+      RD_PROFESSIONAL_API_SERVICE: "${RD_PROFESSIONAL_API_URL:-http://rd-professional-api-aat.service.core-compute-aat.internal}"
       S2S_SERVICE: "${XUI_S2S_URL:-http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}"
       FEE_AND_PAY_API: http://payment-api-aat.service.core-compute-aat.internal
 
