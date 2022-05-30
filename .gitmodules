@@ -10,3 +10,6 @@
 [submodule "projects/ccd-user-profile-api"]
 	path = projects/ccd-user-profile-api
 	url = git@github.com:hmcts/ccd-user-profile-api.git
+[submodule "projects/aac-manage-case-assignment"]
+	path = projects/aac-manage-case-assignment
+	url = git@github.com:hmcts/aac-manage-case-assignment.git
