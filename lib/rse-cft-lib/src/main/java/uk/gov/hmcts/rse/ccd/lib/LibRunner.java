@@ -79,11 +79,11 @@ public class LibRunner {
         System.setProperty("ROLE_ASSIGNMENT_DB_USERNAME", "postgres");
         System.setProperty("ROLE_ASSIGNMENT_DB_PASSWORD", "postgres");
 
-        var esHost = getenv("SEARCH_ELASTIC_HOSTS") != null ? getenv("SEARCH_ELASTIC_HOSTS") : "localhost:9200";
+        var esHost = getenv("SEARCH_ELASTIC_HOSTS") != null ? getenv("SEARCH_ELASTIC_HOSTS") : "http://localhost:9200";
 
         System.setProperty("SEARCH_ELASTIC_HOSTS", esHost);
         System.setProperty("ELASTIC_SEARCH_HOST", esHost);
-        System.setProperty("SEARCH_ELASTIC_DATA_HOSTS", "http://" + esHost);
+        System.setProperty("SEARCH_ELASTIC_DATA_HOSTS", esHost);
         System.setProperty("elasticsearch.enabled", "true");
         System.setProperty("elasticsearch.failimportiferror", "true");
 
