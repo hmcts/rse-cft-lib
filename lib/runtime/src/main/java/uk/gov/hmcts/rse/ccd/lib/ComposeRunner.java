@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.SneakyThrows;
 import net.lingala.zip4j.ZipFile;
 import org.awaitility.Awaitility;
@@ -110,6 +111,14 @@ public class ComposeRunner {
     }
 
     private Map<String, String> getEnvironmentVars() {
+        var builder = new ImmutableMap.Builder<String, String>();
+        // Copy across System properties as environment variables to docker-compose.
+        // Necessary since we set auto-managed AAT secrets as Java system properties and they must be env vars to be
+        // read by docker.
+        for (Object o : System.getProperties().keySet()) {
+            builder.put(o.toString(), System.getProperty(o.toString()));
+        }
+
         if ("localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
             var hostEnv = System.getenv("JVM_HOST");
             var host = "http://" + (
@@ -118,7 +127,7 @@ public class ComposeRunner {
                     : "host.docker.internal");
             var runtime = host + ":5000";
 
-            return Map.of(
+            builder.putAll(Map.of(
                 "XUI_S2S_URL", host + ":" + ControlPlane.getEnvVar("RSE_LIB_S2S_PORT", 8489),
                 "XUI_IDAM_API_URL", runtime,
                 "XUI_IDAM_LOGIN_URL", "http://localhost:5000",
@@ -126,9 +135,9 @@ public class ComposeRunner {
                 "XUI_EM_DOCASSEMBLY_API", runtime,
                 "XUI_DOCUMENTS_API", runtime,
                 "XUI_DOCUMENTS_API_V2", runtime
-            );
+            ));
         }
-        return Map.of();
+        return builder.build();
     }
 
     @SneakyThrows

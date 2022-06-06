@@ -110,9 +110,11 @@ public class LibRunner {
         }
         var lines = Files.readAllLines(env.toPath());
         for (String line : lines) {
-            var splits = line.split("=");
-            if (splits.length == 2) {
-                System.setProperty(splits[0], splits[1]);
+            var index = line.indexOf("=");
+            if (index != -1) {
+                var key = line.substring(0, index);
+                var value = line.substring(index + 1);
+                System.setProperty(key, value);
             }
         }
     }
