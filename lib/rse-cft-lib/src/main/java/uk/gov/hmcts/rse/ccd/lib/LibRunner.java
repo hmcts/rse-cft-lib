@@ -50,6 +50,9 @@ public class LibRunner {
     }
 
     private static void setConfigProperties() {
+        if (!"localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
+            setAATSecrets();
+        }
         var dbHost = "${RSE_LIB_DB_HOST:localhost}";
         var dbPort = "${RSE_LIB_DB_PORT:6432}";
 
@@ -97,6 +100,23 @@ public class LibRunner {
         // Used by AAC manage case assignment
         System.setProperty("CASE_DATA_STORE_BASE_URL", "http://localhost:4452");
         System.setProperty("CCD_DEFINITION_STORE_API_BASE_URL", "http://localhost:4451");
+    }
+
+    @SneakyThrows
+    private static void setAATSecrets() {
+        var env = new File("build/cftlib/.aat-env");
+        if (!env.exists()) {
+            return;
+        }
+        var lines = Files.readAllLines(env.toPath());
+        for (String line : lines) {
+            var index = line.indexOf("=");
+            if (index != -1) {
+                var key = line.substring(0, index);
+                var value = line.substring(index + 1);
+                System.setProperty(key, value);
+            }
+        }
     }
 
     @SneakyThrows

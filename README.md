@@ -15,6 +15,7 @@ Improved local development and robust automated tests:
 * Includes a test runner for automated integration tests
 * Simple setup
 * Fast reload your application with [spring boot devtools](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools) for productive development
+* Inbuilt secret management for working with AAT dependencies
 
 
 ## Prerequisites
@@ -155,7 +156,7 @@ bootWithCCD {
 }
 ```
 
-AAT
+AAT (VPN required)
 
 ```groovy
 bootWithCCD {
@@ -163,6 +164,8 @@ bootWithCCD {
     authMode = uk.gov.hmcts.rse.AuthMode.AAT
 }
 ```
+
+Secrets for AAT dependencies are automatically pulled and configured (from a cftlib Azure keyvault into build/cftlib/.aat-env).
 
 ##### Overriding default S2S & IDAM ports
 
