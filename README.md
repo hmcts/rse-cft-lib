@@ -15,7 +15,7 @@ Improved local development and robust automated tests:
 * Includes a test runner for automated integration tests
 * Simple setup
 * Fast reload your application with [spring boot devtools](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools) for productive development
-* Inbuilt secret management for working with AAT dependencies
+* Inbuilt AAT secret management ([az cli](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) required)
 
 
 ## Prerequisites
