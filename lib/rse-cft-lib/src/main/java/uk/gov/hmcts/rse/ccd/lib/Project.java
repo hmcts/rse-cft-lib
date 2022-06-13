@@ -4,6 +4,7 @@ public enum Project {
     Datastore,
     Definitionstore,
     Userprofile,
+    CaseDocumentAccessManagement,
     AM,
     AacManageCaseAssignment,
     Application

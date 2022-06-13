@@ -56,7 +56,14 @@ plugins {
 This will define the following in your Gradle build:
 
 - A ```bootwithCCD``` task which launches
-  - (in one JVM) your Application + CCD + Access Management + assign access to a case
+  - (in one JVM)
+    - Your spring boot application
+    - CCD Data store
+    - CCD Definition store
+    - CCD User profile
+    - CCD Case document Access Management (CDAM)
+    - Access Management role assignment service
+    - Assign access to a case
   - (in docker)
     - Required dependencies (postgres, elasticsearch etc)
     - XUI Manage cases

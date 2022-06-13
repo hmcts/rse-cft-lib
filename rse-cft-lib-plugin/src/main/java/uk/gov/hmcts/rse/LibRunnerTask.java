@@ -25,12 +25,13 @@ public class LibRunnerTask extends JavaExec {
 
             // S2S simulator
             environment("IDAM_S2S-AUTH_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
+            // Required by CDAM
+            environment("S2S_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
 
             // Idam simulator
             environment("IDAM_API_URL", "http://localhost:5000");
 
-            // Sets data store
-            environment("CASE_DOCUMENT_AM_URL", "http://localhost:5000");
+            environment("CASE_DOCUMENT_AM_URL", "http://localhost:4455");
 
             environment("OIDC_ISSUER", "http://localhost:5000");
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",

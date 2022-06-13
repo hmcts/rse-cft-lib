@@ -35,7 +35,8 @@ public class CftLibPlugin implements Plugin<Project> {
         "ccd-data-store-api-lib", "uk.gov.hmcts.ccd.CoreCaseDataApplication",
         "definition-store-fat", "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication",
         "user-profile-api-lib", "uk.gov.hmcts.ccd.UserProfileApplication",
-        "aac-manage-case-assignment-lib", "uk.gov.hmcts.reform.managecase.Application"
+        "aac-manage-case-assignment-lib", "uk.gov.hmcts.reform.managecase.Application",
+        "ccd-case-document-am-api-lib", "uk.gov.hmcts.reform.ccd.documentam.Application"
     );
     private final List<File> manifests = new ArrayList<>();
     private final List<ManifestTask> manifestTasks = Lists.newArrayList();
