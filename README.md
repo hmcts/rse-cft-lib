@@ -22,6 +22,7 @@ Improved local development and robust automated tests:
 
 - Java 11
 - Docker
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) (when using automated AAT secret management)
 
 ## Example integrations
 
