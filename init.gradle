@@ -80,6 +80,7 @@ def importedProjects = [
         'ccd-data-store-api',
         'user-profile-api',
         'am-role-assignment-service',
+        'ccd-case-document-am-api',
         'aac-manage-case-assignment'
 ]
 
