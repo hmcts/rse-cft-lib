@@ -210,6 +210,7 @@ Services run on the following default ports:
 | CCD definition store | 4451 |
 | CCD data store | 4452 |
 | CCD user profile | 4453 |
+| CCD case document Access Management | 4455 |
 | AM role assignment service | 4096 |
 | AAC assign access to a case | 4454 |
 | XUI Manage cases | 4454 |
