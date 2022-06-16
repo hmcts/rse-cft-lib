@@ -13,3 +13,6 @@
 [submodule "projects/aac-manage-case-assignment"]
 	path = projects/aac-manage-case-assignment
 	url = git@github.com:hmcts/aac-manage-case-assignment.git
+[submodule "projects/ccd-case-document-am-api"]
+	path = projects/ccd-case-document-am-api
+	url = git@github.com:hmcts/ccd-case-document-am-api.git
