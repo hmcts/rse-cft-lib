@@ -52,7 +52,7 @@ services:
       XUI_ENV: local
       DEBUG: '*:*'
       SERVICES_DOCUMENTS_API: "${XUI_DOCUMENTS_API:-http://dm-store-aat.service.core-compute-aat.internal}"
-      SERVICES_DOCUMENTS_API_V2: "${XUI_DOCUMENTS_API_V2:-http://ccd-case-document-am-api-aat.service.core-compute-aat.internal}"
+      SERVICES_DOCUMENTS_API_V2: "${XUI_DOCUMENTS_API_V2:-http://localhost:4455}"
 
       SERVICES_PAYMENTS_URL: http://payment-api-aat.service.core-compute-aat.internal
       SERVICES_EM_ANNO_API: http://${JVM_HOST:-host.docker.internal}:4452
