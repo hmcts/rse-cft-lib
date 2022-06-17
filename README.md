@@ -132,7 +132,11 @@ Plus (in docker):
 * XUI manage cases, available on http://localhost:3000
 * XUI manage org, available on http://localhost:3001
 
-### 4. Writing integration tests
+### 4. Debugging
+
+Launch with `--debug-jvm` and attach your debugger to debug your application plus all bundled cft services (with source level debugging).
+
+### 5. Writing integration tests
 
 A `CftlibTest` junit base class is provided for writing robust automated integration tests that test your application end-to-end with CCD.
 
@@ -148,7 +152,7 @@ public class TestWithCCD extends CftlibTest {
 
 Tests must be placed in the `cftlibTest` sourceset.
 
-### 5. Configuration
+### 6. Configuration
 
 #### IDAM & S2S
 
