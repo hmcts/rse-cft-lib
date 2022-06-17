@@ -188,7 +188,19 @@ The default S2S port can be overridden by setting the `RSE_LIB_S2S_PORT` environ
 
 XUI requires a valid LD client ID to function, which should be provided by setting the `XUI_LD_ID` environment variable.
 
-#### Accessing databases
+#### Databases
+
+##### Creating additional databases
+
+If your application requires a database(s) then you can have the cftlib create them for you by setting the `RSE_LIB_ADDITIONAL_DATABASES` environment variable as a comma delimited value.
+
+```
+bootWithCCD {
+    environment 'RSE_LIB_ADDITIONAL_DATABASES', 'my_db_1,my_db_2'
+}
+```
+
+##### Accessing databases
 
 Postgres is started on port 6432 (default) and can be accessed with user `postgres` password `postgres`
 
