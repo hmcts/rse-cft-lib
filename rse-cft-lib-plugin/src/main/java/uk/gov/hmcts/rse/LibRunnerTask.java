@@ -5,6 +5,8 @@ import java.util.List;
 
 import lombok.SneakyThrows;
 import org.gradle.api.tasks.JavaExec;
+import org.gradle.jvm.toolchain.JavaLanguageVersion;
+import org.gradle.jvm.toolchain.JavaToolchainService;
 
 public class LibRunnerTask extends JavaExec {
     public AuthMode authMode = AuthMode.AAT;
@@ -16,6 +18,7 @@ public class LibRunnerTask extends JavaExec {
     }
 
     private void configure() {
+        setJavaToolChain();
         setRequiredJvmArgs();
         setStandardEnvVars();
         if (authMode == AuthMode.Local) {
@@ -42,6 +45,15 @@ public class LibRunnerTask extends JavaExec {
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
                 "https://idam-web-public.aat.platform.hmcts.net/o");
         }
+    }
+
+    // Java 17 is now required since cft projects are using java 17 features.
+    private void setJavaToolChain() {
+        var launcher = getProject().getExtensions().getByType(JavaToolchainService.class)
+            .launcherFor(x -> {
+                x.getLanguageVersion().set(JavaLanguageVersion.of("17"));
+            });
+        this.getJavaLauncher().set(launcher);
     }
 
     @SneakyThrows
