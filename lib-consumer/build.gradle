@@ -17,10 +17,6 @@ java {
     }
 }
 
-tasks.withType(JavaExec.class).configureEach {
-    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
-}
-
 repositories {
     mavenLocal()
 }
