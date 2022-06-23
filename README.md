@@ -254,7 +254,7 @@ dependencies {
 
 With spring devtools on the classpath your application will automatically reload as you edit and build your java classes.
 
-## How it works
+## How the cftlib works
 
 The cftlib uses isolated classloaders to run multiple spring boot applications in a single Java Virtual Machine (JVM).
 
@@ -267,6 +267,28 @@ graph TD;
 ```
 
 Isolated classloaders allow different versions of the same class to coexist within the same JVM, thus allowing each service to have a different version of common dependencies such as spring boot.
+
+### Project structure
+
+#### lib/bootstrapper
+
+Handles the cftlib bootstrapping process; an application that creates each of the necessary classloaders to run each of our spring boot applications.
+
+This project is necessarily dependency free to avoid polluting the system classloader upon which it runs.
+
+#### lib/injected
+
+Added to the classpath of each spring boot application that the cftlib runs, enabling the injection of new & custom functionality.
+
+For example, to coordinate the boot process a Spring boot event listener detects when each spring boot application is ready and reports it to the bootstrapper control plane.
+
+#### lib/runtime
+
+A minimal spring boot application that provides the CftLibApi implementation and s2s simulator.
+
+#### lib/test-runner
+
+Provides integration testing support using a junit runner. 
 
 ## Previous prototype ideas
 
