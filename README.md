@@ -1,5 +1,6 @@
 # RSE CFT lib ![Java CI](https://github.com/hmcts/rse-cft-lib/workflows/Java%20CI/badge.svg) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hmcts/rse-cft-lib?label=release)
 
+
 ## Run your application + CCD in a single JVM
 
 ### Rationale
@@ -257,7 +258,15 @@ With spring devtools on the classpath your application will automatically reload
 
 The cftlib uses isolated classloaders to run multiple spring boot applications in a single Java Virtual Machine (JVM).
 
-Isolated classloaders allow different versions of the same class to coexist within the same JVM, since the JVM identifies a type by its name, package and classloader.
+```mermaid
+graph TD;
+    boot[Bootstrap classloader]-->app[Your app's classloader];
+    boot-->datastore[CCD data store classloader];
+    boot-->definition[CCD definition store classloader];
+    boot-->etc[Additional service classloaders...];
+```
+
+Isolated classloaders allow different versions of the same class to coexist within the same JVM, thus allowing each service to have a different version of common dependencies such as spring boot.
 
 ## Previous prototype ideas
 
