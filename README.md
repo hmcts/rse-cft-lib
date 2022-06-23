@@ -266,9 +266,13 @@ graph TD;
     boot-->etc[Additional service classloaders...];
 ```
 
-By running each spring boot application in its own classloader dependency conflicts are avoided; each application can have its own unique dependency graph.
+By running each spring boot application in its own classloader dependency conflicts are avoided; each application can have its own unique dependency set.
 
 ### Project structure
+
+#### rse-cft-lib-plugin
+
+The cftlib Gradle plugin
 
 #### lib/bootstrapper
 
