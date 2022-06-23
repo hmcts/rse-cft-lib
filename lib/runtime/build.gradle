@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly project(':lib:rse-cft-lib')
+    compileOnly project(':lib:bootstrapper')
 
     implementation group: 'org.awaitility', name: 'awaitility', version: '4.1.1'
     implementation group: 'net.lingala.zip4j', name: 'zip4j', version: '2.9.1'

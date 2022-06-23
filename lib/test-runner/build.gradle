@@ -1,11 +1,10 @@
 
 dependencies {
-    compileOnly project(':lib:rse-cft-lib')
     compileOnly 'org.springframework.security:spring-security-config:5.4.7'
     compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
     compileOnly 'org.aspectj:aspectjweaver:1.9.7'
     // Will be put on the runtime classpath by the gradle plugin.
-    compileOnly project(':lib:rse-cft-lib')
+    compileOnly project(':lib:bootstrapper')
 
     implementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
 }

@@ -21,7 +21,7 @@ public interface CFTLib {
 
     /**
      * Configure the AM role assignment service
-     * For format see https://github.com/hmcts/rse-cft-lib/blob/main/lib-consumer/src/cftlib/resources/cftlib-am-role-assignments.json
+     * For format see https://github.com/hmcts/rse-cft-lib/blob/main/test-project/src/cftlib/resources/cftlib-am-role-assignments.json
      */
     void configureRoleAssignments(String json);
 
