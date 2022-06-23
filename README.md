@@ -266,15 +266,17 @@ graph TD;
     boot-->etc[Additional service classloaders...];
 ```
 
-Isolated classloaders allow different versions of the same class to coexist within the same JVM, thus allowing each service to have a different version of common dependencies such as spring boot.
+By running each spring boot application in its own classloader dependency conflicts are avoided; each application can have its own unique dependency graph.
 
 ### Project structure
 
 #### lib/bootstrapper
 
-Handles the cftlib bootstrapping process; an application that creates each of the necessary classloaders to run each of our spring boot applications.
+An application that creates each of the necessary classloaders to run our spring boot applications and defines the Cftlib API (but not its implementation). 
 
-This project is necessarily dependency free to avoid polluting the system classloader upon which it runs.
+This project runs on the system classloader, meaning it is provided on the classpath to the JVM upon launch. Since it is on the system classloader it is also accessible to the isolated classloaders that run our applications.
+
+This project should be dependency free to avoid polluting the system classloader upon which it runs
 
 #### lib/injected
 
