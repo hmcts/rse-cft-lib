@@ -20,7 +20,7 @@ Improved local development and robust automated tests:
 
 ## Prerequisites
 
-- Java 17 (Java 11 no longer supported)
+- Java 11
 - Docker
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) (when using automated AAT secret management)
 
