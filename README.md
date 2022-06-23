@@ -260,7 +260,7 @@ The cftlib uses isolated classloaders to run multiple spring boot applications i
 
 ```mermaid
 graph TD;
-    boot[Bootstrap classloader]-->app[Your app's classloader<br>goat];
+    boot[Bootstrap classloader]-->app[Your app's classloader];
     boot-->datastore[CCD data store classloader];
     boot-->definition[CCD definition store classloader];
     boot-->etc[Additional service classloaders...];
