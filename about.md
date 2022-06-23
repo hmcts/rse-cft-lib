@@ -1,5 +1,28 @@
 How the cftlib works
 
+The cftlib uses isolated classloaders to run multiple spring boot applications in a single Java Virtual Machine (JVM).
+
+
+
+Project overview
+
+lib/bootstrapper
+
+Handles the cftlib bootstrapping process; an application that starts other applications within the same JVM.
+
+lib/injected
+
+Added to the classpath of each spring boot application that the cftlib runs, enabling us to inject new & custom functionality.
+
+For example, this library contains a Spring boot event listener that we use to coordinate the bootstrapping process.
+
+lib/runtime
+
+A minimal spring boot application that provides the CftLibApi implementation and s2s simulator.
+
+lib/test-runner
+
+Provides integration testing functionality for 
 
 Previous ideas:
 
@@ -17,3 +40,10 @@ cons:
   dependency conflicts (terminal)
   colliding URLs; two different services might define the same URL mappings
 
+* Extract the application fat jars from the docker images published by the CNP pipeline
+
+Rather than assembling the cft application classpaths using Gradle's dependency resolution, copy and run the complete fat jars from the docker images in the hmcts container registries.
+
+cons:
+ * Transient images - HMCTS container images are cleared down after a time
+ * Classpath injection may be harder
