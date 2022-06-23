@@ -260,7 +260,7 @@ The cftlib uses isolated classloaders to run multiple spring boot applications i
 
 ```mermaid
 graph TD;
-    boot[Bootstrap classloader]-->app[Your app's classloader];
+    boot[Bootstrap classloader]-->app[Your app's classloader<br>goat];
     boot-->datastore[CCD data store classloader];
     boot-->definition[CCD definition store classloader];
     boot-->etc[Additional service classloaders...];
@@ -285,13 +285,13 @@ cons:
  dependency conflicts (terminal)
  colliding URLs; two different services might define the same URL mappings
 
-### Extract the application fat jars from the docker images published by the CNP pipeline
+### Extract fat jars from CNP pipeline docker images
 
-Rather than assembling the cft application classpaths using Gradle's dependency resolution, copy and run the complete fat jars from the docker images in the hmcts container registries.
+Copy and run the complete fat jars from the docker images in the hmcts container registries.
 
 cons:
  * Transient images - HMCTS container images are cleared down after a time
- * Classpath injection may be harder
+ * Classpath injection harder with fat jars
 
 
 ### :warning: Note to maintainers :warning:
