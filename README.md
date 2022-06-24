@@ -1,6 +1,5 @@
 # RSE CFT lib ![Java CI](https://github.com/hmcts/rse-cft-lib/workflows/Java%20CI/badge.svg) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hmcts/rse-cft-lib?label=release)
 
-
 ## Run your application + CCD in a single JVM
 
 ### Rationale
@@ -282,7 +281,7 @@ The lib folder contains libraries that are published to the jitpack maven reposi
 
 An application that creates each of the necessary classloaders to run our spring applications and defines the Cftlib API (but not its implementation). 
 
-This project runs on the system classloader, meaning it is on the classpath to the JVM upon launch. Since it is on the system classloader it is also accessible to the isolated classloaders that run our applications (which have the system classloader as their parent).
+This project runs on the system classloader (meaning it is on the classpath to the JVM upon launch). Since the system classloader is parent to the isolated classloaders that run our applications, classes in this project are accessible to all running services.
 
 A consequence of being on the system classloader is that this project should be dependency free; any dependencies present on the system classloader would override those in the isolated classloaders leading to potential conflicts.
 
