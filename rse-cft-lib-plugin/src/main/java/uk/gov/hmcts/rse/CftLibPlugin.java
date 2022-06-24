@@ -152,7 +152,7 @@ public class CftLibPlugin implements Plugin<Project> {
     private void createConfigurations(Project project) {
         project.getConfigurations().getByName("cftlibImplementation")
             .extendsFrom(project.getConfigurations().getByName("implementation"))
-            .getDependencies().addAll(List.of(libDependencies(project, "bootstrapper", "injected")));
+            .getDependencies().addAll(List.of(libDependencies(project, "bootstrapper", "cftlib-agent")));
 
         project.getConfigurations().getByName("cftlibRuntimeOnly")
             .extendsFrom(project.getConfigurations().getByName("runtimeOnly"));
@@ -263,7 +263,7 @@ public class CftLibPlugin implements Plugin<Project> {
     private ManifestTask createCFTManifestTask(Project project, String depName, String mainClass, File file,
                                                String... args) {
         Configuration classpath = project.getConfigurations().detachedConfiguration(
-            libDependencies(project, depName, "injected"));
+            libDependencies(project, depName, "cftlib-agent"));
         return createManifestTask(project, "writeManifest" + depName, classpath, mainClass, file, args);
     }
 
