@@ -278,11 +278,11 @@ The cftlib Gradle plugin
 
 An application that creates each of the necessary classloaders to run our spring boot applications and defines the Cftlib API (but not its implementation). 
 
-This project runs on the system classloader, meaning it is provided on the classpath to the JVM upon launch. Since it is on the system classloader it is also accessible to the isolated classloaders that run our applications.
+This project runs on the system classloader, meaning it is provided on the classpath to the JVM upon launch. Since it is on the system classloader it is also accessible to the isolated classloaders that run our applications, which have the system classloader as their parent.
 
-This project should be dependency free to avoid polluting the system classloader upon which it runs
+Another consequence of being on the system classloader is that this project should be dependency free; any dependencies present on the system classloader would override those in the isolated classloaders leading to potential conflicts.
 
-#### lib/injected
+#### lib/cftlib-agent
 
 Added to the classpath of each spring boot application that the cftlib runs, enabling the injection of new & custom functionality.
 
