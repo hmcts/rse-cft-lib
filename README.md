@@ -263,7 +263,7 @@ graph TD;
     boot[Bootstrap classloader]-->app[Your app's classloader];
     boot-->datastore[CCD data store classloader];
     boot-->definition[CCD definition store classloader];
-    boot-->etc[Additional service classloaders...];
+    boot-->etc[etc...];
 ```
 
 By running each spring boot application in its own classloader dependency conflicts are avoided; each application can have its own unique dependency set.
@@ -272,27 +272,31 @@ By running each spring boot application in its own classloader dependency confli
 
 #### rse-cft-lib-plugin
 
-The cftlib Gradle plugin
+The cftlib Gradle plugin that configures the build of the consuming project, creating the build tasks, sourcesets etc.
 
-#### lib/bootstrapper
+#### lib/
 
-An application that creates each of the necessary classloaders to run our spring boot applications and defines the Cftlib API (but not its implementation). 
+The lib folder contains libraries that are published to the jitpack maven repository and are consumed as dependencies when running the cftlib.
 
-This project runs on the system classloader, meaning it is provided on the classpath to the JVM upon launch. Since it is on the system classloader it is also accessible to the isolated classloaders that run our applications, which have the system classloader as their parent.
+##### lib/bootstrapper
 
-Another consequence of being on the system classloader is that this project should be dependency free; any dependencies present on the system classloader would override those in the isolated classloaders leading to potential conflicts.
+An application that creates each of the necessary classloaders to run our spring applications and defines the Cftlib API (but not its implementation). 
 
-#### lib/cftlib-agent
+This project runs on the system classloader, meaning it is on the classpath to the JVM upon launch. Since it is on the system classloader it is also accessible to the isolated classloaders that run our applications (which have the system classloader as their parent).
+
+A consequence of being on the system classloader is that this project should be dependency free; any dependencies present on the system classloader would override those in the isolated classloaders leading to potential conflicts.
+
+##### lib/cftlib-agent
 
 Added to the classpath of each spring boot application that the cftlib runs, enabling the injection of new & custom functionality.
 
 For example, to coordinate the boot process a Spring boot event listener detects when each spring boot application is ready and reports it to the bootstrapper control plane.
 
-#### lib/runtime
+##### lib/runtime
 
 A minimal spring boot application that provides the CftLibApi implementation and s2s simulator.
 
-#### lib/test-runner
+##### lib/test-runner
 
 Provides integration testing support using a junit runner. 
 
