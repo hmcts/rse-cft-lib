@@ -300,6 +300,10 @@ A minimal spring boot application that provides the CftLibApi implementation and
 
 Provides integration testing support using a junit runner. 
 
+#### projects/
+
+The CFT projects are found here as git submodules, published as maven libaries by jitpack with some customisation performed using an `init.gradle` script to ensure we reproduce the correct classpath in bootWithCCD.
+
 ## Previous prototype ideas
 
 ### Run everything as a single Spring boot Application
@@ -308,14 +312,14 @@ Rather than running each cft service as an independent spring boot application, 
 
 This falls down on the shared classpath; irreconcilable dependency conflicts can arise when two or more services share a dependency for which no mutually compatible version exists.
 
-I encountered this with the Jackson library when prototyping this idea; one CFT service would only work with jackson version X and another with version Y, so they couldn't run under a single classloader where you can have only one version of jackson loaded.
+I encountered this with the Jackson library when prototyping this idea; one CFT service would only work with jackson version X and another with version Y.
 
 pros: 
 * Significant further reduction in resource requirements
 * Faster boot times
 cons: 
- dependency conflicts (terminal)
- colliding URLs; two different services might define the same URL mappings
+* dependency conflicts
+* colliding URLs; two different services might define the same URL mappings
 
 ### Extract fat jars from CNP pipeline docker images
 
