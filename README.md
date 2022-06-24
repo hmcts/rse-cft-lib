@@ -283,6 +283,8 @@ An application that creates each of the necessary classloaders to run our spring
 
 This project runs on the system classloader (meaning it is on the classpath to the JVM upon launch). Since the system classloader is parent to the isolated classloaders that run our applications, classes in this project are accessible to all running services.
 
+This project contains the 'control plane'; a coordination class invoked by the cftlib-agent (see next project).
+
 A consequence of being on the system classloader is that this project should be dependency free; any dependencies present on the system classloader would override those in the isolated classloaders leading to potential conflicts.
 
 ##### lib/cftlib-agent
@@ -290,6 +292,15 @@ A consequence of being on the system classloader is that this project should be 
 Added to the classpath of each spring boot application that the cftlib runs, enabling the injection of new & custom functionality.
 
 For example, to coordinate the boot process a Spring boot event listener detects when each spring boot application is ready and reports it to the bootstrapper control plane.
+
+```mermaid
+graph BT;
+    boot[Bootstrap classloader <br> ControlPlane::appReady]; 
+    app[App <br> libagent]--ApplicationReadyEvent-->boot;
+    data[Datastore <br> libagent]--ApplicationReadyEvent-->boot;
+    definition[Definition store <br> libagent]--ApplicationReadyEvent-->boot;
+    etc[etc]--ApplicationReadyEvent-->boot;
+```
 
 ##### lib/runtime
 
