@@ -132,6 +132,8 @@ Plus (in docker):
 * XUI manage cases, available on http://localhost:3000
 * XUI manage org, available on http://localhost:3001
 
+The manage cases port can be overridden using the environment variable `XUI_PORT` and manage orgs can be overridden with `XUI_MO_PORT`.
+
 ### 4. Debugging
 
 Launch with `--debug-jvm` and attach your debugger to debug your application plus all bundled cft services (with source level debugging).
