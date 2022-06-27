@@ -52,6 +52,8 @@ public class LibRunner {
     private static void setConfigProperties() {
         if (!"localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
             setAATSecrets();
+            System.setProperty("IDAM_API_URL", "https://idam-api.aat.platform.hmcts.net");
+            System.setProperty("DM_STORE_BASE_URL", "http://dm-store-aat.service.core-compute-aat.internal");
         }
         var dbHost = "${RSE_LIB_DB_HOST:localhost}";
         var dbPort = "${RSE_LIB_DB_PORT:6432}";
