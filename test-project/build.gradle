@@ -46,7 +46,7 @@ dependencies {
     cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.1'
     cftlibTestImplementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     cftlibTestImplementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-    cftlibTestImplementation 'com.auth0:java-jwt:3.19.2'
+    cftlibTestImplementation 'com.auth0:java-jwt:4.0.0'
     cftlibTestImplementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
     cftlibTestImplementation 'org.awaitility:awaitility:4.2.0'
 }
