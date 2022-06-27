@@ -126,7 +126,7 @@ public class CftLibPlugin implements Plugin<Project> {
         jar.setEntryCompression(ZipEntryCompression.STORED);
         jar.doFirst(t -> {
             jar.from(project.zipTree(
-                project.getConfigurations().detachedConfiguration(libDependencies(project, "rse-cft-lib"))
+                project.getConfigurations().detachedConfiguration(libDependencies(project, "bootstrapper"))
                     .getSingleFile()));
         });
         jar.from(archive);
@@ -152,7 +152,7 @@ public class CftLibPlugin implements Plugin<Project> {
     private void createConfigurations(Project project) {
         project.getConfigurations().getByName("cftlibImplementation")
             .extendsFrom(project.getConfigurations().getByName("implementation"))
-            .getDependencies().addAll(List.of(libDependencies(project, "rse-cft-lib", "injected")));
+            .getDependencies().addAll(List.of(libDependencies(project, "bootstrapper", "cftlib-agent")));
 
         project.getConfigurations().getByName("cftlibRuntimeOnly")
             .extendsFrom(project.getConfigurations().getByName("runtimeOnly"));
@@ -263,7 +263,7 @@ public class CftLibPlugin implements Plugin<Project> {
     private ManifestTask createCFTManifestTask(Project project, String depName, String mainClass, File file,
                                                String... args) {
         Configuration classpath = project.getConfigurations().detachedConfiguration(
-            libDependencies(project, depName, "injected"));
+            libDependencies(project, depName, "cftlib-agent"));
         return createManifestTask(project, "writeManifest" + depName, classpath, mainClass, file, args);
     }
 
@@ -317,7 +317,7 @@ public class CftLibPlugin implements Plugin<Project> {
         j.doFirst(x -> {
             // Resolve the configuration as a detached configuration for isolation from
             // the project's build (eg. to prevent interference from spring boot's dependency mgmt plugin)
-            j.classpath(project.getConfigurations().detachedConfiguration(libDependencies(project, "rse-cft-lib")));
+            j.classpath(project.getConfigurations().detachedConfiguration(libDependencies(project, "bootstrapper")));
         });
 
         j.args(manifests);

@@ -12,7 +12,7 @@ includeBuild 'projects/aac-manage-case-assignment'
 includeBuild 'projects/ccd-case-document-am-api'
 includeBuild 'rse-cft-lib-plugin'
 include 'projects:definition-store-fat'
-include 'lib-consumer'
+include 'test-project'
 
 new File(rootDir, "lib").listFiles().each {
   if (it.isDirectory()) {

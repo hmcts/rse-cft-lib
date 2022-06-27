@@ -20,7 +20,7 @@ Improved local development and robust automated tests:
 
 ## Prerequisites
 
-- Java 17 (Java 11 no longer supported)
+- Java 11
 - Docker
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) (when using automated AAT secret management)
 
@@ -134,7 +134,11 @@ Plus (in docker):
 
 The manage cases port can be overridden using the environment variable `XUI_PORT` and manage orgs can be overridden with `XUI_MO_PORT`.
 
-### 4. Writing integration tests
+### 4. Debugging
+
+Launch with `--debug-jvm` and attach your debugger to debug your application plus all bundled cft services (with source level debugging).
+
+### 5. Writing integration tests
 
 A `CftlibTest` junit base class is provided for writing robust automated integration tests that test your application end-to-end with CCD.
 
@@ -150,7 +154,7 @@ public class TestWithCCD extends CftlibTest {
 
 Tests must be placed in the `cftlibTest` sourceset.
 
-### 5. Configuration
+### 6. Configuration
 
 #### IDAM & S2S
 
@@ -186,7 +190,19 @@ The default S2S port can be overridden by setting the `RSE_LIB_S2S_PORT` environ
 
 XUI requires a valid LD client ID to function, which should be provided by setting the `XUI_LD_ID` environment variable.
 
-#### Accessing databases
+#### Databases
+
+##### Creating additional databases
+
+If your application requires a database(s) then you can have the cftlib create them for you by setting the `RSE_LIB_ADDITIONAL_DATABASES` environment variable as a comma delimited value.
+
+```
+bootWithCCD {
+    environment 'RSE_LIB_ADDITIONAL_DATABASES', 'my_db_1,my_db_2'
+}
+```
+
+##### Accessing databases
 
 Postgres is started on port 6432 (default) and can be accessed with user `postgres` password `postgres`
 
@@ -201,7 +217,7 @@ The default postgres port can be overridden by setting the `RSE_LIB_DB_PORT` env
 | CCD user profile | userprofile |
 | AM role assignment service | am |
 
-eg. to connect to ccd data store db ```psql postgresql://localhost:6432/datastore```
+eg. to connect to ccd data store db ```psql postgresql://postgres:postgres@localhost:6432/datastore```
 
 #### Ports
 
