@@ -132,6 +132,8 @@ Plus (in docker):
 * XUI manage cases, available on http://localhost:3000
 * XUI manage org, available on http://localhost:3001
 
+The manage cases port can be overridden using the environment variable `XUI_PORT` and manage orgs can be overridden with `XUI_MO_PORT`.
+
 ### 4. Writing integration tests
 
 A `CftlibTest` junit base class is provided for writing robust automated integration tests that test your application end-to-end with CCD.
