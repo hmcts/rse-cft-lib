@@ -9,7 +9,7 @@ Improved local development and robust automated tests:
 * Reduced RAM requirements & improved performance
 * Improved debugging
   * Set a breakpoint anywhere in any included CFT service
-* A Java API for:
+* A [Java API](lib/bootstrapper/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) for:
   * Definition imports
   * Role creation
 * Includes a test runner for automated integration tests
@@ -279,7 +279,7 @@ The lib folder contains libraries that are published to the jitpack maven reposi
 
 ##### lib/bootstrapper
 
-An application that creates each of the necessary classloaders to run our spring applications and defines the Cftlib API (but not its implementation). 
+An application that creates each of the necessary classloaders to run our spring applications and defines the [Cftlib API](lib/bootstrapper/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) (but not its implementation). 
 
 This project runs on the system classloader (meaning it is on the classpath to the JVM upon launch). Since the system classloader is parent to the isolated classloaders that run our applications, classes in this project are accessible to all running services.
 
@@ -304,7 +304,7 @@ graph BT;
 
 ##### lib/runtime
 
-A minimal spring boot application that provides the CftLibApi implementation and s2s simulator.
+A minimal spring boot application that provides the s2s simulator and [CftLibApi implementation](lib/runtime/src/main/java/uk/gov/hmcts/rse/ccd/lib/CFTLibApiImpl.java), located here because they have dependencies (which risk dependency conflicts if placed on the bootstrap classloader).
 
 ##### lib/test-runner
 
@@ -327,6 +327,7 @@ I encountered this with the Jackson library when prototyping this idea; one CFT 
 pros: 
 * Significant further reduction in resource requirements
 * Faster boot times
+
 cons: 
 * dependency conflicts
 * colliding URLs; two different services might define the same URL mappings
