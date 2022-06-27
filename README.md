@@ -9,7 +9,7 @@ Improved local development and robust automated tests:
 * Reduced RAM requirements & improved performance
 * Improved debugging
   * Set a breakpoint anywhere in any included CFT service
-* A Java API for:
+* A [Java API](lib/bootstrapper/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) for:
   * Definition imports
   * Role creation
 * Includes a test runner for automated integration tests
@@ -136,7 +136,16 @@ The manage cases port can be overridden using the environment variable `XUI_PORT
 
 ### 4. Debugging
 
-Launch with `--debug-jvm` and attach your debugger to debug your application plus all bundled cft services (with source level debugging).
+Your application may be debugged simultaneously with all bundled cft services, allowing you to browse the sourcecode of - and set breakpoints in - bundled cft services (the cftlib bundles java sources for all cft services).
+
+#### From Intellij
+
+Right click the bootWithCCD/cftlibTest Gradle task and select 'Debug...'
+
+#### From command line
+
+Launch with `--debug-jvm` and attach the debugger from your IDE.
+
 
 ### 5. Writing integration tests
 
@@ -254,6 +263,94 @@ dependencies {
 ```
 
 With spring devtools on the classpath your application will automatically reload as you edit and build your java classes.
+
+## How the cftlib works
+
+The cftlib uses isolated classloaders to run multiple spring boot applications in a single Java Virtual Machine (JVM).
+
+```mermaid
+graph TD;
+    boot[Bootstrap classloader]-->app[Your app's classloader];
+    boot-->datastore[CCD data store classloader];
+    boot-->definition[CCD definition store classloader];
+    boot-->etc[etc...];
+```
+
+By running each spring boot application in its own classloader dependency conflicts are avoided; each application can have its own unique dependency set.
+
+### Project structure
+
+#### rse-cft-lib-plugin
+
+The cftlib Gradle plugin that configures the build of the consuming project, creating the build tasks, sourcesets etc.
+
+#### lib/
+
+The lib folder contains libraries that are published to the jitpack maven repository and are consumed as dependencies when running the cftlib.
+
+##### lib/bootstrapper
+
+An application that creates each of the necessary classloaders to run our spring applications and defines the [Cftlib API](lib/bootstrapper/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) (but not its implementation). 
+
+This project runs on the system classloader (meaning it is on the classpath to the JVM upon launch). Since the system classloader is parent to the isolated classloaders that run our applications, classes in this project are accessible to all running services.
+
+This project contains the 'control plane'; a coordination class invoked by the cftlib-agent (see next project).
+
+A consequence of being on the system classloader is that this project should be dependency free; any dependencies present on the system classloader would override those in the isolated classloaders leading to potential conflicts.
+
+##### lib/cftlib-agent
+
+Added to the classpath of each spring boot application that the cftlib runs, enabling the injection of new & custom functionality.
+
+For example, to coordinate the boot process a Spring boot event listener detects when each spring boot application is ready and reports it to the bootstrapper control plane.
+
+```mermaid
+graph BT;
+    boot[Bootstrap classloader <br> ControlPlane::appReady]; 
+    app[App <br> libagent]--ApplicationReadyEvent-->boot;
+    data[Datastore <br> libagent]--ApplicationReadyEvent-->boot;
+    definition[Definition store <br> libagent]--ApplicationReadyEvent-->boot;
+    etc[etc]--ApplicationReadyEvent-->boot;
+```
+
+##### lib/runtime
+
+A minimal spring boot application that provides the s2s simulator and [CftLibApi implementation](lib/runtime/src/main/java/uk/gov/hmcts/rse/ccd/lib/CFTLibApiImpl.java), located here because they have dependencies (which risk dependency conflicts if placed on the bootstrap classloader).
+
+##### lib/test-runner
+
+Provides integration testing support using a junit runner. 
+
+#### projects/
+
+The CFT projects are found here as git submodules, published as maven libaries by jitpack with some customisation performed using an `init.gradle` script to ensure we reproduce the correct classpath in bootWithCCD.
+
+## Previous prototype ideas
+
+### Run everything as a single Spring boot Application
+
+Rather than running each cft service as an independent spring boot application, run a single spring boot application containing all the application code.
+
+This falls down on the shared classpath; irreconcilable dependency conflicts can arise when two or more services share a dependency for which no mutually compatible version exists.
+
+I encountered this with the Jackson library when prototyping this idea; one CFT service would only work with jackson version X and another with version Y.
+
+pros: 
+* Significant further reduction in resource requirements
+* Faster boot times
+
+cons: 
+* dependency conflicts
+* colliding URLs; two different services might define the same URL mappings
+
+### Extract fat jars from CNP pipeline docker images
+
+Copy and run the complete fat jars from the docker images in the hmcts container registries.
+
+cons:
+ * Transient images - HMCTS container images are cleared down after a time
+ * Classpath injection harder with fat jars
+
 
 ### :warning: Note to maintainers :warning:
 
