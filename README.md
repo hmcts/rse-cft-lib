@@ -130,7 +130,7 @@ Plus (in docker):
 
 * CCD & AM dependencies (postgres, logstash & elastic search
 * XUI manage cases, available on http://localhost:3000
-* XUI manage org, available on http://localhost:3003
+* XUI manage org, available on http://localhost:3001
 
 ### 4. Writing integration tests
 
