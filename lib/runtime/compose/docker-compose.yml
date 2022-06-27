@@ -125,7 +125,7 @@ services:
       LOGGING: debug
       PORT: 3001
     ports:
-      - 3001:3001
+      - 3003:3003
 
   rse-idam-simulator:
     image: "hmctspublic.azurecr.io/hmcts/rse/rse-idam-simulator:latest"
