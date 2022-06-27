@@ -134,7 +134,16 @@ Plus (in docker):
 
 ### 4. Debugging
 
-Launch with `--debug-jvm` and attach your debugger to debug your application plus all bundled cft services (with source level debugging).
+Your application may be debugged simultaneously with all bundled cft services, allowing you to browse the sourcecode of - and set breakpoints in - bundled cft services (the cftlib bundles java sources for all cft services).
+
+#### From Intellij
+
+Right click the bootWithCCD/cftlibTest Gradle task and select 'Debug...'
+
+#### From command line
+
+Launch with `--debug-jvm` and attach the debugger from your IDE.
+
 
 ### 5. Writing integration tests
 
