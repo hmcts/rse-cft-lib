@@ -68,10 +68,12 @@ public class LibRunnerTask extends JavaExec {
         var env = getProject().file("build/cftlib/.aat-env");
         if (!env.exists()) {
             try (var os = new FileOutputStream(getProject().file(env))) {
-                var cmd = Os.isFamily(Os.FAMILY_WINDOWS)
-                    ? new ArrayList<>(List.of("cmd", "/c"))
-                    : new ArrayList<String>();
-                cmd.addAll(List.of("az", "keyvault", "secret", "show", "-o", "tsv", "--query", "value", "--id", "https://rse-cft-lib.vault.azure.net/secrets/aat-env"));
+                var cmd  = new ArrayList<>(List.of("az", "keyvault", "secret", "show", "-o", "tsv", "--query", "value",
+                    "--id", "https://rse-cft-lib.vault.azure.net/secrets/aat-env"));
+                // TODO: use the Azure java client library for cross platform secret retrieval
+                if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                    cmd.addAll(0, List.of("cmd", "/c"));
+                }
                 getProject().exec(x -> {
                     x.commandLine(cmd);
                     x.setStandardOutput(os);
