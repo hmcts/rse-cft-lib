@@ -1,9 +1,11 @@
 package uk.gov.hmcts.rse;
 
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.SneakyThrows;
+import org.apache.tools.ant.taskdefs.condition.Os;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
@@ -66,9 +68,14 @@ public class LibRunnerTask extends JavaExec {
         var env = getProject().file("build/cftlib/.aat-env");
         if (!env.exists()) {
             try (var os = new FileOutputStream(getProject().file(env))) {
+                var cmd  = new ArrayList<>(List.of("az", "keyvault", "secret", "show", "-o", "tsv", "--query", "value",
+                    "--id", "https://rse-cft-lib.vault.azure.net/secrets/aat-env"));
+                // TODO: use the Azure java client library for cross platform secret retrieval
+                if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                    cmd.addAll(0, List.of("cmd", "/c"));
+                }
                 getProject().exec(x -> {
-                    x.commandLine("az", "keyvault", "secret", "show", "-o", "tsv", "--query", "value", "--id",
-                        "https://rse-cft-lib.vault.azure.net/secrets/aat-env");
+                    x.commandLine(cmd);
                     x.setStandardOutput(os);
                 });
             }
