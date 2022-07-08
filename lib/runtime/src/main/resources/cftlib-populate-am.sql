@@ -14,10 +14,10 @@ insert into role_assignment
     r."grantType",
     r."roleCategory",
     r."readOnly",
-    now() as begin_time,
-    now() + interval '10 years' as end_time,
+    now() at time zone 'utc' as begin_time,
+    now() at time zone 'utc' + interval '10 years' as end_time,
     r.attributes,
-    now() as created,
+    now() at time zone 'utc' as created,
     r.authorisations
   from rows,
     jsonb_to_record(val) as r(
