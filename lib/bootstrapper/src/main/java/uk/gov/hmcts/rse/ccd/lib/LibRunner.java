@@ -93,6 +93,7 @@ public class LibRunner {
 
         // Allow more time for definitions to import to reduce test flakeyness
         System.setProperty("CCD_TX-TIMEOUT_DEFAULT", "120");
+        System.setProperty("DEFINITION_STORE_TX_TIMEOUT_DEFAULT", "120");
 
         System.setProperty("ROLE_ASSIGNMENT_URL", "http://localhost:4096");
         System.setProperty("DEFINITION_STORE_HOST", "http://localhost:4451");
