@@ -9,18 +9,18 @@ import uk.gov.hmcts.reform.authorisation.filters.ServiceAuthFilter;
 @SpringBootApplication
 public class LibConsumerApplication {
 
-  // Register an s2s auth filter.
-  @Bean
-  public FilterRegistrationBean registerAuthFilter(ServiceAuthFilter serviceAuthFilter) {
-    FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-    filterRegistrationBean.setFilter(serviceAuthFilter);
-    return  filterRegistrationBean;
-  }
-
-  public static void main(String[] args) {
+    public static void main(String[] args) {
         SpringApplication.run(LibConsumerApplication.class, args);
         System.out.println("Lib consumer test app running!");
         // Shut down so we can run in automated test.
         Runtime.getRuntime().halt(0);
+    }
+
+    // Register an s2s auth filter.
+    @Bean
+    public FilterRegistrationBean registerAuthFilter(ServiceAuthFilter serviceAuthFilter) {
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        filterRegistrationBean.setFilter(serviceAuthFilter);
+        return filterRegistrationBean;
     }
 }

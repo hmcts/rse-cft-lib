@@ -11,15 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MyController {
 
-  @GetMapping("/index")
-  public @ResponseBody String index() {
-    return "Hello world!";
-  }
+    @GetMapping("/index")
+    public @ResponseBody
+    String index() {
+        return "Hello world!";
+    }
 
-  @PostMapping("/about-to-submit")
-  public Map aboutToSubmit(@RequestBody Map request) {
-    return Map.of(
-      "data", Map.of()
-    );
-  }
+    @PostMapping("/about-to-submit")
+    public Map aboutToSubmit(@RequestBody Map request) {
+        return Map.of(
+            "data", Map.of()
+        );
+    }
 }
