@@ -44,12 +44,30 @@ import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LibConsumerApplicationTests extends CftlibTest {
 
+    public static String generateDummyS2SToken(String serviceName) {
+        return Jwts.builder()
+            .setSubject(serviceName)
+            .setIssuedAt(new Date())
+            .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.encode("AA"))
+            .compact();
+    }
+
+    public static String buildJwt() {
+        return JWT.create()
+            .withSubject("banderous")
+            .withNotBefore(new Date())
+            .withIssuedAt(new Date())
+            .withClaim("tokenName", "access_token")
+            .withExpiresAt(Date.from(LocalDateTime.now().plusDays(100).toInstant(ZoneOffset.UTC)))
+            .sign(Algorithm.HMAC256("a secret"));
+    }
+
     @SneakyThrows
     @Test
     void testController() {
-      var request = buildGet("http://localhost:7431/index");
-      var response = HttpClientBuilder.create().build().execute(request);
-      assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+        var request = buildGet("http://localhost:7431/index");
+        var response = HttpClientBuilder.create().build().execute(request);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
     }
 
     @SneakyThrows
@@ -64,8 +82,8 @@ class LibConsumerApplicationTests extends CftlibTest {
         assertThat(m.containsKey("header"), is(true));
     }
 
-  @SneakyThrows
-  @Test
+    @SneakyThrows
+    @Test
     void listJurisdictions() {
         var request = buildGet("http://localhost:7431/aggregated/caseworkers/:uid/jurisdictions?access=read");
         // Test xui talking direct to ccd without the gateway.
@@ -100,33 +118,38 @@ class LibConsumerApplicationTests extends CftlibTest {
     @SneakyThrows
     @Test
     void getPaginationMetadata() {
-      var request = buildGet("http://localhost:7431/data/caseworkers/:uid/jurisdictions/DIVORCE/case-types/NFD/cases/pagination_metadata");
+        var request = buildGet(
+            "http://localhost:7431/data/caseworkers/:uid/jurisdictions/DIVORCE/case-types/NFD/cases/pagination_metadata");
 
-      var response = HttpClientBuilder.create().build().execute(request);
-      assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+        var response = HttpClientBuilder.create().build().execute(request);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
     }
 
     // S2S tokens should be leasable by s2s simulator under two endpoints
     @SneakyThrows
     @Test
     void leaseS2SToken() {
-      var request = buildRequest("http://localhost:7431/lease", HttpPost::new);
-      request.setEntity(new StringEntity(new Gson().toJson(Map.of("microservice", "foo")), ContentType.APPLICATION_JSON));
+        var request = buildRequest("http://localhost:7431/lease", HttpPost::new);
+        request.setEntity(
+            new StringEntity(new Gson().toJson(Map.of("microservice", "foo")), ContentType.APPLICATION_JSON));
 
-      var response = HttpClientBuilder.create().build().execute(request);
-      assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
-      request = buildRequest("http://localhost:7431/testing-support/lease", HttpPost::new);
-      request.setEntity(new StringEntity(new Gson().toJson(Map.of("microservice", "foo")), ContentType.APPLICATION_JSON));
-      response = HttpClientBuilder.create().build().execute(request);
-      assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+        var response = HttpClientBuilder.create().build().execute(request);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+        request = buildRequest("http://localhost:7431/testing-support/lease", HttpPost::new);
+        request.setEntity(
+            new StringEntity(new Gson().toJson(Map.of("microservice", "foo")), ContentType.APPLICATION_JSON));
+        response = HttpClientBuilder.create().build().execute(request);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
     }
 
     @Order(1)
     @Test
     void caseCreation() throws IOException {
-        var request = buildGet("http://localhost:7431/data/internal/case-types/NFD/event-triggers/create-test-application?ignore-warning=false");
+        var request = buildGet(
+            "http://localhost:7431/data/internal/case-types/NFD/event-triggers/create-test-application?ignore-warning=false");
         request.addHeader("experimental", "true");
-        request.addHeader("Accept", "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-start-case-trigger.v2+json;charset=UTF-8");
+        request.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-start-case-trigger.v2+json;charset=UTF-8");
 
         var response = HttpClientBuilder.create().build().execute(request);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
@@ -151,9 +174,11 @@ class LibConsumerApplicationTests extends CftlibTest {
             "ignore_warning", false
         );
 
-        var createCase = buildRequest("http://localhost:4452/data/case-types/NFD/cases?ignore-warning=false", HttpPost::new);
+        var createCase =
+            buildRequest("http://localhost:4452/data/case-types/NFD/cases?ignore-warning=false", HttpPost::new);
         createCase.addHeader("experimental", "true");
-        createCase.addHeader("Accept", "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-case.v2+json;charset=UTF-8");
+        createCase.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-case.v2+json;charset=UTF-8");
 
         createCase.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
         response = HttpClientBuilder.create().build().execute(createCase);
@@ -173,8 +198,12 @@ class LibConsumerApplicationTests extends CftlibTest {
 
     @SneakyThrows
     private Boolean caseAppearsInSearch() {
-        var request = buildRequest("http://localhost:4452/data/internal/searchCases?ctid=NFD&use_case=WORKBASKET&view=WORKBASKET&page=1", HttpPost::new);
-        var query = "{\"native_es_query\":{\"from\":0,\"query\":{\"bool\":{\"must\":[]}},\"size\":25,\"sort\":[]},\"supplementary_data\":[\"*\"]}";
+        var request = buildRequest(
+            "http://localhost:4452/data/internal/searchCases?ctid=NFD&use_case=WORKBASKET&view=WORKBASKET&page=1",
+            HttpPost::new);
+        var query =
+            "{\"native_es_query\":{\"from\":0,\"query\":{\"bool\":{\"must\":[]}},\"size\":25,\"sort\":[]},"
+                + "\"supplementary_data\":[\"*\"]}";
         request.setEntity(new StringEntity(query, ContentType.APPLICATION_JSON));
         var response = HttpClientBuilder.create().build().execute(request);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
@@ -184,7 +213,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     }
 
     HttpGet buildGet(String url) {
-    return buildRequest(url, HttpGet::new);
+        return buildRequest(url, HttpGet::new);
     }
 
     <T extends HttpRequestBase> T buildRequest(String url, Function<String, T> ctor) {
@@ -193,24 +222,6 @@ class LibConsumerApplicationTests extends CftlibTest {
         request.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
         request.addHeader("Authorization", "Bearer " + buildJwt());
         return request;
-    }
-
-    public static String generateDummyS2SToken(String serviceName) {
-        return Jwts.builder()
-            .setSubject(serviceName)
-            .setIssuedAt(new Date())
-            .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.encode("AA"))
-            .compact();
-    }
-
-    public static String buildJwt() {
-        return JWT.create()
-            .withSubject("banderous")
-            .withNotBefore(new Date())
-            .withIssuedAt(new Date())
-            .withClaim("tokenName", "access_token")
-            .withExpiresAt(Date.from(LocalDateTime.now().plusDays(100).toInstant(ZoneOffset.UTC)))
-            .sign(Algorithm.HMAC256("a secret"));
     }
 
 }
