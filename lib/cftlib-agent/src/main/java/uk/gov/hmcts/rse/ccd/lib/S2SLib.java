@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import lombok.SneakyThrows;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -36,13 +37,17 @@ class S2SLib {
         + " && args(authHeader)")
     public Object getServiceName(ProceedingJoinPoint p, String authHeader) {
         if (null != authHeader) {
-            var subject = JWT.decode(authHeader.replace("Bearer ", "")).getSubject();
+            try {
+                var subject = JWT.decode(authHeader.replace("Bearer ", "")).getSubject();
 
-            // Allow XUI to talk direct to CCD by making xui appear to be the ccd gateway to ccd data store.
-            if (this.service.equals("ccd_data") && subject.equals("xui_webapp")) {
-                return "ccd_gw";
+                // Allow XUI to talk direct to CCD by making xui appear to be the ccd gateway to ccd data store.
+                if (this.service.equals("ccd_data") && subject.equals("xui_webapp")) {
+                    return "ccd_gw";
+                }
+                return subject;
+            } catch (JWTDecodeException j) {
+                // Let invalid JWTs proceed to be handled as normal, ie. unauthorised.
             }
-            return subject;
         }
         return p.proceed();
     }

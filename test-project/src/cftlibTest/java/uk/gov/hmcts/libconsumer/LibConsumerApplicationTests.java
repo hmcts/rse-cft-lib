@@ -84,6 +84,17 @@ class LibConsumerApplicationTests extends CftlibTest {
 
     @SneakyThrows
     @Test
+    void invalidS2STokenReturnsUnauthorised() {
+        var request = buildGet("http://localhost:4452/addresses");
+        request.removeHeaders("ServiceAuthorization");
+        request.addHeader("ServiceAuthorization", "nonsense");
+        var response = HttpClientBuilder.create().build().execute(request);
+
+        assertThat(response.getStatusLine().getStatusCode(), is(401));
+    }
+
+    @SneakyThrows
+    @Test
     void listJurisdictions() {
         var request = buildGet("http://localhost:7431/aggregated/caseworkers/:uid/jurisdictions?access=read");
         // Test xui talking direct to ccd without the gateway.
