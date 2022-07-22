@@ -61,6 +61,7 @@ bootWithCCD {
 
 cftlibTest {
     environment("RSE_LIB_ADDITIONAL_DATABASES", "mydb")
+    environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
     // Check that we are able to override the default port.
     environment 'RSE_LIB_S2S_PORT', '7431'
     environment 'RSE_LIB_DB_PORT', '8432'
@@ -84,7 +85,7 @@ cftlibTest.dependsOn(rootProject.tasks.publish)
 cftlibTestClasses.dependsOn(rootProject.tasks.publish)
 
 // Relies on bootWithCCD starting up the dockerised dependencies.
-task testGigaJar(type: uk.gov.hmcts.rse.LibRunnerTask, dependsOn: [cftlibExecutableJar, bootWithCCD]) {
+task testGigaJar(type: uk.gov.hmcts.rse.CftlibExec, dependsOn: [cftlibExecutableJar, bootWithCCD]) {
     workingDir project.layout.buildDirectory.dir('gigatest')
     outputs.dir workingDir
     authMode = AuthMode.Local
