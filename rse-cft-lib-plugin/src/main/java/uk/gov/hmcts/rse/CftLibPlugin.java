@@ -229,8 +229,6 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.dependsOn("cftlibClasses");
         exec.dependsOn("cftlibTestClasses");
         exec.args(file);
-        exec.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
-
     }
 
     private void createManifestTasks(Project project) {
@@ -309,8 +307,8 @@ public class CftLibPlugin implements Plugin<Project> {
             .orElse("DEV-SNAPSHOT");
     }
 
-    private LibRunnerTask createRunTask(Project project, String name) {
-        LibRunnerTask j = project.getTasks().create(name, LibRunnerTask.class);
+    private CftlibExec createRunTask(Project project, String name) {
+        CftlibExec j = project.getTasks().create(name, CftlibExec.class);
         j.setMain("uk.gov.hmcts.rse.ccd.lib.LibRunner");
 
 

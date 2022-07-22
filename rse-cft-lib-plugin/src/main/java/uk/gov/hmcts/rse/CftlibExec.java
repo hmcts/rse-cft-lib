@@ -10,7 +10,7 @@ import org.gradle.api.tasks.JavaExec;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
 
-public class LibRunnerTask extends JavaExec {
+public class CftlibExec extends JavaExec {
     public AuthMode authMode = AuthMode.AAT;
 
     @Override
