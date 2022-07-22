@@ -44,7 +44,7 @@ dependencies {
     cftlibTestImplementation 'org.springframework.boot:spring-boot-starter-test'
     cftlibTestImplementation 'org.springframework.security:spring-security-test'
 
-    cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.1'
+    cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.2'
     cftlibTestImplementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     cftlibTestImplementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
     cftlibTestImplementation 'com.auth0:java-jwt:4.0.0'
