@@ -59,13 +59,16 @@ bootWithCCD {
     environment('RSE_LIB_CLEAN_BOOT', 'true')
 }
 
-cftlibTest {
+// Test a custom cftlibTest task.
+task cftlibTestCustom(type: uk.gov.hmcts.rse.CftlibExec) {
     environment("RSE_LIB_ADDITIONAL_DATABASES", "mydb")
     environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
     // Check that we are able to override the default port.
     environment 'RSE_LIB_S2S_PORT', '7431'
     environment 'RSE_LIB_DB_PORT', '8432'
 }
+
+test.dependsOn cftlibTestCustom
 
 test {
     useJUnitPlatform()
