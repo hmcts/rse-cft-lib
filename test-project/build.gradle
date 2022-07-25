@@ -61,6 +61,8 @@ bootWithCCD {
 
 // Test a custom cftlibTest task.
 task cftlibTestCustom(type: uk.gov.hmcts.rse.CftlibExec) {
+    args cftlibTest.args
+    dependsOn cftlibTest.dependsOn
     environment("RSE_LIB_ADDITIONAL_DATABASES", "mydb")
     // Check that we are able to override the default port.
     environment 'RSE_LIB_S2S_PORT', '7431'
