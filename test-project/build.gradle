@@ -61,7 +61,6 @@ bootWithCCD {
 
 cftlibTest {
     environment("RSE_LIB_ADDITIONAL_DATABASES", "mydb")
-    environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
     // Check that we are able to override the default port.
     environment 'RSE_LIB_S2S_PORT', '7431'
     environment 'RSE_LIB_DB_PORT', '8432'
