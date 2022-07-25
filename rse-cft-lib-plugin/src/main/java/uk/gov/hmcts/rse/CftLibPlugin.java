@@ -229,6 +229,7 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.dependsOn("cftlibClasses");
         exec.dependsOn("cftlibTestClasses");
         exec.args(file);
+        exec.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
     }
 
     private void createManifestTasks(Project project) {
