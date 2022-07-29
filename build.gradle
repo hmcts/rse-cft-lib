@@ -2,23 +2,22 @@ apply plugin: 'idea'
 apply plugin: 'base'
 
 task publish
-gradle.includedBuilds.each {
-    if (it.name != 'ccd-definition-store-api') {
-        publish.dependsOn it.task(':publishToMavenLocal')
+
+project.file('projects').listFiles().each { dir ->
+    if (!(dir.name =~ /definition-store/)) {
+        def t = task "publish${dir.name}"(type: Exec) {
+            workingDir dir
+            commandLine './gradlew', '-i', '-I', project.file('init.gradle').path, 'publishToMavenLocal'
+            doFirst {
+                // Gradle requires this in nested builds.
+                new File(dir, 'settings.gradle').createNewFile()
+            }
+        }
+        publish.dependsOn t
     }
 }
 
-// TODO: rework all included projects away from composite builds.
-task publishAM(type: Exec) {
-    workingDir project.file('projects/am-role-assignment-service').path
-    commandLine './gradlew', '-i', '-I', project.file('init.gradle').path, 'publishToMavenLocal'
-    doFirst {
-        // Gradle requires this in nested builds.
-        project.file('projects/am-role-assignment-service/settings.gradle').createNewFile()
-    }
-}
-
-publish.dependsOn ':projects:definition-store-fat:doPublish', publishAM
+publish.dependsOn ':projects:definition-store-fat:doPublish'
 
 tasks.check.dependsOn gradle.includedBuild('rse-cft-lib-plugin').task(':check')
 
