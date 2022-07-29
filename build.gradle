@@ -3,6 +3,9 @@ apply plugin: 'base'
 
 task publish
 
+// Create Gradle tasks that build and publish the CFT submodule projects to maven local.
+// We invoke each subproject's build separately using its own Gradle wrapper since each
+// project may require a different Gradle version.
 project.file('projects').listFiles().each { dir ->
     if (!(dir.name =~ /definition-store/)) {
         def t = task "publish${dir.name}"(type: Exec) {
