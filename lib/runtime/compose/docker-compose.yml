@@ -64,14 +64,14 @@ services:
       SERVICES_IDAM_INDEX_URL: /
       SERVICES_IDAM_OAUTH_CALLBACK_URL: /oauth2/callback
       SERVICES_EM_DOCASSEMBLY_API: "${XUI_EM_DOCASSEMBLY_API:-http://dg-docassembly-aat.service.core-compute-aat.internal}"
-      HEALTH_EM_DOCASSEMBLY_API: http://dg-docassembly-aat.service.core-compute-aat.internal/health
+      HEALTH_EM_DOCASSEMBLY_API: "${XUI_EM_DOCASSEMBLY_API:-http://dg-docassembly-aat.service.core-compute-aat.internal}/health"
       SERVICES_S2S: "${XUI_S2S_URL:-http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}"
       SYSTEM_USER_NAME: "${XUI_SYSTEM_USER_NAME:-cwd_system@mailinator.com}"
       SYSTEM_USER_PASSWORD: "${XUI_SYSTEM_USER_PASSWORD:-password}"
       REDISCLOUD_URL: http://localhost:6780
       HEALTH_CCD_COMPONENT_API: http://${JVM_HOST:-host.docker.internal}:4452/health
       HEALTH_CCD_DATA_API: http://${JVM_HOST:-host.docker.internal}:4452/health
-      SERVICES_PRD_API: http://rd-professional-api-aat.service.core-compute-aat.internal
+      SERVICES_PRD_API: "${RD_PROFESSIONAL_API_URL:-http://rd-professional-api-aat.service.core-compute-aat.internal}"
       APPINSIGHTS_INSTRUMENTATIONKEY: TESTVAR
       IDAM_SECRET: "${XUI_OAUTH_SECRET:-AAAAAAAAAAAAAAA}"
       S2S_SECRET: "${XUI_SERVICE_KEY:-AAAAAAAAAAAAAAAA}"
