@@ -86,7 +86,7 @@ def importedProjects = [
 
 allprojects {
 
-  if (System.env.RSE_LOCAL_BUILD) {
+  if (!System.env.CI) {
     // Speed up the build when working locally
     if (project.hasProperty('dependencyManagement')) {
       configure(project) {
