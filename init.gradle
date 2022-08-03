@@ -86,16 +86,20 @@ def importedProjects = [
 
 allprojects {
 
-  if (!System.env.CI) {
-    // Speed up the build when working locally
-    if (project.hasProperty('dependencyManagement')) {
-      configure(project) {
-        dependencyManagement {
-          applyMavenExclusions = false
+    afterEvaluate {
+        if (!System.env.CI) {
+            // Speed up the build when working locally
+            // Spring boot's dependency management plugin's dependency exclusion feature
+            // can drastically slow down dependency resolution by repeatedly parsing POM files.
+            if (project.hasProperty('dependencyManagement')) {
+                configure(project) {
+                    dependencyManagement {
+                        applyMavenExclusions = false
+                    }
+                }
+            }
         }
-      }
     }
-  }
 
     def name = project.parent?.name ?: project.name
     if (importedProjects.contains(name)) {
