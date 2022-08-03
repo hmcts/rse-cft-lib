@@ -9,6 +9,9 @@ task publish
 project.file('projects').listFiles().each { dir ->
     if (!(dir.name =~ /definition-store/)) {
         def t = task "publish${dir.name}"(type: Exec) {
+            // Enable Gradle's up-to-date checks so we only rebuild the git submodules if they change.
+            inputs.property('sha', ['git', 'submodule', 'status', "projects/${dir.name}"].execute().text)
+            outputs.dir project.repositories.mavenLocal().url
             workingDir dir
             commandLine './gradlew', '-i', '-I', project.file('init.gradle').path, 'publishToMavenLocal'
             doFirst {
