@@ -12,9 +12,9 @@ project.file('projects').listFiles().each { dir ->
         def t = task "publish${dir.name}"(type: Exec) {
             // Enable Gradle's up-to-date checks so we only rebuild the git submodules if they change.
             // Up to date checks require inputs and outputs to be defined, so we use the submodule's git tag as input
-            // and the maven local folder as output.
+            // and the maven local folder of the project as output.
             inputs.property('sha', ['git', 'submodule', 'status', "projects/${dir.name}"].execute().text)
-            outputs.dir project.repositories.mavenLocal().url
+            outputs.dir "${project.repositories.mavenLocal().url}/com/github/hmcts/rse-cft-lib/${dir.name}-lib"
             workingDir dir
             commandLine './gradlew', '-i', '-I', project.file('init.gradle').path, 'publishToMavenLocal'
             doFirst {
