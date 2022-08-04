@@ -13,3 +13,6 @@
 [submodule "projects/ccd-case-document-am-api"]
 	path = projects/ccd-case-document-am-api
 	url = git@github.com:hmcts/ccd-case-document-am-api.git
+[submodule "projects/user-profile-api"]
+	path = projects/user-profile-api
+	url = git@github.com:hmcts/ccd-user-profile-api.git
