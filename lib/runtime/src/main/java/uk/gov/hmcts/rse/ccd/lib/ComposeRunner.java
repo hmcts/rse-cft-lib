@@ -132,9 +132,9 @@ public class ComposeRunner {
                 "XUI_IDAM_API_URL", runtime,
                 "XUI_IDAM_LOGIN_URL", "http://localhost:5000",
                 // TODO: placeholder to pass health checks
-                "XUI_EM_DOCASSEMBLY_API", runtime,
-                "XUI_DOCUMENTS_API", runtime,
-                "XUI_DOCUMENTS_API_V2", runtime
+                "XUI_EM_DOCASSEMBLY_API", ControlPlane.getEnvVar("XUI_EM_DOCASSEMBLY_API", runtime),
+                "XUI_DOCUMENTS_API", ControlPlane.getEnvVar("XUI_DOCUMENTS_API", runtime),
+                "XUI_DOCUMENTS_API_V2", ControlPlane.getEnvVar("XUI_DOCUMENTS_API_V2", runtime)
             ));
         }
         return builder.build();
