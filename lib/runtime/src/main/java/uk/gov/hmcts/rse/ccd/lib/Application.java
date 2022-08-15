@@ -4,7 +4,9 @@ import lombok.SneakyThrows;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(
+    scanBasePackages = {"uk.gov.hmcts.rse.ccd.lib"}
+)
 public class Application {
     @SneakyThrows
     public static void main(String[] args) {

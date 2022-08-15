@@ -10,7 +10,6 @@ subprojects {
 
     repositories {
         mavenCentral()
-        mavenLocal()
         maven {
             url 'https://jitpack.io'
         }
@@ -37,10 +36,6 @@ subprojects {
 
         testCompileOnly 'org.projectlombok:lombok:1.18.22'
         testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
-
-        implementation ('com.github.hmcts.rse-cft-lib:definition-store-fat:DEV-SNAPSHOT') {
-            transitive = false
-        }
     }
 
     rootProject.tasks.publish.dependsOn(project.tasks.publishToMavenLocal)
