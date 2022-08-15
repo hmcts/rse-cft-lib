@@ -1,5 +1,6 @@
 plugins {
     id 'org.springframework.boot' version '2.7.2'
+    id 'io.spring.dependency-management' version '1.0.13.RELEASE'
 }
 
 repositories {
@@ -7,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly project(':lib:bootstrapper')
+    implementation project(':lib:bootstrapper')
 
     implementation group: 'org.awaitility', name: 'awaitility', version: '4.1.1'
     implementation group: 'net.lingala.zip4j', name: 'zip4j', version: '2.9.1'
@@ -25,8 +26,7 @@ dependencies {
         transitive = false
     }
 
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 task zipCompose(type: Zip) {
@@ -36,4 +36,8 @@ task zipCompose(type: Zip) {
 
 processResources {
     from zipCompose
+}
+
+test {
+    useJUnitPlatform()
 }

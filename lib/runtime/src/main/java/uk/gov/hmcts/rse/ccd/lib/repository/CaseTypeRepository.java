@@ -11,18 +11,18 @@ import java.util.Optional;
 @ConfigurationProperties(prefix = "ccd.definition")
 public class CaseTypeRepository {
 
-  private Map<String, String> paths = Map.of("foo", "bar");
+    private Map<String, String> paths = Map.of("foo", "bar");
 
-  public Optional<CaseType> findByCaseTypeId(String id) {
-    return Optional
-        .ofNullable(paths.get(id))
-        .map(this::mapToCaseType);
-  }
+    public Optional<CaseType> findByCaseTypeId(String id) {
+        return Optional
+                .ofNullable(paths.get(id))
+                .map(this::mapToCaseType);
+    }
 
-  private CaseType mapToCaseType(String path) {
-    var caseType = new CaseType();
+    private CaseType mapToCaseType(String path) {
+        var caseType = new CaseType();
 
-    return caseType;
-  }
+        return caseType;
+    }
 
 }
