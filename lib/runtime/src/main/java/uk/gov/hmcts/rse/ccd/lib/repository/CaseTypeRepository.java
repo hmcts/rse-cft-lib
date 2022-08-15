@@ -11,7 +11,7 @@ import java.util.Optional;
 @ConfigurationProperties(prefix = "ccd.definition")
 public class CaseTypeRepository {
 
-  private Map<String, String> paths;
+  private Map<String, String> paths = Map.of("foo", "bar");
 
   public Optional<CaseType> findByCaseTypeId(String id) {
     return Optional
