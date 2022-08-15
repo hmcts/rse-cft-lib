@@ -53,7 +53,6 @@ public class S2S {
         var json = new String(Base64.getDecoder().decode(payload));
         var token = new ObjectMapper().readValue(json, Map.class);
 
-        CaseType caseType = new CaseType();
         return ok(token.get("sub").toString());
     }
 }
