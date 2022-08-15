@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseType;
 
 @Component
 @Controller
@@ -51,6 +52,8 @@ public class S2S {
         var payload = bearerToken.substring(bearerToken.indexOf(".") + 1, bearerToken.lastIndexOf("."));
         var json = new String(Base64.getDecoder().decode(payload));
         var token = new ObjectMapper().readValue(json, Map.class);
+
+        CaseType caseType = new CaseType();
         return ok(token.get("sub").toString());
     }
 }
