@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,7 +25,7 @@ public class JsonDefinitionReader {
 
     public List<Map<String, String>> readPath(String path) {
         final var filesInDirectory = Paths.get(path).toFile().listFiles();
-        final var files = filesInDirectory != null ? asList(filesInDirectory) : new ArrayList<File>();
+        final var files = filesInDirectory != null ? new ArrayList<>(asList(filesInDirectory)) : new ArrayList<File>();
         final var file = Paths.get(path + ".json").toFile();
 
         files.add(file);

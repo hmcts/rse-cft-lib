@@ -25,4 +25,4 @@ spring:
 ccd:
   definition:
     paths:
-      NFD: path/to/definition
+      NFD: src/test/resources/definition/
