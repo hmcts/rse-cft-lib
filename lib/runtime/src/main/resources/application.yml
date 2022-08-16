@@ -25,4 +25,4 @@ spring:
 ccd:
   definition:
     paths:
-      NFD: /api/definition/case-types/NFD
+      NFD: path/to/definition
