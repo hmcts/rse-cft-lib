@@ -1,0 +1,30 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "DocumentsServedHow",
+    "ListElement": "By other means permitted by the court",
+    "ListElementCode": "courtPermitted",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "DocumentsServedHow",
+    "ListElement": "By delivering to or leaving at a permitted place",
+    "ListElementCode": "deliveredTo",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "DocumentsServedHow",
+    "ListElement": "By personally handing it to or leaving it with",
+    "ListElementCode": "handedTo",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 4,
+    "ID": "DocumentsServedHow",
+    "ListElement": "By first class post or other service which provides for delivery on the next day",
+    "ListElementCode": "postedTo",
+    "LiveFrom": "01/01/2017"
+  }
+]

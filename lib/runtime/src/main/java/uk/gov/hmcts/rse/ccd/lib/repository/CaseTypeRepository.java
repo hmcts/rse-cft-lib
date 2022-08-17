@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.definition.store.repository.model.Jurisdiction;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
 
 import java.util.AbstractMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +43,7 @@ public class CaseTypeRepository {
     );
 
     @Autowired
-    private final Map<String, String> paths = new HashMap<>();
+    private final Map<String, String> paths;
 
     @Autowired
     private JsonDefinitionReader reader;
@@ -60,7 +59,7 @@ public class CaseTypeRepository {
     @SneakyThrows
     private Map<String, List<Map<String, String>>> toJson(String path) {
         return FILES.parallelStream()
-            .map(file -> new AbstractMap.SimpleEntry<>(file, reader.readPath(file)))
+            .map(file -> new AbstractMap.SimpleEntry<>(file, reader.readPath(path + "/" + file)))
             .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
     }
 
@@ -77,7 +76,9 @@ public class CaseTypeRepository {
         caseType.setId(row.get("ID"));
         caseType.setDescription(row.get("Description"));
         caseType.setName(row.get("Name"));
-        caseType.setSecurityClassification(SecurityClassification.valueOf(row.get("SecurityClassification")));
+        caseType.setSecurityClassification(
+            SecurityClassification.valueOf(row.get("SecurityClassification").toUpperCase())
+        );
 
         var jurisdiction = new Jurisdiction();
         jurisdiction.setId(row.get("JurisdictionID"));

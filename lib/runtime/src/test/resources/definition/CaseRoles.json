@@ -1,0 +1,30 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "",
+    "ID": "[APPLICANTTWO]",
+    "LiveFrom": "01/01/2017",
+    "Name": "APPLICANT_2"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "",
+    "ID": "[APPONESOLICITOR]",
+    "LiveFrom": "01/01/2017",
+    "Name": "APPLICANT_1_SOLICITOR"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "",
+    "ID": "[APPTWOSOLICITOR]",
+    "LiveFrom": "01/01/2017",
+    "Name": "APPLICANT_2_SOLICITOR"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "",
+    "ID": "[CREATOR]",
+    "LiveFrom": "01/01/2017",
+    "Name": "CREATOR"
+  }
+]

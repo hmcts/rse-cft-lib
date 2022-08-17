@@ -1,0 +1,19 @@
+[
+  {
+    "CallBackURLAboutToStartEvent": "http://localhost:4013/callbacks/about-to-start?eventId=solicitor-submit-application",
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=solicitor-submit-application",
+    "CaseTypeID": "NFD",
+    "Description": "Agree statement of truth, pay & submit",
+    "DisplayOrder": 97,
+    "EndButtonLabel": "Submit Application",
+    "EventEnablingCondition": "applicationType=\"soleApplication\" OR [STATE]=\"Applicant2Approved\"",
+    "ID": "solicitor-submit-application",
+    "LiveFrom": "01/01/2017",
+    "Name": "Sign and submit",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "Applicant2Approved;Draft",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

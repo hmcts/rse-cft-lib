@@ -1,0 +1,36 @@
+[
+  {
+    "CaseFieldID": "applicant2Address",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 30,
+    "TabFieldDisplayOrder": 3,
+    "TabID": "ConfidentialApplicant2caseworker-divorce-superuser",
+    "TabLabel": "Confidential Applicant 2",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant2Email",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 30,
+    "TabFieldDisplayOrder": 2,
+    "TabID": "ConfidentialApplicant2caseworker-divorce-superuser",
+    "TabLabel": "Confidential Applicant 2",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant2PhoneNumber",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 30,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "ConfidentialApplicant2caseworker-divorce-superuser",
+    "TabLabel": "Confidential Applicant 2",
+    "TabShowCondition": "applicant2ContactDetailsType=\"private\" AND applicationType=\"jointApplication\"",
+    "UserRole": "caseworker-divorce-superuser"
+  }
+]

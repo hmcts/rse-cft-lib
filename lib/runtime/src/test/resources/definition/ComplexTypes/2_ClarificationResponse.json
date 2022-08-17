@@ -1,0 +1,36 @@
+[
+  {
+    "ElementLabel": "Applicant cannot upload all or some Conditional Order Clarification documents",
+    "FieldType": "YesOrNo",
+    "ID": "ClarificationResponse",
+    "ListElementCode": "cannotUploadClarificationDocuments",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Date clarification submitted",
+    "FieldType": "Date",
+    "ID": "ClarificationResponse",
+    "ListElementCode": "clarificationDate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "List of responses for Conditional Order clarification",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "TextArea",
+    "ID": "ClarificationResponse",
+    "ListElementCode": "clarificationResponses",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Documents uploaded for the Conditional Order Clarification",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "DivorceDocument",
+    "ID": "ClarificationResponse",
+    "ListElementCode": "clarificationUploadDocuments",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  }
+]

@@ -1,0 +1,67 @@
+[
+  {
+    "ElementLabel": "Amount in pounds",
+    "FieldType": "Number",
+    "ID": "Payment",
+    "ListElementCode": "amount",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Channel",
+    "FieldType": "Text",
+    "ID": "Payment",
+    "ListElementCode": "channel",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Created date",
+    "FieldType": "DateTime",
+    "ID": "Payment",
+    "ListElementCode": "created",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "fee code",
+    "FieldType": "Text",
+    "ID": "Payment",
+    "ListElementCode": "feeCode",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Reference",
+    "FieldType": "Text",
+    "ID": "Payment",
+    "ListElementCode": "reference",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Status",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "PaymentStatus",
+    "ID": "Payment",
+    "ListElementCode": "status",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Transaction Id",
+    "FieldType": "Text",
+    "ID": "Payment",
+    "ListElementCode": "transactionId",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Updated date",
+    "FieldType": "DateTime",
+    "ID": "Payment",
+    "ListElementCode": "updated",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  }
+]

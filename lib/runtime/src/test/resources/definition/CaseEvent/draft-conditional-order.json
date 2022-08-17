@@ -1,0 +1,19 @@
+[
+  {
+    "CallBackURLAboutToStartEvent": "http://localhost:4013/callbacks/about-to-start?eventId=draft-conditional-order",
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=draft-conditional-order",
+    "CaseTypeID": "NFD",
+    "Description": "Draft conditional order",
+    "DisplayOrder": 47,
+    "EndButtonLabel": "Save conditional order",
+    "EventEnablingCondition": "coApplicant1IsDrafted=\"No\"",
+    "ID": "draft-conditional-order",
+    "LiveFrom": "01/01/2017",
+    "Name": "Draft conditional order",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AwaitingConditionalOrder;ConditionalOrderDrafted;ConditionalOrderPending",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "Y"
+  }
+]

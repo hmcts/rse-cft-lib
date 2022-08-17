@@ -1,0 +1,44 @@
+[
+  {
+    "DisplayOrder": 5,
+    "ID": "PaymentStatus",
+    "ListElement": "Cancelled",
+    "ListElementCode": "cancelled",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "PaymentStatus",
+    "ListElement": "Declined",
+    "ListElementCode": "declined",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 6,
+    "ID": "PaymentStatus",
+    "ListElement": "Error",
+    "ListElementCode": "error",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "PaymentStatus",
+    "ListElement": "In Progress",
+    "ListElementCode": "inProgress",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "PaymentStatus",
+    "ListElement": "Success",
+    "ListElementCode": "success",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 4,
+    "ID": "PaymentStatus",
+    "ListElement": "Timed out",
+    "ListElementCode": "timedOut",
+    "LiveFrom": "01/01/2017"
+  }
+]

@@ -1,0 +1,113 @@
+[
+  {
+    "CaseEventID": "caseworker-amend-case",
+    "CaseFieldID": "labelContentApplicantsOrApplicant1s",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "FieldShowCondition": "marriageCountryOfMarriage=\"ALWAYS_HIDE\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "amendCase"
+  },
+  {
+    "CaseEventID": "caseworker-amend-case",
+    "CaseFieldID": "labelContentMarriageOrCivilPartnership",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "FieldShowCondition": "marriageCountryOfMarriage=\"ALWAYS_HIDE\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "amendCase"
+  },
+  {
+    "CaseEventID": "caseworker-amend-case",
+    "CaseFieldID": "labelContentRespondentsOrApplicant2s",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "FieldShowCondition": "marriageCountryOfMarriage=\"ALWAYS_HIDE\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "amendCase"
+  },
+  {
+    "CaseEventID": "caseworker-amend-case",
+    "CaseFieldID": "labelContentTheApplicant2UC",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "FieldShowCondition": "marriageCountryOfMarriage=\"ALWAYS_HIDE\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 4,
+    "PageID": "amendCase"
+  },
+  {
+    "CaseEventID": "caseworker-amend-case",
+    "CaseFieldID": "marriageApplicant1Name",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 8,
+    "PageID": "amendCase",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-amend-case",
+    "CaseFieldID": "marriageApplicant2Name",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 9,
+    "PageID": "amendCase",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventFieldLabel": "Country of ${labelContentMarriageOrCivilPartnership}",
+    "CaseEventID": "caseworker-amend-case",
+    "CaseFieldID": "marriageCountryOfMarriage",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 7,
+    "PageID": "amendCase",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventFieldLabel": "Date of ${labelContentMarriageOrCivilPartnership}",
+    "CaseEventID": "caseworker-amend-case",
+    "CaseFieldID": "marriageDate",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 5,
+    "PageID": "amendCase",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventFieldLabel": "Place of ${labelContentMarriageOrCivilPartnership}",
+    "CaseEventID": "caseworker-amend-case",
+    "CaseFieldID": "marriagePlaceOfMarriage",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 6,
+    "PageID": "amendCase",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

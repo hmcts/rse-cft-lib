@@ -1,0 +1,23 @@
+[
+  {
+    "DisplayOrder": 3,
+    "ID": "AlternativeServiceType",
+    "ListElement": "Bailiff application",
+    "ListElementCode": "bailiff",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "AlternativeServiceType",
+    "ListElement": "Deemed as served",
+    "ListElementCode": "deemed",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "AlternativeServiceType",
+    "ListElement": "Dispensed with service",
+    "ListElementCode": "dispensed",
+    "LiveFrom": "01/01/2017"
+  }
+]

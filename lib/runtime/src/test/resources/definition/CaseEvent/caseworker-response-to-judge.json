@@ -1,0 +1,16 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Response to judge",
+    "DisplayOrder": 90,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-response-to-judge",
+    "LiveFrom": "01/01/2017",
+    "Name": "Response to judge",
+    "PostConditionState": "AwaitingGeneralConsideration",
+    "PreConditionState(s)": "AwaitingJudgeClarification",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

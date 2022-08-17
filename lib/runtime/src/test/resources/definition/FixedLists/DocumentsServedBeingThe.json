@@ -1,0 +1,30 @@
+[
+  {
+    "DisplayOrder": 4,
+    "ID": "DocumentsServedBeingThe",
+    "ListElement": "Applicant's",
+    "ListElementCode": "applicants",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "DocumentsServedBeingThe",
+    "ListElement": "Litigation friend",
+    "ListElementCode": "litigationFriend",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "DocumentsServedBeingThe",
+    "ListElement": "Respondent's",
+    "ListElementCode": "respondents",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "DocumentsServedBeingThe",
+    "ListElement": "Solicitor's",
+    "ListElementCode": "solicitors",
+    "LiveFrom": "01/01/2017"
+  }
+]

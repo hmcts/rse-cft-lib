@@ -1,0 +1,14 @@
+[
+  {
+    "CaseFieldID": "warnings",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 4,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "transformationAndOcrWarningsTab",
+    "TabLabel": "Warnings",
+    "TabShowCondition": "warnings!=\"\"",
+    "UserRole": ""
+  }
+]

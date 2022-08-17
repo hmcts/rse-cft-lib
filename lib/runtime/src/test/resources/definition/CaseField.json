@@ -1,0 +1,4831 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-CorrectApp1HWFDetails",
+    "Label": "### ${labelContentApplicantsOrApplicant1s} Help With Fees details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-CorrectApplicant1Details",
+    "Label": "### ${labelContentApplicantsOrApplicant1s} details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-CorrectApplicant1SOTDetails",
+    "Label": "### ${labelContentApplicantsOrApplicant1s} statement of truth details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-CorrectApplicant2Details",
+    "Label": "### ${labelContentRespondentsOrApplicant2s} details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-CorrectApplicant2SOTDetails",
+    "Label": "### ${labelContentRespondentsOrApplicant2s} statement of truth details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-CorrectJurisdictionDetails",
+    "Label": "### Jurisdiction connection details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-CorrectMarriageDetails",
+    "Label": "### ${labelContentMarriageOrCivilPartnershipUC} details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-CorrectPrayerDetails-App1",
+    "Label": "### ${labelContentApplicantsOrApplicant1s} prayer details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-CorrectPrayerDetails-App2",
+    "Label": "### Applicant 2's prayer details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-CorrectScannedDocuments",
+    "Label": "### Scanned Documents",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-CorrectServiceDetails",
+    "Label": "### Service details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-CorrectStatementOfIrretrievableBreakdown",
+    "Label": "### Statement of irretrievable breakdown",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-CorrectYourApplication",
+    "Label": "### Your application details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "Label-SolicitorService",
+    "Label": "### Solicitor Service",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelAnswerReceivedPayAccountHeading",
+    "Label": "Payment Method: Fee Account",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelAnswerReceivedPayAccountReference1",
+    "Label": "Your pay account reference: **${disputingFeeAccountReferenceNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelAnswerReceivedPayAccountReference2",
+    "Label": "Fee account number: **${disputingFeeAccountNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelAnswerReceivedPayHWFHeading",
+    "Label": "Payment Method: Help with Fees",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelAnswerReceivedPayHWFReference",
+    "Label": "Your Help with Fees reference: **${disputingFeeHelpWithFeesReferenceNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelAnswerReceivedPayTelephoneHeading",
+    "Label": "Payment Method: Telephone",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelAosTabOfflineResponse-Heading",
+    "Label": "## This is an offline AoS response",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelAosTabOnlineResponse-Heading",
+    "Label": "## This is an online AoS response",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApp2SolStatementOTruth-Statement",
+    "Label": "**Proceedings for contempt of court may be brought against anyone who makes, or causes to be made, a false statement verified by a statement of truth without an honest belief in its truth.**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApp2SolStatementOfTruth-Comments",
+    "Label": "If you have any comments you would like to make to the court staff regarding the application you may include them below.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApp2SolStatementOfTruth-SOT",
+    "Label": "## Statement of truth ##",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApp2SolStatementOfTruth-SOTInfo",
+    "Label": "This confirms that the information you are submitting on behalf of the applicant is true and accurate, to the best of your knowledge. It’s known as the ‘statement of truth’. ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApplicant1-Heading",
+    "Label": "### ${labelContentTheApplicantOrApplicant1UC}",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApplicant1-PaymentHeading",
+    "Label": "### The applicant",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApplicant1DetailsAreConfidential-Heading",
+    "Label": "#### ${labelContentTheApplicantOrApplicant1UC}'s contact details are confidential",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApplicant1OtherProceedings-Heading",
+    "Label": "#### ${labelContentTheApplicantOrApplicant1UC}'s other proceedings:",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApplicant1sSolicitor-Heading",
+    "Label": "#### ${labelContentTheApplicantOrApplicant1UC}'s solicitor",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApplicant2-Heading",
+    "Label": "### ${labelContentTheApplicant2UC}",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApplicant2-PaymentHeading",
+    "Label": "### ${labelContentTheApplicant2UC}",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApplicant2DetailsAreConfidential-Heading",
+    "Label": "#### ${labelContentTheApplicant2UC}'s contact details are confidential",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApplicant2OtherProceedings-Heading",
+    "Label": "#### Applicant 2's other proceedings:",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApplicant2SolStatementOfTruth-AoSReview",
+    "Label": "### Review the answers in your Acknowledgement of Service below. If you wish to change any of your answers, please go back and use the 'Update AoS' action",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApplicant2sSolicitorNewCases-Heading",
+    "Label": "#### ${labelContentApplicant2UC}'s solicitor details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelApplicant2sSolicitorOldCases-Heading",
+    "Label": "#### ${labelContentApplicant2UC}'s solicitor details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelCivilPartnership-Heading",
+    "Label": "### Civil partnership and certificate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelGeneralApplicationPayAccountHeading",
+    "Label": "Payment Method: Fee Account",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelGeneralApplicationPayAccountReference1",
+    "Label": "Your pay account reference: **${generalApplicationFeeAccountReferenceNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelGeneralApplicationPayHWFHeading",
+    "Label": "Payment Method: Help with Fees",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelGeneralApplicationPayHWFReference",
+    "Label": "Your Help with Fees reference: **${generalApplicationFeeHelpWithFeesReferenceNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelGeneralApplicationPayTelephoneHeading",
+    "Label": "Payment Method: Telephone",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelGeneralReferralPayAccountHeading",
+    "Label": "Payment Method: Fee Account",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelGeneralReferralPayAccountReference1",
+    "Label": "Your pay account reference: **${generalReferralFeeAccountReferenceNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelGeneralReferralPayAccountReference2",
+    "Label": "Fee account number: **${generalReferralFeeAccountNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelGeneralReferralPayHWFHeading",
+    "Label": "Payment Method: Help with Fees",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelGeneralReferralPayHWFReference",
+    "Label": "Your Help with Fees reference: **${generalReferralFeeHelpWithFeesReferenceNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelGeneralReferralPayTelephoneHeading",
+    "Label": "Payment Method: Telephone",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelHelpWithFeesReferenceNumber",
+    "Label": "Help with fee reference: **${applicant1HWFReferenceNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelHelpWithFeesReferenceNumber-Applicant1",
+    "Label": "Applicant 1 Help with fee reference: **${applicant1HWFReferenceNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelHelpWithFeesReferenceNumber-Applicant2",
+    "Label": "Applicant 2 Help with fee reference: **${applicant2HWFReferenceNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelJurisdiction-Heading",
+    "Label": "### Jurisdiction",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelLanguageDetails-Applicant",
+    "Label": "### The applicant",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelLanguageDetails-Respondent",
+    "Label": "### The respondent",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelMarriage-Heading",
+    "Label": "### Marriage and certificate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelMarriageCertNames",
+    "Label": "### Only update Marriage Certificate Names to make them match the marriage certificate exactly",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelPaperCase-PaymentHeading",
+    "Label": "### Paper Case Payment",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelPaperForm-App1PaymentHeading",
+    "Label": "### Paper Form Payment Details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelPayAccountHeading",
+    "Label": "Payment Method: Fee Account",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelPayAccountReference1",
+    "Label": "Your pay account reference: **${servicePaymentFeeAccountReferenceNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelPayAccountReference2",
+    "Label": "Fee account number: **${servicePaymentFeeAccountNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelPayHWFHeading",
+    "Label": "Payment Method: Help with Fees",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelPayHWFReference",
+    "Label": "Your Help with Fees reference: **${servicePaymentFeeHelpWithFeesReferenceNumber}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelPayTelephoneHeading",
+    "Label": "Payment Method: Telephone",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelPrayer",
+    "Label": "## The prayer ##",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelRespSol-AOSConfirmRead",
+    "Label": "${labelContentTheApplicant2UC} must have read the application before you can respond.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelRespSol-DueDate",
+    "Label": "The response is due by ${dueDate}",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelSolPaySummaryFeeAccountPara-1",
+    "Label": "Payment Method: Fee Account",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelSolPaySummaryHWFPara-1",
+    "Label": "Payment Method: Help with fees",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelSolPaymentPara-1",
+    "Label": "Amount to pay: **£${solApplicationFeeInPounds}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelSolServiceMethod",
+    "Label": "## Service method",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelSolStatementOTruth-Reconciliation",
+    "Label": "## Statement of reconciliation",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelSolStatementOTruth-Statement",
+    "Label": "**Proceedings for contempt of court may be brought against anyone who makes, or causes to be made, a false statement verified by a statement of truth without an honest belief in its truth.**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelSolStatementOTruthPara-3",
+    "Label": "## Statement of reconciliation",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelSolStatementOfTruth-ApplicationFee",
+    "Label": "**Solicitor application fee:**  \n**£${solApplicationFeeInPounds}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelSolStatementOfTruth-Comments",
+    "Label": "If you have any comments you would like to make to the court staff regarding the application you may include them below.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelSolStatementOfTruth-SOT",
+    "Label": "## Statement of truth ##",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelSolStatementOfTruth-SOTInfo",
+    "Label": "This confirms that the information you are submitting on behalf of the applicant is true and accurate, to the best of your knowledge. It’s known as the ‘statement of truth’. ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelSolicitorReference",
+    "Label": "Your fee account reference: **${feeAccountReference}**",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelSolicitorService",
+    "Label": "After service is complete you must notify the court by completing the ‘Confirm Service’ event in CCD. Refer to the notification that will be sent upon the issuing of the the case",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelState",
+    "Label": "#### Case State:  ${[STATE]}",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "LabelUploadDocumentsPara-1",
+    "Label": "Upload a scan of the original ${labelContentMarriageOrCivilPartnership} certificate, or a certified copy or translation.\n\nYou can also upload any other evidence or applications, if required. For example a deed poll to show a change of name, or an application for ‘dispensed with’ service.\n\nMake sure the image you upload shows the entire document and all the text is legible.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "MarriageNotIrretrievablyBroken",
+    "Label": "The ${labelContentMarriageOrCivilPartnership} must have broken down irretrievably for the applicant to ${labelContentDivorceOrLegallyEnd}.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "accessCode",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "HintText": "For the attention of court staff. These comments will not form part of the AOS",
+    "ID": "additionalComments",
+    "Label": "Additional Comments",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "AlternativeServiceMediumType",
+    "ID": "alternativeServiceMedium",
+    "Label": "Medium requested for alternative service",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "AlternativeServiceOutcome",
+    "ID": "alternativeServiceOutcomes",
+    "Label": "Previous Service Applications",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "AlternativeServiceType",
+    "HintText": "What type of service application has been received?",
+    "ID": "alternativeServiceType",
+    "Label": "Service application type",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "DivorceDocument",
+    "ID": "amendedApplications",
+    "Label": "Amended applications",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "DivorceDocument",
+    "ID": "answerReceivedSupportingDocuments",
+    "Label": "Upload Answer Received supporting documents",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "app2ContactMethodIsDigital",
+    "Label": "Applicant 2 is using digital channel?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "AddressGlobalUK",
+    "ID": "applicant1Address",
+    "Label": "Address",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1AgreedToReceiveEmails",
+    "Label": "They have agreed to receive notifications and be served (delivered) court documents by email",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1CannotUpload",
+    "Label": "Supporting documents need posting?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "DocumentType",
+    "ID": "applicant1CannotUploadSupportingDocument",
+    "Label": "Which documents need posting",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1ConfirmReceipt",
+    "Label": "Has the applicant confirmed the receipt?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "ContactDetailsType",
+    "ID": "applicant1ContactDetailsType",
+    "Label": "Should ${labelContentApplicantOrApplicant1} contact details be kept private?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1ContinueApplication",
+    "Label": "The applicant wants to continue with their application.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "DivorceDocument",
+    "ID": "applicant1DocumentsUploaded",
+    "Label": "Applicant 1 uploaded documents",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Email",
+    "ID": "applicant1Email",
+    "Label": "Email address",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant1FinalOrderLateExplanation",
+    "Label": "Final order late explanation",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant1FinalOrderLateExplanationTranslated",
+    "Label": "Final order late explanation",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "TranslatedToLanguage",
+    "ID": "applicant1FinalOrderLateExplanationTranslatedTo",
+    "Label": "Translated To?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1FinalOrderStatementOfTruth",
+    "Label": "The applicant believes that the facts stated in this application are true.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1FinancialOrder",
+    "Label": "Does the applicant wish to apply for a financial order?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "FinancialOrderFor",
+    "ID": "applicant1FinancialOrdersFor",
+    "Label": "Who are the financial orders for?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant1FirstName",
+    "Label": "First name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "Gender",
+    "HintText": "Gender is only collected for statistical purposes.",
+    "ID": "applicant1Gender",
+    "Label": "Gender",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1HWFAppliedForFees",
+    "Label": "Applied for help with fees?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1HWFNeedHelp",
+    "Label": "Need help with fees?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant1HWFReferenceNumber",
+    "Label": "Help with fees reference",
+    "LiveFrom": "01/01/2017",
+    "RegularExpression": "([Hh][Ww][Ff]-?)?[0-9a-zA-Z]{3}-?[0-9a-zA-Z]{3}$",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "Applicant2Represented",
+    "ID": "applicant1IsApplicant2Represented",
+    "Label": "Does ${labelContentTheApplicant2} have a solicitor representing them?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1KnowsApplicant2Address",
+    "Label": "Is the respondent's home address known?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1KnowsApplicant2EmailAddress",
+    "Label": "Is the respondent's email address known?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant1Label-CorrectApplicant1FODetails",
+    "Label": "### ${labelContentApplicantsOrApplicant1s} financial order details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant1Label-CorrectApplicant1LegalProceedingsDetails",
+    "Label": "### ${labelContentApplicantsOrApplicant1s} legal proceedings details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant1LabelHorizontalLine1",
+    "Label": "<hr>",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant1LabelHorizontalLine1-SolAboutApplicant1",
+    "Label": "![Dark Rule](https://raw.githubusercontent.com/hmcts/nfdiv-case-api/master/resources/image/LabelDarkHorizontalRule.png)",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant1LabelPetitionerWarning",
+    "Label": "### WARNING: Changing the ${labelContentApplicantsOrApplicant1s} gender here means you need to Re-Issue the case to update all case documents",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "HintText": "Select \"No\" for English or \"Yes\" for bilingual",
+    "ID": "applicant1LanguagePreferenceWelsh",
+    "Label": "Is the language preference Welsh?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant1LastName",
+    "Label": "Last name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1LastNameChangedWhenMarried",
+    "Label": "Did they change their last name when they got married?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1LegalProceedings",
+    "Label": "Are there any other legal proceedings relating to the ${labelContentMarriageOrCivilPartnership}?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "HintText": "Provide as much information as possible, such as the case number(s); the names of the people involved and if the proceedings are ongoing or if they’ve finished.",
+    "ID": "applicant1LegalProceedingsDetails",
+    "Label": "Provide details of the other legal proceedings",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "applicant1LegalProceedingsDetailsTranslated",
+    "Label": "Provide details of the other legal proceedings(Translated)",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "TranslatedToLanguage",
+    "ID": "applicant1LegalProceedingsDetailsTranslatedTo",
+    "Label": "Translated To?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "If they have a middle name then you must enter it to avoid amendments later.",
+    "ID": "applicant1MiddleName",
+    "Label": "Middle name(s)",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "ChangedNameHow",
+    "ID": "applicant1NameChangedHow",
+    "Label": "How did they change their name?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "applicant1NameChangedHowOtherDetails",
+    "Label": "Details of how they changed their name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1NameDifferentToMarriageCertificate",
+    "Label": "Have they changed their name since they got married?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1Offline",
+    "Label": "Offline",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant1PcqId",
+    "Label": "PCQ ID",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant1PhoneNumber",
+    "Label": "Phone number",
+    "LiveFrom": "01/01/2017",
+    "RegularExpression": "^[0-9 +().-]{9,}$",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "DissolveDivorce",
+    "ID": "applicant1PrayerDissolveDivorce",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "EndCivilPartnership",
+    "ID": "applicant1PrayerEndCivilPartnership",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "FinancialOrdersChild",
+    "ID": "applicant1PrayerFinancialOrdersChild",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "FinancialOrdersThemselves",
+    "ID": "applicant1PrayerFinancialOrdersThemselves",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "ThePrayer",
+    "ID": "applicant1PrayerHasBeenGivenCheckbox",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1ReminderSent",
+    "Label": "Reminder that applicant 2 has approved application sent?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1ScreenHasMarriageBroken",
+    "Label": "Has the applicant's ${labelContentMarriageOrCivilPartnership} broken down irretrievably?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "applicant1SolicitorAddress",
+    "Label": "Solicitor’s firm/ DX address",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "Prayer",
+    "ID": "applicant1SolicitorAgreeToReceiveEmailsCheckbox",
+    "Label": "Service by email",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Document",
+    "ID": "applicant1SolicitorAnswersLink",
+    "Label": "Link to applicant 1 solicitors answers",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Email",
+    "ID": "applicant1SolicitorEmail",
+    "Label": "Solicitor’s Email",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant1SolicitorFirmName",
+    "Label": "Solicitor’s Firm Name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant1SolicitorLabel-Applicant1SolDetails",
+    "Label": "### ${labelContentApplicantsOrApplicant1s} solicitor details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant1SolicitorName",
+    "Label": "Solicitor’s name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "OrganisationPolicy",
+    "ID": "applicant1SolicitorOrganisationPolicy",
+    "Label": "Firm address/DX address",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant1SolicitorPhone",
+    "Label": "Solicitor’s Phone number",
+    "LiveFrom": "01/01/2017",
+    "RegularExpression": "^[0-9 +().-]{9,}$",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "This is your internal reference that your firm uses to identify the case.",
+    "ID": "applicant1SolicitorReference",
+    "Label": "Solicitor’s reference number",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1SolicitorRepresented",
+    "Label": "Is represented by a solicitor?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1StatementOfTruth",
+    "Label": "The applicant believes that the facts stated in this application are true.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant1UsedWelshTranslationOnSubmission",
+    "Label": "Applicant has used the Welsh translation on submission",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "HintText": "For example by email, text message or social media. This is a separate application with an additional fee, which will need to be reviewed by a judge.",
+    "ID": "applicant1WantsToHavePapersServedAnotherWay",
+    "Label": "Want to apply to have the papers 'served' (sent to respondent) in another way",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "AddressGlobalUK",
+    "ID": "applicant2Address",
+    "Label": "Address",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2AgreeToReceiveEmails",
+    "Label": "The respondent agrees that the divorce service can send notifications by email.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2AgreedToReceiveEmails",
+    "Label": "They have agreed to receive notifications and be served (delivered) court documents by email",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2CannotUpload",
+    "Label": "Supporting documents need posting?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "DocumentType",
+    "ID": "applicant2CannotUploadSupportingDocument",
+    "Label": "Which documents need posting",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2ConfirmApplicant1Information",
+    "Label": "Is the information provided on the case correct?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2ConfirmReceipt",
+    "Label": "Has the applicant confirmed the receipt?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "ContactDetailsType",
+    "ID": "applicant2ContactDetailsType",
+    "Label": "Should ${labelContentApplicantOrApplicant1} contact details be kept private?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2ContinueApplication",
+    "Label": "The applicant wants to continue with their application.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "DivorceDocument",
+    "ID": "applicant2DocumentsUploaded",
+    "Label": "Applicant 2 Documents uploaded",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Email",
+    "ID": "applicant2Email",
+    "Label": "Email address",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "applicant2ExplainsApplicant1IncorrectInformation",
+    "Label": "Explain what is incorrect or needs changing.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant2FinalOrderExplanation",
+    "Label": "${labelContentTheApplicant2UC} final order explanation",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2FinancialOrder",
+    "Label": "Does the applicant wish to apply for a financial order?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "FinancialOrderFor",
+    "ID": "applicant2FinancialOrdersFor",
+    "Label": "Who are the financial orders for?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant2FirstName",
+    "Label": "First name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "Gender",
+    "HintText": "Gender is only collected for statistical purposes.",
+    "ID": "applicant2Gender",
+    "Label": "Gender",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2HWFAppliedForFees",
+    "Label": "Applied for help with fees?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant2HWFLabel-CorrectApp2HWFDetails",
+    "Label": "### ${labelContentRespondentsOrApplicant2s} Help With Fees details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2HWFNeedHelp",
+    "Label": "Need help with fees?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant2HWFReferenceNumber",
+    "Label": "Help with fees reference",
+    "LiveFrom": "01/01/2017",
+    "RegularExpression": "([Hh][Ww][Ff]-?)?[0-9a-zA-Z]{3}-?[0-9a-zA-Z]{3}$",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant2InviteEmailAddress",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant2Label-CorrectApplicant2FODetails",
+    "Label": "### ${labelContentRespondentsOrApplicant2s} financial order details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant2LabelHorizontalLine1App2",
+    "Label": "<hr>",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant2LabelHorizontalLine2",
+    "Label": "<hr>",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant2LabelPrayer",
+    "Label": "## The prayer ##",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant2LabelRespondentWarning",
+    "Label": "### WARNING: Changing the ${labelContentRespondentsOrApplicant2s} gender here means you need to Re-Issue the case to update all case documents",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "HintText": "Select \"No\" for English or \"Yes\" for bilingual",
+    "ID": "applicant2LanguagePreferenceWelsh",
+    "Label": "Is the language preference Welsh?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant2LastName",
+    "Label": "Last name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2LastNameChangedWhenMarried",
+    "Label": "Did they change their last name when they got married?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2LegalProceedings",
+    "Label": "Are there any other legal proceedings relating to the ${labelContentMarriageOrCivilPartnership}?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "HintText": "Provide as much information as possible, such as the case number(s); the names of the people involved and if the proceedings are ongoing or if they’ve finished.",
+    "ID": "applicant2LegalProceedingsDetails",
+    "Label": "Provide details of the other legal proceedings",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "applicant2LegalProceedingsDetailsTranslated",
+    "Label": "Provide details of the other legal proceedings(Translated)",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "TranslatedToLanguage",
+    "ID": "applicant2LegalProceedingsDetailsTranslatedTo",
+    "Label": "Translated To?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "If they have a middle name then you must enter it to avoid amendments later.",
+    "ID": "applicant2MiddleName",
+    "Label": "Middle name(s)",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "ChangedNameHow",
+    "ID": "applicant2NameChangedHow",
+    "Label": "How did they change their name?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "applicant2NameChangedHowOtherDetails",
+    "Label": "Details of how they changed their name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2NameDifferentToMarriageCertificate",
+    "Label": "Have they changed their name since they got married?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2NeedsHelpWithFees",
+    "Label": "Does Applicant 2 need help with fees?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2Offline",
+    "Label": "Offline",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant2PcqId",
+    "Label": "PCQ ID",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant2PhoneNumber",
+    "Label": "Phone number",
+    "LiveFrom": "01/01/2017",
+    "RegularExpression": "^[0-9 +().-]{9,}$",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "DissolveDivorce",
+    "ID": "applicant2PrayerDissolveDivorce",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "EndCivilPartnership",
+    "ID": "applicant2PrayerEndCivilPartnership",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "FinancialOrdersChild",
+    "ID": "applicant2PrayerFinancialOrdersChild",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "FinancialOrdersThemselves",
+    "ID": "applicant2PrayerFinancialOrdersThemselves",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "ThePrayer",
+    "ID": "applicant2PrayerHasBeenGivenCheckbox",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2ReminderSent",
+    "Label": "Reminder that applicant 2 needs to review joint application",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant2Respondents-service-details-heading",
+    "Label": "# ${labelContentApplicant2UC} service details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant2Respondents-service-details-text1",
+    "Label": "It’s important you provide the respondent’s email address so the court can serve documents to them online. Otherwise the papers will be served by post, which will take longer",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant2Respondents-service-details-text2",
+    "Label": "You should also provide a postal address so that they can be sent a paper copy of the Notice Of Proceedings. If you only provide the email address, you will need to apply to serve by email only",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant2Respondents-service-details-text3",
+    "Label": "If you need to make any separate applications relating to service then you can do this after you have submitted this application, using the ‘general application’ event.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2ScreenHasMarriageBroken",
+    "Label": "Has applicant 2's marriage broken down irretrievably?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2SolSignStatementOfTruth",
+    "Label": "I am duly authorised by the applicant to sign this statement.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant2SolStatementOfReconciliationFirm",
+    "Label": "Name of your firm",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant2SolStatementOfReconciliationName",
+    "Label": "Your name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "applicant2SolicitorAddress",
+    "Label": "Solicitor’s firm/ DX address",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "Prayer",
+    "ID": "applicant2SolicitorAgreeToReceiveEmailsCheckbox",
+    "Label": "Service by email",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Document",
+    "ID": "applicant2SolicitorAnswersLink",
+    "Label": "Link to applicant 2 solicitors answers",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Email",
+    "ID": "applicant2SolicitorEmail",
+    "Label": "Solicitor’s Email",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant2SolicitorFirmName",
+    "Label": "Solicitor’s Firm Name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant2SolicitorLabel-CorrectApplicant2SolDetails",
+    "Label": "### ${labelContentRespondentsOrApplicant2s} solicitor details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant2SolicitorLabelRespSol-Email",
+    "Label": "Updates on the case will be sent to this email address",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicant2SolicitorLabelRespSol-EmailHeader",
+    "Label": "### Email updates and service",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant2SolicitorName",
+    "Label": "Solicitor’s name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "OrganisationPolicy",
+    "ID": "applicant2SolicitorOrganisationPolicy",
+    "Label": "Firm address/DX address",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant2SolicitorPhone",
+    "Label": "Solicitor’s Phone number",
+    "LiveFrom": "01/01/2017",
+    "RegularExpression": "^[0-9 +().-]{9,}$",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "This is your internal reference that your firm uses to identify the case.",
+    "ID": "applicant2SolicitorReference",
+    "Label": "Solicitor’s reference number",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2SolicitorRepresented",
+    "Label": "Is represented by a solicitor?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "HintText": "For the attention of court staff. These comments will not form part of the application",
+    "ID": "applicant2StatementOfReconciliationComments",
+    "Label": "Additional comments",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2StatementOfTruth",
+    "Label": "The applicant believes that the facts stated in this application are true.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicant2UsedWelshTranslationOnSubmission",
+    "Label": "Applicant has used the Welsh translation on submission",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "applicant2UserId",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicantLabel",
+    "Label": "Name of Applicant - ${applicant1FirstName} ${applicant1LastName}",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicantNotifiedDisputeFormOverdue",
+    "Label": "Notification sent to Applicant indicating that the dispute form is overdue",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "applicantSolicitorDetailsLabel",
+    "Label": "### ${labelContentApplicantsOrApplicant1s} solicitor's details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "applicantsRemindedCanApplyForConditionalOrder",
+    "Label": "Reminder sent to Applicants indicating they can apply for Conditional Order",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "OrderSummary",
+    "ID": "applicationFeeOrderSummary",
+    "Label": "Here are your order details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "Payment",
+    "ID": "applicationPayments",
+    "Label": "Payments",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "ApplicationType",
+    "ID": "applicationType",
+    "Label": "Application type",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "bailiffLocalCourtDetailsLabel",
+    "Label": "### Bailiff local court details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "bailiffReturnLabel",
+    "Label": "### Bailiff return",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "bulkListCaseReference",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "CaseLink",
+    "ID": "bulkListCaseReferenceLink",
+    "Label": "Bulk list case reference",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "bulkScanCaseReference",
+    "Label": "Exception record reference",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "BulkScanEnvelope",
+    "ID": "bulkScanEnvelopes",
+    "Label": "Bulk Scan Envelopes",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "CaseHistoryViewer",
+    "ID": "caseHistory",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "certificateOfServiceDate",
+    "Label": "Certificate of service date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DivorceDocument",
+    "ID": "certificateOfServiceDocument",
+    "Label": "Certificate of Service",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant1ApplyForConditionalOrder",
+    "Label": "Does the applicant want to continue with the ${labelContentUnionType} and apply for a conditional order?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant1ApplyForConditionalOrderIfNo",
+    "Label": "Does the applicant want to continue with the ${labelContentUnionType} and apply for a conditional order?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant1ApplyForConditionalOrderStarted",
+    "Label": "Has the applicant started the process to apply for conditional order?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "HintText": "If you change or add anything which means your application has to be sent to your husband/wife again you may have to pay a £95 fee",
+    "ID": "coApplicant1ChangeOrAddToApplication",
+    "Label": "Do you need to change your application or add anything?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant1ConfirmInformationStillCorrect",
+    "Label": "Is the information in this application still correct?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant1IsDrafted",
+    "Label": "Has applicant drafted conditional order",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant1IsEverythingInApplicationTrue",
+    "Label": "Is everything stated in this divorce application true?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant1IsSubmitted",
+    "Label": "Has applicant submitted conditional order",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "coApplicant1ReasonInformationNotCorrect",
+    "Label": "Provide details of any other information that needs updating.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "coApplicant1ReasonInformationNotCorrectTranslated",
+    "Label": "Provide details of any other information that needs updating.(Translated)",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "TranslatedToLanguage",
+    "ID": "coApplicant1ReasonInformationNotCorrectTranslatedTo",
+    "Label": "Translated To?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "coApplicant1SolicitorAdditionalComments",
+    "Label": "Additional comments",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "coApplicant1SolicitorFirm",
+    "Label": "Solicitor’s firm",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "coApplicant1SolicitorName",
+    "Label": "Solicitor’s name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant1StatementOfTruth",
+    "Label": "The applicant believes that the facts stated in the application for a conditional order are true.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DateTime",
+    "ID": "coApplicant1SubmittedDate",
+    "Label": "Date applicant submitted Conditional Order to HMCTS",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant2ApplyForConditionalOrder",
+    "Label": "Does the applicant want to continue with the ${labelContentUnionType} and apply for a conditional order?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant2ApplyForConditionalOrderIfNo",
+    "Label": "Does the applicant want to continue with the ${labelContentUnionType} and apply for a conditional order?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant2ApplyForConditionalOrderStarted",
+    "Label": "Has the applicant started the process to apply for conditional order?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "HintText": "If you change or add anything which means your application has to be sent to your husband/wife again you may have to pay a £95 fee",
+    "ID": "coApplicant2ChangeOrAddToApplication",
+    "Label": "Do you need to change your application or add anything?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant2ConfirmInformationStillCorrect",
+    "Label": "Is the information in this application still correct?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant2IsDrafted",
+    "Label": "Has applicant drafted conditional order",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant2IsEverythingInApplicationTrue",
+    "Label": "Is everything stated in this divorce application true?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant2IsSubmitted",
+    "Label": "Has applicant submitted conditional order",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "coApplicant2ReasonInformationNotCorrect",
+    "Label": "Provide details of any other information that needs updating.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "coApplicant2ReasonInformationNotCorrectTranslated",
+    "Label": "Provide details of any other information that needs updating.(Translated)",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "TranslatedToLanguage",
+    "ID": "coApplicant2ReasonInformationNotCorrectTranslatedTo",
+    "Label": "Translated To?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "coApplicant2SolicitorAdditionalComments",
+    "Label": "Additional comments",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "coApplicant2SolicitorFirm",
+    "Label": "Solicitor’s firm",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "coApplicant2SolicitorName",
+    "Label": "Solicitor’s name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coApplicant2StatementOfTruth",
+    "Label": "The applicant believes that the facts stated in the application for a conditional order are true.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DateTime",
+    "ID": "coApplicant2SubmittedDate",
+    "Label": "Date applicant submitted Conditional Order to HMCTS",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coCannotUploadClarificationDocuments",
+    "Label": "Applicant cannot upload all or some Conditional Order Clarification documents",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DivorceDocument",
+    "ID": "coCertificateOfEntitlementDocument",
+    "Label": "Link to certificate of entitlement",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "coClaimsCostsOrderInformation",
+    "Label": "Make costs order information",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coClaimsGranted",
+    "Label": "Grant Cost Order?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "TextArea",
+    "ID": "coClarificationResponses",
+    "Label": "List of responses for Conditional Order clarification",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "ClarificationResponse",
+    "ID": "coClarificationResponsesSubmitted",
+    "Label": "Clarification Responses Submitted",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "DivorceDocument",
+    "ID": "coClarificationUploadDocuments",
+    "Label": "Documents uploaded for the Conditional Order Clarification",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DivorceDocument",
+    "ID": "coConditionalOrderGrantedDocument",
+    "Label": "Conditional Order Granted",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "coConditionalOrderLineSep",
+    "Label": "<hr>",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "coConditionalOrderReviewAoSNo",
+    "Label": "You must select yes to apply for a conditional order",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "coConditionalOrderReviewAoSNoApp2IfNo",
+    "Label": "You must select yes to apply for a conditional order",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "coConditionalOrderReviewAoSNoIfNo",
+    "Label": "You must select yes to apply for a conditional order",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "ConditionalOrderCourt",
+    "ID": "coCourt",
+    "Label": "Court name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DateTime",
+    "ID": "coDateAndTimeOfHearing",
+    "Label": "Date and time of hearing",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "coDecisionDate",
+    "Label": "Legal advisor decision date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coGranted",
+    "Label": "Grant Conditional Order?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "coGrantedDate",
+    "Label": "Conditional Order granted date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "JudgeCostsClaimGranted",
+    "ID": "coJudgeCostsClaimGranted",
+    "Label": "Grant Cost Order?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "coJudgeCostsOrderAdditionalInfo",
+    "Label": "Additional info",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Document",
+    "ID": "coLastAlternativeServiceDocumentLink",
+    "Label": "Link to alternative service document",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "LegalAdvisorDecision",
+    "ID": "coLegalAdvisorDecisions",
+    "Label": "Legal Advisor Decisions Submitted",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Document",
+    "ID": "coOnlinePetitionLink",
+    "Label": "Link to online petition",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "coOutcomeCase",
+    "Label": "Case on digital Conditional Order Outcome",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "coPronouncementJudge",
+    "Label": "Pronouncement Judge",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "coRefusalAdminErrorInfo",
+    "Label": "Additional info",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "coRefusalClarificationAdditionalInfo",
+    "Label": "Clarification additional information",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "coRefusalClarificationAdditionalInfoTranslated",
+    "Label": "Clarification additional information (Translated)",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "TranslatedToLanguage",
+    "ID": "coRefusalClarificationAdditionalInfoTranslatedTo",
+    "Label": "Translated To?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "ClarificationReason",
+    "HintText": "Choose at least one of the following",
+    "ID": "coRefusalClarificationReason",
+    "Label": "Provide a refusal reason",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "RefusalOption",
+    "ID": "coRefusalDecision",
+    "Label": "Refusal decision",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Document",
+    "ID": "coRefusalOrderDocument",
+    "Label": "Refusal Rejection reasons",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "coRefusalRejectionAdditionalInfo",
+    "Label": "Make a free text order",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "RejectionReason",
+    "ID": "coRefusalRejectionReason",
+    "Label": "Refusal rejection reasons",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "coRescindedDate",
+    "Label": "Date Conditional Order rescinded",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Document",
+    "ID": "coRespondentAnswersLink",
+    "Label": "Link to respondent answers",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "conditionalOrderLineSep",
+    "Label": "<hr>",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "ConfidentialDivorceDocument",
+    "ID": "confidentialDocumentsGenerated",
+    "Label": "Confidential documents generated",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "ConfidentialDivorceDocument",
+    "ID": "confidentialDocumentsUploaded",
+    "Label": "Confidential documents uploaded",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "confirmDisputeApplication",
+    "Label": "Respondent confirms that they want to dispute the application",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "confirmReadPetition",
+    "Label": "Has the respondent read the application ${labelContentDivorceOrEndCivilPartnership}?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "contactDetails",
+    "Label": "# ${labelContentApplicantsOrApplicant1s} contact details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "createdDate",
+    "Label": "Date when the application was created",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "State",
+    "ID": "currentState",
+    "Label": "Current state",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DivorceDocument",
+    "ID": "d11Document",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Number",
+    "ID": "dataVersion",
+    "Label": "Case data version",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DateTime",
+    "ID": "dateAosSubmitted",
+    "Label": "Date AoS submitted to HMCTS",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "dateFinalOrderEligibleFrom",
+    "Label": "Date Final Order Eligible From",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "dateFinalOrderEligibleToRespondent",
+    "Label": "Date from which ${labelContentTheApplicant2} can apply for Final Order",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "dateFinalOrderNoLongerEligible",
+    "Label": "Final date to apply for Final Order",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DateTime",
+    "ID": "dateFinalOrderSubmitted",
+    "Label": "Date Final Order submitted to HMCTS",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "dateOfPayment",
+    "Label": "Date of Payment",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DateTime",
+    "ID": "dateSubmitted",
+    "Label": "Date submitted to HMCTS",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "deemedServiceDate",
+    "Label": "Deemed service date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "Example: PBA0896366",
+    "ID": "disputingFeeAccountNumber",
+    "Label": "Enter your account number",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "disputingFeeAccountReferenceNumber",
+    "Label": "Enter your reference",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "disputingFeeHelpWithFeesReferenceNumber",
+    "Label": "Help with Fees reference",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "OrderSummary",
+    "ID": "disputingFeeOrderSummary",
+    "Label": "Here are your order details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "ServicePaymentMethod",
+    "HintText": "How will payment be made?",
+    "ID": "disputingFeePaymentMethod",
+    "Label": "How will payment be made?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DynamicList",
+    "ID": "disputingFeePbaNumbers",
+    "Label": "Select your account number",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "DivorceOrDissolution",
+    "ID": "divorceOrDissolution",
+    "Label": "Divorce or dissolution?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "Court",
+    "HintText": "Regional divorce unit",
+    "ID": "divorceUnit",
+    "Label": "RDC",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "WhoDivorcing",
+    "HintText": "Husband or Wife?",
+    "ID": "divorceWho",
+    "Label": "Who is the applicant divorcing?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "HintText": "Select yes to submit the case, if all documents have been uploaded",
+    "ID": "documentUploadComplete",
+    "Label": "All documents uploaded",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "DivorceDocument",
+    "ID": "documentsGenerated",
+    "Label": "Documents generated",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "DivorceDocument",
+    "ID": "documentsUploaded",
+    "Label": "Documents uploaded",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "DivorceDocument",
+    "ID": "documentsUploadedOnConfirmService",
+    "Label": "Documents uploaded",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "doesApplicant1WantToApplyForFinalOrder",
+    "Label": "Does the applicant want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "doesApplicant2WantToApplyForFinalOrder",
+    "Label": "Does ${labelContentTheApplicant2} want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "dueDate",
+    "Label": "Due Date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "evidenceHandled",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "exampleRetiredField",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "This will appear on your statement to help you identify this payment",
+    "ID": "feeAccountReference",
+    "Label": "Fee account reference",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "finalOrderReminderSentApplicant1",
+    "Label": "Has the applicant been sent a reminder to apply for the Final Order?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "finalOrderReminderSentApplicant2",
+    "Label": "Has the respondent been sent a reminder to apply for the Final Order?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "firstInTimeApp1",
+    "Label": "<details><summary><span>Making a sole application for a conditional order</span></summary><div><p>If you want to progress the application but you do not think the other party will confirm the joint application for a conditional order, then you can change to a sole application. This means the other party will become the respondent.</p><p>You should still continue to draft and submit a joint conditional order application. If the other party does not confirm the application then you will be able to change to a sole application online.</p><p>If you want to apply for a conditional order as a sole applicant now, then you need to <a href=\"https://www.gov.uk/government/publications/form-d84-application-for-a-decree-nisi-conditional-order-or-judicial-separation-decreeorder\" target=\"_blank\" rel=\"noopener noreferrer\">download and fill out a paper D84 form</a>. Details of where to post it are on the form. Your application will be lodged as soon as the form is received by the court but it could take up to 3 weeks to process the application.</p></div></details><br>",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "firstInTimeApp2",
+    "Label": "<details><summary><span>Making a sole application for a conditional order</span></summary><div><p>If you want to progress the application but you do not think the other party will confirm the joint application for a conditional order, then you can change to a sole application. This means the other party will become the respondent.</p><p>You should still continue to draft and submit a joint conditional order application. If the other party does not confirm the application then you will be able to change to a sole application online.</p><p>If you want to apply for a conditional order as a sole applicant now, then you need to <a href=\"https://www.gov.uk/government/publications/form-d84-application-for-a-decree-nisi-conditional-order-or-judicial-separation-decreeorder\" target=\"_blank\" rel=\"noopener noreferrer\">download and fill out a paper D84 form</a>. Details of where to post it are on the form. Your application will be lodged as soon as the form is received by the court but it could take up to 3 weeks to process the application.</p></div></details><br>",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "generalApplicationAddedDate",
+    "Label": "General application added date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DivorceDocument",
+    "ID": "generalApplicationDocument",
+    "Label": "General Application Document",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "generalApplicationDocumentComments",
+    "Label": "Additional comments about the supporting document",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "Example: PBA0896366",
+    "ID": "generalApplicationFeeAccountNumber",
+    "Label": "Enter your account number",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "generalApplicationFeeAccountReferenceNumber",
+    "Label": "Enter your reference",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "generalApplicationFeeHelpWithFeesReferenceNumber",
+    "Label": "Help with Fees reference",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "OrderSummary",
+    "ID": "generalApplicationFeeOrderSummary",
+    "Label": "Here are your order details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "ServicePaymentMethod",
+    "HintText": "How will payment be made?",
+    "ID": "generalApplicationFeePaymentMethod",
+    "Label": "How will payment be made?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DynamicList",
+    "ID": "generalApplicationFeePbaNumbers",
+    "Label": "Select your account number",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "GeneralApplicationFee",
+    "ID": "generalApplicationFeeType",
+    "Label": "Choose General Application Fee Type",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "GeneralParties",
+    "ID": "generalApplicationFrom",
+    "Label": "Application from",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "generalApplicationReferralDate",
+    "Label": "Application or referral date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "GeneralApplicationType",
+    "ID": "generalApplicationType",
+    "Label": "Choose General Application Type",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "generalApplicationTypeOtherComments",
+    "Label": "Please provide more information about general application type",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "generalEmailDetails",
+    "Label": "Please provide details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Email",
+    "ID": "generalEmailOtherRecipientEmail",
+    "Label": "Recipient's email",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "generalEmailOtherRecipientName",
+    "Label": "Recipient's name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "GeneralParties",
+    "ID": "generalEmailParties",
+    "Label": "Address to",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "GeneralEmailDetails",
+    "ID": "generalEmails",
+    "Label": "General emails",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "DivorceDocument",
+    "ID": "generalLetterAttachments",
+    "Label": "Add attachments",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "generalLetterDetails",
+    "Label": "Please provide details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "GeneralParties",
+    "ID": "generalLetterParties",
+    "Label": "Address to",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "GeneralLetterDetails",
+    "ID": "generalLetters",
+    "Label": "General letters",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "generalOrderDate",
+    "Label": "Court order date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "generalOrderDetails",
+    "Label": "General order details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "GeneralOrderDivorceParties",
+    "HintText": "Select all parties the general order should be made available to",
+    "ID": "generalOrderDivorceParties",
+    "Label": "Who is the general order for?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Document",
+    "ID": "generalOrderDraft",
+    "Label": "General Order Draft",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "generalOrderJudgeOrLegalAdvisorName",
+    "Label": "Name Of Judge or Legal Advisor",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "GeneralOrderJudgeOrLegalAdvisorType",
+    "ID": "generalOrderJudgeOrLegalAdvisorType",
+    "Label": "Select Judge or Legal Advisor",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "generalOrderRecitals",
+    "Label": "Recitals",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "DivorceGeneralOrder",
+    "ID": "generalOrders",
+    "Label": "General Orders",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "GeneralReferralDecision",
+    "ID": "generalReferralDecision",
+    "Label": "Approve general consideration?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "generalReferralDecisionDate",
+    "Label": "General referral decision date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "HintText": "Provide direction for any general orders or general letters to be created by caseworkers.",
+    "ID": "generalReferralDecisionReason",
+    "Label": "Please provide further details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "Example: PBA0896366",
+    "ID": "generalReferralFeeAccountNumber",
+    "Label": "Enter your account number",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "generalReferralFeeAccountReferenceNumber",
+    "Label": "Enter your reference",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "generalReferralFeeHelpWithFeesReferenceNumber",
+    "Label": "Help with Fees reference",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "OrderSummary",
+    "ID": "generalReferralFeeOrderSummary",
+    "Label": "Here are your order details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "ServicePaymentMethod",
+    "HintText": "How will payment be made?",
+    "ID": "generalReferralFeePaymentMethod",
+    "Label": "How will payment be made?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DynamicList",
+    "ID": "generalReferralFeePbaNumbers",
+    "Label": "Select your account number",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "generalReferralFeeRequired",
+    "Label": "Is fee payment required?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "generalReferralJudgeOrLegalAdvisorDetails",
+    "Label": "Further details for Judge or Legal Advisor",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "GeneralReferralReason",
+    "ID": "generalReferralReason",
+    "Label": "Reason for referral?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "GeneralReferralType",
+    "ID": "generalReferralType",
+    "Label": "Type of referral",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "generalReferralUrgentCase",
+    "Label": "Does this case require an Urgent Referral?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "generalReferralUrgentCaseReason",
+    "Label": "Urgent referral reason",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "GeneralReferral",
+    "ID": "generalReferrals",
+    "Label": "General Referrals",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "Granted",
+    "HintText": "The Final Order made on ${finalOrderDateFinalOrderSubmitted} will be made absolute and the ${divorceOrDissolution} between ${applicant1FirstName} ${applicant1LastName} and ${applicant2FirstName} ${applicant2LastName} will be ended.",
+    "ID": "granted",
+    "Label": "Final Order granted?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DateTime",
+    "ID": "grantedDate",
+    "Label": "Final Order granted date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "HowToRespondApplication",
+    "ID": "howToRespondApplication",
+    "Label": "How do you want to respond?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "hyphenatedCaseRef",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "inWhichCountryIsYourLifeMainlyBased",
+    "Label": "In which country is the respondents life mainly based?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "isJudicialSeparation",
+    "Label": "Is case judicial separation?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "issueDate",
+    "Label": "Date when the application was issued",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "jointApplicantNotifiedCanSwitchToSole",
+    "Label": "Notification sent to Joint Applicant indicating they can switch to sole",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "jointLabel",
+    "Label": "### Joint applications\nThe other party joins and reviews the application before it's submitted.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "jurisdictionAgree",
+    "Label": "Respondent agreed to claimed jurisdiction?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "jurisdictionApp1HabituallyResLastSixMonths",
+    "Label": "Has the applicant been resident for the last six months?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "jurisdictionApp1HabituallyResLastTwelveMonths",
+    "Label": "Has the applicant been resident for the last twelve months?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "jurisdictionApplicant1Domicile",
+    "Label": "Is the applicant domiciled?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "jurisdictionApplicant1Residence",
+    "Label": "Is the applicant resident?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "jurisdictionApplicant2Domicile",
+    "Label": "Is the respondent domiciled?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "jurisdictionApplicant2Residence",
+    "Label": "Is the respondent resident?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "jurisdictionBothLastHabituallyResident",
+    "Label": "Were both the applicant and the respondent last habitually resident, and one still resides?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "JurisdictionConnections",
+    "HintText": "Tick all the reasons that apply:",
+    "ID": "jurisdictionConnections",
+    "Label": "Legal connections",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "jurisdictionResidualEligible",
+    "Label": "Is residual jurisdiction eligible?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "label-ApplicantDispute",
+    "Label": "The respondent can only dispute the application if: (one or more of the following)\n\n",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "label-ApplyForFinalOrder",
+    "Label": "Once the court has checked that there are no outstanding applications or other matters which need to be resolved first, the final order will be made absolute and the ${labelContentDivorceOrCivilPartnership} between ${marriageApplicant1Name} and  ${marriageApplicant2Name} will be ended.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "label-DoNotBelieveMarriageValidBullet",
+    "Label": "- they do not believe their marriage is legally valid. For example, if one of them was already married or in a civil partnership when they got married",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "label-HaveLegalPowerBullet",
+    "Label": "- they do not think the courts of England and Wales have the legal power (jurisdiction) to grant the application",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "label-MarriageLegallyEndedBullet",
+    "Label": "- the marriage has already been legally ended",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "labelApplicant2SolStatementOfTruth-SOT",
+    "Label": "## Statement of truth",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "labelCoClarificationResponses",
+    "Label": "## Clarification Responses",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "labelCoPronouncementDetails",
+    "Label": "## Pronouncement Details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "labelConditionalOrderDetails-Applicant1",
+    "Label": "### Applicant 1",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "labelConditionalOrderDetails-Applicant2",
+    "Label": "### Applicant 2",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentApplicant2",
+    "Label": "applicant 2 or respondent",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentApplicant2UC",
+    "Label": "Applicant or Respondent",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentApplicantOrApplicant1",
+    "Label": "The applicant's or applicant 1’s",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentApplicantOrApplicant1UC",
+    "Label": "Applicant or Applicant 1",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentApplicantsOrApplicant1s",
+    "Label": "applicant's or applicant 1’s",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentDivorceOrCivilPartnership",
+    "Label": "Divorce or civil partnership",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentDivorceOrCivilPartnershipApplication",
+    "Label": "Divorce or civil partnership application",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentDivorceOrEndCivilPartnership",
+    "Label": "Divorce or end civil partnership",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentDivorceOrEndingCivilPartnership",
+    "Label": "divorce or ending of your civil partnership",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentDivorceOrLegallyEnd",
+    "Label": "Get a divorce or legally end it",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentFinaliseDivorceOrEndCivilPartnership",
+    "Label": "Divorce or civil partnership",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentGotMarriedOrFormedCivilPartnership",
+    "Label": "Got married or formed their civil partnership",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentMarriageOrCivilPartnership",
+    "Label": "marriage or civil partnership",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentMarriageOrCivilPartnershipUC",
+    "Label": "Marriage or civil partnership",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentRespondentsOrApplicant2s",
+    "Label": "respondent's or applicant 2’s",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentTheApplicant2",
+    "Label": "applicant 2 or the respondent",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentTheApplicant2UC",
+    "Label": "Applicant 2 or The respondent",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentTheApplicantOrApplicant1",
+    "Label": "the applicant or applicant 1",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentTheApplicantOrApplicant1UC",
+    "Label": "The applicant or applicant 1",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentUnionType",
+    "Label": "divorce or dissolution",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "labelContentUnionTypeUC",
+    "Label": "Divorce or Dissolution",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "labelFinalOrderDetails-SoleApplicant",
+    "Label": "### Applicant",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "labelFinalOrderDetails-SoleRespondent",
+    "Label": "### Respondent",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "labelJudgeCostsDecision",
+    "Label": "## Judge costs decision",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "labelLegalAdvisorDecision",
+    "Label": "## Legal advisor decision",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "labelSolAboutTheSol",
+    "Label": "**Enter the details of ${labelContentApplicantOrApplicant1} solicitor**.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "localCourtDetailsIntro",
+    "Label": "Caseworker will send the Bailiff application together with the divorce application, invitation letter for the respondent and a certificate of service to the local court.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "localCourtDetailsLabel",
+    "Label": "### Local court details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Email",
+    "ID": "localCourtEmail",
+    "Label": "Email address",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "localCourtName",
+    "Label": "Court name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "Exactly as it appears on the certificate. Include any additional text such as 'formally known as'.",
+    "ID": "marriageApplicant1Name",
+    "Label": "The applicant's full name as on ${labelContentMarriageOrCivilPartnership} certificate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "Exactly as it appears on the certificate. Include any additional text such as 'formally known as'.",
+    "ID": "marriageApplicant2Name",
+    "Label": "${labelContentTheApplicant2UC} full name as on ${labelContentMarriageOrCivilPartnership} certificate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "marriageCertificateInEnglish",
+    "Label": "${labelContentMarriageOrCivilPartnershipUC} certificate in English?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "marriageCertifiedTranslation",
+    "Label": "${labelContentMarriageOrCivilPartnershipUC} certificate translation",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "marriageCertifyMarriageCertificateIsCorrect",
+    "Label": "Is the ${labelContentMarriageOrCivilPartnership} certificate correct?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "Enter the country in which the ${labelContentMarriageOrCivilPartnership} took place",
+    "ID": "marriageCountryOfMarriage",
+    "Label": "Country of ${labelContentMarriageOrCivilPartnership}",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "marriageDate",
+    "Label": "${labelContentMarriageOrCivilPartnershipUC} date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "MarriageFormation",
+    "ID": "marriageFormationType",
+    "Label": "Were ${labelContentTheApplicantOrApplicant1} and ${labelContentTheApplicant2} a same-sex couple when they ${labelContentGotMarriedOrFormedCivilPartnership}?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "marriageIssueApplicationWithoutMarriageCertificate",
+    "Label": "Issue application anyway?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "e.g. wrong names, misspellings, poor quality photo or scan, damaged, or missing entirely",
+    "ID": "marriageMarriageCertificateIsIncorrectDetails",
+    "Label": "Why is the ${labelContentMarriageOrCivilPartnershipUC} certification incorrect",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "marriageMarriedInUk",
+    "Label": "Did the ${labelContentMarriageOrCivilPartnership} take place in the UK?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "Enter the place of ${labelContentMarriageOrCivilPartnership} as it appears on the certificate",
+    "ID": "marriagePlaceOfMarriage",
+    "Label": "Place of ${labelContentMarriageOrCivilPartnership}",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Document",
+    "ID": "miniApplicationLink",
+    "Label": "Link to online application",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "newPaperCase",
+    "Label": "Is the case a paper case?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "nocAreTheyDigital",
+    "Label": "Is the solicitor digital?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "nocAreTheyRepresented",
+    "Label": "Are they represented by a solicitor?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "WhichApplicant",
+    "ID": "nocWhichApplicant",
+    "Label": "Which applicant?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "HintText": "Enter note",
+    "ID": "note",
+    "Label": "Add a case note",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "CaseNote",
+    "ID": "notes",
+    "Label": "Notes",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Email",
+    "ID": "noticeOfProceedingsEmail",
+    "Label": "Notice of Proceedings email address",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "noticeOfProceedingsSolicitorFirm",
+    "Label": "Notice of Proceedings solicitor's firm",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "AddressGlobalUK",
+    "ID": "otherRecipientAddress",
+    "Label": "Recipient's address",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "otherRecipientName",
+    "Label": "Recipient's name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "overdueNotificationSent",
+    "Label": "Notification of overdue application sent?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "PaperCasePaymentMethod",
+    "ID": "paperCasePaymentMethod",
+    "Label": "How is offline payment being made?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "paperFormApplicant1LegalRepPosition",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormApplicant1LegalRepSigningSOT",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormApplicant1NoPaymentIncluded",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "paperFormApplicant1SOTSignedOn",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormApplicant1SigningSOT",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "paperFormApplicant2LegalRepPosition",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormApplicant2LegalRepSigningSOT",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormApplicant2NoPaymentIncluded",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormApplicant2PaymentOther",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "paperFormApplicant2PaymentOtherDetail",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "paperFormApplicant2SOTSignedOn",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormApplicant2SigningSOT",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormApplicantWillServeApplication",
+    "Label": "Applicant will arrange service on the respondent",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormChequeOrPostalOrderPayment",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormDebitCreditCardPayment",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormDebitCreditCardPaymentPhone",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "paperFormFeeInPounds",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormHowToPayEmail",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "paperFormPaymentDetailEmail",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormRespondentDifferentServiceAddress",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormRespondentServePostOnly",
+    "Label": "Serve this application by post only",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormServeOutOfUK",
+    "Label": "Is the application to be served on the respondent outside England and Wales?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "paperFormServiceOutsideUK",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "paperFormSoleOrApplicant1PaymentOther",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "paperFormSoleOrApplicant1PaymentOtherDetail",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "FinancialOrderFor",
+    "ID": "paperFormSummaryApplicant1FinancialOrdersFor",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "FinancialOrderFor",
+    "ID": "paperFormSummaryApplicant2FinancialOrdersFor",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "CasePaymentHistoryViewer",
+    "ID": "paymentHistoryField",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DynamicList",
+    "ID": "pbaNumbers",
+    "Label": "Account number",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "petitionerLabel",
+    "Label": "Name of Applicant - ${applicant1FirstName} ${applicant1LastName}",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "CaseLink",
+    "ID": "previousCaseId",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "ReissueOption",
+    "ID": "previousReissueOption",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "State",
+    "ID": "previousState",
+    "Label": "Previous state",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "ProgressPaperCase",
+    "ID": "progressPaperCase",
+    "Label": "Progress paper case",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "reasonCourtsOfEnglandAndWalesHaveNoJurisdiction",
+    "Label": "Reason respondent disagreed to claimed jurisdiction",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated",
+    "Label": "Reason respondent disagreed to claimed jurisdiction(Translated)",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "TranslatedToLanguage",
+    "ID": "reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslatedTo",
+    "Label": "Translated To?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "reasonFailureToServeByBailiff",
+    "Label": "Reason for failure to serve",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "receivedServiceAddedDate",
+    "Label": "Added date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "receivedServiceApplicationDate",
+    "Label": "Application date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "regenerateCourtOrdersWarningLabel",
+    "Label": "Updating court orders recreates the Certificate of Entitlement, Conditional Order and Final Order, based on the latest case data. Any other court orders e.g. conditional order refusals, will remain unchanged.\r\n\r\nIf there have been updates to the case data e.g. change of applicant name, then these will be reflected in the updated court orders.\r\n\r\nPrevious versions of court orders will not be stored against the case.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "reissueDate",
+    "Label": "Date when the application was reissued",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "ReissueOption",
+    "ID": "reissueOption",
+    "Label": "What would you like to reissue?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "RejectReason",
+    "ID": "rejectReason",
+    "Label": "Reject reason",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "respondentLabel",
+    "Label": "Name of Respondent - ${applicant2FirstName} ${applicant2LastName}",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "respondentSolicitorDetailsLabel",
+    "Label": "### ${labelContentRespondentsOrApplicant2s} solicitor's details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "respondentSolicitorReminderSent",
+    "Label": "Reminder that respondent solicitor needs to respond to the application",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DynamicList",
+    "ID": "scannedDocumentNames",
+    "Label": "Select respondent answers document",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "ScannedDocument",
+    "ID": "scannedDocuments",
+    "Label": "Scanned documents",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "screenHasMarriageCert",
+    "Label": "The applicant has marriage cert?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "secondInTimeApp1",
+    "Label": "<details><summary><span>If you want to continue as a sole applicant</span></summary><div><p>The other applicant has already confirmed they want to continue with the joint application. The quickest way for you to progress the ${labelContentDivorceOrEndingCivilPartnership} is for you to also confirm you want to continue with the joint application.</p><p>If you want to change to a sole application then it will delay the ${labelContentDivorceOrEndingCivilPartnership}. You will have to make a separate application by <a href=\"https://www.gov.uk/government/publications/form-d84-application-for-a-decree-nisi-conditional-order-or-judicial-separation-decreeorder\" target=\"_blank\" rel=\"noopener noreferrer\">downloading and filling out a D84 paper form.</a> Details of where to send it are on the form. If you want to change to a sole application then you should go back to ‘manage cases’, sign out and send in the form.</p><p>The quickest way to progress the ${labelContentDivorceOrEndingCivilPartnership} is to confirm you want to continue with the joint application.</p></div></details><br>",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "secondInTimeApp2",
+    "Label": "<details><summary><span>If you want to continue as a sole applicant</span></summary><div><p>The other applicant has already confirmed they want to continue with the joint application. The quickest way for you to progress the ${labelContentDivorceOrEndingCivilPartnership} is for you to also confirm you want to continue with the joint application.</p><p>If you want to change to a sole application then it will delay the ${labelContentDivorceOrEndingCivilPartnership}. You will have to make a separate application by <a href=\"https://www.gov.uk/government/publications/form-d84-application-for-a-decree-nisi-conditional-order-or-judicial-separation-decreeorder\" target=\"_blank\" rel=\"noopener noreferrer\">downloading and filling out a D84 paper form.</a> Details of where to send it are on the form. If you want to change to a sole application then you should go back to ‘manage cases’, sign out and send in the form.</p><p>The quickest way to progress the ${labelContentDivorceOrEndingCivilPartnership} is to confirm you want to continue with the joint application.</p></div></details><br>",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "serviceApplicationDecisionDate",
+    "Label": "Application decision date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "serviceApplicationGranted",
+    "Label": "Service Application Granted",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "serviceApplicationRefusalReason",
+    "Label": "Reason for refusal",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "ServiceMethod",
+    "ID": "serviceMethod",
+    "Label": "How would you like the respondent to be served?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "serviceOutcomeLabel",
+    "Label": "### Outcome of Service Application",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "Example: PBA0896366",
+    "ID": "servicePaymentFeeAccountNumber",
+    "Label": "Enter your account number",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "servicePaymentFeeAccountReferenceNumber",
+    "Label": "Enter your reference",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "servicePaymentFeeHelpWithFeesReferenceNumber",
+    "Label": "Help with Fees reference",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "OrderSummary",
+    "ID": "servicePaymentFeeOrderSummary",
+    "Label": "Here are your order details",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "ServicePaymentMethod",
+    "HintText": "How will payment be made?",
+    "ID": "servicePaymentFeePaymentMethod",
+    "Label": "How will payment be made?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "DynamicList",
+    "ID": "servicePaymentFeePbaNumbers",
+    "Label": "Select your account number",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "solApplicationFeeInPounds",
+    "Label": "Solicitor application fee (in pounds)",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "SolicitorPaymentMethod",
+    "ID": "solPaymentHowToPay",
+    "Label": "How is payment being made?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "HintText": "Include the fax or DX number, e-mail address or other electronic identification",
+    "ID": "solServiceAddressServed",
+    "Label": "Give the address where you served the documents?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "DocumentsServedBeingThe",
+    "ID": "solServiceBeingThe",
+    "Label": "Who served?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Date",
+    "ID": "solServiceDateOfService",
+    "Label": "Date of Service",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "solServiceDocumentsServed",
+    "Label": "What Documents did you serve?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "DocumentsServedHow",
+    "ID": "solServiceHowServed",
+    "Label": "How did you serve the documents?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "DocumentsServedWhere",
+    "ID": "solServiceLocationServed",
+    "Label": "Location",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "ServiceMethod",
+    "ID": "solServiceMethod",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "HintText": "(if appropriate include their position e.g. partner, director)",
+    "ID": "solServiceOnWhomServed",
+    "Label": "On whom did you serve?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "solServiceServiceDetails",
+    "Label": "Details of Service",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "solServiceServiceSotFirm",
+    "Label": "Solicitor’s Firm",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "solServiceServiceSotName",
+    "Label": "Solicitor’s Name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "solServiceSpecifyLocationServed",
+    "Label": "Specify Location",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "solServiceStatementOfTruth",
+    "Label": "I believe that the facts stated in the application are true.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "solServiceTruthStatement",
+    "Label": " ",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "solSignStatementOfTruth",
+    "Label": "I am duly authorised by the applicant to sign this statement.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "solStatementOfReconciliationCertify",
+    "Label": "I have discussed the possibility of a reconciliation with the applicant.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "solStatementOfReconciliationDiscussed",
+    "Label": "I have given the applicant the names and addresses of persons qualified to help effect a reconciliation.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "solStatementOfReconciliationFirm",
+    "Label": "Name of your firm",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "solStatementOfReconciliationName",
+    "Label": "Your name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "solUrgentCase",
+    "Label": "Does this case require urgent issue due to jurisdiction or other financial matters?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "ID": "solUrgentCaseSupportingInformation",
+    "Label": "Any supporting information or instructions?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "soleLabelDissolution",
+    "Label": "### Sole applications\nThe other party responds to the  application to end their civil partnership after it's issued.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "soleLabelDivorce",
+    "Label": "### Sole applications<br>\nThe other party responds to the divorce application after it's issued.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "solicitorFirm",
+    "Label": "Solicitor’s firm",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Text",
+    "ID": "solicitorName",
+    "Label": "Solicitor’s name",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "State",
+    "ID": "stateToTransitionApplicationTo",
+    "Label": "Bulk Scan state to transition to",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "TextArea",
+    "HintText": "For the attention of court staff. These comments will not form part of the application",
+    "ID": "statementOfReconciliationComments",
+    "Label": "Additional comments",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "statementOfTruth",
+    "Label": "Respondent Statement of Truth",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "YesOrNo",
+    "ID": "successfulServedByBailiff",
+    "Label": "Did bailiff serve successfully?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "OfflineDocumentReceived",
+    "ID": "typeOfDocumentAttached",
+    "Label": "What type of document was attached?",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "userIdLabel",
+    "Label": "<pre>Use ./bin/get-user-id-by-email.sh [email] to get an ID.\n\nTEST_SOLICITOR@mailinator.com is 93b108b7-4b26-41bf-ae8f-6e356efb11b3 in AAT.\n</pre>",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "warning-ProceedingForContent",
+    "Label": "*Proceedings for contempt of court may be brought against anyone who makes, or causes to be made, a false statement verified by a statement of truth without an honest belief in its truth*",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "TextArea",
+    "ID": "warnings",
+    "Label": "Transformation and OCR warnings",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "State",
+    "ID": "welshPreviousState",
+    "Label": "Welsh previous state",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "withdrawLabelApp1",
+    "Label": "If you want to withdraw this joint application then both parties need to jointly fill out a <a href=\"https://www.gov.uk/government/publications/form-d11-application-notice\" target=\"_blank\" rel=\"noopener noreferrer\">D11 form</a> and send it to the court. Details of where to send it are on the form.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "FieldType": "Label",
+    "ID": "withdrawLabelApp2",
+    "Label": "If you want to withdraw this joint application then both parties need to jointly fill out a <a href=\"https://www.gov.uk/government/publications/form-d11-application-notice\" target=\"_blank\" rel=\"noopener noreferrer\">D11 form</a> and send it to the court. Details of where to send it are on the form.",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  }
+]

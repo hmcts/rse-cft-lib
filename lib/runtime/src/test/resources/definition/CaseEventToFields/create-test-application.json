@@ -1,0 +1,78 @@
+[
+  {
+    "CaseEventFieldLabel": "Is applicant 1 represented",
+    "CaseEventID": "create-test-application",
+    "CaseFieldID": "applicant1SolicitorRepresented",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "Create test case",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventFieldLabel": "Is applicant 2 represented",
+    "CaseEventID": "create-test-application",
+    "CaseFieldID": "applicant2SolicitorRepresented",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "Create test case",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventFieldLabel": "Applicant 2 user ID",
+    "CaseEventID": "create-test-application",
+    "CaseFieldID": "applicant2UserId",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 5,
+    "PageID": "Create test case",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CallBackURLMidEvent": "http://localhost:4013/callbacks/mid-event?page=Create+test+case&eventId=create-test-application",
+    "CaseEventID": "create-test-application",
+    "CaseFieldID": "applicationType",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "Create test case",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventFieldLabel": "Case state",
+    "CaseEventID": "create-test-application",
+    "CaseFieldID": "stateToTransitionApplicationTo",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 6,
+    "PageID": "Create test case",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "create-test-application",
+    "CaseFieldID": "userIdLabel",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 4,
+    "PageID": "Create test case"
+  }
+]

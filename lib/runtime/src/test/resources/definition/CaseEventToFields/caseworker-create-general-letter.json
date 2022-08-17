@@ -1,0 +1,65 @@
+[
+  {
+    "CaseEventID": "caseworker-create-general-letter",
+    "CaseFieldID": "generalLetterAttachments",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 5,
+    "PageID": "createGeneralLetter",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-create-general-letter",
+    "CaseFieldID": "generalLetterDetails",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 4,
+    "PageID": "createGeneralLetter",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-create-general-letter",
+    "CaseFieldID": "generalLetterParties",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "createGeneralLetter",
+    "PageLabel": "Create general letter",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-create-general-letter",
+    "CaseFieldID": "otherRecipientAddress",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "FieldShowCondition": "generalLetterParties=\"other\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "createGeneralLetter",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-create-general-letter",
+    "CaseFieldID": "otherRecipientName",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "FieldShowCondition": "generalLetterParties=\"other\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "createGeneralLetter",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

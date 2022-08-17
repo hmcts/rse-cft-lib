@@ -1,0 +1,23 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "ReissueOption",
+    "ListElement": "Digital AoS",
+    "ListElementCode": "digitalAos",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "ReissueOption",
+    "ListElement": "Offline AoS",
+    "ListElementCode": "offlineAos",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "ReissueOption",
+    "ListElement": "Reissue Case",
+    "ListElementCode": "reissueCase",
+    "LiveFrom": "01/01/2017"
+  }
+]

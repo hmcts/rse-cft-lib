@@ -1,0 +1,139 @@
+[
+  {
+    "DisplayOrder": 3,
+    "ElementLabel": "What type of service application was received",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "AlternativeServiceType",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "alternativeServiceType",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 13,
+    "ElementLabel": "Certificate of service date",
+    "FieldType": "Date",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "certificateOfServiceDate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 12,
+    "ElementLabel": "Certificate of Service",
+    "FieldType": "DivorceDocument",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "certificateOfServiceDocument",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 9,
+    "ElementLabel": "Deemed service date",
+    "FieldType": "Date",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "deemedServiceDate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 11,
+    "ElementLabel": "Email address",
+    "FieldType": "Email",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "localCourtEmail",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 10,
+    "ElementLabel": "Court name",
+    "FieldType": "Text",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "localCourtName",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 4,
+    "ElementLabel": "How was payment made?",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "ServicePaymentMethod",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "paymentMethod",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 15,
+    "ElementLabel": "Reason for failure to serve",
+    "FieldType": "TextArea",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "reasonFailureToServeByBailiff",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 2,
+    "ElementLabel": "Added date",
+    "FieldType": "Date",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "receivedServiceAddedDate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 1,
+    "ElementLabel": "Application date",
+    "FieldType": "Date",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "receivedServiceApplicationDate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 8,
+    "ElementLabel": "Service Application Decision date",
+    "FieldType": "Date",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "serviceApplicationDecisionDate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 6,
+    "ElementLabel": "Service Application Granted",
+    "FieldType": "YesOrNo",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "serviceApplicationGranted",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 5,
+    "ElementLabel": "Outcome of service application",
+    "FieldType": "Text",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "serviceApplicationOutcomeLabel",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 7,
+    "ElementLabel": "Reason for refusal",
+    "FieldType": "TextArea",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "serviceApplicationRefusalReason",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "DisplayOrder": 14,
+    "ElementLabel": "Did bailiff serve successfully?",
+    "FieldType": "YesOrNo",
+    "ID": "AlternativeServiceOutcome",
+    "ListElementCode": "successfulServedByBailiff",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  }
+]

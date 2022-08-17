@@ -1,0 +1,142 @@
+[
+  {
+    "CaseFieldID": "labelContentMarriageOrCivilPartnership",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageMarriedInUk=\"NEVER_SHOW\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 32,
+    "TabFieldDisplayOrder": 2,
+    "TabID": "civilPartnershipDetails",
+    "TabLabel": "Civil Partnership Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "labelContentMarriageOrCivilPartnershipUC",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageMarriedInUk=\"NEVER_SHOW\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 32,
+    "TabFieldDisplayOrder": 3,
+    "TabID": "civilPartnershipDetails",
+    "TabLabel": "Civil Partnership Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "labelContentTheApplicant2UC",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageMarriedInUk=\"NEVER_SHOW\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 32,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "civilPartnershipDetails",
+    "TabLabel": "Civil Partnership Certificate",
+    "TabShowCondition": "divorceOrDissolution = \"dissolution\"",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageApplicant1Name",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 32,
+    "TabFieldDisplayOrder": 4,
+    "TabID": "civilPartnershipDetails",
+    "TabLabel": "Civil Partnership Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageApplicant2Name",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 32,
+    "TabFieldDisplayOrder": 5,
+    "TabID": "civilPartnershipDetails",
+    "TabLabel": "Civil Partnership Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageCertifyMarriageCertificateIsCorrect",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 32,
+    "TabFieldDisplayOrder": 10,
+    "TabID": "civilPartnershipDetails",
+    "TabLabel": "Civil Partnership Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageCountryOfMarriage",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 32,
+    "TabFieldDisplayOrder": 9,
+    "TabID": "civilPartnershipDetails",
+    "TabLabel": "Civil Partnership Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageDate",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 32,
+    "TabFieldDisplayOrder": 6,
+    "TabID": "civilPartnershipDetails",
+    "TabLabel": "Civil Partnership Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageIssueApplicationWithoutMarriageCertificate",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageCertifyMarriageCertificateIsCorrect=\"No\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 32,
+    "TabFieldDisplayOrder": 12,
+    "TabID": "civilPartnershipDetails",
+    "TabLabel": "Civil Partnership Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageMarriageCertificateIsIncorrectDetails",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageCertifyMarriageCertificateIsCorrect=\"No\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 32,
+    "TabFieldDisplayOrder": 11,
+    "TabID": "civilPartnershipDetails",
+    "TabLabel": "Civil Partnership Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageMarriedInUk",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 32,
+    "TabFieldDisplayOrder": 7,
+    "TabID": "civilPartnershipDetails",
+    "TabLabel": "Civil Partnership Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriagePlaceOfMarriage",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 32,
+    "TabFieldDisplayOrder": 8,
+    "TabID": "civilPartnershipDetails",
+    "TabLabel": "Civil Partnership Certificate",
+    "UserRole": ""
+  }
+]

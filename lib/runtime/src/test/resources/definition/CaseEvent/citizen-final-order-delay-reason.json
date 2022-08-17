@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=citizen-final-order-delay-reason",
+    "CaseTypeID": "NFD",
+    "Description": "Citizen final order delay reason",
+    "DisplayOrder": 32,
+    "EndButtonLabel": "Save and continue",
+    "ID": "citizen-final-order-delay-reason",
+    "LiveFrom": "01/01/2017",
+    "Name": "Citizen FO delay reason",
+    "PostConditionState": "FinalOrderOverdue",
+    "PreConditionState(s)": "FinalOrderOverdue",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

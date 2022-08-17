@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-bailiff-decision",
+    "CaseTypeID": "NFD",
+    "Description": "Make bailiff decision",
+    "DisplayOrder": 63,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-bailiff-decision",
+    "LiveFrom": "01/01/2017",
+    "Name": "Make bailiff decision",
+    "PostConditionState": "AwaitingBailiffReferral",
+    "PreConditionState(s)": "AwaitingBailiffReferral",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

@@ -1,0 +1,3502 @@
+[
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AosDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AosDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AosDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AosDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AosOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AosOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AosOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AosOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AosOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Applicant2Approved",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Applicant2Approved",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Applicant2Approved",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Applicant2Approved",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Applicant2Approved",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Applicant2Approved",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Applicant2Approved",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Applicant2Approved",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Applicant2Approved",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Applicant2Approved",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAdminClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAdminClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAdminClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingAdminClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAdminClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAdminClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingAdminClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAdminClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingAdminClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingAdminClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAdminClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAlternativeService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAlternativeService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAlternativeService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingAlternativeService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAlternativeService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingAlternativeService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAlternativeService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingAlternativeService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingAlternativeService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAlternativeService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAmendedApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAmendedApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAmendedApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingAmendedApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAmendedApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAmendedApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingAmendedApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAmendedApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingAmendedApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingAmendedApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAmendedApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAos",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAos",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAos",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingAos",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAos",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAos",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingAos",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAos",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingAos",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingAos",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingAos",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant1Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant1Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant1Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant1Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant1Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingApplicant1Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant1Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingApplicant1Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant1Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant1Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant2Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant2Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant2Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant2Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant2Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingApplicant2Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant2Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingApplicant2Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant2Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingApplicant2Response",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingBailiffReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingBailiffReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingBailiffReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingBailiffReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingBailiffReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingBailiffReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingBailiffReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingBailiffReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingBailiffReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingBailiffReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingBailiffReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingBailiffService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingBailiffService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingBailiffService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingBailiffService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingBailiffService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingBailiffService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingBailiffService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingBailiffService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingBailiffService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingBailiffService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingDwpResponse",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingDwpResponse",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingDwpResponse",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingDwpResponse",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingDwpResponse",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingDwpResponse",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingDwpResponse",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingDwpResponse",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingDwpResponse",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingDwpResponse",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingGeneralConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingGeneralConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingGeneralConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingGeneralConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingGeneralConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingGeneralConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingGeneralConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingGeneralConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingGeneralConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingGeneralConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingGeneralConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingGeneralReferralPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingGeneralReferralPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingGeneralReferralPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingGeneralReferralPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingGeneralReferralPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingGeneralReferralPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingGeneralReferralPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingGeneralReferralPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingGeneralReferralPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingGeneralReferralPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingHWFDecision",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingHWFDecision",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingHWFDecision",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingHWFDecision",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingHWFDecision",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingHWFDecision",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingHWFDecision",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingHWFDecision",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingJudgeClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingJudgeClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingJudgeClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingJudgeClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingJudgeClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingJudgeClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingJudgeClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingJudgeClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingJudgeClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingJudgeClarification",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingLegalAdvisorReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingLegalAdvisorReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingLegalAdvisorReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingLegalAdvisorReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingLegalAdvisorReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingLegalAdvisorReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingLegalAdvisorReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingLegalAdvisorReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingLegalAdvisorReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingLegalAdvisorReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingLegalAdvisorReferral",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPronouncement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPronouncement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPronouncement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingPronouncement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPronouncement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPronouncement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingPronouncement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPronouncement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingPronouncement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingPronouncement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingPronouncement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingServiceConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingServiceConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingServiceConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingServiceConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingServiceConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingServiceConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingServiceConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingServiceConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingServiceConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingServiceConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingServiceConsideration",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingServicePayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingServicePayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingServicePayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "AwaitingServicePayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingServicePayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingServicePayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingServicePayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingServicePayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "AwaitingServicePayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "AwaitingServicePayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "BulkCaseReject",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "BulkCaseReject",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "BulkCaseReject",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "BulkCaseReject",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "BulkCaseReject",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "BulkCaseReject",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "BulkCaseReject",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "BulkCaseReject",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "BulkCaseReject",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "BulkCaseReject",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ClarificationSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ClarificationSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ClarificationSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "ClarificationSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ClarificationSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ClarificationSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ClarificationSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ClarificationSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ClarificationSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ClarificationSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ClarificationSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ConditionalOrderDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ConditionalOrderDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ConditionalOrderDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ConditionalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ConditionalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ConditionalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderPronounced",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderPronounced",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderPronounced",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "ConditionalOrderPronounced",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderPronounced",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ConditionalOrderPronounced",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderPronounced",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ConditionalOrderPronounced",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ConditionalOrderPronounced",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderPronounced",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderRefused",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderRefused",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderRefused",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "ConditionalOrderRefused",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderRefused",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ConditionalOrderRefused",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderRefused",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ConditionalOrderRefused",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "ConditionalOrderRefused",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "ConditionalOrderRefused",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Draft",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Draft",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Draft",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Draft",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Draft",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Draft",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Draft",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Draft",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Draft",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "FinalOrderComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "FinalOrderComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "FinalOrderComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "FinalOrderComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "FinalOrderOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "FinalOrderOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "FinalOrderOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "FinalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "FinalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "FinalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "FinalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderPending",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "FinalOrderRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "FinalOrderRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "FinalOrderRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "FinalOrderRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "FinalOrderRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "GeneralApplicationReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "GeneralApplicationReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "GeneralApplicationReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "GeneralApplicationReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "GeneralApplicationReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "GeneralApplicationReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "GeneralApplicationReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "GeneralApplicationReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "GeneralApplicationReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "GeneralApplicationReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "GeneralConsiderationComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "GeneralConsiderationComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "GeneralConsiderationComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "GeneralConsiderationComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "GeneralConsiderationComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "GeneralConsiderationComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "GeneralConsiderationComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "GeneralConsiderationComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "GeneralConsiderationComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "GeneralConsiderationComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "GeneralConsiderationComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Holding",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Holding",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Holding",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Holding",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Holding",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Holding",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Holding",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Holding",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Holding",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Holding",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Holding",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "IssuedToBailiff",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "IssuedToBailiff",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "IssuedToBailiff",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "IssuedToBailiff",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "IssuedToBailiff",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "IssuedToBailiff",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "IssuedToBailiff",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "IssuedToBailiff",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "IssuedToBailiff",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "IssuedToBailiff",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "IssuedToBailiff",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "NewPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "NewPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "NewPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "NewPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "NewPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "NewPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "NewPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "NewPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "NewPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "NewPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "NewPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "OfflineDocumentReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "OfflineDocumentReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "OfflineDocumentReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "OfflineDocumentReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "OfflineDocumentReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "OfflineDocumentReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "OfflineDocumentReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "OfflineDocumentReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "OfflineDocumentReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "OfflineDocumentReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "OfflineDocumentReceived",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "PendingHearingOutcome",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "PendingHearingOutcome",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "PendingHearingOutcome",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "PendingHearingOutcome",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "PendingHearingOutcome",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "PendingHearingOutcome",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "PendingHearingOutcome",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "PendingHearingOutcome",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "PendingHearingOutcome",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "PendingHearingOutcome",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Rejected",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Rejected",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Rejected",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "Rejected",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Rejected",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Rejected",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Rejected",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Rejected",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Rejected",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Submitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Submitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Submitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "Submitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Submitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Submitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Submitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Submitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Submitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Submitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "WelshTranslationRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "WelshTranslationRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "WelshTranslationRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "WelshTranslationRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "WelshTranslationRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "WelshTranslationRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "WelshTranslationRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "WelshTranslationRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "WelshTranslationRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "WelshTranslationRequested",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "WelshTranslationReview",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "WelshTranslationReview",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "WelshTranslationReview",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "WelshTranslationReview",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "WelshTranslationReview",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "WelshTranslationReview",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "WelshTranslationReview",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "WelshTranslationReview",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "WelshTranslationReview",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "WelshTranslationReview",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Withdrawn",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Withdrawn",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Withdrawn",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPTWOSOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseStateID": "Withdrawn",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Withdrawn",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Withdrawn",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Withdrawn",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseStateID": "Withdrawn",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseStateID": "Withdrawn",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen"
+  }
+]

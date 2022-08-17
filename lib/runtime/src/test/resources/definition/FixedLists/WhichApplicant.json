@@ -1,0 +1,16 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "WhichApplicant",
+    "ListElement": "Applicant 1",
+    "ListElementCode": "applicant1",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "WhichApplicant",
+    "ListElement": "Respondent / Applicant 2",
+    "ListElementCode": "applicant2",
+    "LiveFrom": "01/01/2017"
+  }
+]

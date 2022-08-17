@@ -1,0 +1,15 @@
+[
+  {
+    "CaseEventID": "caseworker-upload-confidential-document",
+    "CaseFieldID": "confidentialDocumentsUploaded",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "uploadConfidentialDocuments",
+    "PageLabel": "Upload Confidential Documents",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Upload amended application",
+    "DisplayOrder": 120,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-upload-amended-application",
+    "LiveFrom": "01/01/2017",
+    "Name": "Upload amended application",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosDrafted;AosOverdue;Applicant2Approved;AwaitingAdminClarification;AwaitingAlternativeService;AwaitingAmendedApplication;AwaitingAos;AwaitingApplicant1Response;AwaitingApplicant2Response;AwaitingBailiffReferral;AwaitingBailiffService;AwaitingClarification;AwaitingConditionalOrder;AwaitingDocuments;AwaitingDwpResponse;AwaitingFinalOrder;AwaitingGeneralConsideration;AwaitingGeneralReferralPayment;AwaitingHWFDecision;AwaitingJudgeClarification;AwaitingLegalAdvisorReferral;AwaitingPayment;AwaitingPronouncement;AwaitingService;AwaitingServiceConsideration;AwaitingServicePayment;BulkCaseReject;ClarificationSubmitted;ConditionalOrderDrafted;ConditionalOrderPending;ConditionalOrderPronounced;ConditionalOrderRefused;Draft;FinalOrderComplete;FinalOrderOverdue;FinalOrderPending;FinalOrderRequested;GeneralApplicationReceived;GeneralConsiderationComplete;Holding;IssuedToBailiff;NewPaperCase;OfflineDocumentReceived;PendingHearingOutcome;Submitted;WelshTranslationRequested;WelshTranslationReview",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

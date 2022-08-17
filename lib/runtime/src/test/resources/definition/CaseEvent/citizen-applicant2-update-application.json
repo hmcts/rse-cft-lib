@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=citizen-applicant2-update-application",
+    "CaseTypeID": "NFD",
+    "Description": "Patch a joint divorce or dissolution as applicant 2",
+    "DisplayOrder": 71,
+    "EndButtonLabel": "Save and continue",
+    "ID": "citizen-applicant2-update-application",
+    "LiveFrom": "01/01/2017",
+    "Name": "Patch a joint case",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosDrafted;AosOverdue;AwaitingAlternativeService;AwaitingApplicant2Response;AwaitingBailiffReferral;AwaitingBailiffService;AwaitingClarification;AwaitingConditionalOrder;AwaitingDwpResponse;AwaitingGeneralConsideration;AwaitingGeneralReferralPayment;AwaitingJudgeClarification;AwaitingServiceConsideration;AwaitingServicePayment;ConditionalOrderDrafted;ConditionalOrderPending;GeneralApplicationReceived;GeneralConsiderationComplete;Holding;IssuedToBailiff;PendingHearingOutcome",
+    "RetriesTimeoutURLAboutToSubmitEvent": "120,120",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

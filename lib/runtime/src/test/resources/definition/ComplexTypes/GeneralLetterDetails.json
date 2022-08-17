@@ -1,0 +1,44 @@
+[
+  {
+    "ElementLabel": "Attachments",
+    "FieldType": "Collection",
+    "FieldTypeParameter": "Document",
+    "ID": "GeneralLetterDetails",
+    "ListElementCode": "generalLetterAttachmentLinks",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "General letter created by",
+    "FieldType": "Text",
+    "ID": "GeneralLetterDetails",
+    "ListElementCode": "generalLetterCreatedBy",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "General letter date",
+    "FieldType": "DateTime",
+    "ID": "GeneralLetterDetails",
+    "ListElementCode": "generalLetterDateTime",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "General letter",
+    "FieldType": "Document",
+    "ID": "GeneralLetterDetails",
+    "ListElementCode": "generalLetterLink",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Address to",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "GeneralParties",
+    "ID": "GeneralLetterDetails",
+    "ListElementCode": "generalLetterParties",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  }
+]

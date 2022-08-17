@@ -1,0 +1,138 @@
+[
+  {
+    "CaseFieldID": "applicant1FinalOrderLateExplanation",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 55,
+    "TabFieldDisplayOrder": 4,
+    "TabID": "finalOrder[APPONESOLICITOR]",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant1FinalOrderStatementOfTruth",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 55,
+    "TabFieldDisplayOrder": 5,
+    "TabID": "finalOrder[APPONESOLICITOR]",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant2FinalOrderExplanation",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 55,
+    "TabFieldDisplayOrder": 12,
+    "TabID": "finalOrder[APPONESOLICITOR]",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "dateFinalOrderEligibleToRespondent",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 55,
+    "TabFieldDisplayOrder": 9,
+    "TabID": "finalOrder[APPONESOLICITOR]",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "dateFinalOrderNoLongerEligible",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 55,
+    "TabFieldDisplayOrder": 8,
+    "TabID": "finalOrder[APPONESOLICITOR]",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "doesApplicant1WantToApplyForFinalOrder",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 55,
+    "TabFieldDisplayOrder": 3,
+    "TabID": "finalOrder[APPONESOLICITOR]",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "doesApplicant2WantToApplyForFinalOrder",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 55,
+    "TabFieldDisplayOrder": 11,
+    "TabID": "finalOrder[APPONESOLICITOR]",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "granted",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 55,
+    "TabFieldDisplayOrder": 6,
+    "TabID": "finalOrder[APPONESOLICITOR]",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "grantedDate",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 55,
+    "TabFieldDisplayOrder": 7,
+    "TabID": "finalOrder[APPONESOLICITOR]",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "labelContentFinaliseDivorceOrEndCivilPartnership",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 55,
+    "TabFieldDisplayOrder": 2,
+    "TabID": "finalOrder[APPONESOLICITOR]",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "labelFinalOrderDetails-SoleApplicant",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "applicationType=\"soleApplication\" AND doesApplicant1WantToApplyForFinalOrder=\"*\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 55,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "finalOrder[APPONESOLICITOR]",
+    "TabLabel": "Final Order",
+    "TabShowCondition": "[STATE]=\"AwaitingFinalOrder\" OR [STATE]=\"FinalOrderRequested\" OR [STATE]=\"FinalOrderPending\" OR [STATE]=\"FinalOrderOverdue\" OR [STATE]=\"FinalOrderComplete\"",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CaseFieldID": "labelFinalOrderDetails-SoleRespondent",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "applicationType=\"soleApplication\" AND doesApplicant2WantToApplyForFinalOrder=\"*\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 55,
+    "TabFieldDisplayOrder": 10,
+    "TabID": "finalOrder[APPONESOLICITOR]",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  }
+]

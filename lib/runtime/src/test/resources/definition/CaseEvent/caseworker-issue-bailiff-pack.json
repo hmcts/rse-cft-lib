@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-issue-bailiff-pack",
+    "CaseTypeID": "NFD",
+    "Description": "Issue bailiff pack",
+    "DisplayOrder": 58,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-issue-bailiff-pack",
+    "LiveFrom": "01/01/2017",
+    "Name": "Issue bailiff pack",
+    "PostConditionState": "IssuedToBailiff",
+    "PreConditionState(s)": "AwaitingBailiffService",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

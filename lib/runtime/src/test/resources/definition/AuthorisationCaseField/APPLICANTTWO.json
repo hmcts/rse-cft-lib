@@ -1,0 +1,1752 @@
+[
+  {
+    "CRUD": "R",
+    "CaseFieldID": "Label-SolicitorService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant1-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant1DetailsAreConfidential-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant1OtherProceedings-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant1sSolicitor-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2DetailsAreConfidential-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2OtherProceedings-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelApplicant2SolStatementOfTruth-AoSReview",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2sSolicitorNewCases-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2sSolicitorOldCases-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelCivilPartnership-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelJurisdiction-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelLanguageDetails-Applicant",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelLanguageDetails-Respondent",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelMarriage-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelRespSol-AOSConfirmRead",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelRespSol-DueDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "additionalComments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "alternativeServiceType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1Address",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1CannotUpload",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1CannotUploadSupportingDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1ContactDetailsType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1DocumentsUploaded",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1Email",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1FinalOrderLateExplanationTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1FinancialOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1FinancialOrdersFor",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1FirstName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1Gender",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1HWFAppliedForFees",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1HWFNeedHelp",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1HWFReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1IsApplicant2Represented",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1KnowsApplicant2Address",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1LanguagePreferenceWelsh",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1LastName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1LastNameChangedWhenMarried",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1LegalProceedings",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1LegalProceedingsDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1LegalProceedingsDetailsTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1MiddleName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1NameChangedHow",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1NameChangedHowOtherDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1NameDifferentToMarriageCertificate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1Offline",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1PcqId",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1PhoneNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1ScreenHasMarriageBroken",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorAddress",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorAgreeToReceiveEmailsCheckbox",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorEmail",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorFirmName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorOrganisationPolicy",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorPhone",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorReference",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorRepresented",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1StatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1WantsToHavePapersServedAnotherWay",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2Address",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2AgreeToReceiveEmails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2AgreedToReceiveEmails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2CannotUpload",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2CannotUploadSupportingDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2ConfirmApplicant1Information",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2ConfirmReceipt",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2ContactDetailsType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2ContinueApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2DocumentsUploaded",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2Email",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2ExplainsApplicant1IncorrectInformation",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2FinalOrderExplanation",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2FinancialOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2FinancialOrdersFor",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2FirstName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2Gender",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2HWFAppliedForFees",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2HWFNeedHelp",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2HWFReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2LanguagePreferenceWelsh",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2LastName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2LastNameChangedWhenMarried",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2LegalProceedings",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2LegalProceedingsDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2LegalProceedingsDetailsTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2LegalProceedingsDetailsTranslatedTo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2MiddleName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2NameChangedHow",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2NameChangedHowOtherDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2NameDifferentToMarriageCertificate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2NeedsHelpWithFees",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2Offline",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2PcqId",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2PhoneNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2PrayerDissolveDivorce",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2PrayerEndCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2PrayerFinancialOrdersChild",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2PrayerFinancialOrdersThemselves",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2ScreenHasMarriageBroken",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorAddress",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorAgreeToReceiveEmailsCheckbox",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorEmail",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorFirmName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicant2SolicitorLabelRespSol-Email",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicant2SolicitorLabelRespSol-EmailHeader",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorOrganisationPolicy",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorPhone",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorReference",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorRepresented",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2StatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2UsedWelshTranslationOnSubmission",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicationType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "bulkListCaseReferenceLink",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "caseHistory",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "certificateOfServiceDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant1ApplyForConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant1ApplyForConditionalOrderIfNo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant1ConfirmInformationStillCorrect",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant1ReasonInformationNotCorrect",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1ReasonInformationNotCorrectTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant1SolicitorAdditionalComments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant1SolicitorFirm",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant1SolicitorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant1StatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2ApplyForConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2ApplyForConditionalOrderIfNo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2ApplyForConditionalOrderStarted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2ChangeOrAddToApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2ConfirmInformationStillCorrect",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2IsDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2IsEverythingInApplicationTrue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2IsSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2ReasonInformationNotCorrect",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2ReasonInformationNotCorrectTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2ReasonInformationNotCorrectTranslatedTo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2SolicitorAdditionalComments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2SolicitorFirm",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2SolicitorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2StatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2SubmittedDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseFieldID": "coCannotUploadClarificationDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coCertificateOfEntitlementDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseFieldID": "coClarificationResponses",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseFieldID": "coClarificationUploadDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "coConditionalOrderReviewAoSNo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "coConditionalOrderReviewAoSNoApp2IfNo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "coConditionalOrderReviewAoSNoIfNo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coLastAlternativeServiceDocumentLink",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseFieldID": "coRefusalClarificationAdditionalInfo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coRefusalClarificationAdditionalInfoTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseFieldID": "coRefusalDecision",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseFieldID": "coRefusalOrderDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coRespondentAnswersLink",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "confirmDisputeApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "confirmReadPetition",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "createdDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "dateAosSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "dateSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "divorceOrDissolution",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "divorceUnit",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "divorceWho",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "documentsGenerated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "documentsUploaded",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "doesApplicant1WantToApplyForFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "doesApplicant2WantToApplyForFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "dueDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "evidenceHandled",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "firstInTimeApp1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "firstInTimeApp2",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalEmails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalOrders",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalReferralUrgentCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "howToRespondApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "hyphenatedCaseRef",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "inWhichCountryIsYourLifeMainlyBased",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "issueDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "jurisdictionAgree",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "jurisdictionConnections",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "label-ApplicantDispute",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "label-ApplyForFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "label-DoNotBelieveMarriageValidBullet",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "label-HaveLegalPowerBullet",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "label-MarriageLegallyEndedBullet",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "labelApplicant2SolStatementOfTruth-SOT",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentApplicant2",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentApplicant2UC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "labelContentApplicantsOrApplicant1s",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentDivorceOrCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentDivorceOrCivilPartnershipApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentDivorceOrEndingCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentFinaliseDivorceOrEndCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "labelContentGotMarriedOrFormedCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentMarriageOrCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "labelContentMarriageOrCivilPartnershipUC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentTheApplicant2",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentTheApplicant2UC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "labelContentTheApplicantOrApplicant1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "labelContentTheApplicantOrApplicant1UC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentUnionType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageApplicant1Name",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageApplicant2Name",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageCertificateInEnglish",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageCertifiedTranslation",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageCertifyMarriageCertificateIsCorrect",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageCountryOfMarriage",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageFormationType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageIssueApplicationWithoutMarriageCertificate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageMarriageCertificateIsIncorrectDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageMarriedInUk",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriagePlaceOfMarriage",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "miniApplicationLink",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "newPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "reasonCourtsOfEnglandAndWalesHaveNoJurisdiction",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "scannedDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "secondInTimeApp1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "secondInTimeApp2",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "serviceMethod",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solPaymentHowToPay",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceAddressServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceBeingThe",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceDateOfService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceDocumentsServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceHowServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceLocationServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceOnWhomServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceServiceDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceServiceSotFirm",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceServiceSotName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceSpecifyLocationServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceTruthStatement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solSignStatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solStatementOfReconciliationCertify",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solStatementOfReconciliationDiscussed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solStatementOfReconciliationFirm",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solStatementOfReconciliationName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solUrgentCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solUrgentCaseSupportingInformation",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solicitorFirm",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solicitorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "statementOfReconciliationComments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "statementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "warning-ProceedingForContent",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "warnings",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "withdrawLabelApp1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "withdrawLabelApp2",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  }
+]

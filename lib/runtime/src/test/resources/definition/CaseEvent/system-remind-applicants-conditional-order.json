@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=system-remind-applicants-conditional-order",
+    "CaseTypeID": "NFD",
+    "Description": "Remind Joint Applicants they can apply for a Conditional Order",
+    "DisplayOrder": 83,
+    "EndButtonLabel": "Save and continue",
+    "ID": "system-remind-applicants-conditional-order",
+    "LiveFrom": "01/01/2017",
+    "Name": "Remind Applicants Apply for CO",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AwaitingConditionalOrder;ConditionalOrderDrafted;ConditionalOrderPending",
+    "RetriesTimeoutURLAboutToSubmitEvent": "120,120",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

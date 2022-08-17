@@ -1,0 +1,23 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "GeneralReferralDecision",
+    "ListElement": "Approve",
+    "ListElementCode": "approve",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "GeneralReferralDecision",
+    "ListElement": "Other response",
+    "ListElementCode": "other",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "GeneralReferralDecision",
+    "ListElement": "Refuse",
+    "ListElementCode": "refuse",
+    "LiveFrom": "01/01/2017"
+  }
+]

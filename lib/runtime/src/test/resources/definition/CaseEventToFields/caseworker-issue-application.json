@@ -1,0 +1,75 @@
+[
+  {
+    "CaseEventID": "caseworker-issue-application",
+    "CaseFieldID": "labelContentMarriageOrCivilPartnership",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "FieldShowCondition": "marriageApplicant1Name=\"ALWAYS_HIDE\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "issueApplication",
+    "PageLabel": "Issue Divorce Application"
+  },
+  {
+    "CaseEventID": "caseworker-issue-application",
+    "CaseFieldID": "marriageApplicant1Name",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "issueApplication",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-issue-application",
+    "CaseFieldID": "marriageApplicant2Name",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 4,
+    "PageID": "issueApplication",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-issue-application",
+    "CaseFieldID": "marriageCountryOfMarriage",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 5,
+    "PageID": "issueApplication",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-issue-application",
+    "CaseFieldID": "marriageDate",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "issueApplication",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-issue-application",
+    "CaseFieldID": "marriagePlaceOfMarriage",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 6,
+    "PageID": "issueApplication",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

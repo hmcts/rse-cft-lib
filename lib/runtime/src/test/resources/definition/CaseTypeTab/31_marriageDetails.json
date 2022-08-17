@@ -1,0 +1,142 @@
+[
+  {
+    "CaseFieldID": "labelContentMarriageOrCivilPartnership",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageMarriedInUk=\"NEVER_SHOW\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 31,
+    "TabFieldDisplayOrder": 2,
+    "TabID": "marriageDetails",
+    "TabLabel": "Marriage Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "labelContentMarriageOrCivilPartnershipUC",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageMarriedInUk=\"NEVER_SHOW\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 31,
+    "TabFieldDisplayOrder": 3,
+    "TabID": "marriageDetails",
+    "TabLabel": "Marriage Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "labelContentTheApplicant2UC",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageMarriedInUk=\"NEVER_SHOW\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 31,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "marriageDetails",
+    "TabLabel": "Marriage Certificate",
+    "TabShowCondition": "divorceOrDissolution = \"divorce\"",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageApplicant1Name",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 31,
+    "TabFieldDisplayOrder": 4,
+    "TabID": "marriageDetails",
+    "TabLabel": "Marriage Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageApplicant2Name",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 31,
+    "TabFieldDisplayOrder": 5,
+    "TabID": "marriageDetails",
+    "TabLabel": "Marriage Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageCertifyMarriageCertificateIsCorrect",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 31,
+    "TabFieldDisplayOrder": 10,
+    "TabID": "marriageDetails",
+    "TabLabel": "Marriage Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageCountryOfMarriage",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 31,
+    "TabFieldDisplayOrder": 9,
+    "TabID": "marriageDetails",
+    "TabLabel": "Marriage Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageDate",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 31,
+    "TabFieldDisplayOrder": 6,
+    "TabID": "marriageDetails",
+    "TabLabel": "Marriage Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageIssueApplicationWithoutMarriageCertificate",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageCertifyMarriageCertificateIsCorrect=\"No\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 31,
+    "TabFieldDisplayOrder": 12,
+    "TabID": "marriageDetails",
+    "TabLabel": "Marriage Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageMarriageCertificateIsIncorrectDetails",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageCertifyMarriageCertificateIsCorrect=\"No\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 31,
+    "TabFieldDisplayOrder": 11,
+    "TabID": "marriageDetails",
+    "TabLabel": "Marriage Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriageMarriedInUk",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 31,
+    "TabFieldDisplayOrder": 7,
+    "TabID": "marriageDetails",
+    "TabLabel": "Marriage Certificate",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "marriagePlaceOfMarriage",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 31,
+    "TabFieldDisplayOrder": 8,
+    "TabID": "marriageDetails",
+    "TabLabel": "Marriage Certificate",
+    "UserRole": ""
+  }
+]

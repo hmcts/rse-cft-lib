@@ -1,0 +1,345 @@
+[
+  {
+    "DisplayOrder": 3,
+    "ID": "State",
+    "ListElement": "AoS drafted",
+    "ListElementCode": "AosDrafted",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 4,
+    "ID": "State",
+    "ListElement": "AoS overdue",
+    "ListElementCode": "AosOverdue",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 5,
+    "ID": "State",
+    "ListElement": "Applicant 2 approved",
+    "ListElementCode": "Applicant2Approved",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 9,
+    "ID": "State",
+    "ListElement": "Awaiting admin clarification",
+    "ListElementCode": "AwaitingAdminClarification",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 10,
+    "ID": "State",
+    "ListElement": "Awaiting alternative service",
+    "ListElementCode": "AwaitingAlternativeService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 11,
+    "ID": "State",
+    "ListElement": "Awaiting amended application",
+    "ListElementCode": "AwaitingAmendedApplication",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "State",
+    "ListElement": "AoS awaiting",
+    "ListElementCode": "AwaitingAos",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 13,
+    "ID": "State",
+    "ListElement": "Awaiting applicant 1 response",
+    "ListElementCode": "AwaitingApplicant1Response",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 14,
+    "ID": "State",
+    "ListElement": "Awaiting applicant 2 response",
+    "ListElementCode": "AwaitingApplicant2Response",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 15,
+    "ID": "State",
+    "ListElement": "Awaiting bailiff referral",
+    "ListElementCode": "AwaitingBailiffReferral",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 16,
+    "ID": "State",
+    "ListElement": "Awaiting bailiff service",
+    "ListElementCode": "AwaitingBailiffService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 17,
+    "ID": "State",
+    "ListElement": "Awaiting clarification",
+    "ListElementCode": "AwaitingClarification",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 18,
+    "ID": "State",
+    "ListElement": "Awaiting conditional order",
+    "ListElementCode": "AwaitingConditionalOrder",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 12,
+    "ID": "State",
+    "ListElement": "Awaiting applicant",
+    "ListElementCode": "AwaitingDocuments",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 19,
+    "ID": "State",
+    "ListElement": "Awaiting DWP response",
+    "ListElementCode": "AwaitingDwpResponse",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 20,
+    "ID": "State",
+    "ListElement": "Awaiting final order",
+    "ListElementCode": "AwaitingFinalOrder",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 21,
+    "ID": "State",
+    "ListElement": "Awaiting general consideration",
+    "ListElementCode": "AwaitingGeneralConsideration",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 22,
+    "ID": "State",
+    "ListElement": "Awaiting general referral payment",
+    "ListElementCode": "AwaitingGeneralReferralPayment",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 23,
+    "ID": "State",
+    "ListElement": "Awaiting HWF decision",
+    "ListElementCode": "AwaitingHWFDecision",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 25,
+    "ID": "State",
+    "ListElement": "Awaiting judge clarification",
+    "ListElementCode": "AwaitingJudgeClarification",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 26,
+    "ID": "State",
+    "ListElement": "Awaiting legal advisor referral",
+    "ListElementCode": "AwaitingLegalAdvisorReferral",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 6,
+    "ID": "State",
+    "ListElement": "Application awaiting payment",
+    "ListElementCode": "AwaitingPayment",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 42,
+    "ID": "State",
+    "ListElement": "Listed; awaiting pronouncement",
+    "ListElementCode": "AwaitingPronouncement",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 27,
+    "ID": "State",
+    "ListElement": "Awaiting service",
+    "ListElementCode": "AwaitingService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 28,
+    "ID": "State",
+    "ListElement": "Awaiting service consideration",
+    "ListElementCode": "AwaitingServiceConsideration",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 29,
+    "ID": "State",
+    "ListElement": "Awaiting service payment",
+    "ListElementCode": "AwaitingServicePayment",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 46,
+    "ID": "State",
+    "ListElement": "Removed from bulk case",
+    "ListElementCode": "BulkCaseReject",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 30,
+    "ID": "State",
+    "ListElement": "Clarification response submitted",
+    "ListElementCode": "ClarificationSubmitted",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 31,
+    "ID": "State",
+    "ListElement": "Conditional order drafted",
+    "ListElementCode": "ConditionalOrderDrafted",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 24,
+    "ID": "State",
+    "ListElement": "Awaiting joint conditional order",
+    "ListElementCode": "ConditionalOrderPending",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 32,
+    "ID": "State",
+    "ListElement": "Conditional order pronounced",
+    "ListElementCode": "ConditionalOrderPronounced",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 33,
+    "ID": "State",
+    "ListElement": "Conditional order refused",
+    "ListElementCode": "ConditionalOrderRefused",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 34,
+    "ID": "State",
+    "ListElement": "Draft",
+    "ListElementCode": "Draft",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 35,
+    "ID": "State",
+    "ListElement": "Final order complete",
+    "ListElementCode": "FinalOrderComplete",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 36,
+    "ID": "State",
+    "ListElement": "Final order overdue",
+    "ListElementCode": "FinalOrderOverdue",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 37,
+    "ID": "State",
+    "ListElement": "Final order pending",
+    "ListElementCode": "FinalOrderPending",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 38,
+    "ID": "State",
+    "ListElement": "Final order requested",
+    "ListElementCode": "FinalOrderRequested",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 39,
+    "ID": "State",
+    "ListElement": "General application received",
+    "ListElementCode": "GeneralApplicationReceived",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 40,
+    "ID": "State",
+    "ListElement": "General consideration complete",
+    "ListElementCode": "GeneralConsiderationComplete",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "State",
+    "ListElement": "20 week holding period",
+    "ListElementCode": "Holding",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 41,
+    "ID": "State",
+    "ListElement": "Issued to bailiff",
+    "ListElementCode": "IssuedToBailiff",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 43,
+    "ID": "State",
+    "ListElement": "New paper case",
+    "ListElementCode": "NewPaperCase",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 44,
+    "ID": "State",
+    "ListElement": "Offline document received by CW",
+    "ListElementCode": "OfflineDocumentReceived",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 45,
+    "ID": "State",
+    "ListElement": "Pending hearing outcome",
+    "ListElementCode": "PendingHearingOutcome",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 7,
+    "ID": "State",
+    "ListElement": "Application rejected",
+    "ListElementCode": "Rejected",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 47,
+    "ID": "State",
+    "ListElement": "Submitted",
+    "ListElementCode": "Submitted",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 48,
+    "ID": "State",
+    "ListElement": "Welsh Translation requested",
+    "ListElementCode": "WelshTranslationRequested",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 49,
+    "ID": "State",
+    "ListElement": "Welsh Translation review",
+    "ListElementCode": "WelshTranslationReview",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 8,
+    "ID": "State",
+    "ListElement": "Application withdrawn",
+    "ListElementCode": "Withdrawn",
+    "LiveFrom": "01/01/2017"
+  }
+]

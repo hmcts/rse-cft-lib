@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-progress-paper-case",
+    "CaseTypeID": "NFD",
+    "Description": "Progress paper case",
+    "DisplayOrder": 76,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-progress-paper-case",
+    "LiveFrom": "01/01/2017",
+    "Name": "Progress paper case",
+    "PostConditionState": "NewPaperCase",
+    "PreConditionState(s)": "NewPaperCase",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

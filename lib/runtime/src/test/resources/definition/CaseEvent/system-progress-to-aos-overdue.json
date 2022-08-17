@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=system-progress-to-aos-overdue",
+    "CaseTypeID": "NFD",
+    "Description": "AoS not received within SLA",
+    "DisplayOrder": 10,
+    "EndButtonLabel": "Save and continue",
+    "ID": "system-progress-to-aos-overdue",
+    "LiveFrom": "01/01/2017",
+    "Name": "AoS not received within SLA",
+    "PostConditionState": "AosOverdue",
+    "PreConditionState(s)": "AosDrafted;AwaitingAos",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

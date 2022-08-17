@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLSubmittedEvent": "http://localhost:4013/callbacks/submitted?eventId=citizen-save-and-close",
+    "CaseTypeID": "NFD",
+    "Description": "Save application and send email notification to the applicant",
+    "DisplayOrder": 94,
+    "EndButtonLabel": "Save and continue",
+    "ID": "citizen-save-and-close",
+    "LiveFrom": "01/01/2017",
+    "Name": "Save and close application",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "*",
+    "RetriesTimeoutURLSubmittedEvent": "120,120",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

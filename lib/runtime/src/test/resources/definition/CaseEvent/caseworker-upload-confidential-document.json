@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-upload-confidential-document",
+    "CaseTypeID": "NFD",
+    "Description": "Upload confidential document",
+    "DisplayOrder": 121,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-upload-confidential-document",
+    "LiveFrom": "01/01/2017",
+    "Name": "Upload confidential document",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosDrafted;AosOverdue;AwaitingAdminClarification;AwaitingAlternativeService;AwaitingAmendedApplication;AwaitingAos;AwaitingBailiffReferral;AwaitingBailiffService;AwaitingClarification;AwaitingConditionalOrder;AwaitingDocuments;AwaitingDwpResponse;AwaitingFinalOrder;AwaitingGeneralConsideration;AwaitingGeneralReferralPayment;AwaitingHWFDecision;AwaitingJudgeClarification;AwaitingLegalAdvisorReferral;AwaitingPayment;AwaitingPronouncement;AwaitingService;AwaitingServiceConsideration;AwaitingServicePayment;BulkCaseReject;ClarificationSubmitted;ConditionalOrderDrafted;ConditionalOrderPending;ConditionalOrderPronounced;ConditionalOrderRefused;FinalOrderComplete;FinalOrderOverdue;FinalOrderPending;FinalOrderRequested;GeneralApplicationReceived;GeneralConsiderationComplete;Holding;IssuedToBailiff;NewPaperCase;OfflineDocumentReceived;PendingHearingOutcome;Rejected;Submitted;WelshTranslationRequested;WelshTranslationReview;Withdrawn",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

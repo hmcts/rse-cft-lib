@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=applicant2-approve",
+    "CaseTypeID": "NFD",
+    "Description": "Applicant 2 has approved",
+    "DisplayOrder": 13,
+    "EndButtonLabel": "Save and continue",
+    "ID": "applicant2-approve",
+    "LiveFrom": "01/01/2017",
+    "Name": "Applicant 2 approve",
+    "PostConditionState": "Applicant2Approved",
+    "PreConditionState(s)": "AwaitingApplicant2Response",
+    "RetriesTimeoutURLAboutToSubmitEvent": "120,120",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

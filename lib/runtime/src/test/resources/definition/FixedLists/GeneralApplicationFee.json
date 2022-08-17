@@ -1,0 +1,16 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "GeneralApplicationFee",
+    "ListElement": "Application on Notice (FEE0227)",
+    "ListElementCode": "FEE0227",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "GeneralApplicationFee",
+    "ListElement": "Application without notice (FEE0228)",
+    "ListElementCode": "FEE0228",
+    "LiveFrom": "01/01/2017"
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "CaseEventFieldLabel": "${labelContentTheApplicant2UC} home address",
+    "CaseEventID": "solicitor-update-applicant2-contact-details",
+    "CaseFieldID": "applicant2Address",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "Applicant2ContactDetails",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventFieldLabel": "Should ${labelContentTheApplicant2} contact details be kept private?",
+    "CaseEventID": "solicitor-update-applicant2-contact-details",
+    "CaseFieldID": "applicant2ContactDetailsType",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 5,
+    "PageID": "Applicant2ContactDetails",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventFieldLabel": "${labelContentTheApplicant2UC} email address",
+    "CaseEventID": "solicitor-update-applicant2-contact-details",
+    "CaseFieldID": "applicant2Email",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "Applicant2ContactDetails",
+    "PageLabel": "Update contact details",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "solicitor-update-applicant2-contact-details",
+    "CaseFieldID": "applicant2LabelHorizontalLine1App2",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 4,
+    "PageID": "Applicant2ContactDetails"
+  },
+  {
+    "CaseEventFieldLabel": "${labelContentTheApplicant2UC} phone number",
+    "CaseEventID": "solicitor-update-applicant2-contact-details",
+    "CaseFieldID": "applicant2PhoneNumber",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "Applicant2ContactDetails",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

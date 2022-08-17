@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-grant-final-order",
+    "CaseTypeID": "NFD",
+    "Description": "Grant Final order",
+    "DisplayOrder": 54,
+    "EndButtonLabel": "Submit",
+    "ID": "caseworker-grant-final-order",
+    "LiveFrom": "01/01/2017",
+    "Name": "Grant Final order",
+    "PostConditionState": "FinalOrderComplete",
+    "PreConditionState(s)": "FinalOrderRequested",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

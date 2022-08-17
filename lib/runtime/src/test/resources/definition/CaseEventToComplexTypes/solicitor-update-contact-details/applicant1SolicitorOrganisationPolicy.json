@@ -1,0 +1,10 @@
+[
+  {
+    "CaseEventID": "solicitor-update-contact-details",
+    "CaseFieldID": "applicant1SolicitorOrganisationPolicy",
+    "DisplayContext": "MANDATORY",
+    "FieldDisplayOrder": 6,
+    "ListElementCode": "Organisation.OrganisationID",
+    "LiveFrom": "01/01/2017"
+  }
+]

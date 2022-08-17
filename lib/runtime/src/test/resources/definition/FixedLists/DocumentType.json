@@ -1,0 +1,359 @@
+[
+  {
+    "DisplayOrder": 2,
+    "ID": "DocumentType",
+    "ListElement": "Acknowledgement of service",
+    "ListElementCode": "acknowledgementOfService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "DocumentType",
+    "ListElement": "Amended Application",
+    "ListElementCode": "amendedApplication",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 4,
+    "ID": "DocumentType",
+    "ListElement": "Annex A",
+    "ListElementCode": "annexA",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "DocumentType",
+    "ListElement": "AOS overdue cover letter",
+    "ListElementCode": "aosOverdueCoverLetter",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 50,
+    "ID": "DocumentType",
+    "ListElement": "Aos overdue letter",
+    "ListElementCode": "aosOverdueLetter",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 49,
+    "ID": "DocumentType",
+    "ListElement": "Aos response letter",
+    "ListElementCode": "aosResponseLetter",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 5,
+    "ID": "DocumentType",
+    "ListElement": "Application",
+    "ListElementCode": "application",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 6,
+    "ID": "DocumentType",
+    "ListElement": "Bailiff certificate of service",
+    "ListElementCode": "bailiffCertificateOfService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 7,
+    "ID": "DocumentType",
+    "ListElement": "Bailiff Service",
+    "ListElementCode": "bailiffService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 8,
+    "ID": "DocumentType",
+    "ListElement": "Bailiff Service Refused",
+    "ListElementCode": "bailiffServiceRefused",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 9,
+    "ID": "DocumentType",
+    "ListElement": "Certificate of entitlement",
+    "ListElementCode": "certificateOfEntitlement",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 10,
+    "ID": "DocumentType",
+    "ListElement": "Certificate of service",
+    "ListElementCode": "certificateOfService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 11,
+    "ID": "DocumentType",
+    "ListElement": "Conditional order answers",
+    "ListElementCode": "conditionalOrderAnswers",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 12,
+    "ID": "DocumentType",
+    "ListElement": "Conditional order application (D84)",
+    "ListElementCode": "conditionalOrderApplication",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 13,
+    "ID": "DocumentType",
+    "ListElement": "Conditional order can apply",
+    "ListElementCode": "conditionalOrderCanApply",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 15,
+    "ID": "DocumentType",
+    "ListElement": "Conditional Order Granted",
+    "ListElementCode": "conditionalOrderGranted",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 16,
+    "ID": "DocumentType",
+    "ListElement": "Conditional order refusal - clarification response",
+    "ListElementCode": "conditionalOrderRefusal",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 14,
+    "ID": "DocumentType",
+    "ListElement": "Conditional order reminder",
+    "ListElementCode": "conditionalOrderReminder",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 17,
+    "ID": "DocumentType",
+    "ListElement": "Correspondence",
+    "ListElementCode": "correspondence",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 18,
+    "ID": "DocumentType",
+    "ListElement": "Costs",
+    "ListElementCode": "costs",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 19,
+    "ID": "DocumentType",
+    "ListElement": "Costs order",
+    "ListElementCode": "costsOrder",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 20,
+    "ID": "DocumentType",
+    "ListElement": "Coversheet",
+    "ListElementCode": "coversheet",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 24,
+    "ID": "DocumentType",
+    "ListElement": "D10",
+    "ListElementCode": "d10",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 25,
+    "ID": "DocumentType",
+    "ListElement": "D11",
+    "ListElementCode": "d11",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 21,
+    "ID": "DocumentType",
+    "ListElement": "D84",
+    "ListElementCode": "d84",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 22,
+    "ID": "DocumentType",
+    "ListElement": "D9D",
+    "ListElementCode": "d9D",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 23,
+    "ID": "DocumentType",
+    "ListElement": "D9H",
+    "ListElementCode": "d9H",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 27,
+    "ID": "DocumentType",
+    "ListElement": "Deemed as service granted",
+    "ListElementCode": "deemedAsServiceGranted",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 26,
+    "ID": "DocumentType",
+    "ListElement": "Deemed service",
+    "ListElementCode": "deemedService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 28,
+    "ID": "DocumentType",
+    "ListElement": "Deemed service refused",
+    "ListElementCode": "deemedServiceRefused",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 29,
+    "ID": "DocumentType",
+    "ListElement": "Dispense with service",
+    "ListElementCode": "dispenseWithService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 30,
+    "ID": "DocumentType",
+    "ListElement": "Dispense with service granted",
+    "ListElementCode": "dispenseWithServiceGranted",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 31,
+    "ID": "DocumentType",
+    "ListElement": "Dispense with service refused",
+    "ListElementCode": "dispenseWithServiceRefused",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 32,
+    "ID": "DocumentType",
+    "ListElement": "Email",
+    "ListElementCode": "email",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 33,
+    "ID": "DocumentType",
+    "ListElement": "Final Order application",
+    "ListElementCode": "finalOrderApplication",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 34,
+    "ID": "DocumentType",
+    "ListElement": "Final order granted",
+    "ListElementCode": "finalOrderGranted",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 51,
+    "ID": "DocumentType",
+    "ListElement": "General letter",
+    "ListElementCode": "generalLetter",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 35,
+    "ID": "DocumentType",
+    "ListElement": "General order",
+    "ListElementCode": "generalOrder",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 36,
+    "ID": "DocumentType",
+    "ListElement": "Marriage/Civil Partnership Certificate",
+    "ListElementCode": "marriageCertificate",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 37,
+    "ID": "DocumentType",
+    "ListElement": "Marriage/Civil Partnership Certificate translation",
+    "ListElementCode": "marriageCertificateTranslation",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 38,
+    "ID": "DocumentType",
+    "ListElement": "Name change evidence",
+    "ListElementCode": "nameChangeEvidence",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 39,
+    "ID": "DocumentType",
+    "ListElement": "Notice of proceedings for applicant/applicant 1",
+    "ListElementCode": "noticeOfProceedings",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 40,
+    "ID": "DocumentType",
+    "ListElement": "Notice of proceedings for respondent/applicant 2",
+    "ListElementCode": "noticeOfProceedingsApp2",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 41,
+    "ID": "DocumentType",
+    "ListElement": "Notice of refusal of entitlement to a CO",
+    "ListElementCode": "noticeOfRefusalOfEntitlement",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 42,
+    "ID": "DocumentType",
+    "ListElement": "Objection to costs",
+    "ListElementCode": "objectionToCosts",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 43,
+    "ID": "DocumentType",
+    "ListElement": "Other",
+    "ListElementCode": "other",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 44,
+    "ID": "DocumentType",
+    "ListElement": "Pronouncement List",
+    "ListElementCode": "pronouncementList",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 45,
+    "ID": "DocumentType",
+    "ListElement": "Respondent answers",
+    "ListElementCode": "respondentAnswers",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 46,
+    "ID": "DocumentType",
+    "ListElement": "Respondent Invitation",
+    "ListElementCode": "aos",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 47,
+    "ID": "DocumentType",
+    "ListElement": "Solicitor Service",
+    "ListElementCode": "solicitorService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 48,
+    "ID": "DocumentType",
+    "ListElement": "Welsh Translation",
+    "ListElementCode": "welshTranslation",
+    "LiveFrom": "01/01/2017"
+  }
+]

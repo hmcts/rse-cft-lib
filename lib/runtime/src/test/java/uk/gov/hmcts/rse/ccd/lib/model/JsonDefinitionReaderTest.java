@@ -31,8 +31,11 @@ class JsonDefinitionReaderTest {
 
         assertEquals("[SOLICITOR]", result.get(0).get("UserRole"));
         assertEquals("[CITIZEN]", result.get(1).get("UserRole"));
-        assertEquals("[APPLICANTTWO]", result.get(2).get("UserRole"));
-        assertEquals("[APPONESOLICITOR]", result.get(3).get("UserRole"));
+        assertEquals("caseworker-caa", result.get(2).get("UserRole"));
+        assertEquals("caseworker-divorce-bulkscan", result.get(3).get("UserRole"));
+        assertEquals("caseworker-divorce-courtadmin-la", result.get(4).get("UserRole"));
+        assertEquals("caseworker-divorce-courtadmin_beta", result.get(5).get("UserRole"));
+        assertEquals("caseworker-divorce-solicitor", result.get(6).get("UserRole"));
     }
 
 }

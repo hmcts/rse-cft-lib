@@ -1,0 +1,15 @@
+[
+  {
+    "CaseEventID": "caseworker-upload-amended-application",
+    "CaseFieldID": "amendedApplications",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "uploadAmendedApplication",
+    "PageLabel": "Upload Amended Application",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

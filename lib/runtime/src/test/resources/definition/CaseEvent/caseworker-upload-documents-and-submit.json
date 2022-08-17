@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToStartEvent": "http://localhost:4013/callbacks/about-to-start?eventId=caseworker-upload-documents-and-submit",
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-upload-documents-and-submit",
+    "CaseTypeID": "NFD",
+    "Description": "Upload documents from the applicant and submit",
+    "DisplayOrder": 123,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-upload-documents-and-submit",
+    "LiveFrom": "01/01/2017",
+    "Name": "Upload documents and submit",
+    "PostConditionState": "AwaitingDocuments",
+    "PreConditionState(s)": "AwaitingDocuments",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

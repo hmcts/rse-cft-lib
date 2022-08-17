@@ -1,0 +1,16 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "General application received",
+    "DisplayOrder": 50,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-general-application-received",
+    "LiveFrom": "01/01/2017",
+    "Name": "General application received",
+    "PostConditionState": "GeneralApplicationReceived",
+    "PreConditionState(s)": "AosDrafted;AosOverdue;AwaitingAdminClarification;AwaitingAlternativeService;AwaitingAmendedApplication;AwaitingAos;AwaitingBailiffReferral;AwaitingBailiffService;AwaitingClarification;AwaitingConditionalOrder;AwaitingDocuments;AwaitingDwpResponse;AwaitingFinalOrder;AwaitingGeneralConsideration;AwaitingGeneralReferralPayment;AwaitingHWFDecision;AwaitingJudgeClarification;AwaitingLegalAdvisorReferral;AwaitingPayment;AwaitingPronouncement;AwaitingService;AwaitingServiceConsideration;AwaitingServicePayment;BulkCaseReject;ClarificationSubmitted;ConditionalOrderDrafted;ConditionalOrderPending;ConditionalOrderPronounced;ConditionalOrderRefused;FinalOrderComplete;FinalOrderOverdue;FinalOrderPending;FinalOrderRequested;GeneralApplicationReceived;GeneralConsiderationComplete;Holding;IssuedToBailiff;NewPaperCase;OfflineDocumentReceived;PendingHearingOutcome;Submitted;WelshTranslationRequested;WelshTranslationReview",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

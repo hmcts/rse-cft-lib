@@ -1,0 +1,16 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Request DWP disclosure",
+    "DisplayOrder": 87,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-request-dwp-disclosure",
+    "LiveFrom": "01/01/2017",
+    "Name": "Request DWP disclosure",
+    "PostConditionState": "AwaitingDwpResponse",
+    "PreConditionState(s)": "AwaitingJudgeClarification;GeneralConsiderationComplete",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "DissolveDivorce",
+    "ListElement": "I confirm the applicant is applying to the court to dissolve their marriage (get a divorce)",
+    "ListElementCode": "dissolveDivorce",
+    "LiveFrom": "01/01/2017"
+  }
+]

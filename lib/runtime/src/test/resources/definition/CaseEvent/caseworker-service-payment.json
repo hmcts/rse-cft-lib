@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToStartEvent": "http://localhost:4013/callbacks/about-to-start?eventId=caseworker-service-payment",
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-service-payment",
+    "CaseTypeID": "NFD",
+    "Description": "Service payment made",
+    "DisplayOrder": 36,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-service-payment",
+    "LiveFrom": "01/01/2017",
+    "Name": "Confirm service payment",
+    "PostConditionState": "AwaitingServicePayment",
+    "PreConditionState(s)": "AwaitingServicePayment",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

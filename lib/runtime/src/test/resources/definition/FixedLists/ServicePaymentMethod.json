@@ -1,0 +1,23 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "ServicePaymentMethod",
+    "ListElement": "Fee account",
+    "ListElementCode": "feePayByAccount",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "ServicePaymentMethod",
+    "ListElement": "Help with Fees",
+    "ListElementCode": "feePayByHelp",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "ServicePaymentMethod",
+    "ListElement": "Telephone",
+    "ListElementCode": "feePayByTelephone",
+    "LiveFrom": "01/01/2017"
+  }
+]

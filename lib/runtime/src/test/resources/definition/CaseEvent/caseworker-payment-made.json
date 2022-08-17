@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-payment-made",
+    "CaseTypeID": "NFD",
+    "Description": "Payment made",
+    "DisplayOrder": 74,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-payment-made",
+    "LiveFrom": "01/01/2017",
+    "Name": "Payment made",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AwaitingDocuments;AwaitingHWFDecision;AwaitingPayment",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

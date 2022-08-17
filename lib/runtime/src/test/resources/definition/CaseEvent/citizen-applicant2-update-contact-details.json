@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=citizen-applicant2-update-contact-details",
+    "CaseTypeID": "NFD",
+    "Description": "Contact details changed by respondent",
+    "DisplayOrder": 119,
+    "EndButtonLabel": "Save and continue",
+    "ID": "citizen-applicant2-update-contact-details",
+    "LiveFrom": "01/01/2017",
+    "Name": "Update respondent contact info",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "*",
+    "RetriesTimeoutURLAboutToSubmitEvent": "120,120",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

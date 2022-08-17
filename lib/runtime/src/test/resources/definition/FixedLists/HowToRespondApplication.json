@@ -1,0 +1,16 @@
+[
+  {
+    "DisplayOrder": 2,
+    "ID": "HowToRespondApplication",
+    "ListElement": "The respondent wants to dispute",
+    "ListElementCode": "disputeDivorce",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "HowToRespondApplication",
+    "ListElement": "Continue without disputing",
+    "ListElementCode": "withoutDisputeDivorce",
+    "LiveFrom": "01/01/2017"
+  }
+]

@@ -1,17 +1,20 @@
 package uk.gov.hmcts.rse.ccd.lib.repository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(SpringExtension.class)
 class CaseTypeRepositoryTest {
 
-    @Autowired
-    private CaseTypeRepository repository;
+    private final Map<String, String> paths = Map.of(
+        "NFD", "src/test/resources/definition"
+    );
+
+    private CaseTypeRepository repository = new CaseTypeRepository(paths, new JsonDefinitionReader(new ObjectMapper()));
 
     @Test
     void findByCaseTypeId() {

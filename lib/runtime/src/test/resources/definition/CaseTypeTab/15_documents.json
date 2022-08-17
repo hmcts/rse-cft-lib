@@ -1,0 +1,102 @@
+[
+  {
+    "CaseFieldID": "applicant1DocumentsUploaded",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 15,
+    "TabFieldDisplayOrder": 2,
+    "TabID": "documents",
+    "TabLabel": "Documents",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant2DocumentsUploaded",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 15,
+    "TabFieldDisplayOrder": 3,
+    "TabID": "documents",
+    "TabLabel": "Documents",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "certificateOfServiceDocument",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 15,
+    "TabFieldDisplayOrder": 8,
+    "TabID": "documents",
+    "TabLabel": "Documents",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "coCertificateOfEntitlementDocument",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 15,
+    "TabFieldDisplayOrder": 9,
+    "TabID": "documents",
+    "TabLabel": "Documents",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "documentsGenerated",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 15,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "documents",
+    "TabLabel": "Documents",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "documentsUploaded",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 15,
+    "TabFieldDisplayOrder": 6,
+    "TabID": "documents",
+    "TabLabel": "Documents",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "generalEmails",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 15,
+    "TabFieldDisplayOrder": 7,
+    "TabID": "documents",
+    "TabLabel": "Documents",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "generalOrders",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 15,
+    "TabFieldDisplayOrder": 5,
+    "TabID": "documents",
+    "TabLabel": "Documents",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "scannedDocuments",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "applicant1ContactDetailsType!=\"private\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 15,
+    "TabFieldDisplayOrder": 4,
+    "TabID": "documents",
+    "TabLabel": "Documents",
+    "UserRole": ""
+  }
+]

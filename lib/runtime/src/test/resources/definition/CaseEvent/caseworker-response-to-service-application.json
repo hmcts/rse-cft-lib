@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToStartEvent": "http://localhost:4013/callbacks/about-to-start?eventId=caseworker-response-to-service-application",
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-response-to-service-application",
+    "CaseTypeID": "NFD",
+    "Description": "Response to service application",
+    "DisplayOrder": 91,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-response-to-service-application",
+    "LiveFrom": "01/01/2017",
+    "Name": "Response to service app",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosOverdue;AwaitingAos",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "Y"
+  }
+]

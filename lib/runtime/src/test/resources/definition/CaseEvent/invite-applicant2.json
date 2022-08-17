@@ -1,0 +1,19 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=invite-applicant2",
+    "CaseTypeID": "NFD",
+    "Description": "Invite Applicant 2",
+    "DisplayOrder": 57,
+    "EndButtonLabel": "Save and continue",
+    "EventEnablingCondition": "applicationType=\"jointApplication\"",
+    "ID": "invite-applicant2",
+    "LiveFrom": "01/01/2017",
+    "Name": "Invite Applicant 2",
+    "PostConditionState": "AwaitingApplicant2Response",
+    "PreConditionState(s)": "Draft",
+    "RetriesTimeoutURLAboutToSubmitEvent": "120,120",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

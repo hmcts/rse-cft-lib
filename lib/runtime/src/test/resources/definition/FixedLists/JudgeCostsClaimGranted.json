@@ -1,0 +1,23 @@
+[
+  {
+    "DisplayOrder": 3,
+    "ID": "JudgeCostsClaimGranted",
+    "ListElement": "Adjourn",
+    "ListElementCode": "Adjourn",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "JudgeCostsClaimGranted",
+    "ListElement": "No",
+    "ListElementCode": "No",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "JudgeCostsClaimGranted",
+    "ListElement": "Yes",
+    "ListElementCode": "Yes",
+    "LiveFrom": "01/01/2017"
+  }
+]

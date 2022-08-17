@@ -1,0 +1,16 @@
+[
+  {
+    "DisplayOrder": 2,
+    "ID": "ApplicationType",
+    "ListElement": "Joint Application",
+    "ListElementCode": "jointApplication",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "ApplicationType",
+    "ListElement": "Sole Application",
+    "ListElementCode": "soleApplication",
+    "LiveFrom": "01/01/2017"
+  }
+]

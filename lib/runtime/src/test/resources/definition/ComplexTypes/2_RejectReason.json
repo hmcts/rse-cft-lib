@@ -1,0 +1,19 @@
+[
+  {
+    "ElementLabel": "Reject details",
+    "FieldType": "TextArea",
+    "ID": "RejectReason",
+    "ListElementCode": "rejectDetails",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Reject reason",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "RejectReasonType",
+    "ID": "RejectReason",
+    "ListElementCode": "rejectReasonType",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  }
+]

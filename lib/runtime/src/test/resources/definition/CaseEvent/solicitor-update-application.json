@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=solicitor-update-application",
+    "CaseTypeID": "NFD",
+    "Description": "Amend divorce application",
+    "DisplayOrder": 7,
+    "EndButtonLabel": "Save and continue",
+    "ID": "solicitor-update-application",
+    "LiveFrom": "01/01/2017",
+    "Name": "Amend divorce application",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AwaitingApplicant1Response;Draft",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

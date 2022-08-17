@@ -1,0 +1,75 @@
+[
+  {
+    "CaseEventID": "final-order-requested",
+    "CaseFieldID": "doesApplicant1WantToApplyForFinalOrder",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 6,
+    "PageID": "SolicitorApplyForFinalOrder",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "final-order-requested",
+    "CaseFieldID": "label-ApplyForFinalOrder",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 5,
+    "PageID": "SolicitorApplyForFinalOrder"
+  },
+  {
+    "CallBackURLMidEvent": "http://localhost:4013/callbacks/mid-event?page=SolicitorApplyForFinalOrder&eventId=final-order-requested",
+    "CaseEventID": "final-order-requested",
+    "CaseFieldID": "labelContentDivorceOrCivilPartnership",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "FieldShowCondition": "doesApplicant1WantToApplyForFinalOrder=\"ALWAYS_HIDE\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "SolicitorApplyForFinalOrder",
+    "PageLabel": "Apply for final order"
+  },
+  {
+    "CaseEventID": "final-order-requested",
+    "CaseFieldID": "labelContentFinaliseDivorceOrEndCivilPartnership",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "FieldShowCondition": "doesApplicant1WantToApplyForFinalOrder=\"ALWAYS_HIDE\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "SolicitorApplyForFinalOrder"
+  },
+  {
+    "CaseEventID": "final-order-requested",
+    "CaseFieldID": "marriageApplicant1Name",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "FieldShowCondition": "doesApplicant1WantToApplyForFinalOrder=\"ALWAYS_HIDE\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "SolicitorApplyForFinalOrder"
+  },
+  {
+    "CaseEventID": "final-order-requested",
+    "CaseFieldID": "marriageApplicant2Name",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "FieldShowCondition": "doesApplicant1WantToApplyForFinalOrder=\"ALWAYS_HIDE\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 4,
+    "PageID": "SolicitorApplyForFinalOrder"
+  }
+]

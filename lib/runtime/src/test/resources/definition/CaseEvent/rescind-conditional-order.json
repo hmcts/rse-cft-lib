@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=rescind-conditional-order",
+    "CaseTypeID": "NFD",
+    "Description": "Rescind Conditional order",
+    "DisplayOrder": 89,
+    "EndButtonLabel": "Save and continue",
+    "ID": "rescind-conditional-order",
+    "LiveFrom": "01/01/2017",
+    "Name": "Rescind Conditional order",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AwaitingFinalOrder;AwaitingPronouncement;ConditionalOrderPronounced;GeneralConsiderationComplete",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

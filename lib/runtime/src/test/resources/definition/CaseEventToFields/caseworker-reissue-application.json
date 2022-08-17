@@ -1,0 +1,30 @@
+[
+  {
+    "CaseEventID": "caseworker-reissue-application",
+    "CaseFieldID": "reissueOption",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "reissueApplication",
+    "PageLabel": "Reissue Application",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventFieldLabel": " ",
+    "CaseEventID": "caseworker-reissue-application",
+    "CaseFieldID": "serviceMethod",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "FieldShowCondition": "reissueOption=\"reissueCase\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "reissueApplication",
+    "RetainHiddenValue": "Y",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

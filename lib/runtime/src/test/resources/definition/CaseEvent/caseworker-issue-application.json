@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-issue-application",
+    "CallBackURLSubmittedEvent": "http://localhost:4013/callbacks/submitted?eventId=caseworker-issue-application",
+    "CaseTypeID": "NFD",
+    "Description": "Application issued",
+    "DisplayOrder": 18,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-issue-application",
+    "LiveFrom": "01/01/2017",
+    "Name": "Application issue",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AwaitingDocuments;AwaitingDwpResponse;Submitted",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

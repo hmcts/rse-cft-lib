@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=system-cancel-case-invite",
+    "CaseTypeID": "NFD",
+    "Description": "Cancel User Case Invite",
+    "DisplayOrder": 30,
+    "EndButtonLabel": "Save and continue",
+    "ID": "system-cancel-case-invite",
+    "LiveFrom": "01/01/2017",
+    "Name": "Cancel User Case Invite",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosOverdue;AwaitingAlternativeService;AwaitingAos;AwaitingApplicant2Response;AwaitingBailiffReferral;AwaitingBailiffService;AwaitingConditionalOrder;AwaitingDwpResponse;AwaitingGeneralConsideration;AwaitingGeneralReferralPayment;AwaitingJudgeClarification;AwaitingServiceConsideration;AwaitingServicePayment;GeneralApplicationReceived;GeneralConsiderationComplete;Holding;IssuedToBailiff;PendingHearingOutcome",
+    "RetriesTimeoutURLAboutToSubmitEvent": "120,120",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

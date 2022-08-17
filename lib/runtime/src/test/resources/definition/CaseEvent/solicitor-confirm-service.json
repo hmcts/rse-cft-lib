@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=solicitor-confirm-service",
+    "CaseTypeID": "NFD",
+    "Description": "Solicitor confirm service",
+    "DisplayOrder": 98,
+    "EndButtonLabel": "Save and continue",
+    "ID": "solicitor-confirm-service",
+    "LiveFrom": "01/01/2017",
+    "Name": "Solicitor confirm service",
+    "PostConditionState": "AwaitingAos",
+    "PreConditionState(s)": "AwaitingService",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

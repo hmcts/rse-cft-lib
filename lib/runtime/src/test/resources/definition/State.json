@@ -1,0 +1,443 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "AoS drafted",
+    "DisplayOrder": 3,
+    "ID": "AosDrafted",
+    "LiveFrom": "01/01/2017",
+    "Name": "AoS drafted",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "AoS overdue",
+    "DisplayOrder": 4,
+    "ID": "AosOverdue",
+    "LiveFrom": "01/01/2017",
+    "Name": "AoS overdue",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Applicant 2 approved",
+    "DisplayOrder": 5,
+    "ID": "Applicant2Approved",
+    "LiveFrom": "01/01/2017",
+    "Name": "Applicant 2 approved",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting admin clarification",
+    "DisplayOrder": 9,
+    "ID": "AwaitingAdminClarification",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting admin clarification",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting alternative service",
+    "DisplayOrder": 10,
+    "ID": "AwaitingAlternativeService",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting alternative service",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting amended application",
+    "DisplayOrder": 11,
+    "ID": "AwaitingAmendedApplication",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting amended application",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "AoS awaiting",
+    "DisplayOrder": 2,
+    "ID": "AwaitingAos",
+    "LiveFrom": "01/01/2017",
+    "Name": "AoS awaiting",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting applicant 1 response",
+    "DisplayOrder": 13,
+    "ID": "AwaitingApplicant1Response",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting applicant 1 response",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting applicant 2 response",
+    "DisplayOrder": 14,
+    "ID": "AwaitingApplicant2Response",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting applicant 2 response",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting bailiff referral",
+    "DisplayOrder": 15,
+    "ID": "AwaitingBailiffReferral",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting bailiff referral",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting bailiff service",
+    "DisplayOrder": 16,
+    "ID": "AwaitingBailiffService",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting bailiff service",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting clarification",
+    "DisplayOrder": 17,
+    "ID": "AwaitingClarification",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting clarification",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting conditional order",
+    "DisplayOrder": 18,
+    "ID": "AwaitingConditionalOrder",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting conditional order",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting applicant",
+    "DisplayOrder": 12,
+    "ID": "AwaitingDocuments",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting applicant",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting DWP response",
+    "DisplayOrder": 19,
+    "ID": "AwaitingDwpResponse",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting DWP response",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting final order",
+    "DisplayOrder": 20,
+    "ID": "AwaitingFinalOrder",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting final order",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting general consideration",
+    "DisplayOrder": 21,
+    "ID": "AwaitingGeneralConsideration",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting general consideration",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting general referral payment",
+    "DisplayOrder": 22,
+    "ID": "AwaitingGeneralReferralPayment",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting general referral payment",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting HWF decision",
+    "DisplayOrder": 23,
+    "ID": "AwaitingHWFDecision",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting HWF decision",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting judge clarification",
+    "DisplayOrder": 25,
+    "ID": "AwaitingJudgeClarification",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting judge clarification",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting legal advisor referral",
+    "DisplayOrder": 26,
+    "ID": "AwaitingLegalAdvisorReferral",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting legal advisor referral",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Application awaiting payment",
+    "DisplayOrder": 6,
+    "ID": "AwaitingPayment",
+    "LiveFrom": "01/01/2017",
+    "Name": "Application awaiting payment",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Listed; awaiting pronouncement",
+    "DisplayOrder": 42,
+    "ID": "AwaitingPronouncement",
+    "LiveFrom": "01/01/2017",
+    "Name": "Listed; awaiting pronouncement",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting service",
+    "DisplayOrder": 27,
+    "ID": "AwaitingService",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting service",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting service consideration",
+    "DisplayOrder": 28,
+    "ID": "AwaitingServiceConsideration",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting service consideration",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting service payment",
+    "DisplayOrder": 29,
+    "ID": "AwaitingServicePayment",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting service payment",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Removed from bulk case",
+    "DisplayOrder": 46,
+    "ID": "BulkCaseReject",
+    "LiveFrom": "01/01/2017",
+    "Name": "Removed from bulk case",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Clarification response submitted",
+    "DisplayOrder": 30,
+    "ID": "ClarificationSubmitted",
+    "LiveFrom": "01/01/2017",
+    "Name": "Clarification response submitted",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Conditional order drafted",
+    "DisplayOrder": 31,
+    "ID": "ConditionalOrderDrafted",
+    "LiveFrom": "01/01/2017",
+    "Name": "Conditional order drafted",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting joint conditional order",
+    "DisplayOrder": 24,
+    "ID": "ConditionalOrderPending",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting joint conditional order",
+    "TitleDisplay": "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Conditional order pronounced",
+    "DisplayOrder": 32,
+    "ID": "ConditionalOrderPronounced",
+    "LiveFrom": "01/01/2017",
+    "Name": "Conditional order pronounced",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Conditional order refused",
+    "DisplayOrder": 33,
+    "ID": "ConditionalOrderRefused",
+    "LiveFrom": "01/01/2017",
+    "Name": "Conditional order refused",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Draft",
+    "DisplayOrder": 34,
+    "ID": "Draft",
+    "LiveFrom": "01/01/2017",
+    "Name": "Draft",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Final order complete",
+    "DisplayOrder": 35,
+    "ID": "FinalOrderComplete",
+    "LiveFrom": "01/01/2017",
+    "Name": "Final order complete",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Final order overdue",
+    "DisplayOrder": 36,
+    "ID": "FinalOrderOverdue",
+    "LiveFrom": "01/01/2017",
+    "Name": "Final order overdue",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Final order pending",
+    "DisplayOrder": 37,
+    "ID": "FinalOrderPending",
+    "LiveFrom": "01/01/2017",
+    "Name": "Final order pending",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Final order requested",
+    "DisplayOrder": 38,
+    "ID": "FinalOrderRequested",
+    "LiveFrom": "01/01/2017",
+    "Name": "Final order requested",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "General application received",
+    "DisplayOrder": 39,
+    "ID": "GeneralApplicationReceived",
+    "LiveFrom": "01/01/2017",
+    "Name": "General application received",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "General consideration complete",
+    "DisplayOrder": 40,
+    "ID": "GeneralConsiderationComplete",
+    "LiveFrom": "01/01/2017",
+    "Name": "General consideration complete",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "20 week holding period",
+    "DisplayOrder": 1,
+    "ID": "Holding",
+    "LiveFrom": "01/01/2017",
+    "Name": "20 week holding period",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Issued to bailiff",
+    "DisplayOrder": 41,
+    "ID": "IssuedToBailiff",
+    "LiveFrom": "01/01/2017",
+    "Name": "Issued to bailiff",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "New paper case",
+    "DisplayOrder": 43,
+    "ID": "NewPaperCase",
+    "LiveFrom": "01/01/2017",
+    "Name": "New paper case",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Offline document received by CW",
+    "DisplayOrder": 44,
+    "ID": "OfflineDocumentReceived",
+    "LiveFrom": "01/01/2017",
+    "Name": "Offline document received by CW",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Pending hearing outcome",
+    "DisplayOrder": 45,
+    "ID": "PendingHearingOutcome",
+    "LiveFrom": "01/01/2017",
+    "Name": "Pending hearing outcome",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Application rejected",
+    "DisplayOrder": 7,
+    "ID": "Rejected",
+    "LiveFrom": "01/01/2017",
+    "Name": "Application rejected",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Submitted",
+    "DisplayOrder": 47,
+    "ID": "Submitted",
+    "LiveFrom": "01/01/2017",
+    "Name": "Submitted",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Welsh Translation requested",
+    "DisplayOrder": 48,
+    "ID": "WelshTranslationRequested",
+    "LiveFrom": "01/01/2017",
+    "Name": "Welsh Translation requested",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Welsh Translation review",
+    "DisplayOrder": 49,
+    "ID": "WelshTranslationReview",
+    "LiveFrom": "01/01/2017",
+    "Name": "Welsh Translation review",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  },
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Application withdrawn",
+    "DisplayOrder": 8,
+    "ID": "Withdrawn",
+    "LiveFrom": "01/01/2017",
+    "Name": "Application withdrawn",
+    "TitleDisplay": "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+  }
+]

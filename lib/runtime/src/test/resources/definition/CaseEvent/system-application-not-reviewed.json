@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=system-application-not-reviewed",
+    "CaseTypeID": "NFD",
+    "Description": "Alert Applicant 1 that Application has not been reviewed",
+    "DisplayOrder": 5,
+    "EndButtonLabel": "Save and continue",
+    "ID": "system-application-not-reviewed",
+    "LiveFrom": "01/01/2017",
+    "Name": "Alert Applicant 1",
+    "PostConditionState": "AwaitingApplicant2Response",
+    "PreConditionState(s)": "AwaitingApplicant2Response",
+    "RetriesTimeoutURLAboutToSubmitEvent": "120,120",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

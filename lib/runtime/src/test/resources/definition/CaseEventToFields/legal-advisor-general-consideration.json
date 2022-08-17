@@ -1,0 +1,27 @@
+[
+  {
+    "CaseEventID": "legal-advisor-general-consideration",
+    "CaseFieldID": "generalReferralDecision",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "generalConsiderationResponse",
+    "PageLabel": "General consideration response",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "legal-advisor-general-consideration",
+    "CaseFieldID": "generalReferralDecisionReason",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "generalConsiderationResponse",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

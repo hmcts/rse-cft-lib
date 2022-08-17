@@ -1,0 +1,14 @@
+[
+  {
+    "CaseEventID": "system-update-issue-date",
+    "CaseFieldID": "issueDate",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "updateIssueDate",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

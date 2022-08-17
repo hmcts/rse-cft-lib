@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToStartEvent": "http://localhost:4013/callbacks/about-to-start?eventId=caseworker-return-to-previous-state",
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-return-to-previous-state",
+    "CaseTypeID": "NFD",
+    "Description": "Return to previous state",
+    "DisplayOrder": 93,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-return-to-previous-state",
+    "LiveFrom": "01/01/2017",
+    "Name": "Return to previous state",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosDrafted;AosOverdue;AwaitingAdminClarification;AwaitingAlternativeService;AwaitingAmendedApplication;AwaitingAos;AwaitingBailiffReferral;AwaitingBailiffService;AwaitingClarification;AwaitingConditionalOrder;AwaitingDocuments;AwaitingDwpResponse;AwaitingFinalOrder;AwaitingGeneralConsideration;AwaitingGeneralReferralPayment;AwaitingHWFDecision;AwaitingJudgeClarification;AwaitingLegalAdvisorReferral;AwaitingPayment;AwaitingService;AwaitingServiceConsideration;AwaitingServicePayment;BulkCaseReject;ClarificationSubmitted;ConditionalOrderDrafted;ConditionalOrderPending;ConditionalOrderPronounced;ConditionalOrderRefused;FinalOrderComplete;FinalOrderOverdue;FinalOrderPending;FinalOrderRequested;GeneralApplicationReceived;GeneralConsiderationComplete;Holding;IssuedToBailiff;NewPaperCase;OfflineDocumentReceived;PendingHearingOutcome;Submitted;WelshTranslationRequested;WelshTranslationReview",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

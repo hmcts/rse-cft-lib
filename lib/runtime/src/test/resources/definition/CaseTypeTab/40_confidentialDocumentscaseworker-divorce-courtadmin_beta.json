@@ -1,0 +1,36 @@
+[
+  {
+    "CaseFieldID": "confidentialDocumentsGenerated",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 40,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "confidentialDocumentscaseworker-divorce-courtadmin_beta",
+    "TabLabel": "Confidential Document",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CaseFieldID": "confidentialDocumentsUploaded",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 40,
+    "TabFieldDisplayOrder": 2,
+    "TabID": "confidentialDocumentscaseworker-divorce-courtadmin_beta",
+    "TabLabel": "Confidential Document",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "scannedDocuments",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "applicant1ContactDetailsType=\"private\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 40,
+    "TabFieldDisplayOrder": 3,
+    "TabID": "confidentialDocumentscaseworker-divorce-courtadmin_beta",
+    "TabLabel": "Confidential Document",
+    "UserRole": ""
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-add-bailiff-return",
+    "CaseTypeID": "NFD",
+    "Description": "Add bailiff return",
+    "DisplayOrder": 2,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-add-bailiff-return",
+    "LiveFrom": "01/01/2017",
+    "Name": "Add bailiff return",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosDrafted;AosOverdue;AwaitingAos;AwaitingDocuments;AwaitingPayment;Holding;IssuedToBailiff;Submitted",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "DisplayOrder": 2,
+    "ID": "Gender",
+    "ListElement": "Female",
+    "ListElementCode": "female",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "Gender",
+    "ListElement": "Male",
+    "ListElementCode": "male",
+    "LiveFrom": "01/01/2017"
+  }
+]

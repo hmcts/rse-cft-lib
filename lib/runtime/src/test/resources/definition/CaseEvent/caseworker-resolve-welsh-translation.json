@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-resolve-welsh-translation",
+    "CaseTypeID": "NFD",
+    "Description": "Welsh Translation Resolved",
+    "DisplayOrder": 124,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-resolve-welsh-translation",
+    "LiveFrom": "01/01/2017",
+    "Name": "Welsh Translation Resolved",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "WelshTranslationRequested;WelshTranslationReview",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

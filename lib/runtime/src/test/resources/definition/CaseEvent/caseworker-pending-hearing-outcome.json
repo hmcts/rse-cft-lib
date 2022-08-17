@@ -1,0 +1,16 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Pending hearing outcome",
+    "DisplayOrder": 75,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-pending-hearing-outcome",
+    "LiveFrom": "01/01/2017",
+    "Name": "Pending hearing outcome",
+    "PostConditionState": "PendingHearingOutcome",
+    "PreConditionState(s)": "AwaitingDwpResponse;GeneralConsiderationComplete",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

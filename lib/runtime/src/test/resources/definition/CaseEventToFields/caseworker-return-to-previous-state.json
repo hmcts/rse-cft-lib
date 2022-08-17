@@ -1,0 +1,29 @@
+[
+  {
+    "CallBackURLMidEvent": "http://localhost:4013/callbacks/mid-event?page=returnToPreviousState&eventId=caseworker-return-to-previous-state",
+    "CaseEventID": "caseworker-return-to-previous-state",
+    "CaseFieldID": "currentState",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "returnToPreviousState",
+    "PageLabel": "Return to previous state",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventFieldLabel": "State to transfer case to",
+    "CaseEventID": "caseworker-return-to-previous-state",
+    "CaseFieldID": "stateToTransitionApplicationTo",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "returnToPreviousState",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

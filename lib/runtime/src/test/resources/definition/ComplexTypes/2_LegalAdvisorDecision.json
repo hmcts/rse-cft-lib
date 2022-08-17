@@ -1,0 +1,70 @@
+[
+  {
+    "ElementLabel": "Legal advisor decision date",
+    "FieldType": "Date",
+    "ID": "LegalAdvisorDecision",
+    "ListElementCode": "decisionDate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Grant Conditional Order?",
+    "FieldType": "YesOrNo",
+    "ID": "LegalAdvisorDecision",
+    "ListElementCode": "granted",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Additional info",
+    "FieldType": "TextArea",
+    "ID": "LegalAdvisorDecision",
+    "ListElementCode": "refusalAdminErrorInfo",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Clarification additional information (Translated)",
+    "FieldType": "TextArea",
+    "ID": "LegalAdvisorDecision",
+    "ListElementCode": "refusalClarificationAdditionalInfo",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Provide a refusal reason",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "ClarificationReason",
+    "HintText": "Choose at least one of the following",
+    "ID": "LegalAdvisorDecision",
+    "ListElementCode": "refusalClarificationReason",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Refusal decision",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "RefusalOption",
+    "ID": "LegalAdvisorDecision",
+    "ListElementCode": "refusalDecision",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Additional information",
+    "FieldType": "TextArea",
+    "ID": "LegalAdvisorDecision",
+    "ListElementCode": "refusalRejectionAdditionalInfo",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Refusal rejection reasons",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "RejectionReason",
+    "ID": "LegalAdvisorDecision",
+    "ListElementCode": "refusalRejectionReason",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  }
+]

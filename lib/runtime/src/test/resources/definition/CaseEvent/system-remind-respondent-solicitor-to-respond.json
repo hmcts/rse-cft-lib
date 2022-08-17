@@ -1,0 +1,19 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=system-remind-respondent-solicitor-to-respond",
+    "CaseTypeID": "NFD",
+    "Description": "Remind Respondent Solicitor to respond to the application (Notice of Proceedings)",
+    "DisplayOrder": 85,
+    "EndButtonLabel": "Save and continue",
+    "EventEnablingCondition": "divorceOrDissolution=\"NEVER_SHOW\"",
+    "ID": "system-remind-respondent-solicitor-to-respond",
+    "LiveFrom": "01/01/2017",
+    "Name": "Remind Respondent Solicitor",
+    "PostConditionState": "AwaitingAos",
+    "PreConditionState(s)": "AwaitingAos",
+    "RetriesTimeoutURLAboutToSubmitEvent": "120,120",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

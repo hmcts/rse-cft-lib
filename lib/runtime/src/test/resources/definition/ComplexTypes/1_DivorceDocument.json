@@ -1,0 +1,54 @@
+[
+  {
+    "ElementLabel": "Your comments",
+    "FieldType": "Text",
+    "HintText": "Any relevant information that the court should know about the document",
+    "ID": "DivorceDocument",
+    "ListElementCode": "documentComment",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Date added",
+    "FieldType": "Date",
+    "ID": "DivorceDocument",
+    "ListElementCode": "documentDateAdded",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Add content to be emailed",
+    "FieldType": "TextArea",
+    "ID": "DivorceDocument",
+    "ListElementCode": "documentEmailContent",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "File name",
+    "FieldType": "Text",
+    "HintText": "For your own reference, to make the document easier to find",
+    "ID": "DivorceDocument",
+    "ListElementCode": "documentFileName",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Select your document",
+    "FieldType": "Document",
+    "ID": "DivorceDocument",
+    "ListElementCode": "documentLink",
+    "LiveFrom": "01/01/2017",
+    "RegularExpression": ".pdf,.tif,.tiff,.jpg,.jpeg,.png",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Select document type",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "DocumentType",
+    "ID": "DivorceDocument",
+    "ListElementCode": "documentType",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  }
+]

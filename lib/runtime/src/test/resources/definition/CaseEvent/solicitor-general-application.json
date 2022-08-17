@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=solicitor-general-application",
+    "CaseTypeID": "NFD",
+    "Description": "General Application",
+    "DisplayOrder": 49,
+    "EndButtonLabel": "Save and continue",
+    "ID": "solicitor-general-application",
+    "LiveFrom": "01/01/2017",
+    "Name": "General Application",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosDrafted;AosOverdue;AwaitingAdminClarification;AwaitingAlternativeService;AwaitingAmendedApplication;AwaitingAos;AwaitingBailiffReferral;AwaitingBailiffService;AwaitingClarification;AwaitingConditionalOrder;AwaitingDwpResponse;AwaitingFinalOrder;AwaitingGeneralConsideration;AwaitingGeneralReferralPayment;AwaitingJudgeClarification;AwaitingLegalAdvisorReferral;AwaitingPronouncement;AwaitingService;AwaitingServiceConsideration;AwaitingServicePayment;BulkCaseReject;ClarificationSubmitted;ConditionalOrderDrafted;ConditionalOrderPending;ConditionalOrderPronounced;ConditionalOrderRefused;FinalOrderComplete;FinalOrderOverdue;FinalOrderPending;FinalOrderRequested;GeneralApplicationReceived;GeneralConsiderationComplete;Holding;IssuedToBailiff;NewPaperCase;OfflineDocumentReceived;PendingHearingOutcome;WelshTranslationRequested;WelshTranslationReview",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

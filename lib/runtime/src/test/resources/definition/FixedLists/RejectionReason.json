@@ -1,0 +1,16 @@
+[
+  {
+    "DisplayOrder": 2,
+    "ID": "RejectionReason",
+    "ListElement": "Court does not have jurisdiction",
+    "ListElementCode": "noJurisdiction",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "RejectionReason",
+    "ListElement": "Make a free text order",
+    "ListElementCode": "other",
+    "LiveFrom": "01/01/2017"
+  }
+]

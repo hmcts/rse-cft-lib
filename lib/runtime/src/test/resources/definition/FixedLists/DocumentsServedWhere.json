@@ -1,0 +1,79 @@
+[
+  {
+    "DisplayOrder": 7,
+    "ID": "DocumentsServedWhere",
+    "ListElement": "last known place of business",
+    "ListElementCode": "lastKnownBusinessPlace",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 6,
+    "ID": "DocumentsServedWhere",
+    "ListElement": "last known principal place of business",
+    "ListElementCode": "lastKnownPricipalBusinessPlace",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 10,
+    "ID": "DocumentsServedWhere",
+    "ListElement": "last known residence",
+    "ListElementCode": "lastKnownResidence",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "DocumentsServedWhere",
+    "ListElement": "Other (please specify)",
+    "ListElementCode": "otherSpecify",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 9,
+    "ID": "DocumentsServedWhere",
+    "ListElement": "place of business",
+    "ListElementCode": "placeBusiness",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "DocumentsServedWhere",
+    "ListElement": "place of business of the partnership/company/corporation within the jurisdiction with a connection to claim",
+    "ListElementCode": "placeOfBusinessOfCompany",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "DocumentsServedWhere",
+    "ListElement": "principal office of the company",
+    "ListElementCode": "principalOfficeCompany",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 4,
+    "ID": "DocumentsServedWhere",
+    "ListElement": "principal office of the corporation",
+    "ListElementCode": "principalOfficeCorporation",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 5,
+    "ID": "DocumentsServedWhere",
+    "ListElement": "principal office of the partnership",
+    "ListElementCode": "principalOfficePartnership",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 8,
+    "ID": "DocumentsServedWhere",
+    "ListElement": "principal place of business",
+    "ListElementCode": "principalPlaceBusiness",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 11,
+    "ID": "DocumentsServedWhere",
+    "ListElement": "usual residence",
+    "ListElementCode": "usualResidence",
+    "LiveFrom": "01/01/2017"
+  }
+]

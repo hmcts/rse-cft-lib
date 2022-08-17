@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=legal-advisor-general-consideration",
+    "CaseTypeID": "NFD",
+    "Description": "General Consideration",
+    "DisplayOrder": 51,
+    "EndButtonLabel": "Save and continue",
+    "ID": "legal-advisor-general-consideration",
+    "LiveFrom": "01/01/2017",
+    "Name": "General Consideration",
+    "PostConditionState": "GeneralConsiderationComplete",
+    "PreConditionState(s)": "AwaitingGeneralConsideration",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]
