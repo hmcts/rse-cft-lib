@@ -26,6 +26,13 @@ public interface CFTLib {
     void configureRoleAssignments(String json);
 
     /**
+     * Configure the AM role assignment service
+     * @see CFTLib#configureRoleAssignments(String)
+     * @param clean optionally remove any existing user role assignments
+     */
+    void configureRoleAssignments(String json, boolean clean);
+
+    /**
      * Import a CCD definition spreadsheet.
      *
      * @param def A Microsoft xlsx file

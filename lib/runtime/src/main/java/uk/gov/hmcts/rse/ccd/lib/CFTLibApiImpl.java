@@ -127,8 +127,12 @@ public class CFTLibApiImpl implements CFTLib {
         }
     }
 
-    @SneakyThrows
     public void configureRoleAssignments(String json) {
+        configureRoleAssignments(json, false);
+    }
+
+    @SneakyThrows
+    public void configureRoleAssignments(String json, boolean clean) {
         var port = ControlPlane.getEnvVar("RSE_LIB_DB_PORT", 6432);
         var host = ControlPlane.getEnvVar("RSE_LIB_DB_HOST", "localhost");
         try (var c = DriverManager.getConnection(
@@ -143,6 +147,7 @@ public class CFTLibApiImpl implements CFTLib {
             var sql = Resources.toString(url, StandardCharsets.UTF_8);
             var p = c.prepareStatement(sql);
             p.setString(1, json);
+            p.setBoolean(2, clean);
             p.executeQuery();
         }
     }
