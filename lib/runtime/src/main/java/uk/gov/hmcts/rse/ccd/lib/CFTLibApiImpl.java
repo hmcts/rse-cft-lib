@@ -128,12 +128,8 @@ public class CFTLibApiImpl implements CFTLib {
         }
     }
 
-    public void configureRoleAssignments(String json) {
-        configureRoleAssignments(json, false);
-    }
-
     @SneakyThrows
-    public void configureRoleAssignments(String json, boolean clean) {
+    public void configureRoleAssignments(String json) {
         try (var c = getConnection(Database.AM)) {
             // To use the uuid generation function.
             c.createStatement().execute(
@@ -144,7 +140,6 @@ public class CFTLibApiImpl implements CFTLib {
             var sql = Resources.toString(url, StandardCharsets.UTF_8);
             var p = c.prepareStatement(sql);
             p.setString(1, json);
-            p.setBoolean(2, clean);
             p.execute();
         }
     }

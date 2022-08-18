@@ -30,7 +30,7 @@ public class CFTLibConfig implements CFTLibConfigurer {
         );
         var json = Resources.toString(Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8);
         // Import role assignments replacing any existing for the user
-        lib.configureRoleAssignments(json, true);
+        lib.configureRoleAssignments(json);
 
 
         lib.importDefinition(Resources.toByteArray(Resources.getResource("NFD-dev.xlsx")));

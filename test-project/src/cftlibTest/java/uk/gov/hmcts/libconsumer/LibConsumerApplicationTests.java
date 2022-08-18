@@ -170,29 +170,20 @@ class LibConsumerApplicationTests extends CftlibTest {
     @Test
     @SneakyThrows
     void testRoleAssignments() {
+        // Reload the role assignments a second time.
+        var json = Resources.toString(
+                Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8);
+        cftlib().configureRoleAssignments(json);
         try (var c = cftlib().getConnection(Database.AM)) {
-            var query = "select count(*) from role_assignment";
+            var query = "select count(*) from role_assignment group by actor_id order by actor_id asc";
             var v = c.createStatement().executeQuery(query);
-
-            // Our CftlibConfig should create 7 role assignments initially.
             v.next();
+            // User id '1' specifies clean assignments.
             assertThat(v.getInt(1), equalTo(7));
 
-            // Reload the role assignments additively.
-            var json = Resources.toString(
-                    Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8);
-            cftlib().configureRoleAssignments(json, false);
-            v = c.createStatement().executeQuery(query);
-
+            // User id '2' specifies additive assignments.
             v.next();
-            assertThat(v.getInt(1), equalTo(14));
-
-            // Clean reload of role assignments should take us back to 7
-            cftlib().configureRoleAssignments(json, true);
-            v = c.createStatement().executeQuery(query);
-
-            v.next();
-            assertThat(v.getInt(1), equalTo(7));
+            assertThat(v.getInt(1), greaterThan(1));
         }
     }
 
