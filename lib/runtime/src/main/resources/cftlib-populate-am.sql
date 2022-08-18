@@ -1,13 +1,16 @@
 
 with entries(val) as (select jsonb_array_elements(?::jsonb))
-, rows(id, val) as (
-  select val->>'id', jsonb_array_elements(val->'roleAssignments') from entries
+, rows(actor_id, overrideAll, val) as (
+  select val->>'id', val->>'overrideAll', jsonb_array_elements(val->'roleAssignments') from entries
+), clean as (
+  -- Optionally clean existing role assignments if requested
+  delete from role_assignment where actor_id in (select actor_id from rows where overrideAll::boolean = true)
 ), actors as (
 insert into role_assignment
   select
     gen_random_uuid() as id,
     'IDAM' as actor_id_type,
-    id as actor_id,
+    actor_id,
     r."roleType",
     r."roleName",
     r.classification,

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.SneakyThrows;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,8 +21,8 @@ import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 @ComponentScan
 public class LibAgent {
 
-    @Autowired
-    private Optional<CFTLibConfigurer> configurer;
+    @Autowired(required = false)
+    private List<CFTLibConfigurer> configurers = new ArrayList<>();
 
     // Block any database access until ready for use.
     @Before("execution(* javax.sql.DataSource.*(..))")
@@ -39,9 +40,9 @@ public class LibAgent {
     @EventListener(ApplicationReadyEvent.class)
     public void onReady() {
         ControlPlane.appReady();
-        // If this application defines a cftlib config then execute it once fully booted up.
-        if (configurer.isPresent()) {
-            configurer.get().configure(ControlPlane.getApi());
+        // If this application defines any cftlib configs then execute them once fully booted up.
+        for (CFTLibConfigurer configurer : configurers) {
+            configurer.configure(ControlPlane.getApi());
         }
     }
 }

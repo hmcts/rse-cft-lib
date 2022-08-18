@@ -1,6 +1,7 @@
 package uk.gov.hmcts.libconsumer;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -17,6 +18,7 @@ import static org.hamcrest.Matchers.is;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -36,6 +38,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.hmcts.rse.ccd.lib.Database;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -153,7 +156,38 @@ class LibConsumerApplicationTests extends CftlibTest {
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
     }
 
+    @Test
+    @SneakyThrows
+    void connectToDatabases() {
+        for (Database db : Database.values()) {
+            try (var c = cftlib().getConnection(db)) {
+                // All OK
+            }
+        }
+    }
+
     @Order(1)
+    @Test
+    @SneakyThrows
+    void testRoleAssignments() {
+        // Reload the role assignments a second time.
+        var json = Resources.toString(
+                Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8);
+        cftlib().configureRoleAssignments(json);
+        try (var c = cftlib().getConnection(Database.AM)) {
+            var query = "select count(*) from role_assignment group by actor_id order by actor_id asc";
+            var v = c.createStatement().executeQuery(query);
+            v.next();
+            // User id '1' specifies clean assignments.
+            assertThat(v.getInt(1), equalTo(7));
+
+            // User id '2' specifies additive assignments.
+            v.next();
+            assertThat(v.getInt(1), greaterThan(1));
+        }
+    }
+
+    @Order(2)
     @Test
     void caseCreation() throws IOException {
         var request = buildGet(
@@ -196,7 +230,7 @@ class LibConsumerApplicationTests extends CftlibTest {
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
     }
 
-    @Order(2)
+    @Order(3)
     @SneakyThrows
     @Test
     void searchCases() {
