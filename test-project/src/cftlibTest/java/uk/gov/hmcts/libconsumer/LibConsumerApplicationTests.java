@@ -1,6 +1,7 @@
 package uk.gov.hmcts.libconsumer;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -17,6 +18,7 @@ import static org.hamcrest.Matchers.is;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -36,6 +38,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.hmcts.rse.ccd.lib.Database;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -155,6 +158,36 @@ class LibConsumerApplicationTests extends CftlibTest {
 
     @Order(1)
     @Test
+    @SneakyThrows
+    void testRoleAssignments() {
+        try (var c = cftlib().getConnection(Database.AM)) {
+            var query = "select count(*) from role_assignment";
+            var v = c.createStatement().executeQuery(query);
+
+            // Our CftlibConfig should create 7 role assignments initially.
+            v.next();
+            assertThat(v.getInt(1), equalTo(7));
+
+            // Reload the role assignments additively.
+            var json = Resources.toString(
+                    Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8);
+            cftlib().configureRoleAssignments(json, false);
+            v = c.createStatement().executeQuery(query);
+
+            v.next();
+            assertThat(v.getInt(1), equalTo(14));
+
+            // Clean reload of role assignments should take us back to 7
+            cftlib().configureRoleAssignments(json, true);
+            v = c.createStatement().executeQuery(query);
+
+            v.next();
+            assertThat(v.getInt(1), equalTo(7));
+        }
+    }
+
+    @Order(2)
+    @Test
     void caseCreation() throws IOException {
         var request = buildGet(
             "http://localhost:7431/data/internal/case-types/NFD/event-triggers/create-test-application?ignore-warning=false");
@@ -196,7 +229,7 @@ class LibConsumerApplicationTests extends CftlibTest {
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
     }
 
-    @Order(2)
+    @Order(3)
     @SneakyThrows
     @Test
     void searchCases() {

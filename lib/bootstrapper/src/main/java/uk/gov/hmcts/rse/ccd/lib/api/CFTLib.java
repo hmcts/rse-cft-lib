@@ -1,6 +1,9 @@
 package uk.gov.hmcts.rse.ccd.lib.api;
 
+import uk.gov.hmcts.rse.ccd.lib.Database;
+
 import java.io.File;
+import java.sql.Connection;
 
 public interface CFTLib {
     /**
@@ -45,4 +48,9 @@ public interface CFTLib {
      * @param def A Microsoft xlsx file
      */
     void importDefinition(File def);
+
+    /**
+     * Obtain connections to common component databases.
+     */
+    Connection getConnection(Database database);
 }
