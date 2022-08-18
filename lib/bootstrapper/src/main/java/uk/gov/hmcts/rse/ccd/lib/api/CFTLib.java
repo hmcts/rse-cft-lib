@@ -26,7 +26,7 @@ public interface CFTLib {
     void configureRoleAssignments(String json);
 
     /**
-     * Configure the AM role assignment service
+     * Configure the AM role assignment service.
      * @see CFTLib#configureRoleAssignments(String)
      * @param clean optionally remove any existing user role assignments
      */
