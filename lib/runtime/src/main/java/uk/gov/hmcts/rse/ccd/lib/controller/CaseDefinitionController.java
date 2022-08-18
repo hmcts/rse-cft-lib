@@ -1,5 +1,6 @@
 package uk.gov.hmcts.rse.ccd.lib.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,14 +14,10 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(value = "/api")
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class CaseDefinitionController {
 
     private final CaseTypeRepository repository;
-
-    @Autowired
-    public CaseDefinitionController(CaseTypeRepository repository) {
-        this.repository = repository;
-    }
 
     @GetMapping(value = "/data/case-type/{id}")
     public CaseType dataCaseTypeIdGet(@PathVariable("id") String id) {

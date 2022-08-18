@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseField;
 import uk.gov.hmcts.ccd.definition.store.repository.model.CaseType;
 import uk.gov.hmcts.ccd.definition.store.repository.model.Jurisdiction;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
@@ -60,7 +61,10 @@ public class CaseTypeRepository {
     private Map<String, List<Map<String, String>>> toJson(String path) {
         return FILES.parallelStream()
             .map(file -> new AbstractMap.SimpleEntry<>(file, reader.readPath(path + "/" + file)))
-            .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            .collect(Collectors.toUnmodifiableMap(
+                AbstractMap.SimpleEntry::getKey,
+                AbstractMap.SimpleEntry::getValue
+            ));
     }
 
     private CaseType mapToCaseType(Map<String, List<Map<String, String>>> json) {
@@ -88,7 +92,17 @@ public class CaseTypeRepository {
         caseType.setJurisdiction(jurisdiction);
     }
 
-    private void setCaseFields(CaseType caseType, List<Map<String, String>> caseField) {
+    private void setCaseFields(CaseType caseType, List<Map<String, String>> caseFields) {
+        caseType.setCaseFields(caseFields.stream()
+            .map(this::mapToCaseField)
+            .collect(Collectors.toList()));
+    }
 
+    private CaseField mapToCaseField(Map<String, String> row) {
+        var caseField = new CaseField();
+
+        caseField.setCaseTypeId(row.get("CaseTypeID"));
+
+        return caseField;
     }
 }
