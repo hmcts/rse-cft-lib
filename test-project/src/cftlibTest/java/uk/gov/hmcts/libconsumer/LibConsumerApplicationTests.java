@@ -156,6 +156,16 @@ class LibConsumerApplicationTests extends CftlibTest {
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
     }
 
+    @Test
+    @SneakyThrows
+    void connectToDatabases() {
+        for (Database db : Database.values()) {
+            try (var c = cftlib().getConnection(db)) {
+                // All OK
+            }
+        }
+    }
+
     @Order(1)
     @Test
     @SneakyThrows
