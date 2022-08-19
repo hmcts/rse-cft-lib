@@ -72,17 +72,22 @@ public class CaseTypeRepository {
 
     private CaseType mapToCaseType(Map<String, List<Map<String, String>>> json) {
         var caseType = new CaseType();
-        Map<String, List<AccessControlList>> acls = json.get("AuthorisationCaseField").stream()
-            .reduce(new HashMap<String, List<AccessControlList>>(), (HashMap<String, List<AccessControlList>> result, Map<String, String> field) -> {
-                result.computeIfAbsent(field.get("CaseFieldID"), f -> new ArrayList<>()).add(mapToAcl(field));
-                return result;
-            })
-            .collect(/* some collector */);
+        var acls = getAcls(json);
 
         setCaseTypeDetails(caseType, json.get("CaseType").get(0));
         setCaseFields(caseType, acls, json.get("CaseField"));
 
         return caseType;
+    }
+
+    private Map<String, List<AccessControlList>> getAcls(Map<String, List<Map<String, String>>> json) {
+        var acls = new HashMap<String, List<AccessControlList>>();
+
+        for (var row : json.get("AuthorisationCaseField")) {
+            acls.computeIfAbsent(row.get("CaseFieldID"), f -> new ArrayList<>()).add(mapToAcl(row));
+        }
+
+        return acls;
     }
 
     private AccessControlList mapToAcl(Map<String, String> row) {
@@ -113,7 +118,7 @@ public class CaseTypeRepository {
 
     private void setCaseFields(
         CaseType caseType,
-        Map<String, AccessControlList> acls,
+        Map<String, List<AccessControlList>> acls,
         List<Map<String, String>> caseFields
     ) {
         caseType.setCaseFields(caseFields.stream()
@@ -121,7 +126,7 @@ public class CaseTypeRepository {
             .collect(Collectors.toList()));
     }
 
-    private CaseField mapToCaseField(Map<String, AccessControlList> acls, Map<String, String> row) {
+    private CaseField mapToCaseField(Map<String, List<AccessControlList>> acls, Map<String, String> row) {
         var caseField = new CaseField();
 
         caseField.setCaseTypeId(row.get("CaseTypeID"));
@@ -130,6 +135,7 @@ public class CaseTypeRepository {
         caseField.setLabel(row.get("Label"));
         caseField.setId(row.get("ID"));
         caseField.setAcls(acls.computeIfAbsent(row.get("ID"), k -> new ArrayList<>()));
+
         return caseField;
     }
 
