@@ -53,8 +53,8 @@ class CaseDefinitionControllerTest {
             .perform(get("/api/data/case-type/NFD"))
             .andExpect(status().isOk())
             .andExpect(matcher.node("id").isEqualTo(inPath(expected, "$.id")))
-            .andExpect(matcher.node("case_fields").isEqualTo(inPath(expected, "$.case_fields")))
-            .andExpect(matcher.node("events").isEqualTo(inPath(expected, "$.events")))
+            .andExpect(matcher.node("case_fields[0]").isEqualTo(inPath(expected, "$.case_fields[0]")))
+            .andExpect(matcher.node("events[0]").isEqualTo(inPath(expected, "$.events[0]")))
             .andExpect(matcher.node("states").isEqualTo(inPath(expected, "$.states")))
             .andExpect(matcher.isEqualTo(expected));
     }
