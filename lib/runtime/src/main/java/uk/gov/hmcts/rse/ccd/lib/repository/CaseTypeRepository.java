@@ -5,16 +5,22 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
+import uk.gov.hmcts.ccd.definition.store.repository.model.AccessControlList;
 import uk.gov.hmcts.ccd.definition.store.repository.model.CaseField;
 import uk.gov.hmcts.ccd.definition.store.repository.model.CaseType;
 import uk.gov.hmcts.ccd.definition.store.repository.model.Jurisdiction;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
 
-import java.util.AbstractMap;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.util.AbstractMap.*;
 
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -60,20 +66,33 @@ public class CaseTypeRepository {
     @SneakyThrows
     private Map<String, List<Map<String, String>>> toJson(String path) {
         return FILES.parallelStream()
-            .map(file -> new AbstractMap.SimpleEntry<>(file, reader.readPath(path + "/" + file)))
-            .collect(Collectors.toUnmodifiableMap(
-                AbstractMap.SimpleEntry::getKey,
-                AbstractMap.SimpleEntry::getValue
-            ));
+            .map(file -> new SimpleEntry<>(file, reader.readPath(path + "/" + file)))
+            .collect(Collectors.toUnmodifiableMap(SimpleEntry::getKey,SimpleEntry::getValue));
     }
 
     private CaseType mapToCaseType(Map<String, List<Map<String, String>>> json) {
         var caseType = new CaseType();
+        Map<String, List<AccessControlList>> acls = json.get("AuthorisationCaseField").stream()
+            .reduce(new HashMap<String, List<AccessControlList>>(), (HashMap<String, List<AccessControlList>> result, Map<String, String> field) -> {
+                result.computeIfAbsent(field.get("CaseFieldID"), f -> new ArrayList<>()).add(mapToAcl(field));
+                return result;
+            })
+            .collect(/* some collector */);
 
         setCaseTypeDetails(caseType, json.get("CaseType").get(0));
-        setCaseFields(caseType, json.get("CaseField"));
+        setCaseFields(caseType, acls, json.get("CaseField"));
 
         return caseType;
+    }
+
+    private AccessControlList mapToAcl(Map<String, String> row) {
+        return new AccessControlList(
+            row.get("UserRole"),
+            row.get("CRUD").contains("C"),
+            row.get("CRUD").contains("R"),
+            row.get("CRUD").contains("U"),
+            row.get("CRUD").contains("D")
+        );
     }
 
     private void setCaseTypeDetails(CaseType caseType, Map<String, String> row) {
@@ -92,17 +111,31 @@ public class CaseTypeRepository {
         caseType.setJurisdiction(jurisdiction);
     }
 
-    private void setCaseFields(CaseType caseType, List<Map<String, String>> caseFields) {
+    private void setCaseFields(
+        CaseType caseType,
+        Map<String, AccessControlList> acls,
+        List<Map<String, String>> caseFields
+    ) {
         caseType.setCaseFields(caseFields.stream()
-            .map(this::mapToCaseField)
+            .map(f -> this.mapToCaseField(acls, f))
             .collect(Collectors.toList()));
     }
 
-    private CaseField mapToCaseField(Map<String, String> row) {
+    private CaseField mapToCaseField(Map<String, AccessControlList> acls, Map<String, String> row) {
         var caseField = new CaseField();
 
         caseField.setCaseTypeId(row.get("CaseTypeID"));
-
+        caseField.setSecurityClassification(row.get("SecurityClassification").toUpperCase());
+        caseField.setLiveFrom(formatDate(row.get("LiveFrom")));
+        caseField.setLabel(row.get("Label"));
+        caseField.setId(row.get("ID"));
+        caseField.setAcls(acls.computeIfAbsent(row.get("ID"), k -> new ArrayList<>()));
         return caseField;
+    }
+
+    public static String formatDate(String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        return LocalDate.parse(date, formatter).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 }
