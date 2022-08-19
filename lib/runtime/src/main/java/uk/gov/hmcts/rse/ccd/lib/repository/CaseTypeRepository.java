@@ -1,14 +1,14 @@
 package uk.gov.hmcts.rse.ccd.lib.repository;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
-import uk.gov.hmcts.ccd.definition.store.repository.model.AccessControlList;
-import uk.gov.hmcts.ccd.definition.store.repository.model.CaseField;
-import uk.gov.hmcts.ccd.definition.store.repository.model.CaseType;
-import uk.gov.hmcts.ccd.definition.store.repository.model.Jurisdiction;
+import uk.gov.hmcts.ccd.definition.store.repository.model.*;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
 
 import java.time.LocalDate;
@@ -76,8 +76,32 @@ public class CaseTypeRepository {
 
         setCaseTypeDetails(caseType, json.get("CaseType").get(0));
         setCaseFields(caseType, acls, json.get("CaseField"));
+        setCaseStates(caseType, json);
 
         return caseType;
+    }
+
+    private void setCaseStates(CaseType caseType, Map<String, List<Map<String, String>>> json) {
+        var states = new HashMap<String, CaseState>();
+        for (Map state : json.get("State")) {
+            var o = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+
+            var s = o.convertValue(state, CaseState.class);
+            // Def store strips trailing whitespace.
+            s.setTitleDisplay(((String) state.get("TitleDisplay")).trim());
+            s.setOrder((Integer) state.get("DisplayOrder"));
+            s.setAcls(new ArrayList<>());
+            states.put(s.getId(), s);
+        }
+
+        for (Map<String, String> auth : json.get("AuthorisationCaseState")) {
+            var state = states.get(auth.get("CaseStateID"));
+            var acl = mapToAcl(auth);
+            state.getAcls().add(acl);
+        }
+
+        caseType.setStates(new ArrayList<>(states.values()));
     }
 
     private Map<String, List<AccessControlList>> getAcls(Map<String, List<Map<String, String>>> json) {
@@ -91,11 +115,12 @@ public class CaseTypeRepository {
     }
 
     private AccessControlList mapToAcl(Map<String, String> row) {
+        var isCreator = "[CREATOR]".equals(row.get("UserRole"));
         return new AccessControlList(
             row.get("UserRole"),
-            row.get("CRUD").contains("C"),
-            row.get("CRUD").contains("R"),
-            row.get("CRUD").contains("U"),
+            row.get("CRUD").contains("C") || isCreator,
+            row.get("CRUD").contains("R") || isCreator,
+            row.get("CRUD").contains("U") || isCreator,
             row.get("CRUD").contains("D")
         );
     }
