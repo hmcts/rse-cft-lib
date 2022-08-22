@@ -20,7 +20,7 @@ class CaseTypeRepositoryTest {
 
     @BeforeAll
     public static void setup() {
-        var repository = new CaseTypeRepository(paths, new JsonDefinitionReader(new ObjectMapper()));
+        var repository = new CaseTypeRepository(paths, new JsonDefinitionReader(new ObjectMapper()), new FieldTypeRepository());
 
         caseType = repository.findByCaseTypeId("NFD").orElseThrow();
     }

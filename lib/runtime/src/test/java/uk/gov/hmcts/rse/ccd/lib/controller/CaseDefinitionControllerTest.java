@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.ResourceUtils;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
 import uk.gov.hmcts.rse.ccd.lib.repository.CaseTypeRepository;
+import uk.gov.hmcts.rse.ccd.lib.repository.FieldTypeRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,8 +38,13 @@ class CaseDefinitionControllerTest {
         }
 
         @Bean
+        public FieldTypeRepository getFieldTypeRepository() {
+            return new FieldTypeRepository();
+        }
+
+        @Bean
         public CaseTypeRepository getRepository() {
-            return new CaseTypeRepository(paths, getReader());
+            return new CaseTypeRepository(paths, getReader(), getFieldTypeRepository());
         }
     }
 

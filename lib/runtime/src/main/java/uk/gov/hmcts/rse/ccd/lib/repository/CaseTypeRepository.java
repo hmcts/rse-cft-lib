@@ -25,6 +25,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.AbstractMap.SimpleEntry;
+import static java.util.Objects.requireNonNull;
+import static org.springframework.util.StringUtils.hasText;
 
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -59,6 +61,9 @@ public class CaseTypeRepository {
     @Autowired
     private JsonDefinitionReader reader;
 
+    @Autowired
+    private FieldTypeRepository fieldTypes;
+
 
     public Optional<CaseType> findByCaseTypeId(String id) {
         return Optional
@@ -78,11 +83,36 @@ public class CaseTypeRepository {
         var caseType = new CaseType();
         var acls = getAcls(json);
 
+        setComplexTypes(json.get("ComplexTypes"));
         setCaseTypeDetails(caseType, json.get("CaseType").get(0));
         setCaseFields(caseType, acls, json.get("CaseField"));
         setCaseStates(caseType, json);
 
         return caseType;
+    }
+
+    private void setComplexTypes(List<Map<String, String>> complexTypes) {
+        var complexTypesIndexedByID = complexTypes
+            .stream()
+            .collect(Collectors.groupingBy(map -> map.get("ID")));
+
+        for (var complexType : complexTypesIndexedByID.entrySet()) {
+            fieldTypes.addFieldType(null, complexType.getKey(), null, null, null, null, null);
+
+            for (var field : complexType.getValue()) {
+                var fieldType = hasText(field.get("FieldTypeParameter"))
+                    ? field.get("FieldType") + "-" + field.get("FieldTypeParameter")
+                    : field.get("FieldType");
+
+                fieldTypes.addComplexTypeField(
+                    complexType.getKey(),
+                    field.get("ListElementCode"),
+                    field.get("ElementLabel"),
+                    fieldType,
+                    null
+                );
+            }
+        }
     }
 
     private void setCaseStates(CaseType caseType, Map<String, List<Map<String, String>>> json) {
@@ -164,6 +194,11 @@ public class CaseTypeRepository {
         caseField.setLabel(row.get("Label"));
         caseField.setId(row.get("ID"));
         caseField.setAcls(acls.computeIfAbsent(row.get("ID"), k -> new ArrayList<>()));
+
+        var fieldType = fieldTypes.get(row.get("FieldType"));
+        requireNonNull(fieldType, "Unknown field type: " + row.get("FieldType"));
+
+        caseField.setFieldType(fieldType);
 
         return caseField;
     }
