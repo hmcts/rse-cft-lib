@@ -25,7 +25,7 @@ dependencies {
     implementation (project (path: ':projects:definition-store-fat', configuration: 'shadow')) {
         transitive = false
     }
-    compile 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.7.3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'net.javacrumbs.json-unit:json-unit-spring:2.35.0'
     testImplementation 'net.javacrumbs.json-unit:json-unit-json-path:2.35.0'
