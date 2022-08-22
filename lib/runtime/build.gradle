@@ -22,7 +22,7 @@ dependencies {
     implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.13'
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway:3.1.2'
 
-    implementation ('com.github.hmcts.rse-cft-lib:definition-store-fat:DEV-SNAPSHOT') {
+    implementation (project (path: ':projects:definition-store-fat', configuration: 'shadow')) {
         transitive = false
     }
     compile 'org.springframework.boot:spring-boot-starter-web'
