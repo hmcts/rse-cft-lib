@@ -168,7 +168,7 @@ public class FieldTypeRepository {
         fieldType.setRegularExpression(regex);
         fieldType.setCollectionFieldType(types.get(collectionType));
         fieldType.setComplexFields(new ArrayList<>());
-        fieldType.setType(baseType);
+        fieldType.setType(baseType == null ? ref : baseType);
         types.put(ref, fieldType);
     }
 
