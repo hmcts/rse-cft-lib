@@ -8,7 +8,11 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
-import uk.gov.hmcts.ccd.definition.store.repository.model.*;
+import uk.gov.hmcts.ccd.definition.store.repository.model.AccessControlList;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseField;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseState;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseType;
+import uk.gov.hmcts.ccd.definition.store.repository.model.Jurisdiction;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
 
 import java.time.LocalDate;
@@ -20,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static java.util.AbstractMap.*;
+import static java.util.AbstractMap.SimpleEntry;
 
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
