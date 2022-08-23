@@ -30880,7 +30880,7 @@
       "label": "Previous Service Applications",
       "hint_text": null,
       "field_type": {
-        "id": "AlternativeServiceOutcome-Collection",
+        "id": "${json-unit.regex}^\\QalternativeServiceOutcomes-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -31100,7 +31100,7 @@
                     "label": "Select your document",
                     "hint_text": null,
                     "field_type": {
-                      "id": "Document-.pdf,.tif,.tiff,.jpg,.jpeg,.png",
+                      "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                       "type": "Document",
                       "min": null,
                       "max": null,
@@ -31960,7 +31960,7 @@
       "label": "Amended applications",
       "hint_text": null,
       "field_type": {
-        "id": "amendedApplications-5e3e3e8b-e4b7-4727-b392-ed182d79a3b6",
+        "id": "${json-unit.regex}^\\QamendedApplications-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -32094,7 +32094,7 @@
               "label": "Select your document",
               "hint_text": null,
               "field_type": {
-                "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+                "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Document",
                 "min": null,
                 "max": null,
@@ -32472,7 +32472,7 @@
       "label": "Upload Answer Received supporting documents",
       "hint_text": null,
       "field_type": {
-        "id": "answerReceivedSupportingDocuments-e519159a-e4e5-4472-90b0-ef59b24b1b09",
+        "id": "${json-unit.regex}^\\QanswerReceivedSupportingDocuments-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -32606,7 +32606,7 @@
               "label": "Select your document",
               "hint_text": null,
               "field_type": {
-                "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+                "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Document",
                 "min": null,
                 "max": null,
@@ -34177,7 +34177,7 @@
       "label": "Applicant 1 uploaded documents",
       "hint_text": null,
       "field_type": {
-        "id": "applicant1DocumentsUploaded-d15e2147-f5c9-4c2b-b584-3f7981960e0e",
+        "id": "${json-unit.regex}^\\Qapplicant1DocumentsUploaded-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -34311,7 +34311,7 @@
               "label": "Select your document",
               "hint_text": null,
               "field_type": {
-                "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+                "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Document",
                 "min": null,
                 "max": null,
@@ -35825,7 +35825,7 @@
       "label": "Help with fees reference",
       "hint_text": null,
       "field_type": {
-        "id": "applicant1HWFReferenceNumber-93bee652-aedb-47dd-bcf8-8a8218d18e21",
+        "id": "${json-unit.regex}^\\Qapplicant1HWFReferenceNumber-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Text",
         "min": null,
         "max": null,
@@ -37892,7 +37892,7 @@
       "label": "Phone number",
       "hint_text": null,
       "field_type": {
-        "id": "applicant1PhoneNumber-ae6c9c14-f97c-45dc-9aa2-e241cf5ce8ae",
+        "id": "${json-unit.regex}^\\Qapplicant1PhoneNumber-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Text",
         "min": null,
         "max": null,

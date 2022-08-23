@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 import static org.springframework.util.StringUtils.hasText;
@@ -191,14 +192,18 @@ public class FieldTypeRepository {
         types.put(ref, fieldType);
     }
 
-    public FieldType findOrCreateFieldType(String fieldType, String fieldTypeParameter, String regex, Map<String, List<FixedListItem>> listItems) {
+    public FieldType findOrCreateFieldType(
+        String fieldId,
+        String fieldType,
+        String fieldTypeParameter,
+        String regex,
+        Map<String, List<FixedListItem>> listItems
+    ) {
         FieldType type;
 
-        // Lists and Collections create a field type on the
-        // TODO they could be created on the fly and saved using the ID for next time
         if (fieldType.equals("Collection")) {
             type = new FieldType();
-            type.setId(fieldTypeParameter + "-Collection"); // this needs a UUID?
+            type.setId(fieldId + "-" + UUID.randomUUID());
             type.setType(fieldType);
             type.setCollectionFieldType(types.get(fieldTypeParameter));
         } else if (hasText(fieldTypeParameter)) {
@@ -211,10 +216,11 @@ public class FieldTypeRepository {
             requireNonNull(type, "Unknown field type: " + getFieldTypeName(fieldType, fieldTypeParameter));
         }
 
+        // If a field has a regular expression then a new field type is created that is a copy of the original with the regex and a new ID
         if (hasText(regex)) {
             var copy = new FieldType();
             copy.setRegularExpression(regex);
-            copy.setId(type.getId() + "-" + regex);
+            copy.setId(fieldId + "-" + UUID.randomUUID());
             copy.setComplexFields(type.getComplexFields());
             copy.setType(type.getType());
             copy.setFixedListItems(type.getFixedListItems());

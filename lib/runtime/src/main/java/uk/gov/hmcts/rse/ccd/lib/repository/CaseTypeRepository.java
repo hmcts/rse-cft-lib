@@ -107,7 +107,13 @@ public class CaseTypeRepository {
         // referencing a complex type that hasn't been created yet.
         for (var complexType : complexTypesIndexedByID.entrySet()) {
             for (var field : complexType.getValue()) {
-                var fieldType = fieldTypes.findOrCreateFieldType(field.get("FieldType"), field.get("FieldTypeParameter"), field.get("RegularExpression"), listItems);
+                var fieldType = fieldTypes.findOrCreateFieldType(
+                    field.get("ListElementCode"),
+                    field.get("FieldType"),
+                    field.get("FieldTypeParameter"),
+                    field.get("RegularExpression"),
+                    listItems
+                );
 
                 fieldTypes.addComplexTypeField(
                     complexType.getKey(),
@@ -130,7 +136,11 @@ public class CaseTypeRepository {
 
         for (var fixedList : complexTypesIndexedByID.entrySet()) {
             var items = fixedList.getValue().stream()
-                .map(map -> new FixedListItem((String) map.get("ListElementCode"), (String) map.get("ListElement"), (Integer) map.get("DisplayOrder")))
+                .map(map -> new FixedListItem(
+                    (String) map.get("ListElementCode"),
+                    ((String) map.get("ListElement")).trim(),
+                    (Integer) map.get("DisplayOrder"))
+                )
                 .collect(Collectors.toList());
 
             listItems.put(fixedList.getKey(), items);
@@ -236,7 +246,13 @@ public class CaseTypeRepository {
         caseField.setId(row.get("ID"));
         caseField.setAcls(acls.computeIfAbsent(row.get("ID"), k -> new ArrayList<>()));
 
-        FieldType fieldType = fieldTypes.findOrCreateFieldType(row.get("FieldType"), row.get("FieldTypeParameter"), row.get("RegularExpression"), listItems);
+        FieldType fieldType = fieldTypes.findOrCreateFieldType(
+            row.get("ID"),
+            row.get("FieldType"),
+            row.get("FieldTypeParameter"),
+            row.get("RegularExpression"),
+            listItems
+        );
 
         caseField.setFieldType(fieldType);
 
