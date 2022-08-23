@@ -30880,7 +30880,7 @@
       "label": "Previous Service Applications",
       "hint_text": null,
       "field_type": {
-        "id": "alternativeServiceOutcomes-bcc6ecd0-c800-4b4a-a784-cdb6f56d0838",
+        "id": "alternativeServiceOutcomes-Collection",
         "type": "Collection",
         "min": null,
         "max": null,

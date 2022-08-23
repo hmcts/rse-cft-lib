@@ -3,9 +3,11 @@ package uk.gov.hmcts.rse.ccd.lib.repository;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.definition.store.repository.model.CaseField;
 import uk.gov.hmcts.ccd.definition.store.repository.model.FieldType;
+import uk.gov.hmcts.ccd.definition.store.repository.model.FixedListItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -17,63 +19,63 @@ public class FieldTypeRepository {
         /*
         \COPY (select f.id, f.reference, f.minimum, f.maximum, f.regular_expression, bft.reference, cft.reference from field_type f left join field_type bft on f.base_field_type_id = bft.id left join field_type cft on f.collection_field_type_id = cft.id where f.jurisdiction_id is null order by f.id) TO '/tmp/results.csv' WITH (FORMAT CSV, HEADER FALSE, FORCE_QUOTE *, NULL 'null') ;
          */
-        addFieldType("1","Text",null,null,null,null,null);
-        addFieldType("51","Number",null,null,null,null,null);
-        addFieldType("101","Email",null,null,null,null,null);
-        addFieldType("151","YesOrNo",null,null,null,null,null);
-        addFieldType("201","Date",null,null,null,null,null);
-        addFieldType("251","FixedList",null,null,null,null,null);
-        addFieldType("301","Postcode",null,null,"^([A-PR-UWYZ0-9][A-HK-Y0-9][AEHMNPRTVXY0-9]?[ABEHMNPRVWXY0-9]? {1,"+
+        addFieldType("Text",null,null,null,null,null);
+        addFieldType("Number",null,null,null,null,null);
+        addFieldType("Email",null,null,null,null,null);
+        addFieldType("YesOrNo",null,null,null,null,null);
+        addFieldType("Date",null,null,null,null,null);
+        addFieldType("FixedList",null,null,null,null,null);
+        addFieldType("Postcode",null,null,"^([A-PR-UWYZ0-9][A-HK-Y0-9][AEHMNPRTVXY0-9]?[ABEHMNPRVWXY0-9]? {1,"+
             "2}[0-9][ABD-HJLN-UW-Z]{2}|GIR 0AA)$",null,null);
-        addFieldType("351","MoneyGBP",null,null,null,null,null);
-        addFieldType("401","PhoneUK",null,null,"^(((\\+44\\s?\\d{4}|\\(?0\\d{4}\\)?)\\s?\\d{3}\\s?\\d{3})|((\\+44\\s?\\d{3}|\\"+
+        addFieldType("MoneyGBP",null,null,null,null,null);
+        addFieldType("PhoneUK",null,null,"^(((\\+44\\s?\\d{4}|\\(?0\\d{4}\\)?)\\s?\\d{3}\\s?\\d{3})|((\\+44\\s?\\d{3}|\\"+
             "(?0\\d{3}\\)?)\\s?\\d{3}\\s?\\d{4})|((\\+44\\s?\\d{2}|\\(?0\\d{2}\\)?)\\s?\\d{4}\\s?\\d{4}))(\\s?\\#(\\d{4}|\\d{3}))?$",null,null);
-        addFieldType("451","TextArea",null,null,null,null,null);
-        addFieldType("501","Complex",null,null,null,null,null);
-        addFieldType("551","Collection",null,null,null,null,null);
-        addFieldType("601","MultiSelectList",null,null,null,null,null);
-        addFieldType("651","Document",null,null,null,null,null);
-        addFieldType("701","Label",null,null,null,null,null);
-        addFieldType("751","AddressGlobal",null,null,null,"Complex",null);
-        addFieldType("801","TextMax50",null,"50",null,"Text",null);
-        addFieldType("851","TextMax150",null,"150",null,"Text",null);
-        addFieldType("901","TextMax14",null,"14",null,"Text",null);
-        addFieldType("951","AddressGlobalUK",null,null,null,"Complex",null);
-        addFieldType("1001","AddressUK",null,null,null,"Complex",null);
-        addFieldType("1051","DateTime",null,null,null,null,null);
-        addFieldType("1101","OrderSummary",null,null,null,"Complex",null);
-        addFieldType("1151","Fee",null,null,null,"Complex",null);
-        addFieldType("1201","FeesList",null,null,null,"Collection","Fee");
-        addFieldType("1251","CasePaymentHistoryViewer",null,null,null,null,null);
-        addFieldType("1301","FixedRadioList",null,null,null,null,null);
-        addFieldType("1351","CaseLink",null,null,null,"Complex",null);
-        addFieldType("1401","TextCaseReference",null,null,"$|^\\d{4}-\\d{4}-\\d{4}-\\d{4}$)","Text",null);
-        addFieldType("1451","CaseHistoryViewer",null,null,null,null,null);
-        addFieldType("1501","DynamicList",null,null,null,null,null);
-        addFieldType("1551","Organisation",null,null,null,"Complex",null);
-        addFieldType("1601","OrganisationPolicy",null,null,null,"Complex",null);
-        addFieldType("1651","ChangeOrganisationRequest",null,null,null,"Complex",null);
-        addFieldType("1701","PreviousOrganisation",null,null,null,"Complex",null);
-        addFieldType("1751","PreviousOrganisationCollection",null,null,null,"Collection","PreviousOrganisation");
-        addFieldType("1801","CaseLocation",null,null,null,"Complex",null);
-        addFieldType("1851","Region",null,null,null,null,null);
-        addFieldType("1901","BaseLocation",null,null,null,null,null);
-        addFieldType("1951","DynamicRadioList",null,null,null,null,null);
-        addFieldType("2001","DynamicMultiSelectList",null,null,null,null,null);
-        addFieldType("2051","SearchParty",null,null,null,"Complex",null);
-        addFieldType("2101","SearchCriteria",null,null,null,"Complex",null);
-        addFieldType("2151","OtherCaseReferencesList",null,null,null,"Collection","Text");
-        addFieldType("2201","SearchPartyList",null,null,null,"Collection","SearchParty");
-        addFieldType("2251","TTL",null,null,null,"Complex",null);
-        addFieldType("2301","FlagDetails",null,null,null,"Complex",null);
-        addFieldType("2351","PathCollection",null,null,null,"Collection","Text");
-        addFieldType("2401","FlagDetailsCollection",null,null,null,"Collection","FlagDetails");
-        addFieldType("2451","Flags",null,null,null,"Complex",null);
-        addFieldType("2501","WaysToPay",null,null,null,null,null);
-        addFieldType("2551","FlagLauncher",null,null,null,null,null);
-        addFieldType("2601","ComponentLauncher",null,null,null,null,null);
-        addFieldType("2651","LinkReason",null,null,null,"Complex",null);
-        addFieldType("2701","ReasonForLinkList",null,null,null,"Collection","LinkReason");
+        addFieldType("TextArea",null,null,null,null,null);
+        addFieldType("Complex",null,null,null,null,null);
+        addFieldType("Collection",null,null,null,null,null);
+        addFieldType("MultiSelectList",null,null,null,null,null);
+        addFieldType("Document",null,null,null,null,null);
+        addFieldType("Label",null,null,null,null,null);
+        addFieldType("AddressGlobal",null,null,null,"Complex",null);
+        addFieldType("TextMax50",null,"50",null,"Text",null);
+        addFieldType("TextMax150",null,"150",null,"Text",null);
+        addFieldType("TextMax14",null,"14",null,"Text",null);
+        addFieldType("AddressGlobalUK",null,null,null,"Complex",null);
+        addFieldType("AddressUK",null,null,null,"Complex",null);
+        addFieldType("DateTime",null,null,null,null,null);
+        addFieldType("OrderSummary",null,null,null,"Complex",null);
+        addFieldType("Fee",null,null,null,"Complex",null);
+        addFieldType("FeesList",null,null,null,"Collection","Fee");
+        addFieldType("CasePaymentHistoryViewer",null,null,null,null,null);
+        addFieldType("FixedRadioList",null,null,null,null,null);
+        addFieldType("CaseLink",null,null,null,"Complex",null);
+        addFieldType("TextCaseReference",null,null,"$|^\\d{4}-\\d{4}-\\d{4}-\\d{4}$)","Text",null);
+        addFieldType("CaseHistoryViewer",null,null,null,null,null);
+        addFieldType("DynamicList",null,null,null,null,null);
+        addFieldType("Organisation",null,null,null,"Complex",null);
+        addFieldType("OrganisationPolicy",null,null,null,"Complex",null);
+        addFieldType("ChangeOrganisationRequest",null,null,null,"Complex",null);
+        addFieldType("PreviousOrganisation",null,null,null,"Complex",null);
+        addFieldType("PreviousOrganisationCollection",null,null,null,"Collection","PreviousOrganisation");
+        addFieldType("CaseLocation",null,null,null,"Complex",null);
+        addFieldType("Region",null,null,null,null,null);
+        addFieldType("BaseLocation",null,null,null,null,null);
+        addFieldType("DynamicRadioList",null,null,null,null,null);
+        addFieldType("DynamicMultiSelectList",null,null,null,null,null);
+        addFieldType("SearchParty",null,null,null,"Complex",null);
+        addFieldType("SearchCriteria",null,null,null,"Complex",null);
+        addFieldType("OtherCaseReferencesList",null,null,null,"Collection","Text");
+        addFieldType("SearchPartyList",null,null,null,"Collection","SearchParty");
+        addFieldType("TTL",null,null,null,"Complex",null);
+        addFieldType("FlagDetails",null,null,null,"Complex",null);
+        addFieldType("PathCollection",null,null,null,"Collection","Text");
+        addFieldType("FlagDetailsCollection",null,null,null,"Collection","FlagDetails");
+        addFieldType("Flags",null,null,null,"Complex",null);
+        addFieldType("WaysToPay",null,null,null,null,null);
+        addFieldType("FlagLauncher",null,null,null,null,null);
+        addFieldType("ComponentLauncher",null,null,null,null,null);
+        addFieldType("LinkReason",null,null,null,"Complex",null);
+        addFieldType("ReasonForLinkList",null,null,null,"Collection","LinkReason");
 
         /*
         \COPY (select ft.reference, ct.reference, ct.label, fft.reference, ct.retain_hidden_value from complex_field ct join field_type fft on field_type_id = fft.id join field_type ft on ct.complex_field_type_id = ft.id where ft.jurisdiction_id is null) TO  '/tmp/results.csv' WITH (FORMAT CSV, HEADER FALSE, FORCE_QUOTE *, NULL 'null') ;
@@ -160,7 +162,19 @@ public class FieldTypeRepository {
         addComplexTypeField("Flags","details","Flag Details","FlagDetailsCollection","t");
     }
 
-    public void addFieldType(String id, String ref, String min, String max, String regex, String baseType, String collectionType) {
+    public void addFieldType(String ref, String min, String max, String regex, String baseType, String collectionType) {
+        addFieldType(ref, min, max, regex, baseType, collectionType, new ArrayList<>());
+    }
+
+    public void addFieldType(
+        String ref,
+        String min,
+        String max,
+        String regex,
+        String baseType,
+        String collectionType,
+        List<FixedListItem> fixedListItems
+    ) {
         var fieldType = new FieldType();
         fieldType.setId(ref);
         fieldType.setMin(min);
@@ -169,6 +183,7 @@ public class FieldTypeRepository {
         fieldType.setCollectionFieldType(types.get(collectionType));
         fieldType.setComplexFields(new ArrayList<>());
         fieldType.setType(baseType == null ? ref : baseType);
+        fieldType.setFixedListItems(fixedListItems);
         types.put(ref, fieldType);
     }
 

@@ -12,6 +12,8 @@ import uk.gov.hmcts.ccd.definition.store.repository.model.AccessControlList;
 import uk.gov.hmcts.ccd.definition.store.repository.model.CaseField;
 import uk.gov.hmcts.ccd.definition.store.repository.model.CaseState;
 import uk.gov.hmcts.ccd.definition.store.repository.model.CaseType;
+import uk.gov.hmcts.ccd.definition.store.repository.model.FieldType;
+import uk.gov.hmcts.ccd.definition.store.repository.model.FixedListItem;
 import uk.gov.hmcts.ccd.definition.store.repository.model.Jurisdiction;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
 
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 
 import static java.util.AbstractMap.SimpleEntry;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.groupingBy;
 import static org.springframework.util.StringUtils.hasText;
 
 @Component
@@ -82,10 +85,11 @@ public class CaseTypeRepository {
     private CaseType mapToCaseType(Map<String, List<Map<String, String>>> json) {
         var caseType = new CaseType();
         var acls = getAcls(json);
+        var listItems = getListItems((List) json.get("FixedLists"));
 
         setComplexTypes(json.get("ComplexTypes"));
         setCaseTypeDetails(caseType, json.get("CaseType").get(0));
-        setCaseFields(caseType, acls, json.get("CaseField"));
+        setCaseFields(caseType, acls, listItems, json.get("CaseField"));
         setCaseStates(caseType, json);
 
         return caseType;
@@ -94,15 +98,13 @@ public class CaseTypeRepository {
     private void setComplexTypes(List<Map<String, String>> complexTypes) {
         var complexTypesIndexedByID = complexTypes
             .stream()
-            .collect(Collectors.groupingBy(map -> map.get("ID")));
+            .collect(groupingBy(map -> map.get("ID")));
 
         for (var complexType : complexTypesIndexedByID.entrySet()) {
-            fieldTypes.addFieldType(null, complexType.getKey(), null, null, null, null, null);
+            fieldTypes.addFieldType(complexType.getKey(), null, null, null, "Complex", null);
 
             for (var field : complexType.getValue()) {
-                var fieldType = hasText(field.get("FieldTypeParameter"))
-                    ? field.get("FieldType") + "-" + field.get("FieldTypeParameter")
-                    : field.get("FieldType");
+                var fieldType = getFieldTypeName(field);
 
                 fieldTypes.addComplexTypeField(
                     complexType.getKey(),
@@ -113,6 +115,30 @@ public class CaseTypeRepository {
                 );
             }
         }
+    }
+
+    private Map<String, List<FixedListItem>> getListItems(List<Map<String, ?>> fixedLists) {
+        var complexTypesIndexedByID = fixedLists
+            .stream()
+            .collect(groupingBy(map -> (String) map.get("ID")));
+
+        var listItems = new HashMap<String, List<FixedListItem>>();
+
+        for (var fixedList : complexTypesIndexedByID.entrySet()) {
+            var items = fixedList.getValue().stream()
+                .map(map -> new FixedListItem((String) map.get("ListElementCode"), (String) map.get("ListElement"), (Integer) map.get("DisplayOrder")))
+                .collect(Collectors.toList());
+
+            listItems.put(fixedList.getKey(), items);
+        }
+
+        return listItems;
+    }
+
+    private String getFieldTypeName(Map<String, String> row) {
+        return hasText(row.get("FieldTypeParameter")) && !row.get("FieldType").equals("Collection")
+            ? row.get("FieldType") + "-" + row.get("FieldTypeParameter")
+            : row.get("FieldType");
     }
 
     private void setCaseStates(CaseType caseType, Map<String, List<Map<String, String>>> json) {
@@ -131,7 +157,7 @@ public class CaseTypeRepository {
 
         for (Map<String, String> auth : json.get("AuthorisationCaseState")) {
             var state = states.get(auth.get("CaseStateID"));
-            var acl = mapToAcl(auth);
+            var acl = mapStateToAcl(auth);
             state.getAcls().add(acl);
         }
 
@@ -148,13 +174,23 @@ public class CaseTypeRepository {
         return acls;
     }
 
-    private AccessControlList mapToAcl(Map<String, String> row) {
+    private AccessControlList mapStateToAcl(Map<String, String> row) {
         var isCreator = "[CREATOR]".equals(row.get("UserRole"));
         return new AccessControlList(
             row.get("UserRole"),
             row.get("CRUD").contains("C") || isCreator,
             row.get("CRUD").contains("R") || isCreator,
             row.get("CRUD").contains("U") || isCreator,
+            row.get("CRUD").contains("D")
+        );
+    }
+
+    private AccessControlList mapToAcl(Map<String, String> row) {
+        return new AccessControlList(
+            row.get("UserRole"),
+            row.get("CRUD").contains("C"),
+            row.get("CRUD").contains("R"),
+            row.get("CRUD").contains("U"),
             row.get("CRUD").contains("D")
         );
     }
@@ -178,25 +214,46 @@ public class CaseTypeRepository {
     private void setCaseFields(
         CaseType caseType,
         Map<String, List<AccessControlList>> acls,
+        Map<String, List<FixedListItem>> listItems,
         List<Map<String, String>> caseFields
     ) {
         caseType.setCaseFields(caseFields.stream()
-            .map(f -> this.mapToCaseField(acls, f))
+            .map(f -> this.mapToCaseField(acls, listItems, f))
             .collect(Collectors.toList()));
     }
 
-    private CaseField mapToCaseField(Map<String, List<AccessControlList>> acls, Map<String, String> row) {
+    private CaseField mapToCaseField(
+        Map<String, List<AccessControlList>> acls,
+        Map<String, List<FixedListItem>> listItems,
+        Map<String, String> row
+    ) {
         var caseField = new CaseField();
 
         caseField.setCaseTypeId(row.get("CaseTypeID"));
         caseField.setSecurityClassification(row.get("SecurityClassification").toUpperCase());
         caseField.setLiveFrom(formatDate(row.get("LiveFrom")));
-        caseField.setLabel(row.get("Label"));
+        caseField.setLabel(row.get("Label").trim());
+        caseField.setHintText(row.get("HintText"));
         caseField.setId(row.get("ID"));
         caseField.setAcls(acls.computeIfAbsent(row.get("ID"), k -> new ArrayList<>()));
 
-        var fieldType = fieldTypes.get(row.get("FieldType"));
-        requireNonNull(fieldType, "Unknown field type: " + row.get("FieldType"));
+        FieldType fieldType;
+        // Lists and Collections create a field type on the fly
+        if (row.get("FieldType").equals("Collection")) {
+            fieldType = new FieldType();
+            fieldType.setId(row.get("ID") + "-Collection"); // this needs a UUID?
+            fieldType.setType(getFieldTypeName(row));
+            fieldType.setCollectionFieldType(fieldTypes.get(row.get("FieldTypeParameter")));
+        } else if (hasText(row.get("FieldTypeParameter"))) {
+            fieldType = new FieldType();
+            fieldType.setId(getFieldTypeName(row));
+            fieldType.setType(row.get("FieldType"));
+            fieldType.setFixedListItems(listItems.get(row.get("FieldTypeParameter")));
+        } else {
+            fieldType = fieldTypes.get(getFieldTypeName(row));
+        }
+
+        requireNonNull(fieldType, "Unknown field type: " + getFieldTypeName(row));
 
         caseField.setFieldType(fieldType);
 
