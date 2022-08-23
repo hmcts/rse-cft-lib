@@ -27,9 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.AbstractMap.SimpleEntry;
-import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.groupingBy;
-import static org.springframework.util.StringUtils.hasText;
 
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -87,7 +85,7 @@ public class CaseTypeRepository {
         var acls = getAcls(json);
         var listItems = getListItems((List) json.get("FixedLists"));
 
-        setComplexTypes(json.get("ComplexTypes"));
+        setComplexTypes(listItems, json.get("ComplexTypes"));
         setCaseTypeDetails(caseType, json.get("CaseType").get(0));
         setCaseFields(caseType, acls, listItems, json.get("CaseField"));
         setCaseStates(caseType, json);
@@ -95,21 +93,27 @@ public class CaseTypeRepository {
         return caseType;
     }
 
-    private void setComplexTypes(List<Map<String, String>> complexTypes) {
+    private void setComplexTypes(Map<String, List<FixedListItem>> listItems, List<Map<String, String>> complexTypes) {
         var complexTypesIndexedByID = complexTypes
             .stream()
             .collect(groupingBy(map -> map.get("ID")));
 
+
         for (var complexType : complexTypesIndexedByID.entrySet()) {
             fieldTypes.addFieldType(complexType.getKey(), null, null, null, "Complex", null);
+        }
 
+        // Adding complex fields must be done after all the base complex types have been created to avoid a complex type field
+        // referencing a complex type that hasn't been created yet.
+        for (var complexType : complexTypesIndexedByID.entrySet()) {
             for (var field : complexType.getValue()) {
-                var fieldType = getFieldTypeName(field);
+                var fieldType = fieldTypes.findOrCreateFieldType(field.get("FieldType"), field.get("FieldTypeParameter"), listItems);
 
                 fieldTypes.addComplexTypeField(
                     complexType.getKey(),
                     field.get("ListElementCode"),
                     field.get("ElementLabel"),
+                    field.get("HintText"),
                     fieldType,
                     null
                 );
@@ -135,11 +139,6 @@ public class CaseTypeRepository {
         return listItems;
     }
 
-    private String getFieldTypeName(Map<String, String> row) {
-        return hasText(row.get("FieldTypeParameter")) && !row.get("FieldType").equals("Collection")
-            ? row.get("FieldType") + "-" + row.get("FieldTypeParameter")
-            : row.get("FieldType");
-    }
 
     private void setCaseStates(CaseType caseType, Map<String, List<Map<String, String>>> json) {
         var states = new HashMap<String, CaseState>();
@@ -237,23 +236,7 @@ public class CaseTypeRepository {
         caseField.setId(row.get("ID"));
         caseField.setAcls(acls.computeIfAbsent(row.get("ID"), k -> new ArrayList<>()));
 
-        FieldType fieldType;
-        // Lists and Collections create a field type on the fly
-        if (row.get("FieldType").equals("Collection")) {
-            fieldType = new FieldType();
-            fieldType.setId(row.get("ID") + "-Collection"); // this needs a UUID?
-            fieldType.setType(getFieldTypeName(row));
-            fieldType.setCollectionFieldType(fieldTypes.get(row.get("FieldTypeParameter")));
-        } else if (hasText(row.get("FieldTypeParameter"))) {
-            fieldType = new FieldType();
-            fieldType.setId(getFieldTypeName(row));
-            fieldType.setType(row.get("FieldType"));
-            fieldType.setFixedListItems(listItems.get(row.get("FieldTypeParameter")));
-        } else {
-            fieldType = fieldTypes.get(getFieldTypeName(row));
-        }
-
-        requireNonNull(fieldType, "Unknown field type: " + getFieldTypeName(row));
+        FieldType fieldType = fieldTypes.findOrCreateFieldType(row.get("FieldType"), row.get("FieldTypeParameter"), listItems);
 
         caseField.setFieldType(fieldType);
 

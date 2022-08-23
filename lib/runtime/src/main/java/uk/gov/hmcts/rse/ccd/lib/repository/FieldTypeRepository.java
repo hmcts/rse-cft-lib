@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Objects.requireNonNull;
+import static org.springframework.util.StringUtils.hasText;
+
 @Component
 public class FieldTypeRepository {
 
@@ -187,23 +190,62 @@ public class FieldTypeRepository {
         types.put(ref, fieldType);
     }
 
-    public FieldType get(String fieldType) {
-        return types.get(fieldType);
+    public FieldType findOrCreateFieldType(String fieldType, String fieldTypeParameter, Map<String, List<FixedListItem>> listItems) {
+        FieldType type;
+
+        // Lists and Collections create a field type on the
+        // TODO they could be created on the fly and saved using the ID for next time
+        if (fieldType.equals("Collection")) {
+            type = new FieldType();
+            type.setId(fieldTypeParameter + "-Collection"); // this needs a UUID?
+            type.setType(fieldType);
+            type.setCollectionFieldType(types.get(fieldTypeParameter));
+        } else if (hasText(fieldTypeParameter)) {
+            type = new FieldType();
+            type.setId(getFieldTypeName(fieldType, fieldTypeParameter));
+            type.setType(fieldType);
+            type.setFixedListItems(listItems.get(fieldTypeParameter));
+        } else {
+            type = types.get(getFieldTypeName(fieldType, fieldTypeParameter));
+            requireNonNull(type, "Unknown field type: " + getFieldTypeName(fieldType, fieldTypeParameter));
+        }
+
+        return type;
     }
 
-    public void addComplexTypeField(
+    private String getFieldTypeName(String fieldType, String fieldTypeParameter) {
+        return hasText(fieldTypeParameter) && !fieldType.equals("Collection") // TODO is this last check still needed
+            ? fieldType + "-" + fieldTypeParameter
+            : fieldType;
+    }
+
+    private void addComplexTypeField(
         String parentComplexType,
         String fieldName,
         String label,
         String fieldType,
         String showCondition
     ) {
+        addComplexTypeField(parentComplexType, fieldName, label, null, types.get(fieldType), showCondition);
+    }
+
+    public void addComplexTypeField(
+        String parentComplexType,
+        String fieldName,
+        String label,
+        String hint,
+        FieldType fieldType,
+        String showCondition
+    ) {
         var field = new CaseField();
         field.setId(fieldName);
         field.setLabel(label);
-        field.setHidden(false);
+        field.setHintText(hint);
+        field.setHidden(null);
+        field.setAcls(null);
         field.setShowCondition(showCondition);
-        field.setFieldType(types.get(fieldType));
+        field.setFieldType(fieldType);
+        field.setSecurityClassification("PUBLIC");
 
         types.get(parentComplexType).getComplexFields().add(field);
     }
