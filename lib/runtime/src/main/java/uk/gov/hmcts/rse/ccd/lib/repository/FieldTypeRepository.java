@@ -1,5 +1,6 @@
 package uk.gov.hmcts.rse.ccd.lib.repository;
 
+import org.postgresql.core.Field;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.definition.store.repository.model.CaseField;
 import uk.gov.hmcts.ccd.definition.store.repository.model.FieldType;
@@ -190,7 +191,7 @@ public class FieldTypeRepository {
         types.put(ref, fieldType);
     }
 
-    public FieldType findOrCreateFieldType(String fieldType, String fieldTypeParameter, Map<String, List<FixedListItem>> listItems) {
+    public FieldType findOrCreateFieldType(String fieldType, String fieldTypeParameter, String regex, Map<String, List<FixedListItem>> listItems) {
         FieldType type;
 
         // Lists and Collections create a field type on the
@@ -208,6 +209,20 @@ public class FieldTypeRepository {
         } else {
             type = types.get(getFieldTypeName(fieldType, fieldTypeParameter));
             requireNonNull(type, "Unknown field type: " + getFieldTypeName(fieldType, fieldTypeParameter));
+        }
+
+        if (hasText(regex)) {
+            var copy = new FieldType();
+            copy.setRegularExpression(regex);
+            copy.setId(type.getId() + "-" + regex);
+            copy.setComplexFields(type.getComplexFields());
+            copy.setType(type.getType());
+            copy.setFixedListItems(type.getFixedListItems());
+            copy.setCollectionFieldType(type.getCollectionFieldType());
+            copy.setMin(type.getMin());
+            copy.setMax(type.getMax());
+
+            type = copy;
         }
 
         return type;

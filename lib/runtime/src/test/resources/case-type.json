@@ -30880,7 +30880,7 @@
       "label": "Previous Service Applications",
       "hint_text": null,
       "field_type": {
-        "id": "alternativeServiceOutcomes-Collection",
+        "id": "AlternativeServiceOutcome-Collection",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -31100,7 +31100,7 @@
                     "label": "Select your document",
                     "hint_text": null,
                     "field_type": {
-                      "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+                      "id": "Document-.pdf,.tif,.tiff,.jpg,.jpeg,.png",
                       "type": "Document",
                       "min": null,
                       "max": null,

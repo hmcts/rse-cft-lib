@@ -107,7 +107,7 @@ public class CaseTypeRepository {
         // referencing a complex type that hasn't been created yet.
         for (var complexType : complexTypesIndexedByID.entrySet()) {
             for (var field : complexType.getValue()) {
-                var fieldType = fieldTypes.findOrCreateFieldType(field.get("FieldType"), field.get("FieldTypeParameter"), listItems);
+                var fieldType = fieldTypes.findOrCreateFieldType(field.get("FieldType"), field.get("FieldTypeParameter"), field.get("RegularExpression"), listItems);
 
                 fieldTypes.addComplexTypeField(
                     complexType.getKey(),
@@ -236,7 +236,7 @@ public class CaseTypeRepository {
         caseField.setId(row.get("ID"));
         caseField.setAcls(acls.computeIfAbsent(row.get("ID"), k -> new ArrayList<>()));
 
-        FieldType fieldType = fieldTypes.findOrCreateFieldType(row.get("FieldType"), row.get("FieldTypeParameter"), listItems);
+        FieldType fieldType = fieldTypes.findOrCreateFieldType(row.get("FieldType"), row.get("FieldTypeParameter"), row.get("RegularExpression"), listItems);
 
         caseField.setFieldType(fieldType);
 
