@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
 import uk.gov.hmcts.ccd.definition.store.repository.model.*;
+import uk.gov.hmcts.rse.ccd.lib.Mapper;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
 
 import java.io.IOException;
@@ -160,34 +161,7 @@ public class CaseTypeRepository {
                 dx.put("pre_states", pre.toString().split(";"));
             }
 
-            final SimpleModule m = new SimpleModule();
-            m.addDeserializer(Boolean.class, new JsonDeserializer<>() {
-                @Override
-                public Boolean deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-                    switch (p.getText().toLowerCase()) {
-                        case "yes":
-                        case "y":
-                        case "t":
-                        case "true":
-                            return true;
-                        case "no":
-                        case "n":
-                        case "false":
-                        case "f":
-                            return false;
-                        default:
-                            throw new IllegalArgumentException("Invalid boolean: " + p.getText());
-                    }
-                }
-            });
-
-            var o = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-                    .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-                    ;
-            o.registerModule(m);
-
-            var s = o.convertValue(dx, CaseEvent.class);
+            var s = Mapper.instance.convertValue(dx, CaseEvent.class);
             s.setPublish(false);
             s.setOrder(s.getOrder() + 1);
 
@@ -215,34 +189,7 @@ public class CaseTypeRepository {
                 ex.put(name, authorisationCaseEvent.get(o));
             }
             ex.put("case_field_id", authorisationCaseEvent.get("CaseFieldID"));
-            final SimpleModule m = new SimpleModule();
-            m.addDeserializer(Boolean.class, new JsonDeserializer<>() {
-                @Override
-                public Boolean deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-                    switch (p.getText().toLowerCase()) {
-                        case "yes":
-                        case "y":
-                        case "t":
-                        case "true":
-                            return true;
-                        case "no":
-                        case "n":
-                        case "false":
-                        case "f":
-                            return false;
-                        default:
-                            throw new IllegalArgumentException("Invalid boolean: " + p.getText());
-                    }
-                }
-            });
-
-            var o = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-                    .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-                    ;
-            o.registerModule(m);
-
-            CaseEventField cef = o.convertValue(ex, CaseEventField.class);
+            CaseEventField cef = Mapper.instance.convertValue(ex, CaseEventField.class);
             cef.setPublish(false);
             e.getCaseFields().add(cef);
         }
