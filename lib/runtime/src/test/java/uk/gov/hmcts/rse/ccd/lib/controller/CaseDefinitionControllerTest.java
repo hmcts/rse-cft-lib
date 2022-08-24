@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -80,12 +81,15 @@ class CaseDefinitionControllerTest {
     @SneakyThrows
     @Test
     public void testEvents() {
-        var result = inPath(controller.dataCaseTypeIdGet("NFD"), "events[?(@.id == 'caseworker-upload-amended-application')]");
+        var paths = List.of(
+                "events[?(@.id == 'caseworker-upload-amended-application')]"
+        );
         var expected = resourceAsString("classpath:case-type.json");
 
-        var a = inPath(expected, "events[?(@.id == 'caseworker-upload-amended-application')]");
-        assertThatJson(result)
-                .isEqualTo(a);
+        for (String path : paths) {
+            assertThatJson(inPath(controller.dataCaseTypeIdGet("NFD"), path))
+                    .isEqualTo(inPath(expected, path));
+        }
     }
 
     private static String resourceAsString(final String resourcePath) throws IOException {
