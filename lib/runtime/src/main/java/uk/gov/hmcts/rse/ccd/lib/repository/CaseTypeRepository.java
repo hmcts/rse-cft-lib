@@ -168,7 +168,6 @@ public class CaseTypeRepository {
 
             var s = Mapper.instance.convertValue(dx, CaseEvent.class);
             s.setPublish(false);
-            s.setOrder(s.getOrder() + 1);
 
             var post = event.get("PostConditionState");
             if (null != post) {
@@ -177,7 +176,6 @@ public class CaseTypeRepository {
                 postState.setPriority(99);
                 s.setPostStates(List.of(postState));
             }
-
 
             events.put(s.getId(), s);
         }
@@ -228,7 +226,13 @@ public class CaseTypeRepository {
             field.getCaseEventFieldComplex().add(c);
         }
 
-
+        // Def store starts event ordering at 1
+        var l = new ArrayList<>(events.values());
+        l.sort(Comparator.comparing(CaseEvent::getOrder));
+        int i = 1;
+        for (var event : l) {
+            event.setOrder(i++);
+        }
         caseType.setEvents(new ArrayList<>(events.values()));
     }
 
