@@ -89,12 +89,13 @@ class CaseDefinitionControllerTest {
                 .perform(get("/api/data/case-type/NFD"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
-        Files.writeString(Paths.get("mine.json"), actual);
+//        Files.writeString(Paths.get("mine.json"), actual);
         var paths = List.of(
                 "events[?(@.id == 'caseworker-upload-amended-application')]",
                 "events[?(@.id == 'caseworker-confirm-receipt')]",
                 "events[?(@.id == 'caseworker-notice-of-change')]",
                 "events[?(@.id == 'solicitor-create-application')]",
+                "events[?(@.id == 'applicant2-approve')]",
                 "events[?(@.id == 'applicant1-resubmit')]"
 //                ,"events"
         );
