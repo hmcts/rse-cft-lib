@@ -159,6 +159,7 @@ public class CaseTypeRepository {
             }
             dx.put("id", event.get("ID"));
             dx.put("order", event.get("DisplayOrder"));
+            dx.put("callback_url_about_to_start_event", event.get("CallBackURLAboutToStartEvent"));
             dx.put("callback_url_about_to_submit_event", event.get("CallBackURLAboutToSubmitEvent"));
             dx.put("callback_url_submitted_event", event.get("CallBackURLSubmittedEvent"));
 
