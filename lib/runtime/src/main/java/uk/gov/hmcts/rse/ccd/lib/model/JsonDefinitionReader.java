@@ -3,6 +3,7 @@ package uk.gov.hmcts.rse.ccd.lib.model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import net.lingala.zip4j.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,9 +24,9 @@ public class JsonDefinitionReader {
     @Autowired
     private ObjectMapper mapper;
 
+    @SneakyThrows
     public List<Map<String, String>> readPath(String path) {
-        final var filesInDirectory = Paths.get(path).toFile().listFiles();
-        final var files = filesInDirectory != null ? new ArrayList<>(asList(filesInDirectory)) : new ArrayList<File>();
+        final var files = FileUtils.getFilesInDirectoryRecursive(Paths.get(path).toFile(), false, false);
         final var file = Paths.get(path + ".json").toFile();
 
         files.add(file);

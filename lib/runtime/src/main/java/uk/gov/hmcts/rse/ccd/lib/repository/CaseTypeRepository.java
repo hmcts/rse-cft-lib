@@ -156,6 +156,7 @@ public class CaseTypeRepository {
             }
             dx.put("id", event.get("ID"));
             dx.put("order", event.get("DisplayOrder"));
+            dx.put("callback_url_about_to_submit_event", event.get("CallBackURLAboutToSubmitEvent"));
             var pre = event.get("PreConditionState(s)");
             if (null != pre) {
                 dx.put("pre_states", pre.toString().split(";"));
@@ -181,17 +182,30 @@ public class CaseTypeRepository {
             e.getAcls().add(acl);
         }
 
-        for (Map<String, String> authorisationCaseEvent : json.get("CaseEventToFields")) {
-            var e = events.get(authorisationCaseEvent.get("CaseEventID"));
+        for (Map<String, String> caseEventToFields : json.get("CaseEventToFields")) {
+            var e = events.get(caseEventToFields.get("CaseEventID"));
             var ex = new HashMap<>();
-            for (Object o : authorisationCaseEvent.keySet()) {
+            for (Object o : caseEventToFields.keySet()) {
                 var name = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, o.toString());
-                ex.put(name, authorisationCaseEvent.get(o));
+                ex.put(name, caseEventToFields.get(o));
             }
-            ex.put("case_field_id", authorisationCaseEvent.get("CaseFieldID"));
+            ex.put("show_condition", caseEventToFields.get("FieldShowCondition"));
+            ex.put("case_field_id", caseEventToFields.get("CaseFieldID"));
             CaseEventField cef = Mapper.instance.convertValue(ex, CaseEventField.class);
             cef.setPublish(false);
             e.getCaseFields().add(cef);
+        }
+
+        for (Map caseEventToComplexTypes : json.get("CaseEventToComplexTypes")) {
+            var e = events.get(caseEventToComplexTypes.get("CaseEventID"));
+            var field = e.getCaseFields().stream().filter(x -> x.getCaseFieldId().equals(caseEventToComplexTypes.get("CaseFieldID"))).findFirst().get();
+            field.getCaseEventFieldComplex();
+            caseEventToComplexTypes.put("order", caseEventToComplexTypes.get("FieldDisplayOrder"));
+            caseEventToComplexTypes.put("showCondition", caseEventToComplexTypes.get("FieldShowCondition"));
+            caseEventToComplexTypes.put("reference", caseEventToComplexTypes.get("ListElementCode"));
+            var c = Mapper.instance.convertValue(caseEventToComplexTypes, CaseEventFieldComplex.class);
+            c.setPublish(false);
+            field.getCaseEventFieldComplex().add(c);
         }
 
 

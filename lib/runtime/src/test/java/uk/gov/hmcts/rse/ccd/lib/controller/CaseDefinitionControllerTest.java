@@ -81,13 +81,15 @@ class CaseDefinitionControllerTest {
     @SneakyThrows
     @Test
     public void testEvents() {
-        var paths = List.of(
-                "events[?(@.id == 'caseworker-upload-amended-application')]"
-        );
         var expected = resourceAsString("classpath:case-type.json");
-
+        var actual = controller.dataCaseTypeIdGet("NFD");
+        var paths = List.of(
+                "events[?(@.id == 'caseworker-upload-amended-application')]",
+                "events[?(@.id == 'caseworker-confirm-receipt')]",
+                "events[?(@.id == 'caseworker-notice-of-change')]"
+        );
         for (String path : paths) {
-            assertThatJson(inPath(controller.dataCaseTypeIdGet("NFD"), path))
+            assertThatJson(inPath(actual, path))
                     .isEqualTo(inPath(expected, path));
         }
     }
