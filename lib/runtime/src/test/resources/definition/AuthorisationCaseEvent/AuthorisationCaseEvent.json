@@ -67,6 +67,13 @@
     "CaseEventID": "applicant2-approve",
     "CaseTypeID": "NFD",
     "LiveFrom": "01/01/2017",
+    "UserRole": "[APPONESOLICITOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseEventID": "applicant2-approve",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
     "UserRole": "caseworker-divorce-courtadmin_beta"
   },
   {
@@ -1821,6 +1828,41 @@
   },
   {
     "CRUD": "CRU",
+    "CaseEventID": "citizen-update-case-state-aat",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseEventID": "citizen-update-case-state-aat",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[CREATOR]"
+  },
+  {
+    "CRUD": "R",
+    "CaseEventID": "citizen-update-case-state-aat",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "R",
+    "CaseEventID": "citizen-update-case-state-aat",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseEventID": "citizen-update-case-state-aat",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
     "CaseEventID": "citizen-update-contact-details",
     "CaseTypeID": "NFD",
     "LiveFrom": "01/01/2017",
@@ -3267,6 +3309,13 @@
     "CaseTypeID": "NFD",
     "LiveFrom": "01/01/2017",
     "UserRole": "caseworker-divorce-systemupdate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseEventID": "update-aos",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "[APPLICANTTWO]"
   },
   {
     "CRUD": "CRU",

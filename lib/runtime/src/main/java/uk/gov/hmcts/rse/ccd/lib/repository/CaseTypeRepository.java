@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.yaml.snakeyaml.util.ArrayUtils;
+import uk.gov.hmcts.ccd.definition.store.domain.showcondition.ShowConditionParser;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
 import uk.gov.hmcts.ccd.definition.store.repository.model.*;
 import uk.gov.hmcts.rse.ccd.lib.Mapper;
@@ -144,6 +146,7 @@ public class CaseTypeRepository {
     }
 
 
+    @SneakyThrows
     private void setCaseEvents(CaseType caseType, Map<String, List<Map<String, String>>> json) {
         var events = new HashMap<String, CaseEvent>();
 
@@ -157,6 +160,7 @@ public class CaseTypeRepository {
             dx.put("id", event.get("ID"));
             dx.put("order", event.get("DisplayOrder"));
             dx.put("callback_url_about_to_submit_event", event.get("CallBackURLAboutToSubmitEvent"));
+            dx.put("callback_url_submitted_event", event.get("CallBackURLSubmittedEvent"));
             var pre = event.get("PreConditionState(s)");
             if (null != pre) {
                 dx.put("pre_states", pre.toString().split(";"));
@@ -167,12 +171,13 @@ public class CaseTypeRepository {
             s.setOrder(s.getOrder() + 1);
 
             var post = event.get("PostConditionState");
-            if (post.equals("*")) {
+            if (null != post) {
                 var postState = new EventPostState();
-                postState.setPostStateReference("*");
+                postState.setPostStateReference((String) post);
                 postState.setPriority(99);
                 s.setPostStates(List.of(postState));
             }
+
 
             events.put(s.getId(), s);
         }
@@ -189,8 +194,23 @@ public class CaseTypeRepository {
                 var name = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, o.toString());
                 ex.put(name, caseEventToFields.get(o));
             }
-            ex.put("show_condition", caseEventToFields.get("FieldShowCondition"));
+            var showCondition = caseEventToFields.get("FieldShowCondition");
+            if (null != showCondition) {
+                var s = new ShowConditionParser().parseShowCondition(showCondition).getShowConditionExpression();
+                showCondition = s;
+            }
+            ex.put("show_condition", showCondition);
             ex.put("case_field_id", caseEventToFields.get("CaseFieldID"));
+            var label = caseEventToFields.get("CaseEventFieldLabel");
+            label = null != label ? label.trim() : null;
+            ex.put("label", label);
+            var hint = caseEventToFields.get("CaseEventFieldHint");
+            if (null != hint) {
+                if (hint.trim().isEmpty()) {
+                    hint = null;
+                }
+            }
+            ex.put("hint_text", hint);
             CaseEventField cef = Mapper.instance.convertValue(ex, CaseEventField.class);
             cef.setPublish(false);
             e.getCaseFields().add(cef);

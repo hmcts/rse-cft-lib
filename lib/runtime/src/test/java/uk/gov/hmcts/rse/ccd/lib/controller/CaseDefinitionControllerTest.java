@@ -16,7 +16,9 @@ import uk.gov.hmcts.rse.ccd.lib.repository.FieldTypeRepository;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -82,11 +84,16 @@ class CaseDefinitionControllerTest {
     @Test
     public void testEvents() {
         var expected = resourceAsString("classpath:case-type.json");
-        var actual = controller.dataCaseTypeIdGet("NFD");
+        var actual = mockMvc
+                .perform(get("/api/data/case-type/NFD"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+        Files.writeString(Paths.get("mine.json"), actual);
         var paths = List.of(
                 "events[?(@.id == 'caseworker-upload-amended-application')]",
                 "events[?(@.id == 'caseworker-confirm-receipt')]",
-                "events[?(@.id == 'caseworker-notice-of-change')]"
+                "events[?(@.id == 'caseworker-notice-of-change')]",
+                "events[?(@.id == 'solicitor-create-application')]"
         );
         for (String path : paths) {
             assertThatJson(inPath(actual, path))
