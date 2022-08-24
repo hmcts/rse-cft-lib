@@ -1,6 +1,7 @@
 package uk.gov.hmcts.rse.ccd.lib.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -19,14 +20,17 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Map;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.jsonpath.JsonPathAdapter.inPath;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = CaseDefinitionController.class)
 class CaseDefinitionControllerTest {
+
+    @Autowired
+    CaseDefinitionController controller;
 
     @TestConfiguration
     static class InnerConfiguration {
@@ -69,8 +73,19 @@ class CaseDefinitionControllerTest {
 //        matchers.add(matcher.isEqualTo(expected));
 
         mockMvc
-            .perform(get("/api/data/case-type/NFD"))
-            .andExpectAll(matchers.toArray(new ResultMatcher[0]));
+                .perform(get("/api/data/case-type/NFD"))
+                .andExpectAll(matchers.toArray(new ResultMatcher[0]));
+    }
+
+    @SneakyThrows
+    @Test
+    public void testEvents() {
+        var result = inPath(controller.dataCaseTypeIdGet("NFD"), "events[?(@.id == 'caseworker-upload-amended-application')]");
+        var expected = resourceAsString("classpath:case-type.json");
+
+        var a = inPath(expected, "events[?(@.id == 'caseworker-upload-amended-application')]");
+        assertThatJson(result)
+                .isEqualTo(a);
     }
 
     private static String resourceAsString(final String resourcePath) throws IOException {

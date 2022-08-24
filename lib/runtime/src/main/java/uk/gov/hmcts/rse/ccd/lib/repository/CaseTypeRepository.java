@@ -1,29 +1,21 @@
 package uk.gov.hmcts.rse.ccd.lib.repository;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.base.CaseFormat;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
-import uk.gov.hmcts.ccd.definition.store.repository.model.AccessControlList;
-import uk.gov.hmcts.ccd.definition.store.repository.model.CaseField;
-import uk.gov.hmcts.ccd.definition.store.repository.model.CaseState;
-import uk.gov.hmcts.ccd.definition.store.repository.model.CaseType;
-import uk.gov.hmcts.ccd.definition.store.repository.model.FieldType;
-import uk.gov.hmcts.ccd.definition.store.repository.model.FixedListItem;
-import uk.gov.hmcts.ccd.definition.store.repository.model.Jurisdiction;
+import uk.gov.hmcts.ccd.definition.store.repository.model.*;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.AbstractMap.SimpleEntry;
@@ -89,6 +81,7 @@ public class CaseTypeRepository {
         setCaseTypeDetails(caseType, json.get("CaseType").get(0));
         setCaseFields(caseType, acls, listItems, json.get("CaseField"));
         setCaseStates(caseType, json);
+        setCaseEvents(caseType, json);
 
         return caseType;
     }
@@ -149,6 +142,55 @@ public class CaseTypeRepository {
         return listItems;
     }
 
+
+    private void setCaseEvents(CaseType caseType, Map<String, List<Map<String, String>>> json) {
+        var events = new HashMap<String, CaseEvent>();
+
+        for (Map event : json.get("CaseEvent")) {
+
+            var dx = new HashMap<>();
+            for (Object o : event.keySet()) {
+                var name = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, o.toString());
+                dx.put(name, event.get(o));
+            }
+            dx.put("id", event.get("ID"));
+            var pre = event.get("PreConditionState(s)");
+            if (null != pre) {
+                dx.put("pre_states", pre.toString().split(";"));
+            }
+
+            final SimpleModule m = new SimpleModule();
+            m.addDeserializer(Boolean.class, new JsonDeserializer<>() {
+                @Override
+                public Boolean deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+                    switch (p.getText().toLowerCase()) {
+                        case "yes":
+                        case "y":
+                        case "t":
+                        case "true":
+                            return true;
+                        case "no":
+                        case "n":
+                        case "false":
+                        case "f":
+                            return false;
+                        default:
+                            throw new IllegalArgumentException("Invalid boolean: " + p.getText());
+                    }
+                }
+            });
+
+            var o = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                    .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+                    ;
+            o.registerModule(m);
+
+            var s = o.convertValue(dx, CaseEvent.class);
+            events.put(s.getId(), s);
+        }
+        caseType.setEvents(new ArrayList<>(events.values()));
+    }
 
     private void setCaseStates(CaseType caseType, Map<String, List<Map<String, String>>> json) {
         var states = new HashMap<String, CaseState>();
