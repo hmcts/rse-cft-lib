@@ -49,7 +49,6 @@
     "ShowSummaryChangeOption": "Y"
   },
   {
-    "CaseEventFieldLabel": "",
     "CaseEventID": "draft-aos",
     "CaseFieldID": "applicant2SolicitorAgreeToReceiveEmailsCheckbox",
     "CaseTypeID": "NFD",

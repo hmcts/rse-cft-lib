@@ -97,6 +97,7 @@ class CaseDefinitionControllerTest {
                 "events[?(@.id == 'solicitor-create-application')]",
                 "events[?(@.id == 'applicant2-approve')]",
                 "events[?(@.id == 'caseworker-add-answer')]",
+                "events[?(@.id == 'draft-aos')]",
                 "events[?(@.id == 'applicant1-resubmit')]"
 //                ,"events"
         );
