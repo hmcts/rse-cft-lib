@@ -161,12 +161,18 @@ public class CaseTypeRepository {
             dx.put("order", event.get("DisplayOrder"));
             dx.put("callback_url_about_to_submit_event", event.get("CallBackURLAboutToSubmitEvent"));
             dx.put("callback_url_submitted_event", event.get("CallBackURLSubmittedEvent"));
+
             var pre = event.get("PreConditionState(s)");
             if (null != pre) {
                 dx.put("pre_states", pre.toString().split(";"));
             }
 
             var s = Mapper.instance.convertValue(dx, CaseEvent.class);
+
+            s.setRetriesTimeoutAboutToStartEvent(retriesToJsonArray(event.get("RetriesTimeoutURLAboutToStartEvent")));
+            s.setRetriesTimeoutURLAboutToSubmitEvent(retriesToJsonArray(event.get("RetriesTimeoutURLAboutToSubmitEvent")));
+            s.setRetriesTimeoutURLSubmittedEvent(retriesToJsonArray(event.get("RetriesTimeoutURLSubmittedEvent")));
+
             s.setPublish(false);
 
             var post = event.get("PostConditionState");
@@ -234,6 +240,15 @@ public class CaseTypeRepository {
             event.setOrder(i++);
         }
         caseType.setEvents(new ArrayList<>(events.values()));
+    }
+
+    private List<Integer> retriesToJsonArray(Object o) {
+        if (o == null) {
+            return List.of();
+        }
+        return Arrays.stream(o.toString().split(","))
+                .map(Integer::valueOf)
+                .collect(Collectors.toList());
     }
 
     private void setCaseStates(CaseType caseType, Map<String, List<Map<String, String>>> json) {

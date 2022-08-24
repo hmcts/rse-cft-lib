@@ -2,6 +2,7 @@ package uk.gov.hmcts.rse.ccd.lib.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import net.javacrumbs.jsonunit.core.Option;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -93,10 +94,13 @@ class CaseDefinitionControllerTest {
                 "events[?(@.id == 'caseworker-upload-amended-application')]",
                 "events[?(@.id == 'caseworker-confirm-receipt')]",
                 "events[?(@.id == 'caseworker-notice-of-change')]",
-                "events[?(@.id == 'solicitor-create-application')]"
+                "events[?(@.id == 'solicitor-create-application')]",
+                "events[?(@.id == 'applicant1-resubmit')]"
+//                ,"events"
         );
         for (String path : paths) {
             assertThatJson(inPath(actual, path))
+                    .when(IGNORING_ARRAY_ORDER)
                     .isEqualTo(inPath(expected, path));
         }
     }
