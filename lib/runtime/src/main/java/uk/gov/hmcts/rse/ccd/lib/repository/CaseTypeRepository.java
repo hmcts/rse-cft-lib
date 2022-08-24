@@ -154,6 +154,7 @@ public class CaseTypeRepository {
                 dx.put(name, event.get(o));
             }
             dx.put("id", event.get("ID"));
+            dx.put("order", event.get("DisplayOrder"));
             var pre = event.get("PreConditionState(s)");
             if (null != pre) {
                 dx.put("pre_states", pre.toString().split(";"));
@@ -187,8 +188,66 @@ public class CaseTypeRepository {
             o.registerModule(m);
 
             var s = o.convertValue(dx, CaseEvent.class);
+            s.setPublish(false);
+            s.setOrder(s.getOrder() + 1);
+
+            var post = event.get("PostConditionState");
+            if (post.equals("*")) {
+                var postState = new EventPostState();
+                postState.setPostStateReference("*");
+                postState.setPriority(99);
+                s.setPostStates(List.of(postState));
+            }
+
             events.put(s.getId(), s);
         }
+        for (Map<String, String> auth : json.get("AuthorisationCaseEvent")) {
+            var e = events.get(auth.get("CaseEventID"));
+            var acl = this.mapToAcl(auth);
+            e.getAcls().add(acl);
+        }
+
+        for (Map<String, String> authorisationCaseEvent : json.get("CaseEventToFields")) {
+            var e = events.get(authorisationCaseEvent.get("CaseEventID"));
+            var ex = new HashMap<>();
+            for (Object o : authorisationCaseEvent.keySet()) {
+                var name = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, o.toString());
+                ex.put(name, authorisationCaseEvent.get(o));
+            }
+            ex.put("case_field_id", authorisationCaseEvent.get("CaseFieldID"));
+            final SimpleModule m = new SimpleModule();
+            m.addDeserializer(Boolean.class, new JsonDeserializer<>() {
+                @Override
+                public Boolean deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+                    switch (p.getText().toLowerCase()) {
+                        case "yes":
+                        case "y":
+                        case "t":
+                        case "true":
+                            return true;
+                        case "no":
+                        case "n":
+                        case "false":
+                        case "f":
+                            return false;
+                        default:
+                            throw new IllegalArgumentException("Invalid boolean: " + p.getText());
+                    }
+                }
+            });
+
+            var o = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                    .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+                    ;
+            o.registerModule(m);
+
+            CaseEventField cef = o.convertValue(ex, CaseEventField.class);
+            cef.setPublish(false);
+            e.getCaseFields().add(cef);
+        }
+
+
         caseType.setEvents(new ArrayList<>(events.values()));
     }
 
