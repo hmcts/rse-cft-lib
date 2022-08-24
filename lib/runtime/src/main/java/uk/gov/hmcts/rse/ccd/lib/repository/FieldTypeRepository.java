@@ -54,7 +54,7 @@ public class FieldTypeRepository {
         addFieldType("CasePaymentHistoryViewer",null,null,null,null,null);
         addFieldType("FixedRadioList",null,null,null,null,null);
         addFieldType("CaseLink",null,null,null,"Complex",null);
-        addFieldType("TextCaseReference",null,null,"$|^\\d{4}-\\d{4}-\\d{4}-\\d{4}$)","Text",null);
+        addFieldType("TextCaseReference",null,null,"(?:^[0-9]{16}$|^\\d{4}-\\d{4}-\\d{4}-\\d{4}$)","Text",null);
         addFieldType("CaseHistoryViewer",null,null,null,null,null);
         addFieldType("DynamicList",null,null,null,null,null);
         addFieldType("Organisation",null,null,null,"Complex",null);

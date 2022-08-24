@@ -61,7 +61,7 @@ class CaseDefinitionControllerTest {
         matchers.add(matcher.node("id").isEqualTo(inPath(expected, "$.id")));
         matchers.add(matcher.node("states").isEqualTo(inPath(expected, "$.states")));
 
-        for (int i = 0; i < 150; i++) {
+        for (int i = 0; i < 585; i++) {
             matchers.add(matcher.node("case_fields[" + i + "]").isEqualTo(inPath(expected, "$.case_fields[" + i + "]")));
         }
 

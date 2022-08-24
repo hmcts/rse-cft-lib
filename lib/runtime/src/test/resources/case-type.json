@@ -39966,7 +39966,7 @@
       "label": "Solicitor’s Phone number",
       "hint_text": null,
       "field_type": {
-        "id": "applicant1SolicitorPhone-ba1fffba-3253-4305-8ae7-28075025fb13",
+        "id": "${json-unit.regex}^\\Qapplicant1SolicitorPhone-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Text",
         "min": null,
         "max": null,
@@ -41943,7 +41943,7 @@
       "label": "Applicant 2 Documents uploaded",
       "hint_text": null,
       "field_type": {
-        "id": "applicant2DocumentsUploaded-0bea889c-ff24-4935-80fc-d7811e942d3e",
+        "id": "${json-unit.regex}^\\Qapplicant2DocumentsUploaded-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -42077,7 +42077,7 @@
               "label": "Select your document",
               "hint_text": null,
               "field_type": {
-                "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+                "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Document",
                 "min": null,
                 "max": null,
@@ -43467,7 +43467,7 @@
       "label": "Help with fees reference",
       "hint_text": null,
       "field_type": {
-        "id": "applicant2HWFReferenceNumber-6220f373-1b2f-435c-925d-775d795af6ef",
+        "id": "${json-unit.regex}^\\Qapplicant2HWFReferenceNumber-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Text",
         "min": null,
         "max": null,
@@ -45412,7 +45412,7 @@
       "label": "Phone number",
       "hint_text": null,
       "field_type": {
-        "id": "applicant2PhoneNumber-ca847688-aaf4-4c30-932f-42f3b74eb406",
+        "id": "${json-unit.regex}^\\Qapplicant2PhoneNumber-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Text",
         "min": null,
         "max": null,
@@ -48216,7 +48216,7 @@
       "label": "Solicitor’s Phone number",
       "hint_text": null,
       "field_type": {
-        "id": "applicant2SolicitorPhone-c6ccc452-e0e5-4db0-8de2-151b1727b58d",
+        "id": "${json-unit.regex}^\\Qapplicant2SolicitorPhone-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Text",
         "min": null,
         "max": null,
@@ -49464,7 +49464,7 @@
       "label": "Payments",
       "hint_text": null,
       "field_type": {
-        "id": "applicationPayments-aa0f7ad8-3572-46f6-a306-1631d413b0ce",
+        "id": "${json-unit.regex}^\\QapplicationPayments-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -50451,7 +50451,7 @@
       "label": "Bulk Scan Envelopes",
       "hint_text": null,
       "field_type": {
-        "id": "bulkScanEnvelopes-930af42a-63ab-4354-b072-51f195724653",
+        "id": "${json-unit.regex}^\\QbulkScanEnvelopes-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -50863,7 +50863,7 @@
             "label": "Select your document",
             "hint_text": null,
             "field_type": {
-              "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+              "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
               "type": "Document",
               "min": null,
               "max": null,
@@ -54557,7 +54557,7 @@
             "label": "Select your document",
             "hint_text": null,
             "field_type": {
-              "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+              "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
               "type": "Document",
               "min": null,
               "max": null,
@@ -55146,7 +55146,7 @@
       "label": "List of responses for Conditional Order clarification",
       "hint_text": null,
       "field_type": {
-        "id": "coClarificationResponses-4bf40f91-218d-46a8-93a9-20bcc7ffefc8",
+        "id": "${json-unit.regex}^\\QcoClarificationResponses-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -55254,7 +55254,7 @@
       "label": "Clarification Responses Submitted",
       "hint_text": null,
       "field_type": {
-        "id": "coClarificationResponsesSubmitted-17194845-7f18-48b6-8ea3-2bc3f33603b6",
+        "id": "${json-unit.regex}^\\QcoClarificationResponsesSubmitted-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -55332,7 +55332,7 @@
               "label": "List of responses for Conditional Order clarification",
               "hint_text": null,
               "field_type": {
-                "id": "clarificationResponses-9a3522c3-efb8-4a9e-bc97-a2b270ffed19",
+                "id": "${json-unit.regex}^\\QclarificationResponses-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Collection",
                 "min": null,
                 "max": null,
@@ -55369,7 +55369,7 @@
               "label": "Documents uploaded for the Conditional Order Clarification",
               "hint_text": null,
               "field_type": {
-                "id": "clarificationUploadDocuments-38a585be-9d36-4f74-851a-3687e2d95527",
+                "id": "${json-unit.regex}^\\QclarificationUploadDocuments-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Collection",
                 "min": null,
                 "max": null,
@@ -55503,7 +55503,7 @@
                       "label": "Select your document",
                       "hint_text": null,
                       "field_type": {
-                        "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+                        "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                         "type": "Document",
                         "min": null,
                         "max": null,
@@ -55911,7 +55911,7 @@
       "label": "Documents uploaded for the Conditional Order Clarification",
       "hint_text": null,
       "field_type": {
-        "id": "coClarificationUploadDocuments-bae33567-69b8-4dd4-b128-9358a9812ff1",
+        "id": "${json-unit.regex}^\\QcoClarificationUploadDocuments-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -56045,7 +56045,7 @@
               "label": "Select your document",
               "hint_text": null,
               "field_type": {
-                "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+                "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Document",
                 "min": null,
                 "max": null,
@@ -56570,7 +56570,7 @@
             "label": "Select your document",
             "hint_text": null,
             "field_type": {
-              "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+              "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
               "type": "Document",
               "min": null,
               "max": null,
@@ -58001,7 +58001,7 @@
       "label": "Legal Advisor Decisions Submitted",
       "hint_text": null,
       "field_type": {
-        "id": "coLegalAdvisorDecisions-7f415491-a4fb-48bb-b5f9-c1b69a237a2e",
+        "id": "${json-unit.regex}^\\QcoLegalAdvisorDecisions-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -59768,7 +59768,7 @@
       "label": "Confidential documents generated",
       "hint_text": null,
       "field_type": {
-        "id": "confidentialDocumentsGenerated-ae53847e-f37f-4633-9160-18639d3ea2d0",
+        "id": "${json-unit.regex}^\\QconfidentialDocumentsGenerated-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -60091,7 +60091,7 @@
               "label": "Document Url",
               "hint_text": null,
               "field_type": {
-                "id": "documentLink-7fe63f10-cd65-4300-b224-9b905ba28c90",
+                "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Document",
                 "min": null,
                 "max": null,
@@ -60171,7 +60171,7 @@
       "label": "Confidential documents uploaded",
       "hint_text": null,
       "field_type": {
-        "id": "confidentialDocumentsUploaded-db9289aa-1dc8-4d6a-8acd-573deda545f9",
+        "id": "${json-unit.regex}^\\QconfidentialDocumentsUploaded-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -60494,7 +60494,7 @@
               "label": "Document Url",
               "hint_text": null,
               "field_type": {
-                "id": "documentLink-7fe63f10-cd65-4300-b224-9b905ba28c90",
+                "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Document",
                 "min": null,
                 "max": null,
@@ -61343,7 +61343,7 @@
             "label": "Select your document",
             "hint_text": null,
             "field_type": {
-              "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+              "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
               "type": "Document",
               "min": null,
               "max": null,
@@ -63597,7 +63597,7 @@
       "label": "Documents generated",
       "hint_text": null,
       "field_type": {
-        "id": "documentsGenerated-c251de38-5ec3-4f83-8a95-6d8ddd725036",
+        "id": "${json-unit.regex}^\\QdocumentsGenerated-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -63731,7 +63731,7 @@
               "label": "Select your document",
               "hint_text": null,
               "field_type": {
-                "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+                "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Document",
                 "min": null,
                 "max": null,
@@ -64137,7 +64137,7 @@
       "label": "Documents uploaded",
       "hint_text": null,
       "field_type": {
-        "id": "documentsUploaded-c0c5524e-7661-4def-8785-323db484ebcf",
+        "id": "${json-unit.regex}^\\QdocumentsUploaded-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -64271,7 +64271,7 @@
               "label": "Select your document",
               "hint_text": null,
               "field_type": {
-                "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+                "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Document",
                 "min": null,
                 "max": null,
@@ -64677,7 +64677,7 @@
       "label": "Documents uploaded",
       "hint_text": null,
       "field_type": {
-        "id": "documentsUploadedOnConfirmService-e3c37c44-5ade-47c6-9b11-118e1ba93c87",
+        "id": "${json-unit.regex}^\\QdocumentsUploadedOnConfirmService-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -64811,7 +64811,7 @@
               "label": "Select your document",
               "hint_text": null,
               "field_type": {
-                "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+                "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Document",
                 "min": null,
                 "max": null,
@@ -66236,7 +66236,7 @@
             "label": "Select your document",
             "hint_text": null,
             "field_type": {
-              "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+              "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
               "type": "Document",
               "min": null,
               "max": null,
@@ -67920,7 +67920,7 @@
       "label": "General emails",
       "hint_text": null,
       "field_type": {
-        "id": "generalEmails-47fd7aeb-f9be-4cf3-a6be-401ff93d75d6",
+        "id": "${json-unit.regex}^\\QgeneralEmails-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -68164,7 +68164,7 @@
       "label": "Add attachments",
       "hint_text": null,
       "field_type": {
-        "id": "generalLetterAttachments-4eacc93e-8ef8-46b1-8d66-c1aac80679b5",
+        "id": "${json-unit.regex}^\\QgeneralLetterAttachments-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -68298,7 +68298,7 @@
               "label": "Select your document",
               "hint_text": null,
               "field_type": {
-                "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+                "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Document",
                 "min": null,
                 "max": null,
@@ -68820,7 +68820,7 @@
       "label": "General letters",
       "hint_text": null,
       "field_type": {
-        "id": "generalLetters-318f0222-eb68-4887-8c12-6eb3d39f9762",
+        "id": "${json-unit.regex}^\\QgeneralLetters-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -68842,7 +68842,7 @@
               "label": "Attachments",
               "hint_text": null,
               "field_type": {
-                "id": "generalLetterAttachmentLinks-59fc749f-d8ad-4568-8089-58c50a19ec56",
+                "id": "${json-unit.regex}^\\QgeneralLetterAttachmentLinks-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                 "type": "Collection",
                 "min": null,
                 "max": null,
@@ -69584,7 +69584,7 @@
       "label": "General Orders",
       "hint_text": null,
       "field_type": {
-        "id": "generalOrders-e1a7913e-ad0f-4300-956e-801622ac5309",
+        "id": "${json-unit.regex}^\\QgeneralOrders-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -69771,7 +69771,7 @@
                     "label": "Select your document",
                     "hint_text": null,
                     "field_type": {
-                      "id": "documentLink-aa60b376-7bca-4f80-9f2c-fdf279ce17f9",
+                      "id": "${json-unit.regex}^\\QdocumentLink-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
                       "type": "Document",
                       "min": null,
                       "max": null,
@@ -71397,7 +71397,7 @@
       "label": "General Referrals",
       "hint_text": null,
       "field_type": {
-        "id": "generalReferrals-48c1cf22-aff4-444e-94b6-8477ca51f5d0",
+        "id": "${json-unit.regex}^\\QgeneralReferrals-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -79148,7 +79148,7 @@
       "label": "Notes",
       "hint_text": null,
       "field_type": {
-        "id": "notes-61744b00-09a1-4fb8-97ae-e225feb8b582",
+        "id": "${json-unit.regex}^\\Qnotes-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -82971,7 +82971,7 @@
       "metadata": false,
       "id": "regenerateCourtOrdersWarningLabel",
       "case_type_id": "NFD",
-      "label": "Updating court orders recreates the Certificate of Entitlement, Conditional Order and Final Order, based on the latest case data. Any other court orders e.g. conditional order refusals, will remain unchanged.\n\nIf there have been updates to the case data e.g. change of applicant name, then these will be reflected in the updated court orders.\n\nPrevious versions of court orders will not be stored against the case.",
+      "label": "${json-unit.any-string}",
       "hint_text": null,
       "field_type": {
         "id": "Label",
@@ -83582,7 +83582,7 @@
       "label": "Scanned documents",
       "hint_text": null,
       "field_type": {
-        "id": "scannedDocuments-decba68e-9cf3-45d2-8bf7-1bfdc8774f08",
+        "id": "${json-unit.regex}^\\QscannedDocuments-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
@@ -88693,7 +88693,7 @@
       "label": "Transformation and OCR warnings",
       "hint_text": null,
       "field_type": {
-        "id": "warnings-1f3f002b-decd-43fe-8a6b-2f4af4e2a953",
+        "id": "${json-unit.regex}^\\Qwarnings-\\E[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "type": "Collection",
         "min": null,
         "max": null,
