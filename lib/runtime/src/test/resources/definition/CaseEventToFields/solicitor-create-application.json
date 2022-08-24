@@ -436,7 +436,6 @@
     "ShowSummaryChangeOption": "Y"
   },
   {
-    "CaseEventFieldHint": "",
     "CaseEventFieldLabel": "Is ${labelContentTheApplicant2}'s name different from the name on the ${labelContentMarriageOrCivilPartnership} certificate?",
     "CaseEventID": "solicitor-create-application",
     "CaseFieldID": "applicant2NameDifferentToMarriageCertificate",

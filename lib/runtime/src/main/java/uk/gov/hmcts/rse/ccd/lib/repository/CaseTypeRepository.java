@@ -210,11 +210,6 @@ public class CaseTypeRepository {
             label = null != label ? label.trim() : null;
             ex.put("label", label);
             var hint = caseEventToFields.get("CaseEventFieldHint");
-            if (null != hint) {
-                if (hint.trim().isEmpty()) {
-                    hint = null;
-                }
-            }
             ex.put("hint_text", hint);
             CaseEventField cef = Mapper.instance.convertValue(ex, CaseEventField.class);
             cef.setPublish(false);

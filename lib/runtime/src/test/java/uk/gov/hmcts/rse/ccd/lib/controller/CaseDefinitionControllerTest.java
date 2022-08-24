@@ -99,7 +99,7 @@ class CaseDefinitionControllerTest {
                 "events[?(@.id == 'caseworker-add-answer')]",
                 "events[?(@.id == 'draft-aos')]",
                 "events[?(@.id == 'applicant1-resubmit')]"
-//                ,"events"
+                ,"events"
         );
         for (String path : paths) {
             assertThatJson(inPath(actual, path))
