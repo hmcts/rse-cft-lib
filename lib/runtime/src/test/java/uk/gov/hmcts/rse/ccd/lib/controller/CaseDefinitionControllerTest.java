@@ -118,13 +118,15 @@ class CaseDefinitionControllerTest {
                 .perform(get("/api/display/tab-structure/NFD"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
-        var mapper = new ObjectMapper();
-        var json = mapper.readValue(actual, Object.class);
-        var pretty = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(json);
-        Files.writeString(Paths.get("mine.json"), pretty);
+//        var mapper = new ObjectMapper();
+//        var json = mapper.readValue(actual, Object.class);
+//        var pretty = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(json);
+//        Files.writeString(Paths.get("mine.json"), pretty);
         var paths = List.of(
                 "tabs[?(@.id == 'ConfidentialRespondent[APPTWOSOLICITOR]')]",
-                "tabs[?(@.id == 'civilPartnershipDetails')]"
+                "tabs[?(@.id == 'civilPartnershipDetails')]",
+                "tabs[?(@.id == 'aosDetailscaseworker-divorce-courtadmin-la')]",
+                "tabs[?(@.id == 'applicationDetailsJoint')]"
 //                ,"tabs"
         );
         for (String path : paths) {

@@ -87,10 +87,12 @@ public class CaseTypeRepository {
             tabMap.put(tab.getId(), tab);
             tab.setLabel((String) tabJson.get("TabLabel"));
             tab.setOrder((Integer) tabJson.get("TabDisplayOrder"));
-            tab.setRole((String) tabJson.get("UserRole"));
-            if (tab.getRole().isBlank()) {
-                tab.setRole(null);
+
+            var role = (String) tabJson.get("UserRole");
+            if (null != role && !role.isBlank()) {
+                tab.setRole(role);
             }
+
             var tabShow = (String) tabJson.get("TabShowCondition");
             if (tabShow != null && !tabShow.isBlank()) {
                 tab.setShowCondition(formatShowCondition(tabShow));
@@ -98,12 +100,18 @@ public class CaseTypeRepository {
 
             var field = new CaseTypeTabField();
             field.setOrder((Integer) tabJson.get("TabFieldDisplayOrder"));
-            field.setShowCondition((String) tabJson.get("FieldShowCondition"));
+            field.setShowCondition(formatShowCondition((String) tabJson.get("FieldShowCondition")));
             field.setCaseField(fieldMap.get(tabJson.get("CaseFieldID")));
             tab.getTabFields().add(field);
         }
         var result  = new CaseTabCollection();
         result.getTabs().addAll(tabMap.values());
+        for (CaseTypeTab tab : result.getTabs()) {
+            if (tab.getRole() != null && tab.getRole().isBlank()) {
+                tab.setRole(null);
+            }
+        }
+
         return result;
     }
 
