@@ -34,3 +34,14 @@ tasks.check.dependsOn gradle.includedBuild('rse-cft-lib-plugin').task(':check')
 task publishSecrets(type: Exec) {
   commandLine 'az', 'keyvault', 'secret', 'set', "--vault-name", "rse-cft-lib", "--name", "aat-env", "--file", "test-project/build/cftlib/.aat-env"
 }
+
+ext {
+    importedDefStoreModules = [
+             'application',
+             'domain',
+             'elastic-search-support',
+             'excel-importer',
+             'repository',
+             'rest-api'
+    ]
+}
