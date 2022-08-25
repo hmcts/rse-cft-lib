@@ -108,6 +108,38 @@ class CaseDefinitionControllerTest {
         }
     }
 
+    @Test
+    void dataCaseworkerIdAndJurisdictionIdCaseTypeGet() throws Exception {
+        var expected = resourceAsString("classpath:case-type.json");
+        var matcher = json().when(IGNORING_ARRAY_ORDER);
+        var matchers = new ArrayList<ResultMatcher>();
+
+        matchers.add(matcher.node("id").isEqualTo(inPath(expected, "$.id")));
+        matchers.add(matcher.node("states").isEqualTo(inPath(expected, "$.states")));
+
+        mockMvc
+            .perform(get("/api/data/caseworkers/ignored/jurisdictions/ignored/case-types/NFD"))
+            .andExpectAll(matchers.toArray(new ResultMatcher[0]));
+    }
+
+    @Test
+    void getRoleToAccessProfiles() throws Exception {
+        var expected = resourceAsString("classpath:case-assignments.json");
+
+        mockMvc
+            .perform(get("/api/data/caseworkers/ignored/jurisdictions/ignored/case-types/NFD/access/profile/roles"))
+            .andExpect(json().isEqualTo(expected));
+    }
+
+    @Test
+    void dataCaseTypeVersionGet() throws Exception {
+        var expected = resourceAsString("classpath:case-type-version.json");
+
+        mockMvc
+            .perform(get("/api/data/case-type/NFD/version"))
+            .andExpect(json().isEqualTo(expected));
+    }
+
     private static String resourceAsString(final String resourcePath) throws IOException {
         final File file = ResourceUtils.getFile(resourcePath);
         return new String(Files.readAllBytes(file.toPath()));
