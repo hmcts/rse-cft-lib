@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static java.util.AbstractMap.SimpleEntry;
 import static java.util.stream.Collectors.groupingBy;
+import static org.springframework.util.StringUtils.hasText;
 
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -555,5 +556,29 @@ public class CaseTypeRepository {
         }
 
         return result;
+    }
+
+    public Optional<List<CaseRole>> getRoles(String id) {
+        return Optional
+            .ofNullable(paths.get(id))
+            .map(this::toJson)
+            .map(this::mapToRoles);
+    }
+
+    private List<CaseRole> mapToRoles(Map<String, List<Map<String, String>>> json) {
+        return json.get("CaseRoles")
+            .stream()
+            .map(this::mapToRole)
+            .collect(Collectors.toList());
+    }
+
+    private CaseRole mapToRole(Map<String, String> row) {
+        var role = new CaseRole();
+
+        role.setId(row.get("ID"));
+        role.setName(row.get("Name"));
+        role.setDescription(hasText(row.get("Description")) ? row.get("Description") : null);
+
+        return role;
     }
 }

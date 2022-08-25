@@ -40,13 +40,13 @@ public class CaseDefinitionController {
             return dataCaseTypeIdGet(caseTypeId);
     }
 
-//    @GetMapping(value = "/data/caseworkers/{uid}/jurisdictions/{jid}/case-types/{ctid}/roles")
-//    public List<CaseRole> getCaseRoles(
-//        @PathVariable("uid") String caseworkerId,
-//        @PathVariable("jid") String jurisdictionId,
-//        @PathVariable("ctid") String caseTypeId) {
-//        return caseRoleService.findByCaseTypeId(caseTypeId);
-//    }
+    @GetMapping(value = "/data/caseworkers/{uid}/jurisdictions/{jid}/case-types/{ctid}/roles")
+    public List<CaseRole> getCaseRoles(
+        @PathVariable("uid") String caseworkerId,
+        @PathVariable("jid") String jurisdictionId,
+        @PathVariable("ctid") String caseTypeId) {
+        return repository.getRoles(caseTypeId).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Case type not found"));
+    }
 
     @GetMapping(value = "/data/caseworkers/{uid}/jurisdictions/{jid}/case-types/{ctid}/access/profile/roles")
     public List<RoleAssignment> getRoleToAccessProfiles(

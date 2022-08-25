@@ -193,6 +193,15 @@ class CaseDefinitionControllerTest {
             .andExpect(json().isEqualTo(expected));
     }
 
+    @Test
+    void getCaseRoles() throws Exception {
+        var expected = resourceAsString("classpath:response/case-definition/case-roles.json");
+
+        mockMvc
+            .perform(get("/api/data/caseworkers/ignore/jurisdictions/ignore/case-types/NFD/roles"))
+            .andExpect(json().isEqualTo(expected));
+    }
+
     private static String resourceAsString(final String resourcePath) throws IOException {
         final File file = ResourceUtils.getFile(resourcePath);
         return new String(Files.readAllBytes(file.toPath()));
