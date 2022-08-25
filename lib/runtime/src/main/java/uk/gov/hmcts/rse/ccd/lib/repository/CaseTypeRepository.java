@@ -529,4 +529,31 @@ public class CaseTypeRepository {
 
         return result;
     }
+
+    public SearchResultDefinition getSearchResults(String id) {
+        var result = new SearchResultDefinition();
+        result.setCaseTypeId(id);
+        var jsonCase =  toJson(paths.get(id));
+        for (Map wif : jsonCase.get("SearchResultFields")) {
+            var field = new SearchResultsField();
+            field.setCaseFieldId((String) wif.get("CaseFieldID"));
+            field.setLabel((String) wif.get("Label"));
+            field.setOrder((Integer) wif.get("DisplayOrder"));
+            field.setMetadata(field.getCaseFieldId().startsWith("["));
+            field.setCaseTypeId(id);
+
+            var order = (String) wif.get("ResultsOrdering");
+            if (null != order) {
+                var splits = order.split(":");
+                var sortOrder = new SortOrder();
+                sortOrder.setDirection(splits[1]);
+                sortOrder.setPriority(Integer.valueOf(splits[0]));
+                field.setSortOrder(sortOrder);
+            }
+
+            result.getFields().add(field);
+        }
+
+        return result;
+    }
 }

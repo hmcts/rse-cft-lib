@@ -44,12 +44,12 @@ public class DisplayApiController {
         return repository.getSearchInputs(id);
     }
 
-//    @GetMapping(value = "/display/search-result-definition/{id}", produces = {"application/json"})
-//    public SearchResultDefinition displaySearchResultDefinitionIdGet(
-//        @PathVariable("id") String id) {
-//        return this.displayService.findSearchResultDefinitionForCaseType(id);
-//    }
-//
+    @GetMapping(value = "/display/search-result-definition/{id}", produces = {"application/json"})
+    public SearchResultDefinition displaySearchResultDefinitionIdGet(
+        @PathVariable("id") String id) {
+        return repository.getSearchResults(id);
+    }
+
     @GetMapping(value = "/display/tab-structure/{id}", produces = {"application/json"})
     public CaseTabCollection displayTabStructureIdGet(
         @PathVariable("id") String id) {
