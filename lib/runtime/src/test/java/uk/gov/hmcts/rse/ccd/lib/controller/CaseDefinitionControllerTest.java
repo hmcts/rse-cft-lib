@@ -69,24 +69,23 @@ class CaseDefinitionControllerTest {
         var expected = resourceAsString("classpath:response/case-definition/case-type.json");
         var matcher = json().when(IGNORING_ARRAY_ORDER);
         var matchers = new ArrayList<ResultMatcher>();
+
         matchers.add(matcher.node("id").isEqualTo(inPath(expected, "$.id")));
-//        matchers.add(matcher.node("description").isEqualTo(inPath(expected, "$.description")));
-//        matchers.add(matcher.node("version").isEqualTo(inPath(expected, "$.version")));
-//        matchers.add(matcher.node("jurisdiction").isEqualTo(inPath(expected, "$.jurisdiction")));
-//        matchers.add(matcher.node("name").isEqualTo(inPath(expected, "$.name")));
-//        matchers.add(matcher.node("acls").isEqualTo(inPath(expected, "$.acls")));
-//        matchers.add(matcher.node("security_classification").isEqualTo(inPath(expected, "$.security_classification")));
+        matchers.add(matcher.node("description").isEqualTo(inPath(expected, "$.description")));
+        matchers.add(matcher.node("version").isEqualTo(inPath(expected, "$.version")));
+        matchers.add(matcher.node("jurisdiction").isEqualTo(inPath(expected, "$.jurisdiction")));
+        matchers.add(matcher.node("name").isEqualTo(inPath(expected, "$.name")));
+        matchers.add(matcher.node("acls").isEqualTo(inPath(expected, "$.acls")));
+        matchers.add(matcher.node("security_classification").isEqualTo(inPath(expected, "$.security_classification")));
         matchers.add(matcher.node("states").isEqualTo(inPath(expected, "$.states")));
 
-        for (int i = 0; i < 585; i++) {
+        for (int i = 0; i < 593; i++) {
             matchers.add(matcher.node("case_fields[" + i + "]").isEqualTo(inPath(expected, "$.case_fields[" + i + "]")));
         }
 
         for (int i = 0; i < 126; i++) {
             matchers.add(matcher.node("events[" + i + "]").isEqualTo(inPath(expected, "$.events[" + i + "]")));
         }
-
-//        matchers.add(matcher.isEqualTo(expected));
 
         mockMvc
                 .perform(get("/api/data/case-type/NFD"))
