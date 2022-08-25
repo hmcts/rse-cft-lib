@@ -1,22 +1,18 @@
 package uk.gov.hmcts.rse.ccd.lib.repository;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.yaml.snakeyaml.util.ArrayUtils;
 import uk.gov.hmcts.ccd.definition.store.domain.showcondition.ShowConditionParser;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
 import uk.gov.hmcts.ccd.definition.store.repository.model.*;
 import uk.gov.hmcts.rse.ccd.lib.Mapper;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -51,6 +47,8 @@ public class CaseTypeRepository {
         "WorkBasketInputFields",
         "WorkBasketResultFields"
     );
+
+    private static final Date LIVE_FROM = new Date(1483228800000L);
 
     @Autowired
     private final Map<String, String> paths;
@@ -128,14 +126,16 @@ public class CaseTypeRepository {
 
     private CaseType mapToCaseType(Map<String, List<Map<String, String>>> json) {
         var caseType = new CaseType();
-        var acls = getAcls(json);
+        var fieldAcls = getFieldAcls(json.get("AuthorisationCaseField"));
         var listItems = getListItems((List) json.get("FixedLists"));
 
         setComplexTypes(listItems, json.get("ComplexTypes"));
         setCaseTypeDetails(caseType, json.get("CaseType").get(0));
-        setCaseFields(caseType, acls, listItems, json.get("CaseField"));
+        setJurisdiction(caseType, json.get("Jurisdiction").get(0));
         setCaseStates(caseType, json);
+        setCaseFields(caseType, fieldAcls, listItems, json.get("CaseField"));
         setCaseEvents(caseType, json);
+        setAcls(caseType, json.get("AuthorisationCaseType"));
 
         return caseType;
     }
@@ -292,6 +292,14 @@ public class CaseTypeRepository {
                 .collect(Collectors.toList());
     }
 
+    private void setAcls(CaseType caseType, List<Map<String, String>> rows) {
+        var acls = new ArrayList<AccessControlList>();
+        for (Map<String, String> row : rows) {
+            acls.add(mapToAcl(row));
+        }
+        caseType.setAcls(acls);
+    }
+
     private void setCaseStates(CaseType caseType, Map<String, List<Map<String, String>>> json) {
         var states = new HashMap<String, CaseState>();
         for (Map state : json.get("State")) {
@@ -315,10 +323,10 @@ public class CaseTypeRepository {
         caseType.setStates(new ArrayList<>(states.values()));
     }
 
-    private Map<String, List<AccessControlList>> getAcls(Map<String, List<Map<String, String>>> json) {
+    private Map<String, List<AccessControlList>> getFieldAcls(List<Map<String, String>> rows) {
         var acls = new HashMap<String, List<AccessControlList>>();
 
-        for (var row : json.get("AuthorisationCaseField")) {
+        for (var row : rows) {
             acls.computeIfAbsent(row.get("CaseFieldID"), f -> new ArrayList<>()).add(mapToAcl(row));
         }
 
@@ -354,10 +362,19 @@ public class CaseTypeRepository {
             SecurityClassification.valueOf(row.get("SecurityClassification").toUpperCase())
         );
 
+        var version = new Version();
+        version.setNumber(1);
+        version.setLiveFrom(LIVE_FROM);
+
+        caseType.setVersion(version);
+    }
+
+    private void setJurisdiction(CaseType caseType, Map<String, String> row) {
         var jurisdiction = new Jurisdiction();
-        jurisdiction.setId(row.get("JurisdictionID"));
-        jurisdiction.setName(row.get("JurisdictionID"));
-        jurisdiction.setDescription(row.get("JurisdictionID"));
+        jurisdiction.setId(row.get("ID"));
+        jurisdiction.setName(row.get("Name"));
+        jurisdiction.setDescription(row.get("Description"));
+        jurisdiction.setLiveFrom(LIVE_FROM);
 
         caseType.setJurisdiction(jurisdiction);
     }
@@ -371,6 +388,45 @@ public class CaseTypeRepository {
         caseType.setCaseFields(caseFields.stream()
             .map(f -> this.mapToCaseField(acls, listItems, f))
             .collect(Collectors.toList()));
+
+        var field = new CaseField();
+        field.setId("[STATE]");
+        field.setLabel("State");
+        field.setCaseTypeId(caseType.getId());
+        field.setSecurityClassification("PUBLIC");
+        field.setLiveFrom("2017-01-01");
+
+        var type = new FieldType();
+        type.setId("FixedList-" + caseType.getId() + "[STATE]");
+        type.setType("FixedList");
+        type.setFixedListItems(caseType.getStates().stream()
+            .map(s -> new FixedListItem(s.getId(), s.getName(), null))
+            .collect(Collectors.toList()));
+
+        field.setFieldType(type);
+        field.setHidden(false);
+        field.setMetadata(true);
+        caseType.getCaseFields().add(field);
+
+        addField(caseType, "[JURISDICTION]", "Jurisdiction", "Text");
+        addField(caseType, "[CASE_TYPE]", "Case Type", "Text");
+        addField(caseType, "[SECURITY_CLASSIFICATION]", "Security Classification", "Text");
+        addField(caseType, "[CREATED_DATE]", "Created Date", "DateTime");
+        addField(caseType, "[LAST_MODIFIED_DATE]", "Last Modified Date", "DateTime");
+        addField(caseType, "[LAST_STATE_MODIFIED_DATE]", "Last State Modified Date", "DateTime");
+        addField(caseType, "[CASE_REFERENCE]", "Case Reference", "Text");
+    }
+
+    private void addField(CaseType caseType, String id, String label, String type) {
+        var field = new CaseField();
+        field.setId(id);
+        field.setLabel(label);
+        field.setSecurityClassification("PUBLIC");
+        field.setLiveFrom("2017-01-01");
+        field.setFieldType(fieldTypes.findOrCreateFieldType(null, type, null, null, null));
+        field.setHidden(false);
+        field.setMetadata(true);
+        caseType.getCaseFields().add(field);
     }
 
     private CaseField mapToCaseField(
