@@ -283,6 +283,32 @@ public class CaseTypeRepository {
         caseType.setEvents(l);
     }
 
+    public WorkBasketResult getWorkbasketResult(String caseType) {
+        var jsonCase =  toJson(paths.get(caseType));
+        var result = new WorkBasketResult();
+        result.setCaseTypeId(caseType);
+        for (Map json : jsonCase.get("WorkBasketResultFields")) {
+            var field = new WorkBasketResultField();
+            result.getFields().add(field);
+
+            field.setCaseTypeId(caseType);
+            field.setCaseFieldId((String) json.get("CaseFieldID"));
+            field.setLabel((String) json.get("Label"));
+            field.setOrder((Integer) json.get("DisplayOrder"));
+            field.setMetadata(field.getCaseFieldId().startsWith("["));
+
+            var order = (String) json.get("ResultsOrdering");
+            if (null != order) {
+                var splits = order.split(":");
+                var sortOrder = new SortOrder();
+                sortOrder.setDirection(splits[1]);
+                sortOrder.setPriority(Integer.valueOf(splits[0]));
+                field.setSortOrder(sortOrder);
+            }
+        }
+        return result;
+    }
+
     private List<Integer> retriesToJsonArray(Object o) {
         if (o == null) {
             return List.of();

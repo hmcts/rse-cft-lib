@@ -68,11 +68,11 @@ public class DisplayApiController {
 //        return this.displayService.findWorkBasketInputDefinitionForCaseType(id);
 //    }
 //
-//    @GetMapping(value = "/display/work-basket-definition/{id}", produces = {"application/json"})
-//    public WorkBasketResult displayWorkBasketDefinitionIdGet(
-//        @PathVariable("id") String id) {
-//        return this.displayService.findWorkBasketDefinitionForCaseType(id);
-//    }
+    @GetMapping(value = "/display/work-basket-definition/{id}", produces = {"application/json"})
+    public WorkBasketResult displayWorkBasketDefinitionIdGet(
+        @PathVariable("id") String id) {
+        return repository.getWorkbasketResult(id);
+    }
 //
 //    @GetMapping(path = "/display/search-cases-result-fields/{id}")
 //    public SearchCasesResult displaySearchCasesResultIdGet(
