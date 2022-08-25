@@ -1,0 +1,125 @@
+{
+  "case_type_id": "NFD",
+  "fields": [
+    {
+      "metadata": true,
+      "case_field_id": "[CASE_REFERENCE]",
+      "case_field_element_path": null,
+      "label": "Case number",
+      "order": 1,
+      "role": null,
+      "use_case": "ORGCASES",
+      "sort_order": null,
+      "display_context_parameter": null,
+      "case_type_id": "NFD"
+    },
+    {
+      "metadata": true,
+      "case_field_id": "[CREATED_DATE]",
+      "case_field_element_path": null,
+      "label": "Created date",
+      "order": 8,
+      "role": null,
+      "use_case": "ORGCASES",
+      "sort_order": null,
+      "display_context_parameter": null,
+      "case_type_id": "NFD"
+    },
+    {
+      "metadata": true,
+      "case_field_id": "[LAST_MODIFIED_DATE]",
+      "case_field_element_path": null,
+      "label": "Last modified date",
+      "order": 9,
+      "role": null,
+      "use_case": "ORGCASES",
+      "sort_order": null,
+      "display_context_parameter": null,
+      "case_type_id": "NFD"
+    },
+    {
+      "metadata": true,
+      "case_field_id": "[STATE]",
+      "case_field_element_path": null,
+      "label": "State",
+      "order": 10,
+      "role": null,
+      "use_case": "ORGCASES",
+      "sort_order": null,
+      "display_context_parameter": null,
+      "case_type_id": "NFD"
+    },
+    {
+      "metadata": false,
+      "case_field_id": "applicant1LastName",
+      "case_field_element_path": null,
+      "label": "Applicants last name",
+      "order": 5,
+      "role": null,
+      "use_case": "ORGCASES",
+      "sort_order": null,
+      "display_context_parameter": null,
+      "case_type_id": "NFD"
+    },
+    {
+      "metadata": false,
+      "case_field_id": "applicant2LastName",
+      "case_field_element_path": null,
+      "label": "Respondents last name",
+      "order": 6,
+      "role": null,
+      "use_case": "ORGCASES",
+      "sort_order": null,
+      "display_context_parameter": null,
+      "case_type_id": "NFD"
+    },
+    {
+      "metadata": false,
+      "case_field_id": "applicant2SolicitorName",
+      "case_field_element_path": null,
+      "label": "Respondents solicitors name",
+      "order": 4,
+      "role": null,
+      "use_case": "ORGCASES",
+      "sort_order": null,
+      "display_context_parameter": null,
+      "case_type_id": "NFD"
+    },
+    {
+      "metadata": false,
+      "case_field_id": "applicant2SolicitorReference",
+      "case_field_element_path": null,
+      "label": "Respondent solicitor reference",
+      "order": 3,
+      "role": null,
+      "use_case": "ORGCASES",
+      "sort_order": null,
+      "display_context_parameter": null,
+      "case_type_id": "NFD"
+    },
+    {
+      "metadata": false,
+      "case_field_id": "applicationType",
+      "case_field_element_path": null,
+      "label": "Application type",
+      "order": 2,
+      "role": null,
+      "use_case": "ORGCASES",
+      "sort_order": null,
+      "display_context_parameter": null,
+      "case_type_id": "NFD"
+    },
+    {
+      "metadata": false,
+      "case_field_id": "dueDate",
+      "case_field_element_path": null,
+      "label": "Due Date",
+      "order": 7,
+      "role": null,
+      "use_case": "ORGCASES",
+      "sort_order": null,
+      "display_context_parameter": null,
+      "case_type_id": "NFD"
+    }
+  ]
+}
