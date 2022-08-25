@@ -81,12 +81,18 @@ public class CaseTypeRepository {
         var caseType = mapToCaseType(json);
         var tabMap = new HashMap<String, CaseTypeTab>();
         var fieldMap = Maps.uniqueIndex(caseType.getCaseFields(), CaseField::getId);
+        var channelMap = new HashMap<String, String>();
         for (Map tabJson : json.get("CaseTypeTab")) {
             var tab = tabMap.getOrDefault((String) tabJson.get("TabID"), new CaseTypeTab());
             tab.setId((String) tabJson.get("TabID"));
             tabMap.put(tab.getId(), tab);
             tab.setLabel((String) tabJson.get("TabLabel"));
             tab.setOrder((Integer) tabJson.get("TabDisplayOrder"));
+
+            var channel = tabJson.get("Channel");
+            if (null != channel) {
+                channelMap.put(tab.getId(), (String) channel);
+            }
 
             var role = (String) tabJson.get("UserRole");
             if (null != role && !role.isBlank()) {
@@ -112,6 +118,11 @@ public class CaseTypeRepository {
             }
         }
 
+        result.setCaseTypeId(caseType.getId());
+        result.setChannels(result.getTabs()
+                .stream()
+                .map(t -> channelMap.get(t.getId()))
+                .collect(Collectors.toList()));
         return result;
     }
 

@@ -105,18 +105,9 @@ class CaseDefinitionControllerTest {
 //        var json = mapper.readValue(actual, Object.class);
 //        var pretty = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(json);
 //        Files.writeString(Paths.get("mine.json"), pretty);
-        var paths = List.of(
-                "tabs[?(@.id == 'ConfidentialRespondent[APPTWOSOLICITOR]')]",
-                "tabs[?(@.id == 'civilPartnershipDetails')]",
-                "tabs[?(@.id == 'aosDetailscaseworker-divorce-courtadmin-la')]",
-                "tabs[?(@.id == 'applicationDetailsJoint')]"
-//                ,"tabs"
-        );
-        for (String path : paths) {
-            assertThatJson(inPath(actual, path))
-                    .when(IGNORING_ARRAY_ORDER)
-                    .isEqualTo(inPath(expected, path));
-        }
+        assertThatJson(actual)
+                .when(IGNORING_ARRAY_ORDER)
+                .isEqualTo(expected);
     }
 
     @Test
