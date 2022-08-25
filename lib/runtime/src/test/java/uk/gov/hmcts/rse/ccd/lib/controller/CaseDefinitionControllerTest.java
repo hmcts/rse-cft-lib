@@ -30,7 +30,10 @@ import static net.javacrumbs.jsonunit.jsonpath.JsonPathAdapter.inPath;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-@WebMvcTest(controllers = CaseDefinitionController.class)
+@WebMvcTest(controllers = {
+        CaseDefinitionController.class,
+        DisplayApiController.class
+})
 class CaseDefinitionControllerTest {
 
     @Autowired
@@ -89,7 +92,6 @@ class CaseDefinitionControllerTest {
                 .perform(get("/api/data/case-type/NFD"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
-//        Files.writeString(Paths.get("mine.json"), actual);
         var paths = List.of(
                 "events[?(@.id == 'caseworker-upload-amended-application')]",
                 "events[?(@.id == 'caseworker-confirm-receipt')]",
@@ -100,6 +102,30 @@ class CaseDefinitionControllerTest {
                 "events[?(@.id == 'draft-aos')]",
                 "events[?(@.id == 'applicant1-resubmit')]"
                 ,"events"
+        );
+        for (String path : paths) {
+            assertThatJson(inPath(actual, path))
+                    .when(IGNORING_ARRAY_ORDER)
+                    .isEqualTo(inPath(expected, path));
+        }
+    }
+
+    @SneakyThrows
+    @Test
+    public void testTabs() {
+        var expected = resourceAsString("classpath:response/display/tab-structure.json");
+        var actual = mockMvc
+                .perform(get("/api/display/tab-structure/NFD"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+        var mapper = new ObjectMapper();
+        var json = mapper.readValue(actual, Object.class);
+        var pretty = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(json);
+        Files.writeString(Paths.get("mine.json"), pretty);
+        var paths = List.of(
+                "tabs[?(@.id == 'ConfidentialRespondent[APPTWOSOLICITOR]')]",
+                "tabs[?(@.id == 'civilPartnershipDetails')]"
+//                ,"tabs"
         );
         for (String path : paths) {
             assertThatJson(inPath(actual, path))

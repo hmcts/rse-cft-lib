@@ -1,6 +1,7 @@
 package uk.gov.hmcts.rse.ccd.lib.controller;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import uk.gov.hmcts.ccd.definition.store.repository.model.SearchResultDefinition
 import uk.gov.hmcts.ccd.definition.store.repository.model.WizardPageCollection;
 import uk.gov.hmcts.ccd.definition.store.repository.model.WorkBasketResult;
 import uk.gov.hmcts.ccd.definition.store.repository.model.WorkbasketInputDefinition;
+import uk.gov.hmcts.rse.ccd.lib.repository.CaseTypeRepository;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +35,8 @@ import java.util.Optional;
 public class DisplayApiController {
 
 
+    @Autowired
+    CaseTypeRepository repository;
 //    @GetMapping(value = "/display/search-input-definition/{id}", produces = {"application/json"})
 //    public SearchInputDefinition displaySearchInputDefinitionIdGet(
 //        @PathVariable("id") String id) {
@@ -45,11 +49,11 @@ public class DisplayApiController {
 //        return this.displayService.findSearchResultDefinitionForCaseType(id);
 //    }
 //
-//    @GetMapping(value = "/display/tab-structure/{id}", produces = {"application/json"})
-//    public CaseTabCollection displayTabStructureIdGet(
-//        @PathVariable("id") String id) {
-//        return this.displayService.findTabStructureForCaseType(id);
-//    }
+    @GetMapping(value = "/display/tab-structure/{id}", produces = {"application/json"})
+    public CaseTabCollection displayTabStructureIdGet(
+        @PathVariable("id") String id) {
+        return repository.getTabs(id);
+    }
 //
 //    @GetMapping(path = "/display/wizard-page-structure/case-types/{ctid}/event-triggers/{etid}")
 //    public WizardPageCollection displayWizardPageStructureIdGet(

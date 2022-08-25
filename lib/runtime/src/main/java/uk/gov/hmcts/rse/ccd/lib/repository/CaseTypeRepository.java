@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.base.CaseFormat;
+import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,37 @@ public class CaseTypeRepository {
         return FILES.parallelStream()
             .map(file -> new SimpleEntry<>(file, reader.readPath(path + "/" + file)))
             .collect(Collectors.toUnmodifiableMap(SimpleEntry::getKey,SimpleEntry::getValue));
+    }
+
+    public CaseTabCollection getTabs(String id) {
+        var json = toJson(paths.get(id));
+        var caseType = mapToCaseType(json);
+        var tabMap = new HashMap<String, CaseTypeTab>();
+        var fieldMap = Maps.uniqueIndex(caseType.getCaseFields(), CaseField::getId);
+        for (Map tabJson : json.get("CaseTypeTab")) {
+            var tab = tabMap.getOrDefault((String) tabJson.get("TabID"), new CaseTypeTab());
+            tab.setId((String) tabJson.get("TabID"));
+            tabMap.put(tab.getId(), tab);
+            tab.setLabel((String) tabJson.get("TabLabel"));
+            tab.setOrder((Integer) tabJson.get("TabDisplayOrder"));
+            tab.setRole((String) tabJson.get("UserRole"));
+            if (tab.getRole().isBlank()) {
+                tab.setRole(null);
+            }
+            var tabShow = (String) tabJson.get("TabShowCondition");
+            if (tabShow != null && !tabShow.isBlank()) {
+                tab.setShowCondition(formatShowCondition(tabShow));
+            }
+
+            var field = new CaseTypeTabField();
+            field.setOrder((Integer) tabJson.get("TabFieldDisplayOrder"));
+            field.setShowCondition((String) tabJson.get("FieldShowCondition"));
+            field.setCaseField(fieldMap.get(tabJson.get("CaseFieldID")));
+            tab.getTabFields().add(field);
+        }
+        var result  = new CaseTabCollection();
+        result.getTabs().addAll(tabMap.values());
+        return result;
     }
 
     private CaseType mapToCaseType(Map<String, List<Map<String, String>>> json) {
@@ -197,11 +229,7 @@ public class CaseTypeRepository {
                 var name = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, o.toString());
                 ex.put(name, caseEventToFields.get(o));
             }
-            var showCondition = caseEventToFields.get("FieldShowCondition");
-            if (null != showCondition) {
-                var s = new ShowConditionParser().parseShowCondition(showCondition).getShowConditionExpression();
-                showCondition = s;
-            }
+            var showCondition = formatShowCondition(caseEventToFields.get("FieldShowCondition"));
             ex.put("show_condition", showCondition);
             ex.put("case_field_id", caseEventToFields.get("CaseFieldID"));
             var label = caseEventToFields.get("CaseEventFieldLabel");
@@ -351,6 +379,14 @@ public class CaseTypeRepository {
         caseField.setFieldType(fieldType);
 
         return caseField;
+    }
+
+    @SneakyThrows
+    private static String formatShowCondition(String show) {
+        if (null != show) {
+            return new ShowConditionParser().parseShowCondition(show).getShowConditionExpression();
+        }
+        return show;
     }
 
     public static String formatDate(String date) {
