@@ -200,6 +200,24 @@ class CaseDefinitionControllerTest {
     }
 
     @Test
+    void findJurisdictions() throws Exception {
+        var expected = resourceAsString("classpath:response/case-definition/jurisdictions.json");
+        var matcher = json().when(IGNORING_ARRAY_ORDER);
+        var matchers = new ArrayList<ResultMatcher>();
+
+        matchers.add(matcher.node("[0].id").isEqualTo(inPath(expected, "$[0].id")));
+        matchers.add(matcher.node("[0].description").isEqualTo(inPath(expected, "$[0].description")));
+        matchers.add(matcher.node("[0].name").isEqualTo(inPath(expected, "$[0].name")));
+        matchers.add(matcher.node("[0].case_types[0].acls").isEqualTo(inPath(expected, "$[0].case_types[0].acls")));
+        matchers.add(matcher.node("[0].case_types[0].events").isEqualTo(inPath(expected, "$[0].case_types[0].events")));
+        matchers.add(matcher.node("[0].case_types[0].states").isEqualTo(inPath(expected, "$[0].case_types[0].states")));
+
+        mockMvc
+            .perform(get("/api/data/jurisdictions"))
+            .andExpectAll(matchers.toArray(new ResultMatcher[0]));
+    }
+
+    @Test
     void dataJurisdictionsJurisdictionIdCaseTypeGet() throws Exception {
         var expected = resourceAsString("classpath:response/case-definition/jurisdiction-case-type.json");
         var matcher = json().when(IGNORING_ARRAY_ORDER);
