@@ -2,7 +2,7 @@
   "id": "NFD",
   "description": "Handling of the dissolution of marriage",
   "version": {
-    "number": 3,
+    "number": 1,
     "live_from": "2017-01-01T00:00:00.000+0000",
     "live_until": null
   },

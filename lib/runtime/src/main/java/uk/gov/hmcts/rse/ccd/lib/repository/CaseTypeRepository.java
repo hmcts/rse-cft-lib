@@ -268,7 +268,8 @@ public class CaseTypeRepository {
         for (var event : l) {
             event.setOrder(i++);
         }
-        caseType.setEvents(new ArrayList<>(events.values()));
+        l.sort(Comparator.comparing(CaseEvent::getId));
+        caseType.setEvents(l);
     }
 
     private List<Integer> retriesToJsonArray(Object o) {
