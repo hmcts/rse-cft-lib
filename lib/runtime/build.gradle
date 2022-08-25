@@ -26,8 +26,8 @@ dependencies {
     }
 
     // Intellij cannot resolve classes from the shadow configuration
-    // so to fix intellisense we make them available as compile only dependencies.
-    //    https://youtrack.jetbrains.com/issue/IDEA-163411
+    // so to fix intellisense we make definition store available as compile only dependencies.
+    // https://youtrack.jetbrains.com/issue/IDEA-163411
     ['domain', 'repository'].each {
         compileOnly ("uk.gov.hmcts.ccd.definition:${it}") {
             transitive = false
