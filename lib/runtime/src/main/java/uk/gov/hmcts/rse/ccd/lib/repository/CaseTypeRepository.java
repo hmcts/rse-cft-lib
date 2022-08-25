@@ -68,6 +68,15 @@ public class CaseTypeRepository {
                 .map(this::mapToCaseType);
     }
 
+    public List<CaseType> findByJurisdictionId(String jurisdictionId) {
+        return paths.values()
+                .stream()
+                .map(this::toJson)
+                .map(this::mapToCaseType)
+                .filter(caseType -> caseType.getJurisdiction().getId().equals(jurisdictionId))
+                .collect(Collectors.toList());
+    }
+
     @SneakyThrows
     private Map<String, List<Map<String, String>>> toJson(String path) {
         return FILES.parallelStream()

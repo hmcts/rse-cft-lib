@@ -56,11 +56,11 @@ public class CaseDefinitionController {
         return new ArrayList<>();
     }
 
-//    @GetMapping(value = "/data/jurisdictions/{jurisdiction_id}/case-type")
-//    public List<CaseType> dataJurisdictionsJurisdictionIdCaseTypeGet(
-//        @PathVariable("jurisdiction_id") String jurisdictionId) {
-//        return caseTypeService.findByJurisdictionId(jurisdictionId);
-//    }
+    @GetMapping(value = "/data/jurisdictions/{jurisdiction_id}/case-type")
+    public List<CaseType> dataJurisdictionsJurisdictionIdCaseTypeGet(
+        @PathVariable("jurisdiction_id") String jurisdictionId) {
+        return repository.findByJurisdictionId(jurisdictionId);
+    }
 //
 //    @GetMapping(value = "/data/jurisdictions")
 //    public List<Jurisdiction> findJurisdictions(@RequestParam("ids") Optional<List<String>> idsOptional) {

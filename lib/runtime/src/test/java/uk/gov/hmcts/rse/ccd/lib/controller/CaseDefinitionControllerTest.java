@@ -2,7 +2,6 @@ package uk.gov.hmcts.rse.ccd.lib.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import net.javacrumbs.jsonunit.core.Option;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -19,9 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -200,6 +197,34 @@ class CaseDefinitionControllerTest {
         mockMvc
             .perform(get("/api/data/caseworkers/ignore/jurisdictions/ignore/case-types/NFD/roles"))
             .andExpect(json().isEqualTo(expected));
+    }
+
+    @Test
+    void dataJurisdictionsJurisdictionIdCaseTypeGet() throws Exception {
+        var expected = resourceAsString("classpath:response/case-definition/jurisdiction-case-type.json");
+        var matcher = json().when(IGNORING_ARRAY_ORDER);
+        var matchers = new ArrayList<ResultMatcher>();
+
+        matchers.add(matcher.node("[0].id").isEqualTo(inPath(expected, "$[0].id")));
+        matchers.add(matcher.node("[0].description").isEqualTo(inPath(expected, "$[0].description")));
+        matchers.add(matcher.node("[0].version").isEqualTo(inPath(expected, "$[0].version")));
+        matchers.add(matcher.node("[0].jurisdiction").isEqualTo(inPath(expected, "$[0].jurisdiction")));
+        matchers.add(matcher.node("[0].name").isEqualTo(inPath(expected, "$[0].name")));
+        matchers.add(matcher.node("[0].acls").isEqualTo(inPath(expected, "$[0].acls")));
+        matchers.add(matcher.node("[0].security_classification").isEqualTo(inPath(expected, "$[0].security_classification")));
+        matchers.add(matcher.node("[0].states").isEqualTo(inPath(expected, "$[0].states")));
+
+        for (int i = 0; i < 593; i++) {
+            matchers.add(matcher.node("[0].case_fields[" + i + "]").isEqualTo(inPath(expected, "$[0].case_fields[" + i + "]")));
+        }
+
+        for (int i = 0; i < 126; i++) {
+            matchers.add(matcher.node("[0].events[" + i + "]").isEqualTo(inPath(expected, "$[0].events[" + i + "]")));
+        }
+
+        mockMvc
+            .perform(get("/api/data/jurisdictions/DIVORCE/case-type"))
+            .andExpectAll(matchers.toArray(new ResultMatcher[0]));
     }
 
     private static String resourceAsString(final String resourcePath) throws IOException {
