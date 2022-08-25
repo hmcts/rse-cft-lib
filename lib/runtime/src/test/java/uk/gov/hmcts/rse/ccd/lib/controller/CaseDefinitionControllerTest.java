@@ -63,7 +63,7 @@ class CaseDefinitionControllerTest {
 
     @Test
     void dataCaseTypeIdGet() throws Exception {
-        var expected = resourceAsString("classpath:case-type.json");
+        var expected = resourceAsString("classpath:response/case-definition/case-type.json");
         var matcher = json().when(IGNORING_ARRAY_ORDER);
         var matchers = new ArrayList<ResultMatcher>();
         matchers.add(matcher.node("id").isEqualTo(inPath(expected, "$.id")));
@@ -84,7 +84,7 @@ class CaseDefinitionControllerTest {
     @SneakyThrows
     @Test
     public void testEvents() {
-        var expected = resourceAsString("classpath:case-type.json");
+        var expected = resourceAsString("classpath:response/case-definition/case-type.json");
         var actual = mockMvc
                 .perform(get("/api/data/case-type/NFD"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -110,7 +110,7 @@ class CaseDefinitionControllerTest {
 
     @Test
     void dataCaseworkerIdAndJurisdictionIdCaseTypeGet() throws Exception {
-        var expected = resourceAsString("classpath:case-type.json");
+        var expected = resourceAsString("classpath:response/case-definition/case-type.json");
         var matcher = json().when(IGNORING_ARRAY_ORDER);
         var matchers = new ArrayList<ResultMatcher>();
 
@@ -124,7 +124,7 @@ class CaseDefinitionControllerTest {
 
     @Test
     void getRoleToAccessProfiles() throws Exception {
-        var expected = resourceAsString("classpath:case-assignments.json");
+        var expected = resourceAsString("classpath:response/case-definition/case-assignments.json");
 
         mockMvc
             .perform(get("/api/data/caseworkers/ignored/jurisdictions/ignored/case-types/NFD/access/profile/roles"))
@@ -133,7 +133,7 @@ class CaseDefinitionControllerTest {
 
     @Test
     void dataCaseTypeVersionGet() throws Exception {
-        var expected = resourceAsString("classpath:case-type-version.json");
+        var expected = resourceAsString("classpath:response/case-definition/case-type-version.json");
 
         mockMvc
             .perform(get("/api/data/case-type/NFD/version"))
