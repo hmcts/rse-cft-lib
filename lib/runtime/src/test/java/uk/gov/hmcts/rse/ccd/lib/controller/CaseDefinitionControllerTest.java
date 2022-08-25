@@ -111,10 +111,23 @@ class CaseDefinitionControllerTest {
 
     @SneakyThrows
     @Test
-    public void testWorkbasket() {
+    public void testWorkbasketResults() {
         var expected = resourceAsString("classpath:response/display/workbasket.json");
         var actual = mockMvc
                 .perform(get("/api/display/work-basket-definition/NFD"))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+        assertThatJson(actual)
+                .when(IGNORING_ARRAY_ORDER)
+                .isEqualTo(expected);
+    }
+
+    @SneakyThrows
+    @Test
+    public void testWorkbasketInputs() {
+        var expected = resourceAsString("classpath:response/display/workbasket-input.json");
+        var actual = mockMvc
+                .perform(get("/api/display/work-basket-input-definition/NFD"))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
         assertThatJson(actual)

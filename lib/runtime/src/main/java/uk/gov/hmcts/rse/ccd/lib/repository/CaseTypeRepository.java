@@ -496,4 +496,21 @@ public class CaseTypeRepository {
 
         return LocalDate.parse(date, formatter).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
+
+    public WorkbasketInputDefinition getWorkbasketInputs(String id) {
+        var result = new WorkbasketInputDefinition();
+        result.setCaseTypeId(id);
+        var jsonCase =  toJson(paths.get(id));
+        for (Map wif : jsonCase.get("WorkBasketInputFields")) {
+            var field = new WorkbasketInputField();
+            field.setCaseFieldId((String) wif.get("CaseFieldID"));
+            field.setLabel((String) wif.get("Label"));
+            field.setOrder((Integer) wif.get("DisplayOrder"));
+            field.setShowCondition(formatShowCondition((String) wif.get("FieldShowCondition")));
+            field.setCaseFieldElementPath((String) wif.get("ListElementCode"));
+            result.getFields().add(field);
+        }
+
+        return result;
+    }
 }
