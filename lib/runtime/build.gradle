@@ -25,7 +25,16 @@ dependencies {
         transitive = false
     }
 
-    implementation (project (path: ':projects:definition-store-fat', configuration: 'shadow')) {
+    // Intellij cannot resolve classes from the shadow configuration
+    // so to fix intellisense we make them available as compile only dependencies.
+    //    https://youtrack.jetbrains.com/issue/IDEA-163411
+    ['domain', 'repository'].each {
+        compileOnly ("uk.gov.hmcts.ccd.definition:${it}") {
+            transitive = false
+        }
+    }
+    // Use the fat definition store jar at runtime.
+    runtimeOnly (project (path: ':projects:definition-store-fat', configuration: 'shadow')) {
         transitive = false
     }
     implementation 'org.springframework.boot:spring-boot-starter-web:2.7.3'
