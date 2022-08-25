@@ -187,9 +187,7 @@ public class CaseTypeRepository {
             events.put(s.getId(), s);
         }
         for (Map<String, String> auth : json.get("AuthorisationCaseEvent")) {
-            var e = events.get(auth.get("CaseEventID"));
-            var acl = this.mapToAcl(auth);
-            e.getAcls().add(acl);
+            events.get(auth.get("CaseEventID")).getAcls().add(mapToAcl(auth));
         }
 
         for (Map<String, String> caseEventToFields : json.get("CaseEventToFields")) {
@@ -219,7 +217,6 @@ public class CaseTypeRepository {
         for (Map caseEventToComplexTypes : json.get("CaseEventToComplexTypes")) {
             var e = events.get(caseEventToComplexTypes.get("CaseEventID"));
             var field = e.getCaseFields().stream().filter(x -> x.getCaseFieldId().equals(caseEventToComplexTypes.get("CaseFieldID"))).findFirst().get();
-            field.getCaseEventFieldComplex();
             caseEventToComplexTypes.put("order", caseEventToComplexTypes.get("FieldDisplayOrder"));
             caseEventToComplexTypes.put("showCondition", caseEventToComplexTypes.get("FieldShowCondition"));
             caseEventToComplexTypes.put("reference", caseEventToComplexTypes.get("ListElementCode"));
