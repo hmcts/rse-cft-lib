@@ -37,12 +37,13 @@ public class DisplayApiController {
 
     @Autowired
     CaseTypeRepository repository;
-//    @GetMapping(value = "/display/search-input-definition/{id}", produces = {"application/json"})
-//    public SearchInputDefinition displaySearchInputDefinitionIdGet(
-//        @PathVariable("id") String id) {
-//        return this.displayService.findSearchInputDefinitionForCaseType(id);
-//    }
-//
+
+    @GetMapping(value = "/display/search-input-definition/{id}", produces = {"application/json"})
+    public SearchInputDefinition displaySearchInputDefinitionIdGet(
+        @PathVariable("id") String id) {
+        return repository.getSearchInputs(id);
+    }
+
 //    @GetMapping(value = "/display/search-result-definition/{id}", produces = {"application/json"})
 //    public SearchResultDefinition displaySearchResultDefinitionIdGet(
 //        @PathVariable("id") String id) {

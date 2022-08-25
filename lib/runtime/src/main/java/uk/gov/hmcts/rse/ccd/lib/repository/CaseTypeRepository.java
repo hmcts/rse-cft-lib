@@ -513,4 +513,20 @@ public class CaseTypeRepository {
 
         return result;
     }
+
+    public SearchInputDefinition getSearchInputs(String id) {
+        var result = new SearchInputDefinition();
+        result.setCaseTypeId(id);
+        var jsonCase =  toJson(paths.get(id));
+        for (Map wif : jsonCase.get("SearchInputFields")) {
+            var field = new SearchInputField();
+            field.setCaseFieldId((String) wif.get("CaseFieldID"));
+            field.setLabel((String) wif.get("Label"));
+            field.setOrder((Integer) wif.get("DisplayOrder"));
+            field.setShowCondition(formatShowCondition((String) wif.get("FieldShowCondition")));
+            result.getFields().add(field);
+        }
+
+        return result;
+    }
 }
