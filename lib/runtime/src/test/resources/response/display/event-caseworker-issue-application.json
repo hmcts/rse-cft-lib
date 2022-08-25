@@ -1,0 +1,52 @@
+{
+  "case_type_id": "NFD",
+  "event_id": "caseworker-issue-application",
+  "wizard_pages": [
+    {
+      "id": "caseworker-issue-applicationissueApplication",
+      "label": "Issue Divorce Application",
+      "order": 1,
+      "wizard_page_fields": [
+        {
+          "case_field_id": "marriageCountryOfMarriage",
+          "order": 5,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "marriageDate",
+          "order": 2,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentMarriageOrCivilPartnership",
+          "order": 1,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "marriageApplicant2Name",
+          "order": 4,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "marriagePlaceOfMarriage",
+          "order": 6,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "marriageApplicant1Name",
+          "order": 3,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        }
+      ],
+      "show_condition": null,
+      "callback_url_mid_event": null,
+      "retries_timeout_mid_event": []
+    }
+  ]
+}

@@ -1,0 +1,898 @@
+{
+  "case_type_id": "NFD",
+  "event_id": "solicitor-create-application",
+  "wizard_pages": [
+    {
+      "id": "solicitor-create-applicationhowDoYouWantToApplyForDivorce",
+      "label": null,
+      "order": 1,
+      "wizard_page_fields": [
+        {
+          "case_field_id": "labelContentDivorceOrLegallyEnd",
+          "order": 14,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentMarriageOrCivilPartnership",
+          "order": 12,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "coApplicant1IsSubmitted",
+          "order": 22,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentGotMarriedOrFormedCivilPartnership",
+          "order": 18,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicationType",
+          "order": 29,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "soleLabelDissolution",
+          "order": 27,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "soleLabelDivorce",
+          "order": 26,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentUnionTypeUC",
+          "order": 6,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentTheApplicantOrApplicant1",
+          "order": 16,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentTheApplicant2",
+          "order": 3,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentMarriageOrCivilPartnershipUC",
+          "order": 13,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentUnionType",
+          "order": 5,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentDivorceOrCivilPartnershipApplication",
+          "order": 8,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "coApplicant2IsDrafted",
+          "order": 23,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentFinaliseDivorceOrEndCivilPartnership",
+          "order": 9,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "jointLabel",
+          "order": 28,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "coApplicant2IsSubmitted",
+          "order": 24,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "coApplicant1IsDrafted",
+          "order": 21,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentTheApplicant2UC",
+          "order": 4,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentDivorceOrEndCivilPartnership",
+          "order": 11,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentRespondentsOrApplicant2s",
+          "order": 19,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentApplicant2",
+          "order": 1,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "divorceOrDissolution",
+          "order": 25,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentDivorceOrCivilPartnership",
+          "order": 7,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentApplicant2UC",
+          "order": 2,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "isJudicialSeparation",
+          "order": 20,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentApplicantOrApplicant1",
+          "order": 10,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentTheApplicantOrApplicant1UC",
+          "order": 17,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelContentApplicantsOrApplicant1s",
+          "order": 15,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        }
+      ],
+      "show_condition": null,
+      "callback_url_mid_event": "http://localhost:4013/callbacks/mid-event?page=howDoYouWantToApplyForDivorce&eventId=solicitor-create-application",
+      "retries_timeout_mid_event": []
+    },
+    {
+      "id": "solicitor-create-applicationSolAboutTheSolicitor",
+      "label": null,
+      "order": 2,
+      "wizard_page_fields": [
+        {
+          "case_field_id": "applicant1SolicitorOrganisationPolicy",
+          "order": 7,
+          "page_column_no": 1,
+          "complex_field_overrides": [
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.OrgPolicyCaseAssignedRole",
+              "display_context": "OPTIONAL",
+              "label": null,
+              "hint_text": null,
+              "show_condition": "divorceOrDissolution=\"NEVER_SHOW\"",
+              "default_value": "[APPONESOLICITOR]",
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.OrgPolicyReference",
+              "display_context": "OPTIONAL",
+              "label": null,
+              "hint_text": null,
+              "show_condition": "divorceOrDissolution=\"NEVER_SHOW\"",
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.Organisation.OrganisationID",
+              "display_context": "MANDATORY",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.PostCode",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.Organisation.OrganisationName",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.PreviousOrganisations.FromTimestamp",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.PostTown",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.Country",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.PreviousOrganisations.ToTimestamp",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.AddressLine1",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.PrepopulateToUsersOrganisation",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.County",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.AddressLine2",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationName",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant1SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.AddressLine3",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            }
+          ]
+        },
+        {
+          "case_field_id": "applicant1SolicitorAgreeToReceiveEmailsCheckbox",
+          "order": 6,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1SolicitorEmail",
+          "order": 5,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1SolicitorReference",
+          "order": 3,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1SolicitorPhone",
+          "order": 4,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "labelSolAboutTheSol",
+          "order": 1,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1SolicitorName",
+          "order": 2,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        }
+      ],
+      "show_condition": null,
+      "callback_url_mid_event": "http://localhost:4013/callbacks/mid-event?page=SolAboutTheSolicitor&eventId=solicitor-create-application",
+      "retries_timeout_mid_event": []
+    },
+    {
+      "id": "solicitor-create-applicationMarriageIrretrievablyBroken",
+      "label": null,
+      "order": 3,
+      "wizard_page_fields": [
+        {
+          "case_field_id": "MarriageNotIrretrievablyBroken",
+          "order": 2,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1ScreenHasMarriageBroken",
+          "order": 1,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        }
+      ],
+      "show_condition": null,
+      "callback_url_mid_event": "http://localhost:4013/callbacks/mid-event?page=MarriageIrretrievablyBroken&eventId=solicitor-create-application",
+      "retries_timeout_mid_event": []
+    },
+    {
+      "id": "solicitor-create-applicationSolAboutApplicant1",
+      "label": null,
+      "order": 4,
+      "wizard_page_fields": [
+        {
+          "case_field_id": "applicant1Email",
+          "order": 11,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1Gender",
+          "order": 7,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1LastName",
+          "order": 3,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1ContactDetailsType",
+          "order": 15,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1FirstName",
+          "order": 1,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1LabelHorizontalLine1-SolAboutApplicant1",
+          "order": 14,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "marriageFormationType",
+          "order": 9,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1NameChangedHow",
+          "order": 5,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1NameChangedHowOtherDetails",
+          "order": 6,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1MiddleName",
+          "order": 2,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1NameDifferentToMarriageCertificate",
+          "order": 4,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "contactDetails",
+          "order": 10,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "divorceWho",
+          "order": 8,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1PhoneNumber",
+          "order": 12,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1Address",
+          "order": 13,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        }
+      ],
+      "show_condition": null,
+      "callback_url_mid_event": null,
+      "retries_timeout_mid_event": []
+    },
+    {
+      "id": "solicitor-create-applicationSolAboutApplicant2",
+      "label": "About the other party",
+      "order": 5,
+      "wizard_page_fields": [
+        {
+          "case_field_id": "applicant2LastName",
+          "order": 3,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2MiddleName",
+          "order": 2,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2NameDifferentToMarriageCertificate",
+          "order": 4,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2FirstName",
+          "order": 1,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2NameChangedHow",
+          "order": 5,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2NameChangedHowOtherDetails",
+          "order": 6,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        }
+      ],
+      "show_condition": null,
+      "callback_url_mid_event": null,
+      "retries_timeout_mid_event": []
+    },
+    {
+      "id": "solicitor-create-applicationApplicant2ServiceDetails",
+      "label": null,
+      "order": 6,
+      "wizard_page_fields": [
+        {
+          "case_field_id": "applicant2Address",
+          "order": 13,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2SolicitorEmail",
+          "order": 5,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2SolicitorRepresented",
+          "order": 1,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2Respondents-service-details-text3",
+          "order": 11,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2SolicitorReference",
+          "order": 3,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2Respondents-service-details-text1",
+          "order": 9,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2SolicitorName",
+          "order": 2,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2SolicitorPhone",
+          "order": 4,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2Email",
+          "order": 12,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2SolicitorOrganisationPolicy",
+          "order": 7,
+          "page_column_no": 1,
+          "complex_field_overrides": [
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.OrgPolicyCaseAssignedRole",
+              "display_context": "OPTIONAL",
+              "label": null,
+              "hint_text": null,
+              "show_condition": "divorceOrDissolution=\"NEVER_SHOW\"",
+              "default_value": "[APPTWOSOLICITOR]",
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.OrgPolicyReference",
+              "display_context": "OPTIONAL",
+              "label": null,
+              "hint_text": null,
+              "show_condition": "divorceOrDissolution=\"NEVER_SHOW\"",
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.Organisation.OrganisationID",
+              "display_context": "OPTIONAL",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.Organisation.OrganisationName",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.AddressLine2",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.PreviousOrganisations.FromTimestamp",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.AddressLine3",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.County",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.AddressLine1",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.PostCode",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.PreviousOrganisations.ToTimestamp",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.PostTown",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.PrepopulateToUsersOrganisation",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationAddress.Country",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            },
+            {
+              "complex_field_element_id": "applicant2SolicitorOrganisationPolicy.PreviousOrganisations.OrganisationName",
+              "display_context": "HIDDEN",
+              "label": null,
+              "hint_text": null,
+              "show_condition": null,
+              "default_value": null,
+              "retain_hidden_value": null
+            }
+          ]
+        },
+        {
+          "case_field_id": "applicant2Respondents-service-details-text2",
+          "order": 10,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2Respondents-service-details-heading",
+          "order": 8,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant2SolicitorAddress",
+          "order": 6,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        }
+      ],
+      "show_condition": null,
+      "callback_url_mid_event": null,
+      "retries_timeout_mid_event": []
+    },
+    {
+      "id": "solicitor-create-applicationMarriageCertificateDetails",
+      "label": null,
+      "order": 7,
+      "wizard_page_fields": [
+        {
+          "case_field_id": "marriageDate",
+          "order": 1,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "marriageMarriedInUk",
+          "order": 4,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "marriageCountryOfMarriage",
+          "order": 6,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "marriagePlaceOfMarriage",
+          "order": 5,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "marriageApplicant2Name",
+          "order": 3,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "marriageApplicant1Name",
+          "order": 2,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        }
+      ],
+      "show_condition": null,
+      "callback_url_mid_event": "http://localhost:4013/callbacks/mid-event?page=MarriageCertificateDetails&eventId=solicitor-create-application",
+      "retries_timeout_mid_event": []
+    },
+    {
+      "id": "solicitor-create-applicationJurisdictionApplyForDivorce",
+      "label": "Jurisdiction - Apply for a divorce",
+      "order": 8,
+      "wizard_page_fields": [
+        {
+          "case_field_id": "jurisdictionConnections",
+          "order": 1,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        }
+      ],
+      "show_condition": null,
+      "callback_url_mid_event": null,
+      "retries_timeout_mid_event": []
+    },
+    {
+      "id": "solicitor-create-applicationOtherLegalProceedings",
+      "label": "Other legal proceedings",
+      "order": 9,
+      "wizard_page_fields": [
+        {
+          "case_field_id": "applicant1LegalProceedings",
+          "order": 1,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1LegalProceedingsDetails",
+          "order": 2,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        }
+      ],
+      "show_condition": null,
+      "callback_url_mid_event": null,
+      "retries_timeout_mid_event": []
+    },
+    {
+      "id": "solicitor-create-applicationFinancialOrders",
+      "label": "Financial orders",
+      "order": 10,
+      "wizard_page_fields": [
+        {
+          "case_field_id": "applicant1FinancialOrder",
+          "order": 1,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "applicant1FinancialOrdersFor",
+          "order": 2,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        }
+      ],
+      "show_condition": null,
+      "callback_url_mid_event": null,
+      "retries_timeout_mid_event": []
+    },
+    {
+      "id": "solicitor-create-applicationUploadSupportingDocuments",
+      "label": "Upload your documents",
+      "order": 11,
+      "wizard_page_fields": [
+        {
+          "case_field_id": "applicant1DocumentsUploaded",
+          "order": 2,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        },
+        {
+          "case_field_id": "LabelUploadDocumentsPara-1",
+          "order": 1,
+          "page_column_no": 1,
+          "complex_field_overrides": []
+        }
+      ],
+      "show_condition": null,
+      "callback_url_mid_event": null,
+      "retries_timeout_mid_event": []
+    }
+  ]
+}
