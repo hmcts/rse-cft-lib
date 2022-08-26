@@ -133,6 +133,6 @@ services:
     ports:
       - 5000:5556
     environment:
-      SIMULATOR_JWT_ISSUER: http://localhost:5000
-      SIMULATOR_OPENID_BASE-URL: http://localhost:5000
+      SIMULATOR_JWT_ISSUER: "${IDAM_SIMULATOR_BASE_URL:-http://localhost:5000}"
+      SIMULATOR_OPENID_BASE-URL: "${IDAM_SIMULATOR_BASE_URL:-http://localhost:5000}"
 
