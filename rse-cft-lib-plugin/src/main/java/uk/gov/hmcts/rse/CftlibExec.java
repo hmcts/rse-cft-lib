@@ -34,13 +34,13 @@ public class CftlibExec extends JavaExec {
             environment("S2S_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
 
             // Idam simulator
-            environment("IDAM_API_URL", "http://localhost:5000");
+            environment("IDAM_API_URL", "${IDAM_SIMULATOR_BASE_URL:http://localhost:5000}");
 
             environment("CASE_DOCUMENT_AM_URL", "http://localhost:4455");
 
-            environment("OIDC_ISSUER", "http://localhost:5000");
+            environment("OIDC_ISSUER", "${IDAM_API_URL}");
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
-                "http://localhost:5000/o");
+                "${IDAM_API_URL}/o");
         } else {
             // AAT
             fetchAATSecrets();
