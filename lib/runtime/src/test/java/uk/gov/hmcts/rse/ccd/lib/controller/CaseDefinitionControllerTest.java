@@ -161,19 +161,6 @@ class CaseDefinitionControllerTest {
                 .isEqualTo(expected);
     }
 
-    @SneakyThrows
-    @Test
-    public void testSearchCasesResults() {
-        var expected = resourceAsString("classpath:response/display/search-cases-result-fields.json");
-        var actual = mockMvc
-                .perform(get("/api/display/search-cases-result-fields/NFD"))
-                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-
-        assertThatJson(actual)
-                .when(IGNORING_ARRAY_ORDER)
-                .isEqualTo(expected);
-    }
-
     @Test
     void dataCaseworkerIdAndJurisdictionIdCaseTypeGet() throws Exception {
         var expected = resourceAsString("classpath:response/case-definition/case-type.json");

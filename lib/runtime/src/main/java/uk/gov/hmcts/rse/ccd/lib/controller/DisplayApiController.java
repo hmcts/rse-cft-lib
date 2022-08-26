@@ -74,12 +74,15 @@ public class DisplayApiController {
         @PathVariable("id") String id) {
         return repository.getWorkbasketResult(id);
     }
-
-    @GetMapping(path = "/display/search-cases-result-fields/{id}")
-    public SearchCasesResult displaySearchCasesResultIdGet(
-        @PathVariable("id") String id) {
-            return repository.findSearchCasesResultDefinitionForCaseType(id);
-    }
+//
+//    @GetMapping(path = "/display/search-cases-result-fields/{id}")
+//    public SearchCasesResult displaySearchCasesResultIdGet(
+//        @PathVariable("id") String id,
+//        @RequestParam(value = "use_case", required = false) String useCase) {
+//        return (useCase == null || useCase.isEmpty())
+//            ? this.displayService.findSearchCasesResultDefinitionForCaseType(id)
+//            : this.displayService.findSearchCasesResultDefinitionForCaseType(id, useCase);
+//    }
 //
 //    @GetMapping(value = "/display/banners", produces = {"application/json"})
 //    public BannersResult getBanners(
