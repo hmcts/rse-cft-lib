@@ -1,6 +1,7 @@
 package uk.gov.hmcts.rse;
 
 import java.io.FileOutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class CftlibExec extends JavaExec {
                 "${IDAM_API_URL}/o");
         } else {
             // AAT
-            fetchAATSecrets();
+            fetchAndSetAATSecrets();
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
                 "https://idam-web-public.aat.platform.hmcts.net/o");
         }
@@ -59,13 +60,13 @@ public class CftlibExec extends JavaExec {
     }
 
     @SneakyThrows
-    private void fetchAATSecrets() {
+    private void fetchAndSetAATSecrets() {
         // Cannot pull secrets running on continuous integration
         if (System.getenv("CI") != null) {
             return;
         }
 
-        var env = getProject().file("build/cftlib/.aat-env");
+        var env = CftLibPlugin.cftlibBuildDir(getProject()).file(".aat-env").getAsFile();
         if (!env.exists()) {
             try (var os = new FileOutputStream(getProject().file(env))) {
                 var cmd  = new ArrayList<>(List.of("az", "keyvault", "secret", "show", "-o", "tsv", "--query", "value",
@@ -78,6 +79,16 @@ public class CftlibExec extends JavaExec {
                     x.commandLine(cmd);
                     x.setStandardOutput(os);
                 });
+            }
+        }
+
+        var lines = Files.readAllLines(env.toPath());
+        for (String line : lines) {
+            var index = line.indexOf("=");
+            if (index != -1) {
+                var key = line.substring(0, index);
+                var value = line.substring(index + 1);
+                System.setProperty(key, value);
             }
         }
     }

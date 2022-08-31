@@ -94,3 +94,7 @@ task testGigaJar(type: uk.gov.hmcts.rse.CftlibExec, dependsOn: [cftlibExecutable
 }
 
 tasks.test.dependsOn(testGigaJar)
+
+task publishSecrets(type: Exec) {
+    commandLine 'az', 'keyvault', 'secret', 'set', "--vault-name", "rse-cft-lib", "--name", "aat-env", "--file", layout.buildDirectory.file('cftlib/.aat-env')
+}
