@@ -51,7 +51,6 @@ public class LibRunner {
 
     private static void setConfigProperties() {
         if (!"localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
-            setAATSecrets();
             System.setProperty("IDAM_API_URL", "https://idam-api.aat.platform.hmcts.net");
             System.setProperty("DM_STORE_BASE_URL", "http://dm-store-aat.service.core-compute-aat.internal");
         }
@@ -105,22 +104,6 @@ public class LibRunner {
         System.setProperty("CCD_DEFINITION_STORE_API_BASE_URL", "http://localhost:4451");
     }
 
-    @SneakyThrows
-    private static void setAATSecrets() {
-        var env = new File("build/cftlib/.aat-env");
-        if (!env.exists()) {
-            return;
-        }
-        var lines = Files.readAllLines(env.toPath());
-        for (String line : lines) {
-            var index = line.indexOf("=");
-            if (index != -1) {
-                var key = line.substring(0, index);
-                var value = line.substring(index + 1);
-                System.setProperty(key, value);
-            }
-        }
-    }
 
     @SneakyThrows
     public static String[] extractRuntime() throws IOException {

@@ -61,6 +61,11 @@ public class CftLibPlugin implements Plugin<Project> {
         createExecutableJarTask(project, createZipRuntimeTask(project));
     }
 
+    static Directory cftlibBuildDir(Project project) {
+        return project.getLayout().getBuildDirectory().dir("cftlib").get();
+    }
+
+
     /**
      * Register the repositories that host the libraries used by the cftlib.
      */
@@ -79,7 +84,7 @@ public class CftLibPlugin implements Plugin<Project> {
         // Jars are already compressed so switch off compression.
         zip.setEntryCompression(ZipEntryCompression.STORED);
         zip.setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE);
-        zip.from("build/cftlib", z -> {
+        zip.from(cftlibBuildDir(project), z -> {
             z.include("**/*_packed");
             z.exclude("**/*libTest*");
         });
@@ -95,14 +100,21 @@ public class CftLibPlugin implements Plugin<Project> {
         return zip;
     }
 
+    /**
+     * Calculate the correct path that files should be placed inside the zip file.
+     * We pack files from both the project folder (into 'build') and Gradle's dependency cache (into 'lib').
+     */
     @SneakyThrows
     private RelativePath zipPath(Project project, File f) {
-        var projectRoot = project.getProjectDir().getCanonicalPath();
+        var projectRoot = project.getLayout().getBuildDirectory().get().dir("../").getAsFile().getCanonicalPath();
         if (f.getCanonicalPath().startsWith(projectRoot)) {
+            // File should go into 'build'
             var relativePath = Paths.get(projectRoot).relativize(f.toPath());
             return RelativePath.parse(true, relativePath.toString());
         } else {
+            // File should go into 'lib'
             var p = RelativePath.parse(true, f.getPath());
+            // The last 4 segments of the jar's directory path include its group, name and version.
             var tail = Arrays.copyOfRange(p.getSegments(), p.getSegments().length - 4, p.getSegments().length);
             var result = ObjectArrays.concat("lib", tail);
             return new RelativePath(true, result);
@@ -189,7 +201,7 @@ public class CftLibPlugin implements Plugin<Project> {
         SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
         var lib = s.getByName("cftlib");
 
-        var file = getBuildDir(project).file("application").getAsFile();
+        var file = cftlibBuildDir(project).file("application").getAsFile();
         var manifest = project.getTasks().create("createManifestApplication", ManifestTask.class);
         manifest.doFirst(m -> {
             JavaExec e = (JavaExec) project.getTasks().getByName("bootRun");
@@ -222,7 +234,7 @@ public class CftLibPlugin implements Plugin<Project> {
         var lib = s.getByName("cftlibTest");
 
         var exec = createRunTask(project, "cftlibTest");
-        var file = getBuildDir(project).file("libTest").getAsFile();
+        var file = cftlibBuildDir(project).file("libTest").getAsFile();
         var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(),
             "org.junit.platform.console.ConsoleLauncher", file, "--select-package=uk.gov.hmcts");
         exec.dependsOn(app);
@@ -235,7 +247,7 @@ public class CftLibPlugin implements Plugin<Project> {
     private void createManifestTasks(Project project) {
         {
             // Runtime is always the first manifest
-            var file = getBuildDir(project).file("runtime").getAsFile();
+            var file = cftlibBuildDir(project).file("runtime").getAsFile();
             Configuration classpath = project.getConfigurations().detachedConfiguration(
                 libDependencies(project, "runtime"));
             var task =
@@ -246,7 +258,7 @@ public class CftLibPlugin implements Plugin<Project> {
         }
 
         for (var e : projects.entrySet()) {
-            var file = getBuildDir(project).file(e.getKey()).getAsFile();
+            var file = cftlibBuildDir(project).file(e.getKey()).getAsFile();
             var args = Lists.newArrayList(
                 "--rse.lib.service_name=" + e.getKey()
             );
@@ -279,7 +291,7 @@ public class CftLibPlugin implements Plugin<Project> {
     @SneakyThrows
     private void writeManifests(Project project, FileCollection classpath, String mainClass, File file,
                                 String... args) {
-        getBuildDir(project).getAsFile().mkdirs();
+        cftlibBuildDir(project).getAsFile().mkdirs();
         writeManifest(file, mainClass, classpath, File::getAbsolutePath, args);
         writeManifest(new File(file.getPath() + "_packed"), mainClass, classpath,
             x -> zipPath(project, x).getPathString(), args);
@@ -330,9 +342,5 @@ public class CftLibPlugin implements Plugin<Project> {
             .map(d -> project.getDependencies()
                 .create("com.github.hmcts.rse-cft-lib:" + d + ":" + getLibVersion(project)))
             .toArray(Dependency[]::new);
-    }
-
-    Directory getBuildDir(Project project) {
-        return project.getLayout().getBuildDirectory().dir("cftlib").get();
     }
 }
