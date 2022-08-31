@@ -88,7 +88,7 @@ public class CftlibExec extends JavaExec {
             if (index != -1) {
                 var key = line.substring(0, index);
                 var value = line.substring(index + 1);
-                System.setProperty(key, value);
+                environment(key, value);
             }
         }
     }
