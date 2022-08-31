@@ -100,14 +100,21 @@ public class CftLibPlugin implements Plugin<Project> {
         return zip;
     }
 
+    /**
+     * Calculate the correct path that files should be placed inside the zip file.
+     * We pack files from both the project folder (into 'build') and Gradle's dependency cache (into 'lib').
+     */
     @SneakyThrows
     private RelativePath zipPath(Project project, File f) {
-        var projectRoot = project.getProjectDir().getCanonicalPath();
+        var projectRoot = project.getLayout().getBuildDirectory().get().dir("../").getAsFile().getCanonicalPath();
         if (f.getCanonicalPath().startsWith(projectRoot)) {
+            // File should go into 'build'
             var relativePath = Paths.get(projectRoot).relativize(f.toPath());
             return RelativePath.parse(true, relativePath.toString());
         } else {
+            // File should go into 'lib'
             var p = RelativePath.parse(true, f.getPath());
+            // The last 4 segments of the jar's directory path include its group, name and version.
             var tail = Arrays.copyOfRange(p.getSegments(), p.getSegments().length - 4, p.getSegments().length);
             var result = ObjectArrays.concat("lib", tail);
             return new RelativePath(true, result);
