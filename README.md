@@ -217,6 +217,8 @@ Postgres is started on port 6432 (default) and can be accessed with user `postgr
 
 The default postgres port can be overridden by setting the `RSE_LIB_DB_PORT` environment variable.
 
+Database connections can be obtained programmatically via the `Cftlib::getConnection` method on the CftlibApi.
+
 ##### Database names
 
 | Service | Database name |

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.rse;
 
 import java.io.FileOutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,16 +35,16 @@ public class CftlibExec extends JavaExec {
             environment("S2S_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
 
             // Idam simulator
-            environment("IDAM_API_URL", "http://localhost:5000");
+            environment("IDAM_API_URL", "${IDAM_SIMULATOR_BASE_URL:http://localhost:5000}");
 
             environment("CASE_DOCUMENT_AM_URL", "http://localhost:4455");
 
-            environment("OIDC_ISSUER", "http://localhost:5000");
+            environment("OIDC_ISSUER", "${IDAM_API_URL}");
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
-                "http://localhost:5000/o");
+                "${IDAM_API_URL}/o");
         } else {
             // AAT
-            fetchAATSecrets();
+            fetchAndSetAATSecrets();
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
                 "https://idam-web-public.aat.platform.hmcts.net/o");
         }
@@ -59,13 +60,13 @@ public class CftlibExec extends JavaExec {
     }
 
     @SneakyThrows
-    private void fetchAATSecrets() {
+    private void fetchAndSetAATSecrets() {
         // Cannot pull secrets running on continuous integration
         if (System.getenv("CI") != null) {
             return;
         }
 
-        var env = getProject().file("build/cftlib/.aat-env");
+        var env = CftLibPlugin.cftlibBuildDir(getProject()).file(".aat-env").getAsFile();
         if (!env.exists()) {
             try (var os = new FileOutputStream(getProject().file(env))) {
                 var cmd  = new ArrayList<>(List.of("az", "keyvault", "secret", "show", "-o", "tsv", "--query", "value",
@@ -78,6 +79,16 @@ public class CftlibExec extends JavaExec {
                     x.commandLine(cmd);
                     x.setStandardOutput(os);
                 });
+            }
+        }
+
+        var lines = Files.readAllLines(env.toPath());
+        for (String line : lines) {
+            var index = line.indexOf("=");
+            if (index != -1) {
+                var key = line.substring(0, index);
+                var value = line.substring(index + 1);
+                System.setProperty(key, value);
             }
         }
     }

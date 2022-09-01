@@ -7,6 +7,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -129,11 +130,7 @@ public class CFTLibApiImpl implements CFTLib {
 
     @SneakyThrows
     public void configureRoleAssignments(String json) {
-        var port = ControlPlane.getEnvVar("RSE_LIB_DB_PORT", 6432);
-        var host = ControlPlane.getEnvVar("RSE_LIB_DB_HOST", "localhost");
-        try (var c = DriverManager.getConnection(
-            "jdbc:postgresql://" + host + ":" + port + "/am",
-            "postgres", "postgres")) {
+        try (var c = getConnection(Database.AM)) {
             // To use the uuid generation function.
             c.createStatement().execute(
                 "create extension if not exists pgcrypto"
@@ -143,7 +140,7 @@ public class CFTLibApiImpl implements CFTLib {
             var sql = Resources.toString(url, StandardCharsets.UTF_8);
             var p = c.prepareStatement(sql);
             p.setString(1, json);
-            p.executeQuery();
+            p.execute();
         }
     }
 
@@ -187,5 +184,16 @@ public class CFTLibApiImpl implements CFTLib {
     @Override
     public void importDefinition(File def) {
         importDefinition(Files.readAllBytes(def.toPath()));
+    }
+
+
+    @SneakyThrows
+    @Override
+    public Connection getConnection(Database database) {
+        var port = ControlPlane.getEnvVar("RSE_LIB_DB_PORT", 6432);
+        var host = ControlPlane.getEnvVar("RSE_LIB_DB_HOST", "localhost");
+        return DriverManager.getConnection(
+                "jdbc:postgresql://" + host + ":" + port + "/" + String.valueOf(database).toLowerCase(),
+                "postgres", "postgres");
     }
 }

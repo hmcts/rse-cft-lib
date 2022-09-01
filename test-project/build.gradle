@@ -6,7 +6,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.13.RELEASE'
     id 'java'
     id 'com.github.hmcts.rse-cft-lib'
-    id 'uk.gov.hmcts.java' version '0.12.28'
+    id 'uk.gov.hmcts.java' version '0.12.29'
 }
 
 group = 'uk.gov.hmcts'
@@ -39,12 +39,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.github.hmcts:service-auth-provider-java-client:4.0.3'
     implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
-    cftlibTestImplementation group: 'org.postgresql', name: 'postgresql', version: '42.4.1'
+    cftlibTestImplementation group: 'org.postgresql', name: 'postgresql', version: '42.5.0'
 
     cftlibTestImplementation 'org.springframework.boot:spring-boot-starter-test'
     cftlibTestImplementation 'org.springframework.security:spring-security-test'
 
-    cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.2'
+    cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.3'
     cftlibTestImplementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     cftlibTestImplementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
     cftlibTestImplementation 'com.auth0:java-jwt:4.0.0'
@@ -94,3 +94,7 @@ task testGigaJar(type: uk.gov.hmcts.rse.CftlibExec, dependsOn: [cftlibExecutable
 }
 
 tasks.test.dependsOn(testGigaJar)
+
+task publishSecrets(type: Exec) {
+    commandLine 'az', 'keyvault', 'secret', 'set', "--vault-name", "rse-cft-lib", "--name", "aat-env", "--file", layout.buildDirectory.file('cftlib/.aat-env')
+}
