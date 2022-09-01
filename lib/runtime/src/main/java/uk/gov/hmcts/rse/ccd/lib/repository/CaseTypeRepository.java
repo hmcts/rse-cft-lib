@@ -1,6 +1,8 @@
 package uk.gov.hmcts.rse.ccd.lib.repository;
 
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
@@ -9,17 +11,52 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.definition.store.domain.showcondition.ShowConditionParser;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
-import uk.gov.hmcts.ccd.definition.store.repository.model.*;
+import uk.gov.hmcts.ccd.definition.store.repository.model.AccessControlList;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseEvent;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseEventField;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseEventFieldComplex;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseEventLite;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseField;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseRole;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseState;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseTabCollection;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseType;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseTypeLite;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseTypeTab;
+import uk.gov.hmcts.ccd.definition.store.repository.model.CaseTypeTabField;
+import uk.gov.hmcts.ccd.definition.store.repository.model.EventPostState;
+import uk.gov.hmcts.ccd.definition.store.repository.model.FieldType;
+import uk.gov.hmcts.ccd.definition.store.repository.model.FixedListItem;
+import uk.gov.hmcts.ccd.definition.store.repository.model.Jurisdiction;
+import uk.gov.hmcts.ccd.definition.store.repository.model.SearchInputDefinition;
+import uk.gov.hmcts.ccd.definition.store.repository.model.SearchInputField;
+import uk.gov.hmcts.ccd.definition.store.repository.model.SearchResultDefinition;
+import uk.gov.hmcts.ccd.definition.store.repository.model.SearchResultsField;
+import uk.gov.hmcts.ccd.definition.store.repository.model.SortOrder;
+import uk.gov.hmcts.ccd.definition.store.repository.model.Version;
+import uk.gov.hmcts.ccd.definition.store.repository.model.WorkBasketResult;
+import uk.gov.hmcts.ccd.definition.store.repository.model.WorkBasketResultField;
+import uk.gov.hmcts.ccd.definition.store.repository.model.WorkbasketInputDefinition;
+import uk.gov.hmcts.ccd.definition.store.repository.model.WorkbasketInputField;
 import uk.gov.hmcts.rse.ccd.lib.Mapper;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.AbstractMap.SimpleEntry;
 import static java.util.stream.Collectors.groupingBy;
+import static org.springframework.util.StringUtils.hasText;
 
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -65,6 +102,15 @@ public class CaseTypeRepository {
                 .ofNullable(paths.get(id))
                 .map(this::toJson)
                 .map(this::mapToCaseType);
+    }
+
+    public List<CaseType> findByJurisdictionId(String jurisdictionId) {
+        return paths.values()
+                .stream()
+                .map(this::toJson)
+                .map(this::mapToCaseType)
+                .filter(caseType -> caseType.getJurisdiction().getId().equals(jurisdictionId))
+                .collect(Collectors.toList());
     }
 
     @SneakyThrows
@@ -555,5 +601,70 @@ public class CaseTypeRepository {
         }
 
         return result;
+    }
+
+    public Optional<List<CaseRole>> getRoles(String id) {
+        return Optional
+            .ofNullable(paths.get(id))
+            .map(this::toJson)
+            .map(this::mapToRoles);
+    }
+
+    private List<CaseRole> mapToRoles(Map<String, List<Map<String, String>>> json) {
+        return json.get("CaseRoles")
+            .stream()
+            .map(this::mapToRole)
+            .collect(Collectors.toList());
+    }
+
+    private CaseRole mapToRole(Map<String, String> row) {
+        var role = new CaseRole();
+
+        role.setId(row.get("ID"));
+        role.setName(row.get("Name"));
+        role.setDescription(hasText(row.get("Description")) ? row.get("Description") : null);
+
+        return role;
+    }
+
+    public List<Jurisdiction> findJurisdictions(Predicate<Jurisdiction> filter) {
+        var caseTypesOfJurisdiction = paths.values()
+            .stream()
+            .map(this::toJson)
+            .map(this::mapToCaseType)
+            .collect(Collectors.toList());
+
+        var caseTypesByJurisdiction = caseTypesOfJurisdiction.stream()
+            .collect(Collectors.groupingBy(CaseType::getJurisdiction));
+
+        caseTypesByJurisdiction.keySet()
+            .stream()
+            .filter(filter)
+            .forEach(j -> j.setCaseTypes(caseTypesByJurisdiction.get(j).stream().map(this::mapToCaseTypeLite).collect(Collectors.toList())));
+
+        return new ArrayList<>(caseTypesByJurisdiction.keySet());
+    }
+
+    private CaseTypeLite mapToCaseTypeLite(CaseType caseType) {
+        var caseTypeLite = new CaseTypeLite();
+        caseTypeLite.setId(caseType.getId());
+        caseTypeLite.setName(caseType.getName());
+        caseTypeLite.setDescription(caseType.getDescription());
+        caseTypeLite.setAcls(caseType.getAcls());
+        caseTypeLite.setEvents(caseType.getEvents().stream().map(this::mapToEventLite).collect(Collectors.toList()));
+        caseTypeLite.setStates(caseType.getStates());
+
+        return caseTypeLite;
+    }
+
+    private CaseEventLite mapToEventLite(CaseEvent caseEvent) {
+        var event = new CaseEventLite();
+        event.setId(caseEvent.getId());
+        event.setName(caseEvent.getName());
+        event.setDescription(caseEvent.getDescription());
+        event.setAcls(caseEvent.getAcls());
+        event.setPreStates(caseEvent.getPreStates());
+
+        return event;
     }
 }

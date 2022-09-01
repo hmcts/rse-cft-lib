@@ -5,16 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.ccd.definition.store.domain.service.casetype.CaseTypeVersionInformation;
 import uk.gov.hmcts.ccd.definition.store.repository.model.CaseRole;
 import uk.gov.hmcts.ccd.definition.store.repository.model.CaseType;
+import uk.gov.hmcts.ccd.definition.store.repository.model.Jurisdiction;
 import uk.gov.hmcts.ccd.definition.store.repository.model.RoleAssignment;
 import uk.gov.hmcts.rse.ccd.lib.repository.CaseTypeRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -40,13 +44,13 @@ public class CaseDefinitionController {
             return dataCaseTypeIdGet(caseTypeId);
     }
 
-//    @GetMapping(value = "/data/caseworkers/{uid}/jurisdictions/{jid}/case-types/{ctid}/roles")
-//    public List<CaseRole> getCaseRoles(
-//        @PathVariable("uid") String caseworkerId,
-//        @PathVariable("jid") String jurisdictionId,
-//        @PathVariable("ctid") String caseTypeId) {
-//        return caseRoleService.findByCaseTypeId(caseTypeId);
-//    }
+    @GetMapping(value = "/data/caseworkers/{uid}/jurisdictions/{jid}/case-types/{ctid}/roles")
+    public List<CaseRole> getCaseRoles(
+        @PathVariable("uid") String caseworkerId,
+        @PathVariable("jid") String jurisdictionId,
+        @PathVariable("ctid") String caseTypeId) {
+        return repository.getRoles(caseTypeId).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Case type not found"));
+    }
 
     @GetMapping(value = "/data/caseworkers/{uid}/jurisdictions/{jid}/case-types/{ctid}/access/profile/roles")
     public List<RoleAssignment> getRoleToAccessProfiles(
@@ -56,19 +60,19 @@ public class CaseDefinitionController {
         return new ArrayList<>();
     }
 
-//    @GetMapping(value = "/data/jurisdictions/{jurisdiction_id}/case-type")
-//    public List<CaseType> dataJurisdictionsJurisdictionIdCaseTypeGet(
-//        @PathVariable("jurisdiction_id") String jurisdictionId) {
-//        return caseTypeService.findByJurisdictionId(jurisdictionId);
-//    }
-//
-//    @GetMapping(value = "/data/jurisdictions")
-//    public List<Jurisdiction> findJurisdictions(@RequestParam("ids") Optional<List<String>> idsOptional) {
-//
-//        LOG.debug("received find jurisdictions request with ids: {}", idsOptional);
-//
-//        return idsOptional.map(ids -> jurisdictionService.getAll(ids)).orElseGet(jurisdictionService::getAll);
-//    }
+    @GetMapping(value = "/data/jurisdictions/{jurisdiction_id}/case-type")
+    public List<CaseType> dataJurisdictionsJurisdictionIdCaseTypeGet(
+        @PathVariable("jurisdiction_id") String jurisdictionId) {
+        return repository.findByJurisdictionId(jurisdictionId);
+    }
+
+    @GetMapping(value = "/data/jurisdictions")
+    public List<Jurisdiction> findJurisdictions(@RequestParam("ids") Optional<List<String>> idsOptional) {
+        var ids = idsOptional.orElse(new ArrayList<>());
+        Predicate<Jurisdiction> filter = ids.isEmpty() ? j -> true : j -> ids.contains(j.getId());
+
+        return repository.findJurisdictions(filter);
+    }
 
     @GetMapping(value = "/data/case-type/{ctid}/version")
     public CaseTypeVersionInformation dataCaseTypeVersionGet(@PathVariable("ctid") String id) {
