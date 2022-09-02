@@ -155,6 +155,7 @@ public class CFTLibApiImpl implements CFTLib {
             }
         }
         lastImportHash = hash;
+        // Route the request via the gateway embedded in the runtime project.
         // Our port is overridable
         var port = ControlPlane.getEnvVar("RSE_LIB_S2S_PORT", 8489);
         HttpPost uploadFile = new HttpPost("http://localhost:" + port + "/import");
