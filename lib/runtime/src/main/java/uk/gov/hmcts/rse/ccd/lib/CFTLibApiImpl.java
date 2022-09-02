@@ -156,30 +156,7 @@ public class CFTLibApiImpl implements CFTLib {
             }
         }
         lastImportHash = hash;
-        // Route the request via the gateway embedded in the runtime project.
-        // Our port is overridable
-        var port = ControlPlane.getEnvVar("RSE_LIB_S2S_PORT", 8489);
-        HttpPost uploadFile = new HttpPost("http://localhost:" + port + "/import");
-        uploadFile.addHeader("Authorization", "Bearer " + buildJwt());
-        uploadFile.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.addBinaryBody(
-            "file",
-            def,
-            ContentType.MULTIPART_FORM_DATA,
-            "definition"
-        );
-
-        HttpEntity multipart = builder.build();
-        uploadFile.setEntity(multipart);
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        CloseableHttpResponse response = httpClient.execute(uploadFile);
-
-        if (!String.valueOf(response.getStatusLine().getStatusCode()).startsWith("2")) {
-            var body = EntityUtils.toString(response.getEntity());
-            throw new RuntimeException(
-                "Failed to import definition: HTTP " + response.getStatusLine().getStatusCode() + " " + body);
-        }
+        postDefinition(def);
     }
 
     @SneakyThrows
@@ -194,6 +171,11 @@ public class CFTLibApiImpl implements CFTLib {
         if (!defFolder.exists()) {
             throw new FileNotFoundException(defFolder.getCanonicalPath());
         }
+        postDefinition(defFolder.getCanonicalPath().getBytes(StandardCharsets.UTF_8));
+    }
+
+    @SneakyThrows
+    private void postDefinition(byte[] data) {
         // Route the request via the gateway embedded in the runtime project.
         // Our port is overridable
         var port = ControlPlane.getEnvVar("RSE_LIB_S2S_PORT", 8489);
@@ -203,7 +185,7 @@ public class CFTLibApiImpl implements CFTLib {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.addBinaryBody(
                 "file",
-                defFolder.getCanonicalPath().getBytes(StandardCharsets.UTF_8),
+                data,
                 ContentType.MULTIPART_FORM_DATA,
                 "definition"
         );
