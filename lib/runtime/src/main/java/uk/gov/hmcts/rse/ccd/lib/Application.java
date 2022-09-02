@@ -3,13 +3,8 @@ package uk.gov.hmcts.rse.ccd.lib;
 import lombok.SneakyThrows;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import uk.gov.hmcts.rse.ccd.lib.config.DefinitionConfig;
 
-@SpringBootApplication(
-    scanBasePackages = {"uk.gov.hmcts.rse.ccd.lib"}
-)
-@EnableConfigurationProperties(DefinitionConfig.class)
+@SpringBootApplication
 public class Application {
     @SneakyThrows
     public static void main(String[] args) {

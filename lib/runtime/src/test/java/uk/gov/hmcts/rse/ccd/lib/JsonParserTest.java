@@ -14,7 +14,6 @@ import uk.gov.hmcts.ccd.definition.store.excel.parser.model.DefinitionSheet;
 import uk.gov.hmcts.ccd.definition.store.excel.util.mapper.ColumnName;
 import uk.gov.hmcts.ccd.definition.store.excel.validation.SpreadsheetValidator;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
-import uk.gov.hmcts.rse.ccd.lib.repository.CaseTypeRepository;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -30,7 +29,7 @@ class JsonParserTest {
         var i = getClass().getClassLoader().getResourceAsStream("ccd-definition.xlsx");
 
         var reference = s.parse(i);
-        var parsed = CaseTypeRepository.fromJson("src/test/resources/definition", new JsonDefinitionReader(new ObjectMapper()));
+        var parsed = JsonDefinitionReader.fromJson("src/test/resources/definition", new JsonDefinitionReader(new ObjectMapper()));
 
         assertThat(Sets.difference(reference.keySet(), parsed.keySet())).isEmpty();
 
