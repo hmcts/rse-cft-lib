@@ -26,7 +26,6 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 
-@Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class JsonDefinitionReader {
 
