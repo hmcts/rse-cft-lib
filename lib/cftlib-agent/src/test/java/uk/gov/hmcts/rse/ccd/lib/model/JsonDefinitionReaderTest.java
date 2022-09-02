@@ -1,6 +1,5 @@
 package uk.gov.hmcts.rse.ccd.lib.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.Pair;
@@ -14,19 +13,19 @@ import uk.gov.hmcts.ccd.definition.store.excel.util.mapper.ColumnName;
 import uk.gov.hmcts.ccd.definition.store.excel.validation.SpreadsheetValidator;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class JsonDefinitionReaderTest {
 
-    private JsonDefinitionReader reader = new JsonDefinitionReader(new ObjectMapper());
-
     @Test
     public void readsFileAndDirectory() {
-        var result = reader.readPath("src/test/resources/definition/AuthorisationCaseType");
+        var result = JsonDefinitionReader.readPath("src/test/resources/definition/AuthorisationCaseType");
 
         assertEquals("caseworker-caa", result.get(0).get("UserRole"));
         assertEquals("caseworker-divorce-bulkscan", result.get(1).get("UserRole"));
@@ -35,16 +34,22 @@ class JsonDefinitionReaderTest {
         assertEquals("caseworker-divorce-solicitor", result.get(4).get("UserRole"));
     }
 
+    @SneakyThrows
+    Map<String, DefinitionSheet> loadReferenceXlsx() {
+        var parser = new SpreadsheetParser(new SpreadsheetValidator());
+        var i = getClass().getClassLoader().getResourceAsStream("ccd-definition.xlsx");
+        return parser.parse(i);
+    }
+
+    Map<String, DefinitionSheet> loadJsonDefinition() {
+        return JsonDefinitionReader.fromJson("src/test/resources/definition");
+    }
 
     @Test
     @SneakyThrows
     public void testParsesAllSheets() {
-        var parser = new SpreadsheetParser(new SpreadsheetValidator());
-        var i = getClass().getClassLoader().getResourceAsStream("ccd-definition.xlsx");
-        var expected = parser.parse(i);
-
-        var actual = JsonDefinitionReader.fromJson("src/test/resources/definition",
-                new JsonDefinitionReader(new ObjectMapper()));
+        var expected = loadReferenceXlsx();
+        var actual = loadJsonDefinition();
 
         // Check that we have all the expected sheets
         assertThat(Sets.difference(expected.keySet(), actual.keySet())).isEmpty();
@@ -55,6 +60,14 @@ class JsonDefinitionReaderTest {
             var a = actual.get(s1);
             assertSheetsEqual(e, a);
         }
+    }
+
+    @Test
+    public void testSortsComplexTypesCorrectly() {
+        // Ordered maps are returned.
+        var expected = loadReferenceXlsx().get("ComplexTypes").groupDataItemsById();
+        var actual = loadJsonDefinition().get("ComplexTypes").groupDataItemsById();
+        assertThat(new ArrayList<>(actual.keySet())).isEqualTo(new ArrayList<>(expected.keySet()));
     }
 
     /**

@@ -1,15 +1,23 @@
 package uk.gov.hmcts.rse.ccd.lib.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
+import uk.gov.hmcts.ccd.definition.store.excel.parser.SpreadsheetParser;
 import uk.gov.hmcts.ccd.definition.store.excel.parser.model.DefinitionDataItem;
 import uk.gov.hmcts.ccd.definition.store.excel.parser.model.DefinitionSheet;
 import uk.gov.hmcts.ccd.definition.store.excel.util.mapper.SheetName;
+import uk.gov.hmcts.ccd.definition.store.excel.validation.SpreadsheetValidator;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -27,24 +35,49 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 
-@AllArgsConstructor(onConstructor = @__(@Autowired))
-public class JsonDefinitionReader {
+@ConditionalOnClass(CaseDataAPIApplication.class)
+@Component
+public class JsonDefinitionReader extends SpreadsheetParser {
 
     private static final List<String> FILES = Arrays.stream(SheetName.values())
             .map(SheetName::getName)
             .collect(Collectors.toList());
 
+    private static final ObjectMapper mapper = new ObjectMapper();
+
     @Autowired
-    private ObjectMapper mapper;
+    public JsonDefinitionReader(SpreadsheetValidator spreadsheetValidator) {
+        super(spreadsheetValidator);
+    }
+
+    @Override
+    public Map<String, DefinitionSheet> parse(InputStream inputStream) throws IOException {
+        var data = inputStream.readAllBytes();
+        var path =  new String(data);
+        try {
+            if (Path.of(path).toFile().exists()) {
+                return fromJson(path);
+            }
+        } catch (InvalidPathException i) {
+            // Treat it as xlsx
+        }
+        return super.parse(new ByteArrayInputStream(data));
+    }
+
+    @Override
+    public List<String> getImportWarnings() {
+        return List.of();
+    }
 
     @SneakyThrows
-    public List<Map<String, String>> readPath(String path) {
+    public static List<Map<String, String>> readPath(String path) {
         var fi = Paths.get(path).toFile();
         List<File> files = new ArrayList<>();
         if (fi.exists()) {
             files = Files.walk(fi.toPath())
                     .filter(Files::isRegularFile)
                     .map(Path::toFile)
+                    .sorted()
                     .collect(Collectors.toList());
         }
         final var file = Paths.get(path + ".json").toFile();
@@ -53,19 +86,19 @@ public class JsonDefinitionReader {
 
         return files.parallelStream()
                 .filter(f -> f.exists() && f.getName().endsWith(".json") && f.canRead())
-                .flatMap(this::readFile)
+                .flatMap(JsonDefinitionReader::readFile)
                 .collect(Collectors.toList());
     }
 
     @SneakyThrows
-    private Stream<Map<String, String>> readFile(File file) {
+    private static Stream<Map<String, String>> readFile(File file) {
         List<Map<String, String>> entries = asList(mapper.readValue(file, Map[].class));
 
         return entries.stream();
     }
 
     @SneakyThrows
-    public static Map<String, List<Map<String, String>>> toJson(final String path, JsonDefinitionReader reader) {
+    public static Map<String, List<Map<String, String>>> toJson(final String path) {
         return FILES.parallelStream()
                 .map(file -> {
                     var p = file;
@@ -73,15 +106,15 @@ public class JsonDefinitionReader {
                     if (file.equals("EventToComplexTypes")) {
                         p = "CaseEventToComplexTypes";
                     }
-                    return new AbstractMap.SimpleEntry<>(file, reader.readPath(path + "/" + p));
+                    return new AbstractMap.SimpleEntry<>(file, JsonDefinitionReader.readPath(path + "/" + p));
                 })
                 .collect(Collectors.toUnmodifiableMap(AbstractMap.SimpleEntry::getKey,
                         AbstractMap.SimpleEntry::getValue));
     }
 
-    public static Map<String, DefinitionSheet> fromJson(String path, JsonDefinitionReader reader) {
+    public static Map<String, DefinitionSheet> fromJson(String path) {
         Map<String, DefinitionSheet> result = new HashMap<>();
-        var j = toJson(path, reader);
+        var j = toJson(path);
         for (String s : j.keySet()) {
             var sheet = j.get(s);
             var defSheet = new DefinitionSheet();

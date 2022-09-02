@@ -1,5 +1,6 @@
 package uk.gov.hmcts.libconsumer;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -235,11 +236,18 @@ class LibConsumerApplicationTests extends CftlibTest {
     @Test
     void searchCases() {
         // Give logstash some time to index the case created by the previous test
-        Thread.sleep(3000);
         await()
             .timeout(Duration.ofSeconds(20))
             .until(this::caseAppearsInSearch);
     }
+
+    @Order(4)
+    @SneakyThrows
+    @Test
+    void testJsonDefinitionImport() {
+        cftlib().importJsonDefinition(new File("../lib/cftlib-agent/src/test/resources/definition"));
+    }
+
 
     @SneakyThrows
     private Boolean caseAppearsInSearch() {
