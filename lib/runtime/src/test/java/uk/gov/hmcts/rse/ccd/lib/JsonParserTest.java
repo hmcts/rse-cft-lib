@@ -43,17 +43,11 @@ class JsonParserTest {
 
     private void assertSheetsEqual(DefinitionSheet expected, DefinitionSheet actual) {
         assertThat(expected.getName()).isEqualTo(actual.getName());
-        try {
-            assertThat(actual.getDataItems().size()).isEqualTo(expected.getDataItems().size());
-            expected.getDataItems().sort(Comparator.comparing(this::gooo));
-            actual.getDataItems().sort(Comparator.comparing(this::gooo));
-            for (int t = 0; t < expected.getDataItems().size(); t++) {
-                assertItemsEqual(actual.getDataItems().get(t), expected.getDataItems().get(t));
-            }
-        } catch (NullPointerException n) {
-            throw n;
-        } catch (AssertionFailedError a) {
-            throw a;
+        assertThat(actual.getDataItems().size()).isEqualTo(expected.getDataItems().size());
+        expected.getDataItems().sort(Comparator.comparing(this::gooo));
+        actual.getDataItems().sort(Comparator.comparing(this::gooo));
+        for (int t = 0; t < expected.getDataItems().size(); t++) {
+            assertItemsEqual(actual.getDataItems().get(t), expected.getDataItems().get(t));
         }
         System.out.println(expected.getName() + " is ok");
     }
@@ -68,9 +62,6 @@ class JsonParserTest {
     );
     @SneakyThrows
     private String gooo(DefinitionDataItem item) {
-//        Field f = item.getClass().getDeclaredField("attributes"); //NoSuchFieldException
-//        f.setAccessible(true);
-//        var attributes = (List<Pair<String, Object>>) f.get(item);
         for (List<ColumnName> keyset : keys) {
             try {
                 var v = "";
@@ -84,25 +75,12 @@ class JsonParserTest {
                     return v;
                 }
             } catch (MapperException m) {
+                // If the item
                 //
             }
         }
 
         throw new RuntimeException("No known keys to compare: " + item.getCaseFieldId());
-    }
-
-    private int sorted(DefinitionDataItem definitionDataItem, DefinitionDataItem definitionDataItem1) {
-        return 0;
-    }
-
-    private static Map<String, ColumnName> columnIndex = new HashMap<>();
-    static {
-        for (ColumnName value : ColumnName.values()) {
-            columnIndex.put(value.toString(), value);
-            for (String alias : value.getAliases()) {
-                columnIndex.put(alias, value);
-            }
-        }
     }
 
     @SneakyThrows
@@ -113,8 +91,6 @@ class JsonParserTest {
         var actualAttributes = (List<Pair<String, Object>>) f.get(actual);
         for (Pair<String, Object> expectedAttribute : expectedAttributes) {
             try {
-                var columnName = expectedAttribute.getKey();
-//                assertThat(actual.findAttribute(columnIndex.get(expectedAttribute.getKey()))).isEqualTo(expectedAttribute.getValue());
                 var pair = actualAttributes.stream().filter(x -> x.getKey().equals(expectedAttribute.getKey())).findFirst();
                 var val = pair.isPresent() ? pair.get().getValue() : null;
 
@@ -124,13 +100,7 @@ class JsonParserTest {
                 if (!expectedAttribute.getValue().equals("42736")) {
                     throw a;
                 }
-            } catch (NullPointerException n) {
-                throw n;
             }
-
-        }
-
-        for (ColumnName value : ColumnName.values()) {
         }
     }
 
