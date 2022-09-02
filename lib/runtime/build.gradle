@@ -7,11 +7,6 @@ repositories {
     mavenLocal()
 }
 
-// Give tests access to definition store code
-configurations {
-    testImplementation.extendsFrom compileOnly
-}
-
 dependencies {
     implementation project(':lib:bootstrapper')
 
@@ -38,19 +33,15 @@ dependencies {
             transitive = false
         }
     }
-    // Use the fat definition store jar at runtime.
+    // Use the fat definition store code at compile time.
     compileOnly (project (path: ':projects:definition-store-fat', configuration: 'shadow'))
+
+    // Provide definition store for running tests
+    testImplementation 'com.github.hmcts.rse-cft-lib:definition-store-fat:DEV-SNAPSHOT'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.7.3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'net.javacrumbs.json-unit:json-unit-spring:2.35.0'
     testImplementation 'net.javacrumbs.json-unit:json-unit-json-path:2.35.0'
-    testImplementation (project (path: ':projects:definition-store-fat', configuration: 'shadow'))
-    testImplementation group: 'org.apache.poi', name: 'poi', version: '5.2.2'
-    testImplementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.2'
-    testImplementation group: 'org.apache.poi', name: 'poi-scratchpad', version: '5.2.2'
-    testImplementation 'org.apache.commons:commons-lang3:3.11'
-
-
 }
 
 task zipCompose(type: Zip) {
