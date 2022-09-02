@@ -16,7 +16,6 @@ import uk.gov.hmcts.ccd.definition.store.excel.validation.SpreadsheetValidator;
 import java.lang.reflect.Field;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,20 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class JsonDefinitionReaderTest {
 
     private JsonDefinitionReader reader = new JsonDefinitionReader(new ObjectMapper());
-
-    @Test
-    public void readsSingleFile() {
-        var result = reader.readPath("src/test/resources/definition/CaseType");
-
-        assertEquals(Map.of(
-            "Description", "Handling of the dissolution of marriage",
-            "ID", "NFD",
-            "JurisdictionID", "DIVORCE",
-            "LiveFrom", "01/01/2017",
-            "Name","New Law Case",
-            "SecurityClassification", "Public"
-        ), result.get(0));
-    }
 
     @Test
     public void readsFileAndDirectory() {
@@ -136,7 +121,7 @@ class JsonDefinitionReaderTest {
         for (Pair<String, Object> expectedAttribute : expectedAttributes) {
             try {
                 var pair = actualAttributes.stream().filter(
-                        x -> x.getKey().equals(expectedAttribute.getKey())).findFirst();
+                    x -> x.getKey().equals(expectedAttribute.getKey())).findFirst();
                 var val = pair.isPresent() ? pair.get().getValue() : null;
 
                 assertThat(val).isEqualTo(expectedAttribute.getValue());

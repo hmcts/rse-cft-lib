@@ -3,18 +3,20 @@ package uk.gov.hmcts.rse.ccd.lib.model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import net.lingala.zip4j.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.hmcts.ccd.definition.store.excel.parser.model.DefinitionDataItem;
 import uk.gov.hmcts.ccd.definition.store.excel.parser.model.DefinitionSheet;
 import uk.gov.hmcts.ccd.definition.store.excel.util.mapper.SheetName;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,7 +39,14 @@ public class JsonDefinitionReader {
 
     @SneakyThrows
     public List<Map<String, String>> readPath(String path) {
-        final var files = FileUtils.getFilesInDirectoryRecursive(Paths.get(path).toFile(), false, false);
+        var fi = Paths.get(path).toFile();
+        List<File> files = new ArrayList<>();
+        if (fi.exists()) {
+            files = Files.walk(fi.toPath())
+                    .filter(Files::isRegularFile)
+                    .map(Path::toFile)
+                    .collect(Collectors.toList());
+        }
         final var file = Paths.get(path + ".json").toFile();
 
         files.add(file);

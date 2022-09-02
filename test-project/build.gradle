@@ -56,7 +56,7 @@ bootWithCCD {
     authMode = AuthMode.Local
     environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
     // Force container recreation.
-    environment('RSE_LIB_CLEAN_BOOT', 'true')
+//    environment('RSE_LIB_CLEAN_BOOT', 'true')
 }
 
 cftlibTest {
