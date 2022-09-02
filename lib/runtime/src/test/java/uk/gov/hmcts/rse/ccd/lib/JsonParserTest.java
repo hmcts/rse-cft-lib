@@ -107,7 +107,7 @@ class JsonParserTest {
         for (Pair<String, Object> expectedAttribute : expectedAttributes) {
             try {
                 var pair = actualAttributes.stream().filter(
-                        x -> x.getKey().equals(expectedAttribute.getKey())).findFirst();
+                    x -> x.getKey().equals(expectedAttribute.getKey())).findFirst();
                 var val = pair.isPresent() ? pair.get().getValue() : null;
 
                 assertThat(val).isEqualTo(expectedAttribute.getValue());
