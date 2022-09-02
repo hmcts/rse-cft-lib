@@ -1,7 +1,6 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.Pair;
@@ -25,34 +24,43 @@ class JsonParserTest {
     @Test
     @SneakyThrows
     public void testParsesAllSheets() {
-        var s = new SpreadsheetParser(new SpreadsheetValidator());
+        var parser = new SpreadsheetParser(new SpreadsheetValidator());
         var i = getClass().getClassLoader().getResourceAsStream("ccd-definition.xlsx");
+        var expected = parser.parse(i);
 
-        var reference = s.parse(i);
-        var parsed = JsonDefinitionReader.fromJson("src/test/resources/definition", new JsonDefinitionReader(new ObjectMapper()));
+        var actual = JsonDefinitionReader.fromJson("src/test/resources/definition", new JsonDefinitionReader(new ObjectMapper()));
 
-        assertThat(Sets.difference(reference.keySet(), parsed.keySet())).isEmpty();
+        // Check that we have all the expected sheets
+        assertThat(Sets.difference(expected.keySet(), actual.keySet())).isEmpty();
 
-        for (String s1 : reference.keySet()) {
-            var expected = reference.get(s1);
-            var actual = parsed.get(s1);
-            assertSheetsEqual(expected, actual);
+        // Compare each sheet
+        for (String s1 : expected.keySet()) {
+            var e = expected.get(s1);
+            var a = actual.get(s1);
+            assertSheetsEqual(e, a);
         }
-
     }
 
+    /**
+     * Compare two definition sheets for equality.
+     * We sort the rows in each sheet deterministically and then compare row by row.
+     */
     private void assertSheetsEqual(DefinitionSheet expected, DefinitionSheet actual) {
         assertThat(expected.getName()).isEqualTo(actual.getName());
         assertThat(actual.getDataItems().size()).isEqualTo(expected.getDataItems().size());
-        expected.getDataItems().sort(Comparator.comparing(this::gooo));
-        actual.getDataItems().sort(Comparator.comparing(this::gooo));
+        expected.getDataItems().sort(Comparator.comparing(this::extractSortKey));
+        actual.getDataItems().sort(Comparator.comparing(this::extractSortKey));
         for (int t = 0; t < expected.getDataItems().size(); t++) {
             assertItemsEqual(actual.getDataItems().get(t), expected.getDataItems().get(t));
         }
         System.out.println(expected.getName() + " is ok");
     }
 
-    private List<List<ColumnName>> keys = List.of(
+    /**
+     * Different definition sheets have different 'primary keys'
+     * ie. the columns that uniquely identify a row.
+     */
+    private List<List<ColumnName>> compoundSortKeys = List.of(
             List.of(ColumnName.ID),
             List.of(ColumnName.DISPLAY_ORDER),
             List.of(ColumnName.STATE_ID),
@@ -60,23 +68,27 @@ class JsonParserTest {
             List.of(ColumnName.TAB_ID),
             List.of(ColumnName.CASE_FIELD_ID, ColumnName.ACCESS_PROFILE)
     );
+
+    /**
+     * Generate a string for sorting on by looking through our known
+     * list of keys and finding the first contained in the item.
+     */
     @SneakyThrows
-    private String gooo(DefinitionDataItem item) {
-        for (List<ColumnName> keyset : keys) {
+    private String extractSortKey(DefinitionDataItem item) {
+        for (List<ColumnName> compoundKey : compoundSortKeys) {
             try {
-                var v = "";
-                for (ColumnName key : keyset) {
+                var sortKey = "";
+                for (ColumnName key : compoundKey) {
                     var val = item.findAttribute(key);
                     if (null != val) {
-                        v += val;
+                        sortKey += val;
                     }
                 }
-                if (!v.isEmpty()) {
-                    return v;
+                if (!sortKey.isEmpty()) {
+                    return sortKey;
                 }
             } catch (MapperException m) {
-                // If the item
-                //
+                // Expected if the key is not found for a particular item.
             }
         }
 
@@ -85,6 +97,7 @@ class JsonParserTest {
 
     @SneakyThrows
     private void assertItemsEqual(DefinitionDataItem actual, DefinitionDataItem expected) {
+        // We have to use reflection to get access to the attributes field for comparison.
         Field f = DefinitionDataItem.class.getDeclaredField("attributes"); //NoSuchFieldException
         f.setAccessible(true);
         var expectedAttributes = (List<Pair<String, Object>>) f.get(expected);
