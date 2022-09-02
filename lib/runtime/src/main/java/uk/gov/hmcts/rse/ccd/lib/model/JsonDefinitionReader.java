@@ -31,7 +31,6 @@ public class JsonDefinitionReader {
     private static final List<String> FILES = Arrays.stream(SheetName.values())
             .map(SheetName::getName)
             .collect(Collectors.toList());
-    private static final Date LIVE_FROM = new Date(1483228800000L);
 
     @Autowired
     private ObjectMapper mapper;
