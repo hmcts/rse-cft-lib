@@ -25,7 +25,6 @@
     "CaseTypeID": "NFD",
     "DisplayOrder": 12,
     "Label": "Applicant postcode",
-    "ListElementCode": "PostCode",
     "LiveFrom": "01/01/2017"
   },
   {
@@ -75,7 +74,6 @@
     "CaseTypeID": "NFD",
     "DisplayOrder": 13,
     "Label": "Respondent postcode",
-    "ListElementCode": "PostCode",
     "LiveFrom": "01/01/2017"
   },
   {

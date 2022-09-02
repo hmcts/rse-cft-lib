@@ -10,6 +10,9 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.definition.store.domain.showcondition.ShowConditionParser;
+import uk.gov.hmcts.ccd.definition.store.excel.parser.model.DefinitionDataItem;
+import uk.gov.hmcts.ccd.definition.store.excel.parser.model.DefinitionSheet;
+import uk.gov.hmcts.ccd.definition.store.excel.util.mapper.SheetName;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
 import uk.gov.hmcts.ccd.definition.store.repository.model.AccessControlList;
 import uk.gov.hmcts.ccd.definition.store.repository.model.CaseEvent;
@@ -41,7 +44,10 @@ import uk.gov.hmcts.ccd.definition.store.repository.model.WorkbasketInputField;
 import uk.gov.hmcts.rse.ccd.lib.Mapper;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,34 +63,15 @@ import java.util.stream.Collectors;
 import static java.util.AbstractMap.SimpleEntry;
 import static java.util.stream.Collectors.groupingBy;
 import static org.springframework.util.StringUtils.hasText;
+import static org.springframework.util.StringUtils.quote;
 
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class CaseTypeRepository {
 
-    private static final List<String> FILES = List.of(
-        "AuthorisationCaseEvent",
-        "AuthorisationCaseField",
-        "AuthorisationCaseState",
-        "AuthorisationCaseType",
-        "CaseEvent",
-        "CaseEventToComplexTypes",
-        "CaseEventToFields",
-        "CaseField",
-        "CaseRoles",
-        "CaseType",
-        "CaseTypeTab",
-        "ComplexTypes",
-        "FixedLists",
-        "Jurisdiction",
-        "SearchCasesResultFields",
-        "SearchInputFields",
-        "SearchResultFields",
-        "State",
-        "WorkBasketInputFields",
-        "WorkBasketResultFields"
-    );
-
+    private static final List<String> FILES = Arrays.stream(SheetName.values())
+            .map(SheetName::getName)
+            .collect(Collectors.toList());
     private static final Date LIVE_FROM = new Date(1483228800000L);
 
     @Autowired
@@ -113,11 +100,62 @@ public class CaseTypeRepository {
                 .collect(Collectors.toList());
     }
 
+    public static Map<String, DefinitionSheet> fromJson(String path, JsonDefinitionReader reader) {
+        Map<String, DefinitionSheet> result = new HashMap<>();
+        var j = toJson(path, reader);
+        for (String s : j.keySet()) {
+            var sheet = j.get(s);
+            var defSheet = new DefinitionSheet();
+            defSheet.setName(s);
+            result.put(s, defSheet);
+            for (Map<String, String> row : sheet) {
+                var item = new DefinitionDataItem(s);
+                defSheet.getDataItems().add(item);
+                for (String s1 : row.keySet()) {
+                    Object val = row.get(s1);
+                    if (null != val) {
+                        if (val.getClass().equals(Integer.class)) {
+                            val = val.toString();
+                        }
+                        if (s1.equals("LiveFrom") || s1.equals("LiveTo")) {
+                            var formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                            var ld = LocalDate.parse(val.toString(), formatter);
+                            val = Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                        }
+                        if (val.toString().contains("\r")) {
+                            val = val.toString().replace("\r", "");
+                        }
+                        if (val.getClass().equals(String.class)) {
+                            if (((String) val).isEmpty()) {
+                                val = null;
+                            }
+                        }
+                    }
+                    item.addAttribute(s1, val);
+                }
+            }
+        }
+        return result;
+    }
+
     @SneakyThrows
-    private Map<String, List<Map<String, String>>> toJson(String path) {
+    public static Map<String, List<Map<String, String>>> toJson(final String path, JsonDefinitionReader reader) {
         return FILES.parallelStream()
-            .map(file -> new SimpleEntry<>(file, reader.readPath(path + "/" + file)))
+            .map(file -> {
+                var p = file;
+                // quick hack since this sheet's name doesn't follow convention.
+                if (file.equals("EventToComplexTypes")) {
+                    p = "CaseEventToComplexTypes";
+                }
+                return new SimpleEntry<>(file, reader.readPath(path + "/" + p));
+            })
             .collect(Collectors.toUnmodifiableMap(SimpleEntry::getKey,SimpleEntry::getValue));
+    }
+
+    public Map<String, List<Map<String, String>>> toJson(String path) {
+        return FILES.parallelStream()
+                .map(file -> new SimpleEntry<>(file, reader.readPath(path + "/" + file)))
+                .collect(Collectors.toUnmodifiableMap(SimpleEntry::getKey,SimpleEntry::getValue));
     }
 
     public CaseTabCollection getTabs(String id) {
