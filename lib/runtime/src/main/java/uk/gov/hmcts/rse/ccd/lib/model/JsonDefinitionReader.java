@@ -15,7 +15,12 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -64,7 +69,8 @@ public class JsonDefinitionReader {
                     }
                     return new AbstractMap.SimpleEntry<>(file, reader.readPath(path + "/" + p));
                 })
-                .collect(Collectors.toUnmodifiableMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+                .collect(Collectors.toUnmodifiableMap(AbstractMap.SimpleEntry::getKey,
+                        AbstractMap.SimpleEntry::getValue));
     }
 
     public static Map<String, DefinitionSheet> fromJson(String path, JsonDefinitionReader reader) {

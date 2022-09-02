@@ -15,7 +15,8 @@ import uk.gov.hmcts.ccd.definition.store.excel.validation.SpreadsheetValidator;
 import uk.gov.hmcts.rse.ccd.lib.model.JsonDefinitionReader;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,7 +29,8 @@ class JsonParserTest {
         var i = getClass().getClassLoader().getResourceAsStream("ccd-definition.xlsx");
         var expected = parser.parse(i);
 
-        var actual = JsonDefinitionReader.fromJson("src/test/resources/definition", new JsonDefinitionReader(new ObjectMapper()));
+        var actual = JsonDefinitionReader.fromJson("src/test/resources/definition",
+                new JsonDefinitionReader(new ObjectMapper()));
 
         // Check that we have all the expected sheets
         assertThat(Sets.difference(expected.keySet(), actual.keySet())).isEmpty();
@@ -104,7 +106,8 @@ class JsonParserTest {
         var actualAttributes = (List<Pair<String, Object>>) f.get(actual);
         for (Pair<String, Object> expectedAttribute : expectedAttributes) {
             try {
-                var pair = actualAttributes.stream().filter(x -> x.getKey().equals(expectedAttribute.getKey())).findFirst();
+                var pair = actualAttributes.stream().filter(
+                        x -> x.getKey().equals(expectedAttribute.getKey())).findFirst();
                 var val = pair.isPresent() ? pair.get().getValue() : null;
 
                 assertThat(val).isEqualTo(expectedAttribute.getValue());
