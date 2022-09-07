@@ -73,6 +73,9 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         return super.parse(new ByteArrayInputStream(data));
     }
 
+    /**
+     * Avoid an NPE since the list in the base class is initialised by the parse routine.
+     */
     @Override
     public List<String> getImportWarnings() {
         return List.of();
@@ -124,6 +127,7 @@ public class JsonDefinitionReader extends SpreadsheetParser {
     public static Map<String, DefinitionSheet> fromJson(String path) {
         Map<String, DefinitionSheet> result = new HashMap<>();
         var j = toJson(path);
+        final var dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         for (String s : j.keySet()) {
             var sheet = j.get(s);
             var defSheet = new DefinitionSheet();
@@ -134,13 +138,14 @@ public class JsonDefinitionReader extends SpreadsheetParser {
                 defSheet.getDataItems().add(item);
                 for (String s1 : row.keySet()) {
                     Object val = row.get(s1);
+                    // Match the behaviour of apache's spreadsheet parser
                     if (null != val) {
+                        // Numbers are expected to be strings
                         if (val.getClass().equals(Integer.class)) {
                             val = val.toString();
                         }
                         if (s1.equals("LiveFrom") || s1.equals("LiveTo")) {
-                            var formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                            var ld = LocalDate.parse(val.toString(), formatter);
+                            var ld = LocalDate.parse(val.toString(), dateFormatter);
                             val = Date.from(ld.atStartOfDay(ZoneId.of("UTC")).toInstant());
                         }
                         if (val.toString().contains("\r")) {
