@@ -64,6 +64,9 @@ cftlibTest {
     // Check that we are able to override the default port.
     environment 'RSE_LIB_S2S_PORT', '7431'
     environment 'RSE_LIB_DB_PORT', '8432'
+
+    // Test environment variable substitution - this value should be subbed into one of our FixedLists
+    environment 'CCD_DEF_CHANGED_NAME_HOW', '"ID": "ChangedNameHow"'
 }
 
 test {
@@ -98,3 +101,4 @@ tasks.test.dependsOn(testGigaJar)
 task publishSecrets(type: Exec) {
     commandLine 'az', 'keyvault', 'secret', 'set', "--vault-name", "rse-cft-lib", "--name", "aat-env", "--file", layout.buildDirectory.file('cftlib/.aat-env')
 }
+

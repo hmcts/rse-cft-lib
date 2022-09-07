@@ -2,6 +2,7 @@ package uk.gov.hmcts.rse.ccd.lib.definitionstore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Component;
@@ -104,7 +105,15 @@ public class JsonDefinitionReader extends SpreadsheetParser {
 
     @SneakyThrows
     private static Stream<Map<String, String>> readFile(File file) {
-        List<Map<String, String>> entries = asList(mapper.readValue(file, Map[].class));
+        var s = FileUtils.readFileToString(file);
+        // TODO - this is highly inefficient and will be slow if a project uses lots of env vars.
+        for (String s1 : System.getenv().keySet()) {
+            if (s1.startsWith("CCD_DEF")) {
+                s = s.replace("${" + s1 + "}", System.getenv(s1));
+            }
+        }
+
+        List<Map<String, String>> entries = asList(mapper.readValue(s, Map[].class));
 
         return entries.stream();
     }

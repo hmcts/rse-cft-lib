@@ -41,6 +41,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.3'
 }
 
+
 test {
     useJUnitPlatform()
+    // Test environment variable substitution - this value should be subbed into one of our FixedLists
+    environment 'CCD_DEF_CHANGED_NAME_HOW', '"ID": "ChangedNameHow"'
 }
