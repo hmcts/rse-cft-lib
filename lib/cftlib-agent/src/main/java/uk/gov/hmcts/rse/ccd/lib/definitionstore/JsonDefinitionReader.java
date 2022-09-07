@@ -1,4 +1,4 @@
-package uk.gov.hmcts.rse.ccd.lib.model;
+package uk.gov.hmcts.rse.ccd.lib.definitionstore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -35,6 +35,10 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 
+/**
+ * Adds json definition parsing to CCD definition store.
+ * Runs only in definition store.
+ */
 @ConditionalOnClass(CaseDataAPIApplication.class)
 @Component
 public class JsonDefinitionReader extends SpreadsheetParser {
@@ -50,6 +54,11 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         super(spreadsheetValidator);
     }
 
+    /**
+     * Extend CCD's spreadsheet parser with one that supports JSON.
+     * Definition store expects an xlsx which we extend by supporting
+     * the passing of a file path indicating the directory containing definition json.
+     */
     @Override
     public Map<String, DefinitionSheet> parse(InputStream inputStream) throws IOException {
         var data = inputStream.readAllBytes();
