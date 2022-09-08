@@ -1,4 +1,0 @@
-ccd:
-  definition:
-    paths:
-      NFD: src/test/resources/definition/
