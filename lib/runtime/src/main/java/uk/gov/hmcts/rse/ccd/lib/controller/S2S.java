@@ -51,6 +51,7 @@ public class S2S {
         var payload = bearerToken.substring(bearerToken.indexOf(".") + 1, bearerToken.lastIndexOf("."));
         var json = new String(Base64.getDecoder().decode(payload));
         var token = new ObjectMapper().readValue(json, Map.class);
+
         return ok(token.get("sub").toString());
     }
 }

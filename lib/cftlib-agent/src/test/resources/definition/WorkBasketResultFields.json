@@ -1,0 +1,66 @@
+[
+  {
+    "CaseFieldID": "[CASE_REFERENCE]",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 1,
+    "Label": "Case Number",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "[LAST_MODIFIED_DATE]",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 8,
+    "Label": "Last modified date",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "[LAST_STATE_MODIFIED_DATE]",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 9,
+    "Label": "Last state modified date",
+    "LiveFrom": "01/01/2017",
+    "ResultsOrdering": "1:ASC"
+  },
+  {
+    "CaseFieldID": "applicant1FirstName",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 3,
+    "Label": "Applicant's First Name",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant1LastName",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 4,
+    "Label": "Applicant's Last Name",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant2FirstName",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 5,
+    "Label": "Respondent's First Name",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant2LastName",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 6,
+    "Label": "Respondent's Last Name",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicationType",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 2,
+    "Label": "Application Type",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "dueDate",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 7,
+    "Label": "Due Date",
+    "LiveFrom": "01/01/2017"
+  }
+]

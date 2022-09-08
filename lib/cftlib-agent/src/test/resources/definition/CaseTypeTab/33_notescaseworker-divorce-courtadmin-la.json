@@ -1,0 +1,13 @@
+[
+  {
+    "CaseFieldID": "notes",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 33,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "notescaseworker-divorce-courtadmin-la",
+    "TabLabel": "Notes",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  }
+]

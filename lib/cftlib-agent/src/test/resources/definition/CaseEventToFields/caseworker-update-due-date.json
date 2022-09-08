@@ -1,0 +1,15 @@
+[
+  {
+    "CaseEventID": "caseworker-update-due-date",
+    "CaseFieldID": "dueDate",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "updateDueDate",
+    "PageLabel": "Update due date",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

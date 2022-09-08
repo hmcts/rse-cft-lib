@@ -1,0 +1,15 @@
+[
+  {
+    "CaseEventID": "caseworker-remove-scanned-document",
+    "CaseFieldID": "scannedDocuments",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "removeScannedDocument",
+    "PageLabel": "Remove scanned document",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

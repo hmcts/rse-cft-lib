@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=switch-to-sole",
+    "CaseTypeID": "NFD",
+    "Description": "Application type switched to sole",
+    "DisplayOrder": 19,
+    "EndButtonLabel": "Save and continue",
+    "ID": "switch-to-sole",
+    "LiveFrom": "01/01/2017",
+    "Name": "Application switched to sole",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "Applicant2Approved;AwaitingApplicant1Response;AwaitingApplicant2Response;AwaitingPayment",
+    "RetriesTimeoutURLAboutToSubmitEvent": "120,120",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

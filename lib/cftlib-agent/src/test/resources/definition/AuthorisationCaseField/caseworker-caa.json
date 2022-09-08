@@ -1,0 +1,72 @@
+[
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1LastName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorOrganisationPolicy",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorReference",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2LastName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorOrganisationPolicy",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorReference",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicationType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "dueDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-caa"
+  }
+]

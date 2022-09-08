@@ -1,0 +1,163 @@
+[
+  {
+    "ElementLabel": "Medium requested for alternative service",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "AlternativeServiceMediumType",
+    "ID": "GeneralReferral",
+    "ListElementCode": "alternativeServiceMedium",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "General application added date",
+    "FieldType": "Date",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalApplicationAddedDate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Application from",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "GeneralParties",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalApplicationFrom",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Application or referral date",
+    "FieldType": "Date",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalApplicationReferralDate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Approve general consideration?",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "GeneralReferralDecision",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralDecision",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "General referral decision date",
+    "FieldType": "Date",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralDecisionDate",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Please provide further details",
+    "FieldType": "TextArea",
+    "HintText": "Provide direction for any general orders or general letters to be created by caseworkers.",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralDecisionReason",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Enter your account number",
+    "FieldType": "Text",
+    "HintText": "Example: PBA0896366",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralFeeAccountNumber",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Enter your reference",
+    "FieldType": "Text",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralFeeAccountReferenceNumber",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Help with Fees reference",
+    "FieldType": "Text",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralFeeHelpWithFeesReferenceNumber",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Here are your order details",
+    "FieldType": "OrderSummary",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralFeeOrderSummary",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "How will payment be made?",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "ServicePaymentMethod",
+    "HintText": "How will payment be made?",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralFeePaymentMethod",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Select your account number",
+    "FieldType": "DynamicList",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralFeePbaNumbers",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Is fee payment required?",
+    "FieldType": "YesOrNo",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralFeeRequired",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Further details for Judge or Legal Advisor",
+    "FieldType": "TextArea",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralJudgeOrLegalAdvisorDetails",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Reason for referral?",
+    "FieldType": "FixedRadioList",
+    "FieldTypeParameter": "GeneralReferralReason",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralReason",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Type of referral",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "GeneralReferralType",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralType",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Does this case require an Urgent Referral?",
+    "FieldType": "YesOrNo",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralUrgentCase",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Urgent referral reason",
+    "FieldType": "TextArea",
+    "ID": "GeneralReferral",
+    "ListElementCode": "generalReferralUrgentCaseReason",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  }
+]

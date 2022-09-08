@@ -1,0 +1,16 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "ContactDetailsType",
+    "ListElement": "Keep contact details private ",
+    "ListElementCode": "private",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "ContactDetailsType",
+    "ListElement": "Do not need to keep contact details private",
+    "ListElementCode": "public",
+    "LiveFrom": "01/01/2017"
+  }
+]

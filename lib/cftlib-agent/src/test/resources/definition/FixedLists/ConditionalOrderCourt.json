@@ -1,0 +1,16 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "ConditionalOrderCourt",
+    "ListElement": "Birmingham Civil and Family Justice Centre",
+    "ListElementCode": "birmingham",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "ConditionalOrderCourt",
+    "ListElement": "Bury St. Edmunds Regional Divorce Centre",
+    "ListElementCode": "buryStEdmunds",
+    "LiveFrom": "01/01/2017"
+  }
+]

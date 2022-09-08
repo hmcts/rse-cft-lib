@@ -1,0 +1,44 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "GeneralReferralType",
+    "ListElement": "Alternative service application",
+    "ListElementCode": "alternativeServiceApplication",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 5,
+    "ID": "GeneralReferralType",
+    "ListElement": "Disclosure via DWP",
+    "ListElementCode": "disclosureViaDwp",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "GeneralReferralType",
+    "ListElement": "Order application without m/c",
+    "ListElementCode": "orderApplicationWithoutMc",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "GeneralReferralType",
+    "ListElement": "Order on filing of Answers",
+    "ListElementCode": "orderOnFilingOfAnswers",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 6,
+    "ID": "GeneralReferralType",
+    "ListElement": "Other",
+    "ListElementCode": "other",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 4,
+    "ID": "GeneralReferralType",
+    "ListElement": "Permission on DA OOT",
+    "ListElementCode": "permissionOnDaOot",
+    "LiveFrom": "01/01/2017"
+  }
+]

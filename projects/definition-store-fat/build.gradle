@@ -39,12 +39,9 @@ java {
 
 dependencies {
     // Bring in the ccd projects via Gradle's dependency substitution
-    bundler 'uk.gov.hmcts.ccd.definition:application'
-    bundler 'uk.gov.hmcts.ccd.definition:domain'
-    bundler 'uk.gov.hmcts.ccd.definition:elastic-search-support'
-    bundler 'uk.gov.hmcts.ccd.definition:excel-importer'
-    bundler 'uk.gov.hmcts.ccd.definition:repository'
-    bundler 'uk.gov.hmcts.ccd.definition:rest-api'
+    rootProject.ext.importedDefStoreModules.each {
+        bundler "uk.gov.hmcts.ccd.definition:${it}"
+    }
 }
 
 shadowJar {

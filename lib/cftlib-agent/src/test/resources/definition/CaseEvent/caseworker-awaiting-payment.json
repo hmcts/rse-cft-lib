@@ -1,0 +1,16 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting payment from the applicant",
+    "DisplayOrder": 29,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-awaiting-payment",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting payment",
+    "PostConditionState": "AwaitingPayment",
+    "PreConditionState(s)": "AwaitingHWFDecision",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

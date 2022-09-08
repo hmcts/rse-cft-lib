@@ -1,0 +1,28 @@
+[
+  {
+    "CaseEventFieldLabel": "Supplementary evidence handled",
+    "CaseEventID": "attachScannedDocs",
+    "CaseFieldID": "evidenceHandled",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "attachScannedDocs",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "attachScannedDocs",
+    "CaseFieldID": "scannedDocuments",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "attachScannedDocs",
+    "PageLabel": "Correspondence",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

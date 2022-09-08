@@ -1,0 +1,19 @@
+[
+  {
+    "CallBackURLAboutToStartEvent": "http://localhost:4013/callbacks/about-to-start?eventId=caseworker-add-answer",
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-add-answer",
+    "CallBackURLSubmittedEvent": "http://localhost:4013/callbacks/submitted?eventId=caseworker-add-answer",
+    "CaseTypeID": "NFD",
+    "Description": "Answer received",
+    "DisplayOrder": 8,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-add-answer",
+    "LiveFrom": "01/01/2017",
+    "Name": "Answer received",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosOverdue;AwaitingAos;AwaitingConditionalOrder;AwaitingPronouncement;Holding",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

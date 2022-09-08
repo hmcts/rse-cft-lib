@@ -1,0 +1,16 @@
+[
+  {
+    "DisplayOrder": 2,
+    "ID": "DivorceOrDissolution",
+    "ListElement": "Dissolution",
+    "ListElementCode": "dissolution",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "DivorceOrDissolution",
+    "ListElement": "Divorce",
+    "ListElementCode": "divorce",
+    "LiveFrom": "01/01/2017"
+  }
+]

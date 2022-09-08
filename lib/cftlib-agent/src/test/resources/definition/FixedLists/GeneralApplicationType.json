@@ -1,0 +1,44 @@
+[
+  {
+    "DisplayOrder": 2,
+    "ID": "GeneralApplicationType",
+    "ListElement": "Deemed service",
+    "ListElementCode": "deemedService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "GeneralApplicationType",
+    "ListElement": "Dispensed with service",
+    "ListElementCode": "dispensedWithService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 4,
+    "ID": "GeneralApplicationType",
+    "ListElement": "Expedite",
+    "ListElementCode": "expedite",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "GeneralApplicationType",
+    "ListElement": "Issue divorce without marriage certificate",
+    "ListElementCode": "issueDivorceWithoutMarriageCertificate",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 6,
+    "ID": "GeneralApplicationType",
+    "ListElement": "Other",
+    "ListElementCode": "other",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 5,
+    "ID": "GeneralApplicationType",
+    "ListElement": "Other alternative service methods",
+    "ListElementCode": "otherAlternativeServiceMethod",
+    "LiveFrom": "01/01/2017"
+  }
+]

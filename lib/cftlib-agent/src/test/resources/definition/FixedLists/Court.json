@@ -1,0 +1,44 @@
+[
+  {
+    "DisplayOrder": 6,
+    "ID": "Court",
+    "ListElement": "Bury St Edmunds",
+    "ListElementCode": "buryStEdmunds",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "Court",
+    "ListElement": "East Midlands Divorce Unit (Nottingham)",
+    "ListElementCode": "eastMidlands",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 5,
+    "ID": "Court",
+    "ListElement": "North West Regional Divorce Unit (Liverpool)",
+    "ListElementCode": "northWest",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "Court",
+    "ListElement": "Courts and Tribunals Service Centre",
+    "ListElementCode": "serviceCentre",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 4,
+    "ID": "Court",
+    "ListElement": "South West Regional Divorce Unit (Southampton)",
+    "ListElementCode": "southWest",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "Court",
+    "ListElement": "West Midlands Divorce Unit (Stoke)",
+    "ListElementCode": "westMidlands",
+    "LiveFrom": "01/01/2017"
+  }
+]

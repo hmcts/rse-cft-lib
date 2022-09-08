@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=solicitor-update-applicant2-contact-details",
+    "CaseTypeID": "NFD",
+    "Description": "Update respondent contact details",
+    "DisplayOrder": 114,
+    "EndButtonLabel": "Save and continue",
+    "ID": "solicitor-update-applicant2-contact-details",
+    "LiveFrom": "01/01/2017",
+    "Name": "Update contact details",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "*",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

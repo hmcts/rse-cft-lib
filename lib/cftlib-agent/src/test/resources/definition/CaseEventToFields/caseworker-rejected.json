@@ -1,0 +1,15 @@
+[
+  {
+    "CaseEventID": "caseworker-rejected",
+    "CaseFieldID": "rejectReason",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "COMPLEX",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "reject",
+    "PageLabel": "Reject",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

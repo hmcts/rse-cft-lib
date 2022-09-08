@@ -1,0 +1,30 @@
+[
+  {
+    "DisplayOrder": 2,
+    "ID": "AlternativeServiceMediumType",
+    "ListElement": "Email",
+    "ListElementCode": "email",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 4,
+    "ID": "AlternativeServiceMediumType",
+    "ListElement": "Other",
+    "ListElementCode": "other",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "AlternativeServiceMediumType",
+    "ListElement": "Social media",
+    "ListElementCode": "socialMedia",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "AlternativeServiceMediumType",
+    "ListElement": "Text",
+    "ListElementCode": "text",
+    "LiveFrom": "01/01/2017"
+  }
+]

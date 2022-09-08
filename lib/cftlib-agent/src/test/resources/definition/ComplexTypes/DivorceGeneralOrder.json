@@ -1,0 +1,19 @@
+[
+  {
+    "ElementLabel": "General Order Parties",
+    "FieldType": "MultiSelectList",
+    "FieldTypeParameter": "GeneralOrderDivorceParties",
+    "ID": "DivorceGeneralOrder",
+    "ListElementCode": "generalOrderDivorceParties",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "General Order",
+    "FieldType": "DivorceDocument",
+    "ID": "DivorceGeneralOrder",
+    "ListElementCode": "generalOrderDocument",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  }
+]

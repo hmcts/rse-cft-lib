@@ -1,0 +1,36 @@
+[
+  {
+    "CaseFieldID": "applicant1Address",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 20,
+    "TabFieldDisplayOrder": 3,
+    "TabID": "ConfidentialApplicantcaseworker-divorce-courtadmin-la",
+    "TabLabel": "Confidential Applicant",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant1Email",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 20,
+    "TabFieldDisplayOrder": 2,
+    "TabID": "ConfidentialApplicantcaseworker-divorce-courtadmin-la",
+    "TabLabel": "Confidential Applicant",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant1PhoneNumber",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 20,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "ConfidentialApplicantcaseworker-divorce-courtadmin-la",
+    "TabLabel": "Confidential Applicant",
+    "TabShowCondition": "applicant1ContactDetailsType=\"private\"",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  }
+]

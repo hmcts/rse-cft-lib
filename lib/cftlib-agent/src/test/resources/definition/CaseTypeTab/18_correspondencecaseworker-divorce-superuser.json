@@ -1,0 +1,24 @@
+[
+  {
+    "CaseFieldID": "generalEmails",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 18,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "correspondencecaseworker-divorce-superuser",
+    "TabLabel": "Correspondence",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CaseFieldID": "generalLetters",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 18,
+    "TabFieldDisplayOrder": 2,
+    "TabID": "correspondencecaseworker-divorce-superuser",
+    "TabLabel": "Correspondence",
+    "UserRole": ""
+  }
+]

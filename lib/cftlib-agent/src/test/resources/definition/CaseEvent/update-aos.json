@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToStartEvent": "http://localhost:4013/callbacks/about-to-start?eventId=update-aos",
+    "CaseTypeID": "NFD",
+    "Description": "Update Acknowledgement of Service",
+    "DisplayOrder": 107,
+    "EndButtonLabel": "Save Updated AoS Response",
+    "ID": "update-aos",
+    "LiveFrom": "01/01/2017",
+    "Name": "Update AoS",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosDrafted;AosOverdue",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "Y"
+  }
+]

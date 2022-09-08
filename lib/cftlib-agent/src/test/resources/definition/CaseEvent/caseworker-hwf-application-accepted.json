@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-hwf-application-accepted",
+    "CaseTypeID": "NFD",
+    "Description": "HWF application accepted",
+    "DisplayOrder": 55,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-hwf-application-accepted",
+    "LiveFrom": "01/01/2017",
+    "Name": "HWF application accepted",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AwaitingDocuments;AwaitingHWFDecision;AwaitingPayment",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

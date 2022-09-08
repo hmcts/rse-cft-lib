@@ -1,0 +1,23 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "GeneralParties",
+    "ListElement": "Applicant / Applicant's Solicitor",
+    "ListElementCode": "applicant",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "GeneralParties",
+    "ListElement": "Other",
+    "ListElementCode": "other",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "GeneralParties",
+    "ListElement": "Respondent / Respondent's Solicitor",
+    "ListElementCode": "respondent",
+    "LiveFrom": "01/01/2017"
+  }
+]

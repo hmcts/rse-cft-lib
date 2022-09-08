@@ -1,0 +1,17 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Confirm Receipt",
+    "DisplayOrder": 34,
+    "EndButtonLabel": "Save and continue",
+    "EventEnablingCondition": "applicationType=\"jointApplication\"",
+    "ID": "confirm-receipt",
+    "LiveFrom": "01/01/2017",
+    "Name": "Confirm Receipt",
+    "PostConditionState": "Holding",
+    "PreConditionState(s)": "Holding",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

@@ -1,0 +1,67 @@
+[
+  {
+    "CaseEventID": "solicitor-update-contact-details",
+    "CaseFieldID": "applicant1SolicitorAgreeToReceiveEmailsCheckbox",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 4,
+    "PageID": "SolUpdateContactDetails",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventFieldLabel": "Your email",
+    "CaseEventID": "solicitor-update-contact-details",
+    "CaseFieldID": "applicant1SolicitorEmail",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "SolUpdateContactDetails",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CallBackURLMidEvent": "http://localhost:4013/callbacks/mid-event?page=SolUpdateContactDetails&eventId=solicitor-update-contact-details",
+    "CaseEventFieldLabel": "Your name",
+    "CaseEventID": "solicitor-update-contact-details",
+    "CaseFieldID": "applicant1SolicitorName",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "SolUpdateContactDetails",
+    "PageLabel": "Update contact details",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "solicitor-update-contact-details",
+    "CaseFieldID": "applicant1SolicitorOrganisationPolicy",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "COMPLEX",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 5,
+    "PageID": "SolUpdateContactDetails",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventFieldLabel": "Your phone number",
+    "CaseEventID": "solicitor-update-contact-details",
+    "CaseFieldID": "applicant1SolicitorPhone",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "SolUpdateContactDetails",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

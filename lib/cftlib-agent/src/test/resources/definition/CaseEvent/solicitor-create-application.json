@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=solicitor-create-application",
+    "CallBackURLSubmittedEvent": "http://localhost:4013/callbacks/submitted?eventId=solicitor-create-application",
+    "CaseTypeID": "NFD",
+    "Description": "Apply: divorce or dissolution",
+    "DisplayOrder": 22,
+    "EndButtonLabel": "Save Application",
+    "ID": "solicitor-create-application",
+    "LiveFrom": "01/01/2017",
+    "Name": "Apply: divorce or dissolution",
+    "PostConditionState": "Draft",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

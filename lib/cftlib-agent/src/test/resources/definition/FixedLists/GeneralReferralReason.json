@@ -1,0 +1,16 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "GeneralReferralReason",
+    "ListElement": "Caseworker referral",
+    "ListElementCode": "caseworkerReferral",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "GeneralReferralReason",
+    "ListElement": "General application referral",
+    "ListElementCode": "generalApplicationReferral",
+    "LiveFrom": "01/01/2017"
+  }
+]

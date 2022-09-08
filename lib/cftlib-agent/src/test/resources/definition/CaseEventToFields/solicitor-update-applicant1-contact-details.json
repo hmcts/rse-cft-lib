@@ -1,0 +1,62 @@
+[
+  {
+    "CaseEventID": "solicitor-update-applicant1-contact-details",
+    "CaseFieldID": "applicant1Address",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "ApplicantContactDetails",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "solicitor-update-applicant1-contact-details",
+    "CaseFieldID": "applicant1ContactDetailsType",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 5,
+    "PageID": "ApplicantContactDetails",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "solicitor-update-applicant1-contact-details",
+    "CaseFieldID": "applicant1Email",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "ApplicantContactDetails",
+    "PageLabel": "Update applicants contact details",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "solicitor-update-applicant1-contact-details",
+    "CaseFieldID": "applicant1LabelHorizontalLine1",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 4,
+    "PageID": "ApplicantContactDetails"
+  },
+  {
+    "CaseEventID": "solicitor-update-applicant1-contact-details",
+    "CaseFieldID": "applicant1PhoneNumber",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "ApplicantContactDetails",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

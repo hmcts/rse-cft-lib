@@ -1,0 +1,18 @@
+[
+  {
+    "CaseEventID": "caseworker-rejected",
+    "CaseFieldID": "rejectReason",
+    "DisplayContext": "MANDATORY",
+    "FieldDisplayOrder": 3,
+    "ListElementCode": "rejectDetails",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseEventID": "caseworker-rejected",
+    "CaseFieldID": "rejectReason",
+    "DisplayContext": "MANDATORY",
+    "FieldDisplayOrder": 2,
+    "ListElementCode": "rejectReasonType",
+    "LiveFrom": "01/01/2017"
+  }
+]

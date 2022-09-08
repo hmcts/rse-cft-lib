@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=system-update-case-court-hearing",
+    "CaseTypeID": "NFD",
+    "Description": "Update case with court hearing",
+    "DisplayOrder": 110,
+    "EndButtonLabel": "Save and continue",
+    "EventEnablingCondition": "divorceOrDissolution=\"NEVER_SHOW\"",
+    "ID": "system-update-case-court-hearing",
+    "LiveFrom": "01/01/2017",
+    "Name": "Update case with court hearing",
+    "PostConditionState": "AwaitingPronouncement",
+    "PreConditionState(s)": "AwaitingPronouncement",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

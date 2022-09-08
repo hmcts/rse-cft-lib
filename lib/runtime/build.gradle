@@ -1,3 +1,4 @@
+
 dependencies {
     compileOnly project(':lib:bootstrapper')
 
@@ -12,10 +13,6 @@ dependencies {
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.13'
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway:3.1.2'
-
-
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.13.2'
 }
 
 task zipCompose(type: Zip) {

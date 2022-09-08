@@ -1,0 +1,16 @@
+[
+  {
+    "DisplayOrder": 2,
+    "ID": "PaperCasePaymentMethod",
+    "ListElement": "Cheque/Postal Order",
+    "ListElementCode": "chequeOrPostalOrder",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "PaperCasePaymentMethod",
+    "ListElement": "Phone",
+    "ListElementCode": "phone",
+    "LiveFrom": "01/01/2017"
+  }
+]

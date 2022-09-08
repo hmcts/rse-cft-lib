@@ -1,0 +1,35 @@
+[
+  {
+    "ElementLabel": "Body",
+    "FieldType": "TextArea",
+    "ID": "GeneralEmailDetails",
+    "ListElementCode": "generalEmailBody",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Email created by",
+    "FieldType": "Text",
+    "ID": "GeneralEmailDetails",
+    "ListElementCode": "generalEmailCreatedBy",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "General email date",
+    "FieldType": "DateTime",
+    "ID": "GeneralEmailDetails",
+    "ListElementCode": "generalEmailDateTime",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Address to",
+    "FieldType": "FixedList",
+    "FieldTypeParameter": "GeneralParties",
+    "ID": "GeneralEmailDetails",
+    "ListElementCode": "generalEmailParties",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  }
+]

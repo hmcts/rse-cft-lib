@@ -1,0 +1,16 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Applicant 1 confirms receipt for joint application",
+    "DisplayOrder": 12,
+    "EndButtonLabel": "Save and continue",
+    "ID": "applicant1-confirm-receipt",
+    "LiveFrom": "01/01/2017",
+    "Name": "Applicant 1 Confirm Receipt",
+    "PostConditionState": "Holding",
+    "PreConditionState(s)": "Holding",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

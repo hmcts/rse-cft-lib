@@ -43,6 +43,13 @@ public interface CFTLib {
     void importDefinition(File def);
 
     /**
+     * Import a CCD definition from json in the format used by the ccd definition processor.
+     *
+     * @param defFolder folder containing json ccd definition
+     */
+    void importJsonDefinition(File defFolder);
+
+    /**
      * Obtain connections to common component databases.
      */
     Connection getConnection(Database database);

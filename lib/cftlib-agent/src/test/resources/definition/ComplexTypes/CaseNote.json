@@ -1,0 +1,26 @@
+[
+  {
+    "ElementLabel": "Author",
+    "FieldType": "Text",
+    "ID": "CaseNote",
+    "ListElementCode": "author",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Date",
+    "FieldType": "Date",
+    "ID": "CaseNote",
+    "ListElementCode": "date",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Note",
+    "FieldType": "TextArea",
+    "ID": "CaseNote",
+    "ListElementCode": "note",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  }
+]

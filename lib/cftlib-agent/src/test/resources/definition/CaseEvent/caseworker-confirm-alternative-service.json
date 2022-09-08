@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-confirm-alternative-service",
+    "CaseTypeID": "NFD",
+    "Description": "Confirm alternative service",
+    "DisplayOrder": 33,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-confirm-alternative-service",
+    "LiveFrom": "01/01/2017",
+    "Name": "Confirm alternative service",
+    "PostConditionState": "Holding",
+    "PreConditionState(s)": "AwaitingAlternativeService",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

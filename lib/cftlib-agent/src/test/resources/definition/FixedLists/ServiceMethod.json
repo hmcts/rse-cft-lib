@@ -1,0 +1,23 @@
+[
+  {
+    "DisplayOrder": 2,
+    "ID": "ServiceMethod",
+    "ListElement": "Court Service",
+    "ListElementCode": "courtService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "ServiceMethod",
+    "ListElement": "Personal Service",
+    "ListElementCode": "personalService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "ServiceMethod",
+    "ListElement": "Solicitor Service",
+    "ListElementCode": "solicitorService",
+    "LiveFrom": "01/01/2017"
+  }
+]

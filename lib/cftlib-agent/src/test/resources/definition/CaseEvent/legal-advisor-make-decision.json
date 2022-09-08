@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=legal-advisor-make-decision",
+    "CaseTypeID": "NFD",
+    "Description": "Grant Conditional Order",
+    "DisplayOrder": 62,
+    "EndButtonLabel": "Submit",
+    "ID": "legal-advisor-make-decision",
+    "LiveFrom": "01/01/2017",
+    "Name": "Make a decision",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AwaitingLegalAdvisorReferral;ClarificationSubmitted",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

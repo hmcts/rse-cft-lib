@@ -1,0 +1,16 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Final Order pending",
+    "DisplayOrder": 48,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-final-order-pending",
+    "LiveFrom": "01/01/2017",
+    "Name": "Final Order pending",
+    "PostConditionState": "FinalOrderPending",
+    "PreConditionState(s)": "AwaitingFinalOrder;FinalOrderOverdue;FinalOrderRequested",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

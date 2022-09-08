@@ -1,0 +1,20 @@
+[
+  {
+    "CallBackURLAboutToStartEvent": "http://localhost:4013/callbacks/about-to-start?eventId=submit-aos",
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=submit-aos",
+    "CallBackURLSubmittedEvent": "http://localhost:4013/callbacks/submitted?eventId=submit-aos",
+    "CaseTypeID": "NFD",
+    "Description": "Submit AoS",
+    "DisplayOrder": 99,
+    "EndButtonLabel": "Save and continue",
+    "EventEnablingCondition": "applicationType=\"soleApplication\"",
+    "ID": "submit-aos",
+    "LiveFrom": "01/01/2017",
+    "Name": "Submit AoS",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosDrafted;AosOverdue;AwaitingAlternativeService;AwaitingBailiffReferral;AwaitingBailiffService;AwaitingConditionalOrder;AwaitingDwpResponse;AwaitingGeneralConsideration;AwaitingGeneralReferralPayment;AwaitingJudgeClarification;AwaitingServiceConsideration;AwaitingServicePayment;GeneralApplicationReceived;GeneralConsiderationComplete;Holding;IssuedToBailiff;OfflineDocumentReceived;PendingHearingOutcome",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "Y"
+  }
+]

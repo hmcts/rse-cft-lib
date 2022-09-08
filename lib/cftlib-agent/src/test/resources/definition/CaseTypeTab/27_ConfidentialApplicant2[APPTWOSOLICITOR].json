@@ -1,0 +1,36 @@
+[
+  {
+    "CaseFieldID": "applicant2Address",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 27,
+    "TabFieldDisplayOrder": 3,
+    "TabID": "ConfidentialApplicant2[APPTWOSOLICITOR]",
+    "TabLabel": "Confidential Applicant 2",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant2Email",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 27,
+    "TabFieldDisplayOrder": 2,
+    "TabID": "ConfidentialApplicant2[APPTWOSOLICITOR]",
+    "TabLabel": "Confidential Applicant 2",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant2PhoneNumber",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 27,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "ConfidentialApplicant2[APPTWOSOLICITOR]",
+    "TabLabel": "Confidential Applicant 2",
+    "TabShowCondition": "applicant2ContactDetailsType=\"private\" AND applicationType=\"jointApplication\"",
+    "UserRole": "[APPTWOSOLICITOR]"
+  }
+]

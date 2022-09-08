@@ -1,0 +1,226 @@
+[
+  {
+    "DisplayOrder": 2,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Annex A",
+    "ListElementCode": "annexa",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Acknowledgement of Service",
+    "ListElementCode": "aos",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - AoS offline invitation letter Respondent",
+    "ListElementCode": "aosInvitationLetterOfflineResp",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 4,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Application",
+    "ListElementCode": "application",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 5,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Bailiff Service",
+    "ListElementCode": "bailiffService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 6,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Certificate Of Entitlement",
+    "ListElementCode": "coe",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 8,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Conditional Order Application (D84)",
+    "ListElementCode": "conditionalOrderApplication",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 9,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Conditional Order Granted",
+    "ListElementCode": "conditionalOrderGranted",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 11,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Correspondence",
+    "ListElementCode": "correspondence",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 12,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Costs",
+    "ListElementCode": "costs",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 13,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Costs Order",
+    "ListElementCode": "costsOrder",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 7,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Conditional Order Answers",
+    "ListElementCode": "coAnswers",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 10,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Conditional Order refusal - clarification response",
+    "ListElementCode": "coRefusalClarificationResp",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 16,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - D84A",
+    "ListElementCode": "d84a",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 17,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - D9D",
+    "ListElementCode": "d9d",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 18,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - D9H",
+    "ListElementCode": "d9h",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 14,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Deemed Service",
+    "ListElementCode": "deemedService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 15,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Dispense with Service",
+    "ListElementCode": "dispenseWithService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 19,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Email",
+    "ListElementCode": "email",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 20,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Final Order Application",
+    "ListElementCode": "finalOrderApplication",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 21,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Final Order Granted",
+    "ListElementCode": "finalOrderGranted",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 22,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - General letter",
+    "ListElementCode": "generalLetter",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 23,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Marriage certificate",
+    "ListElementCode": "marriageCert",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 24,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Marriage certificate translation",
+    "ListElementCode": "marriageCertTranslation",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 25,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Name change evidence",
+    "ListElementCode": "nameChange",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 31,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Notice of proceedings for applicant/applicant 1",
+    "ListElementCode": "noticeOfProceedings",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 32,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Notice of proceedings for respondent/applicant 2",
+    "ListElementCode": "noticeOfProceedingsApp2",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 26,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Notice of refusal of entitlement to a CO",
+    "ListElementCode": "noticeOfRefusalOfEntitlement",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 27,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Other",
+    "ListElementCode": "other",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 28,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Respondent Answers",
+    "ListElementCode": "respondentAnswers",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 29,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Solicitor Service",
+    "ListElementCode": "solicitorService",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 30,
+    "ID": "ConfidentialDocumentsReceived",
+    "ListElement": "Confidential - Welsh Translation",
+    "ListElementCode": "welshTranslation",
+    "LiveFrom": "01/01/2017"
+  }
+]

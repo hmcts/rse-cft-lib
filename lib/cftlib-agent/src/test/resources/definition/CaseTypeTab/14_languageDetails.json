@@ -1,0 +1,123 @@
+[
+  {
+    "CaseFieldID": "LabelLanguageDetails-Applicant",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 14,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "languageDetails",
+    "TabLabel": "Language",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "LabelLanguageDetails-Respondent",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 14,
+    "TabFieldDisplayOrder": 6,
+    "TabID": "languageDetails",
+    "TabLabel": "Language",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant1FinalOrderLateExplanationTranslated",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 14,
+    "TabFieldDisplayOrder": 5,
+    "TabID": "languageDetails",
+    "TabLabel": "Language",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant1LanguagePreferenceWelsh",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 14,
+    "TabFieldDisplayOrder": 2,
+    "TabID": "languageDetails",
+    "TabLabel": "Language",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant1LegalProceedingsDetailsTranslated",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 14,
+    "TabFieldDisplayOrder": 3,
+    "TabID": "languageDetails",
+    "TabLabel": "Language",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant2LanguagePreferenceWelsh",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 14,
+    "TabFieldDisplayOrder": 7,
+    "TabID": "languageDetails",
+    "TabLabel": "Language",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant2LegalProceedingsDetailsTranslated",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 14,
+    "TabFieldDisplayOrder": 8,
+    "TabID": "languageDetails",
+    "TabLabel": "Language",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "coApplicant1ReasonInformationNotCorrectTranslated",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 14,
+    "TabFieldDisplayOrder": 4,
+    "TabID": "languageDetails",
+    "TabLabel": "Language",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "coApplicant2ReasonInformationNotCorrectTranslated",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 14,
+    "TabFieldDisplayOrder": 9,
+    "TabID": "languageDetails",
+    "TabLabel": "Language",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "coRefusalClarificationAdditionalInfoTranslated",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 14,
+    "TabFieldDisplayOrder": 11,
+    "TabID": "languageDetails",
+    "TabLabel": "Language",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 14,
+    "TabFieldDisplayOrder": 10,
+    "TabID": "languageDetails",
+    "TabLabel": "Language",
+    "UserRole": ""
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "CaseEventID": "solicitor-update-application",
+    "CaseFieldID": "applicant2SolicitorOrganisationPolicy",
+    "DefaultValue": "[APPTWOSOLICITOR]",
+    "DisplayContext": "OPTIONAL",
+    "FieldDisplayOrder": 9,
+    "FieldShowCondition": "divorceOrDissolution=\"NEVER_SHOW\"",
+    "ListElementCode": "OrgPolicyCaseAssignedRole",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseEventID": "solicitor-update-application",
+    "CaseFieldID": "applicant2SolicitorOrganisationPolicy",
+    "DisplayContext": "OPTIONAL",
+    "FieldDisplayOrder": 10,
+    "FieldShowCondition": "divorceOrDissolution=\"NEVER_SHOW\"",
+    "ListElementCode": "OrgPolicyReference",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseEventID": "solicitor-update-application",
+    "CaseFieldID": "applicant2SolicitorOrganisationPolicy",
+    "DisplayContext": "OPTIONAL",
+    "FieldDisplayOrder": 8,
+    "ListElementCode": "Organisation.OrganisationID",
+    "LiveFrom": "01/01/2017"
+  }
+]

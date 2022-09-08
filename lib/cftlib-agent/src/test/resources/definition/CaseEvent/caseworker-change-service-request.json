@@ -1,0 +1,16 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Change service request",
+    "DisplayOrder": 31,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-change-service-request",
+    "LiveFrom": "01/01/2017",
+    "Name": "Change service request",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AwaitingDocuments;AwaitingHWFDecision;Submitted",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "Y"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "ProgressPaperCase",
+    "ListElement": "Awaiting applicant",
+    "ListElementCode": "awaitingDocuments",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 4,
+    "ID": "ProgressPaperCase",
+    "ListElement": "Awaiting HWF Decision",
+    "ListElementCode": "awaitingHwfDecision",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "ProgressPaperCase",
+    "ListElement": "Awaiting payment",
+    "ListElementCode": "awaitingPayment",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "ProgressPaperCase",
+    "ListElement": "Submitted",
+    "ListElementCode": "submitted",
+    "LiveFrom": "01/01/2017"
+  }
+]

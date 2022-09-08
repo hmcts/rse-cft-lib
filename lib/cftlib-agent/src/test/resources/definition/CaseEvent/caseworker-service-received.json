@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-service-received",
+    "CaseTypeID": "NFD",
+    "Description": "Service application received",
+    "DisplayOrder": 96,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-service-received",
+    "LiveFrom": "01/01/2017",
+    "Name": "Service application received",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosDrafted;AosOverdue;AwaitingAos;AwaitingDocuments;GeneralApplicationReceived;Submitted",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

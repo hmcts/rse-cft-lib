@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToStartEvent": "http://localhost:4013/callbacks/about-to-start?eventId=caseworker-offline-document-verified",
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-offline-document-verified",
+    "CaseTypeID": "NFD",
+    "Description": "Offline Document Verified",
+    "DisplayOrder": 69,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-offline-document-verified",
+    "LiveFrom": "01/01/2017",
+    "Name": "Offline Document Verified",
+    "PostConditionState": "OfflineDocumentReceived",
+    "PreConditionState(s)": "OfflineDocumentReceived",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "DisplayOrder": 1,
+    "ID": "ClarificationReason",
+    "ListElement": "Jurisdiction details",
+    "ListElementCode": "jurisdictionDetails",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "ClarificationReason",
+    "ListElement": "Marriage certificate",
+    "ListElementCode": "marriageCertificate",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "ClarificationReason",
+    "ListElement": "Translation of marriage certificate",
+    "ListElementCode": "marriageCertTranslation",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 5,
+    "ID": "ClarificationReason",
+    "ListElement": "Enter free Text / Make free text order",
+    "ListElementCode": "other",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 4,
+    "ID": "ClarificationReason",
+    "ListElement": "Previous proceedings details",
+    "ListElementCode": "previousProceedingDetails",
+    "LiveFrom": "01/01/2017"
+  }
+]

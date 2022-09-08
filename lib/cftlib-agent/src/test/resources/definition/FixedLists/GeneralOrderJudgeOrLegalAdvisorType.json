@@ -1,0 +1,44 @@
+[
+  {
+    "DisplayOrder": 5,
+    "ID": "GeneralOrderJudgeOrLegalAdvisorType",
+    "ListElement": "Assistant Justice's Clerk",
+    "ListElementCode": "assistantJusticesClerk",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 2,
+    "ID": "GeneralOrderJudgeOrLegalAdvisorType",
+    "ListElement": "Deputy District Judge",
+    "ListElementCode": "deputyDistrictJudge",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "GeneralOrderJudgeOrLegalAdvisorType",
+    "ListElement": "District Judge",
+    "ListElementCode": "districtJudge",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 4,
+    "ID": "GeneralOrderJudgeOrLegalAdvisorType",
+    "ListElement": "Her Honour Judge",
+    "ListElementCode": "herHonourJudge",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "GeneralOrderJudgeOrLegalAdvisorType",
+    "ListElement": "His Honour Judge",
+    "ListElementCode": "hisHonourJudge",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 6,
+    "ID": "GeneralOrderJudgeOrLegalAdvisorType",
+    "ListElement": "Proper Officer of the Court",
+    "ListElementCode": "properOfficerOfTheCourt",
+    "LiveFrom": "01/01/2017"
+  }
+]

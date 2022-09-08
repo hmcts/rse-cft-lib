@@ -1,0 +1,147 @@
+[
+  {
+    "CaseFieldID": "alternativeServiceMedium",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 38,
+    "TabFieldDisplayOrder": 6,
+    "TabID": "generalReferralcaseworker-divorce-superuser",
+    "TabLabel": "General Referral",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "generalApplicationAddedDate",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 38,
+    "TabFieldDisplayOrder": 4,
+    "TabID": "generalReferralcaseworker-divorce-superuser",
+    "TabLabel": "General Referral",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "generalApplicationFrom",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "generalApplicationFrom=\"*\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 38,
+    "TabFieldDisplayOrder": 2,
+    "TabID": "generalReferralcaseworker-divorce-superuser",
+    "TabLabel": "General Referral",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "generalApplicationReferralDate",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "generalApplicationReferralDate=\"*\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 38,
+    "TabFieldDisplayOrder": 3,
+    "TabID": "generalReferralcaseworker-divorce-superuser",
+    "TabLabel": "General Referral",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "generalReferralDecision",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 38,
+    "TabFieldDisplayOrder": 11,
+    "TabID": "generalReferralcaseworker-divorce-superuser",
+    "TabLabel": "General Referral",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "generalReferralDecisionDate",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 38,
+    "TabFieldDisplayOrder": 10,
+    "TabID": "generalReferralcaseworker-divorce-superuser",
+    "TabLabel": "General Referral",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "generalReferralDecisionReason",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 38,
+    "TabFieldDisplayOrder": 12,
+    "TabID": "generalReferralcaseworker-divorce-superuser",
+    "TabLabel": "General Referral",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "generalReferralFeePaymentMethod",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 38,
+    "TabFieldDisplayOrder": 9,
+    "TabID": "generalReferralcaseworker-divorce-superuser",
+    "TabLabel": "General Referral",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "generalReferralFeeRequired",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 38,
+    "TabFieldDisplayOrder": 8,
+    "TabID": "generalReferralcaseworker-divorce-superuser",
+    "TabLabel": "General Referral",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "generalReferralJudgeOrLegalAdvisorDetails",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 38,
+    "TabFieldDisplayOrder": 7,
+    "TabID": "generalReferralcaseworker-divorce-superuser",
+    "TabLabel": "General Referral",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "generalReferralReason",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 38,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "generalReferralcaseworker-divorce-superuser",
+    "TabLabel": "General Referral",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CaseFieldID": "generalReferralType",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 38,
+    "TabFieldDisplayOrder": 5,
+    "TabID": "generalReferralcaseworker-divorce-superuser",
+    "TabLabel": "General Referral",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "generalReferrals",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 38,
+    "TabFieldDisplayOrder": 13,
+    "TabID": "generalReferralcaseworker-divorce-superuser",
+    "TabLabel": "General Referral",
+    "UserRole": ""
+  }
+]

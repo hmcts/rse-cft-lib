@@ -1,0 +1,18 @@
+[
+  {
+    "ElementLabel": "Action",
+    "FieldType": "Text",
+    "ID": "BulkScanEnvelope",
+    "ListElementCode": "action",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ElementLabel": "Envelope id",
+    "FieldType": "Text",
+    "ID": "BulkScanEnvelope",
+    "ListElementCode": "id",
+    "LiveFrom": "01/01/2017",
+    "SecurityClassification": "Public"
+  }
+]

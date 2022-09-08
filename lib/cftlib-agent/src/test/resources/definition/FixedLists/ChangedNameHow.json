@@ -1,0 +1,23 @@
+[
+  {
+    "DisplayOrder": 2,
+    ${CCD_DEF_CHANGED_NAME_HOW},
+    "ListElement": "Deed poll",
+    "ListElementCode": "deedPoll",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "ChangedNameHow",
+    "ListElement": "Their marriage or civil partnership certificate",
+    "ListElementCode": "marriageCertificate",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "ChangedNameHow",
+    "ListElement": "Other",
+    "ListElementCode": "other",
+    "LiveFrom": "01/01/2017"
+  }
+]

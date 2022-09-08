@@ -1,0 +1,76 @@
+[
+  {
+    "CaseEventID": "submit-clarification",
+    "CaseFieldID": "coCannotUploadClarificationDocuments",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "FieldShowCondition": "coRefusalDecision=\"NEVER_SHOW\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "submitClarificationForCO",
+    "PageLabel": "Submit clarification for conditional order",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "submit-clarification",
+    "CaseFieldID": "coClarificationResponses",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 5,
+    "PageID": "submitClarificationForCO",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "submit-clarification",
+    "CaseFieldID": "coClarificationUploadDocuments",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 6,
+    "PageID": "submitClarificationForCO",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "submit-clarification",
+    "CaseFieldID": "coRefusalClarificationAdditionalInfo",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 4,
+    "PageID": "submitClarificationForCO",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "submit-clarification",
+    "CaseFieldID": "coRefusalDecision",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "submitClarificationForCO",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "submit-clarification",
+    "CaseFieldID": "coRefusalOrderDocument",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "submitClarificationForCO",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

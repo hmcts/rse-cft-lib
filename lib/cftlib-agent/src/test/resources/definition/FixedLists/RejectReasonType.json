@@ -1,0 +1,23 @@
+[
+  {
+    "DisplayOrder": 2,
+    "ID": "RejectReasonType",
+    "ListElement": "Incorrect information",
+    "ListElementCode": "incorrectInfo",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 1,
+    "ID": "RejectReasonType",
+    "ListElement": "No information",
+    "ListElementCode": "noInfo",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "DisplayOrder": 3,
+    "ID": "RejectReasonType",
+    "ListElement": "Other",
+    "ListElementCode": "Other",
+    "LiveFrom": "01/01/2017"
+  }
+]

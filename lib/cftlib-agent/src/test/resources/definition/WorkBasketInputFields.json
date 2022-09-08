@@ -1,0 +1,151 @@
+[
+  {
+    "CaseFieldID": "[CASE_REFERENCE]",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 1,
+    "Label": "CCD reference",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "alternativeServiceType",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 10,
+    "Label": "Type of service",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant1Address",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 11,
+    "Label": "Applicant postcode",
+    "ListElementCode": "PostCode",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant1Email",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 13,
+    "Label": "Applicant email",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant1FirstName",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 15,
+    "Label": "Applicant first name",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant1HWFReferenceNumber",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 5,
+    "Label": "Applicant 1 HWF reference",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant1LanguagePreferenceWelsh",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 20,
+    "Label": "Applicant Welsh Translation",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant1LastName",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 16,
+    "Label": "Applicant last name",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant1SolicitorFirmName",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 9,
+    "Label": "Solicitor firm name",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant2Address",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 12,
+    "Label": "Respondent postcode",
+    "ListElementCode": "PostCode",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant2Email",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 14,
+    "Label": "Respondent email",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant2FirstName",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 17,
+    "Label": "Respondent first name",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant2HWFReferenceNumber",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 6,
+    "Label": "Applicant 2 HWF reference",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant2LanguagePreferenceWelsh",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 21,
+    "Label": "Respondent Welsh Translation",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicant2LastName",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 18,
+    "Label": "Respondent last name",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "applicationType",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 2,
+    "Label": "Application Type (sole or joint)",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "evidenceHandled",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 19,
+    "Label": "Supplementary evidence handled",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "generalReferralUrgentCase",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 8,
+    "Label": "Urgent general referral case",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "marriageDate",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 3,
+    "Label": "Marriage date",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "solPaymentHowToPay",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 4,
+    "Label": "Payment method",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseFieldID": "solUrgentCase",
+    "CaseTypeID": "NFD",
+    "DisplayOrder": 7,
+    "Label": "Urgent case",
+    "LiveFrom": "01/01/2017"
+  }
+]

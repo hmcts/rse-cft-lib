@@ -1,0 +1,51 @@
+[
+  {
+    "CaseEventID": "submit-joint-conditional-order",
+    "CaseFieldID": "coApplicant2SolicitorAdditionalComments",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 4,
+    "PageID": "JointConditionalOrderSoT",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "submit-joint-conditional-order",
+    "CaseFieldID": "coApplicant2SolicitorFirm",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "JointConditionalOrderSoT",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "submit-joint-conditional-order",
+    "CaseFieldID": "coApplicant2SolicitorName",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "JointConditionalOrderSoT",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "submit-joint-conditional-order",
+    "CaseFieldID": "coApplicant2StatementOfTruth",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "JointConditionalOrderSoT",
+    "PageLabel": "Statement of Truth - submit joint conditional order",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=system-notify-applicant-dispute-form-overdue",
+    "CaseTypeID": "NFD",
+    "Description": "Notify applicant that Dispute Form is overdue",
+    "DisplayOrder": 44,
+    "EndButtonLabel": "Save and continue",
+    "ID": "system-notify-applicant-dispute-form-overdue",
+    "LiveFrom": "01/01/2017",
+    "Name": "Dispute Form Overdue",
+    "PostConditionState": "Holding",
+    "PreConditionState(s)": "Holding",
+    "RetriesTimeoutURLAboutToSubmitEvent": "120,120",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

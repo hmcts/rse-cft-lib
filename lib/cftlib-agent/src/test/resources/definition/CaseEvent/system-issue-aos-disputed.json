@@ -1,0 +1,16 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "AoS disputed",
+    "DisplayOrder": 9,
+    "EndButtonLabel": "Save and continue",
+    "ID": "system-issue-aos-disputed",
+    "LiveFrom": "01/01/2017",
+    "Name": "AoS disputed",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosOverdue;AwaitingAlternativeService;AwaitingAos;AwaitingBailiffReferral;AwaitingBailiffService;AwaitingConditionalOrder;AwaitingDwpResponse;AwaitingGeneralConsideration;AwaitingGeneralReferralPayment;AwaitingJudgeClarification;AwaitingServiceConsideration;AwaitingServicePayment;GeneralApplicationReceived;GeneralConsiderationComplete;Holding;IssuedToBailiff;OfflineDocumentReceived;PendingHearingOutcome",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "N",
+    "ShowSummary": "N"
+  }
+]

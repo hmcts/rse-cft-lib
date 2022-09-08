@@ -1,3 +1,8 @@
+
+repositories {
+    mavenLocal()
+}
+
 dependencies {
     // All these dependencies will be provided at runtime by the service this
     // library is injected into.
@@ -20,4 +25,25 @@ dependencies {
     // This is needed at runtime to decode JWTs
     implementation 'com.auth0:java-jwt:3.12.0'
 
+    // Intellij cannot resolve classes from the shadow configuration
+    // so to fix intellisense we make definition store available as compile only dependencies.
+    // https://youtrack.jetbrains.com/issue/IDEA-163411
+    rootProject.ext.importedDefStoreModules.each {
+        compileOnly ("uk.gov.hmcts.ccd.definition:${it}") {
+            transitive = false
+        }
+    }
+    // Use the fat definition store code at compile time.
+    compileOnly (project (path: ':projects:definition-store-fat', configuration: 'shadow'))
+
+    // Provide definition store for running tests
+    testImplementation 'com.github.hmcts.rse-cft-lib:definition-store-fat:DEV-SNAPSHOT'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.3'
+}
+
+
+test {
+    useJUnitPlatform()
+    // Test environment variable substitution - this value should be subbed into one of our FixedLists
+    environment 'CCD_DEF_CHANGED_NAME_HOW', '"ID": "ChangedNameHow"'
 }

@@ -21,3 +21,8 @@ spring:
           uri: http://localhost:4013
           predicates:
             - Path=/**
+
+ccd:
+  definition:
+    paths:
+      NFD: src/test/resources/definition/

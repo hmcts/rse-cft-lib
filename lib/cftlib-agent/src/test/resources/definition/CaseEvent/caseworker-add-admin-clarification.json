@@ -1,0 +1,16 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Add admin clarification",
+    "DisplayOrder": 1,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-add-admin-clarification",
+    "LiveFrom": "01/01/2017",
+    "Name": "Add admin clarification",
+    "PostConditionState": "ClarificationSubmitted",
+    "PreConditionState(s)": "AwaitingAdminClarification",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

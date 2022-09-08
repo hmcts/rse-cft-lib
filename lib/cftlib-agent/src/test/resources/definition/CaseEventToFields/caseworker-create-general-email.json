@@ -1,0 +1,54 @@
+[
+  {
+    "CaseEventID": "caseworker-create-general-email",
+    "CaseFieldID": "generalEmailDetails",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 4,
+    "PageID": "createGeneralEmail",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-create-general-email",
+    "CaseFieldID": "generalEmailOtherRecipientEmail",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "FieldShowCondition": "generalEmailParties=\"other\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "createGeneralEmail",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-create-general-email",
+    "CaseFieldID": "generalEmailOtherRecipientName",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "FieldShowCondition": "generalEmailParties=\"other\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "createGeneralEmail",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CallBackURLMidEvent": "http://localhost:4013/callbacks/mid-event?page=createGeneralEmail&eventId=caseworker-create-general-email",
+    "CaseEventID": "caseworker-create-general-email",
+    "CaseFieldID": "generalEmailParties",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "createGeneralEmail",
+    "PageLabel": "Create general email",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

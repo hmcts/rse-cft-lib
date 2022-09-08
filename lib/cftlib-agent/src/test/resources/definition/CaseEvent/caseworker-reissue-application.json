@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-reissue-application",
+    "CallBackURLSubmittedEvent": "http://localhost:4013/callbacks/submitted?eventId=caseworker-reissue-application",
+    "CaseTypeID": "NFD",
+    "Description": "Application reissued",
+    "DisplayOrder": 79,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-reissue-application",
+    "LiveFrom": "01/01/2017",
+    "Name": "Reissue",
+    "PostConditionState": "*",
+    "PreConditionState(s)": "AosDrafted;AosOverdue;AwaitingAos;AwaitingDocuments;AwaitingDwpResponse;AwaitingService;ConditionalOrderRefused;Holding",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

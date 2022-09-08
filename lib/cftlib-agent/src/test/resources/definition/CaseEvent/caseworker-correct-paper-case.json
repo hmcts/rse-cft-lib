@@ -1,0 +1,18 @@
+[
+  {
+    "CallBackURLAboutToStartEvent": "http://localhost:4013/callbacks/about-to-start?eventId=caseworker-correct-paper-case",
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=caseworker-correct-paper-case",
+    "CaseTypeID": "NFD",
+    "Description": "Correct paper case",
+    "DisplayOrder": 37,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-correct-paper-case",
+    "LiveFrom": "01/01/2017",
+    "Name": "Correct paper case",
+    "PostConditionState": "NewPaperCase",
+    "PreConditionState(s)": "NewPaperCase",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

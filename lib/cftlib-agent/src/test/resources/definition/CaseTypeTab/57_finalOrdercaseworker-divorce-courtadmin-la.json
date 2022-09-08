@@ -1,0 +1,138 @@
+[
+  {
+    "CaseFieldID": "applicant1FinalOrderLateExplanation",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 57,
+    "TabFieldDisplayOrder": 4,
+    "TabID": "finalOrdercaseworker-divorce-courtadmin-la",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant1FinalOrderStatementOfTruth",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 57,
+    "TabFieldDisplayOrder": 5,
+    "TabID": "finalOrdercaseworker-divorce-courtadmin-la",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "applicant2FinalOrderExplanation",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 57,
+    "TabFieldDisplayOrder": 12,
+    "TabID": "finalOrdercaseworker-divorce-courtadmin-la",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "dateFinalOrderEligibleToRespondent",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 57,
+    "TabFieldDisplayOrder": 9,
+    "TabID": "finalOrdercaseworker-divorce-courtadmin-la",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "dateFinalOrderNoLongerEligible",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 57,
+    "TabFieldDisplayOrder": 8,
+    "TabID": "finalOrdercaseworker-divorce-courtadmin-la",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "doesApplicant1WantToApplyForFinalOrder",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 57,
+    "TabFieldDisplayOrder": 3,
+    "TabID": "finalOrdercaseworker-divorce-courtadmin-la",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "doesApplicant2WantToApplyForFinalOrder",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 57,
+    "TabFieldDisplayOrder": 11,
+    "TabID": "finalOrdercaseworker-divorce-courtadmin-la",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "granted",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 57,
+    "TabFieldDisplayOrder": 6,
+    "TabID": "finalOrdercaseworker-divorce-courtadmin-la",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "grantedDate",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 57,
+    "TabFieldDisplayOrder": 7,
+    "TabID": "finalOrdercaseworker-divorce-courtadmin-la",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "labelContentFinaliseDivorceOrEndCivilPartnership",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 57,
+    "TabFieldDisplayOrder": 2,
+    "TabID": "finalOrdercaseworker-divorce-courtadmin-la",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  },
+  {
+    "CaseFieldID": "labelFinalOrderDetails-SoleApplicant",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "applicationType=\"soleApplication\" AND doesApplicant1WantToApplyForFinalOrder=\"*\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 57,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "finalOrdercaseworker-divorce-courtadmin-la",
+    "TabLabel": "Final Order",
+    "TabShowCondition": "[STATE]=\"AwaitingFinalOrder\" OR [STATE]=\"FinalOrderRequested\" OR [STATE]=\"FinalOrderPending\" OR [STATE]=\"FinalOrderOverdue\" OR [STATE]=\"FinalOrderComplete\"",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CaseFieldID": "labelFinalOrderDetails-SoleRespondent",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "FieldShowCondition": "applicationType=\"soleApplication\" AND doesApplicant2WantToApplyForFinalOrder=\"*\"",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 57,
+    "TabFieldDisplayOrder": 10,
+    "TabID": "finalOrdercaseworker-divorce-courtadmin-la",
+    "TabLabel": "Final Order",
+    "UserRole": ""
+  }
+]

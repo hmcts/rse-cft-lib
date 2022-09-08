@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=submit-clarification",
+    "CaseTypeID": "NFD",
+    "Description": "Submit clarification for conditional order",
+    "DisplayOrder": 100,
+    "EndButtonLabel": "Save and continue",
+    "ID": "submit-clarification",
+    "LiveFrom": "01/01/2017",
+    "Name": "Submit clarification for CO",
+    "PostConditionState": "ClarificationSubmitted",
+    "PreConditionState(s)": "AwaitingClarification",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

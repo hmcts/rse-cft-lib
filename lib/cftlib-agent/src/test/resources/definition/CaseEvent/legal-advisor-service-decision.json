@@ -1,0 +1,17 @@
+[
+  {
+    "CallBackURLAboutToSubmitEvent": "http://localhost:4013/callbacks/about-to-submit?eventId=legal-advisor-service-decision",
+    "CaseTypeID": "NFD",
+    "Description": "Make service decision",
+    "DisplayOrder": 64,
+    "EndButtonLabel": "Save and continue",
+    "ID": "legal-advisor-service-decision",
+    "LiveFrom": "01/01/2017",
+    "Name": "Make service decision",
+    "PostConditionState": "AwaitingServiceConsideration",
+    "PreConditionState(s)": "AwaitingServiceConsideration",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "Y"
+  }
+]

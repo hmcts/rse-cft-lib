@@ -1,0 +1,38 @@
+[
+  {
+    "CaseEventID": "caseworker-upload-documents-and-submit",
+    "CaseFieldID": "LabelUploadDocumentsPara-1",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "caseworkerUploadDocuments",
+    "PageLabel": "Upload the documents"
+  },
+  {
+    "CaseEventID": "caseworker-upload-documents-and-submit",
+    "CaseFieldID": "applicant1DocumentsUploaded",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "caseworkerUploadDocuments",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-upload-documents-and-submit",
+    "CaseFieldID": "documentUploadComplete",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "caseworkerUploadDocuments",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

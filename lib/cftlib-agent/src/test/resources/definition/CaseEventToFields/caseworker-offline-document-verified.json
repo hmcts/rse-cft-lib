@@ -1,0 +1,66 @@
+[
+  {
+    "CaseEventID": "caseworker-offline-document-verified",
+    "CaseFieldID": "applicationType",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "READONLY",
+    "FieldShowCondition": "typeOfDocumentAttached=\"ALWAYS_HIDE\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "documentTypeReceived",
+    "PageShowCondition": "applicationType=\"soleApplication\""
+  },
+  {
+    "CaseEventID": "caseworker-offline-document-verified",
+    "CaseFieldID": "howToRespondApplication",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "FieldShowCondition": "typeOfDocumentAttached=\"D10\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "documentTypeReceived",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-offline-document-verified",
+    "CaseFieldID": "scannedDocumentNames",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "FieldShowCondition": "typeOfDocumentAttached=\"D10\"",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 4,
+    "PageID": "documentTypeReceived",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-offline-document-verified",
+    "CaseFieldID": "stateToTransitionApplicationTo",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 2,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "stateToTransitionTo",
+    "PageShowCondition": "applicationType=\"jointApplication\" OR typeOfDocumentAttached=\"Other\"",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "caseworker-offline-document-verified",
+    "CaseFieldID": "typeOfDocumentAttached",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "documentTypeReceived",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

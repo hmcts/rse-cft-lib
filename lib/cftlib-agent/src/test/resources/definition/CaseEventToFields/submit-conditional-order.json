@@ -1,0 +1,51 @@
+[
+  {
+    "CaseEventID": "submit-conditional-order",
+    "CaseFieldID": "coApplicant1SolicitorAdditionalComments",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "OPTIONAL",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 4,
+    "PageID": "ConditionalOrderSoT",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "submit-conditional-order",
+    "CaseFieldID": "coApplicant1SolicitorFirm",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 3,
+    "PageID": "ConditionalOrderSoT",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "submit-conditional-order",
+    "CaseFieldID": "coApplicant1SolicitorName",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 2,
+    "PageID": "ConditionalOrderSoT",
+    "ShowSummaryChangeOption": "Y"
+  },
+  {
+    "CaseEventID": "submit-conditional-order",
+    "CaseFieldID": "coApplicant1StatementOfTruth",
+    "CaseTypeID": "NFD",
+    "DisplayContext": "MANDATORY",
+    "LiveFrom": "01/01/2017",
+    "PageColumnNumber": 1,
+    "PageDisplayOrder": 1,
+    "PageFieldDisplayOrder": 1,
+    "PageID": "ConditionalOrderSoT",
+    "PageLabel": "Statement of Truth - submit conditional order",
+    "ShowSummaryChangeOption": "Y"
+  }
+]

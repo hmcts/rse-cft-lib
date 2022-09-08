@@ -1,0 +1,1675 @@
+[
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "Label-CorrectApp1HWFDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "Label-CorrectApplicant1Details",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "Label-CorrectApplicant1SOTDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "Label-CorrectApplicant2Details",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "Label-CorrectApplicant2SOTDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "Label-CorrectJurisdictionDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "Label-CorrectMarriageDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "Label-CorrectPrayerDetails-App1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "Label-CorrectPrayerDetails-App2",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "Label-CorrectScannedDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "Label-CorrectServiceDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "Label-CorrectStatementOfIrretrievableBreakdown",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "Label-CorrectYourApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "Label-SolicitorService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant1-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant1DetailsAreConfidential-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant1OtherProceedings-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant1sSolicitor-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2DetailsAreConfidential-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2OtherProceedings-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2sSolicitorNewCases-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2sSolicitorOldCases-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelCivilPartnership-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelJurisdiction-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelLanguageDetails-Applicant",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelLanguageDetails-Respondent",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelMarriage-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "alternativeServiceType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1Address",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1CannotUpload",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1CannotUploadSupportingDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1ContactDetailsType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1DocumentsUploaded",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1Email",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1FinalOrderLateExplanationTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1FinancialOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1FinancialOrdersFor",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1FirstName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1Gender",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1HWFAppliedForFees",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1HWFNeedHelp",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1HWFReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1IsApplicant2Represented",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1KnowsApplicant2Address",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicant1Label-CorrectApplicant1FODetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicant1Label-CorrectApplicant1LegalProceedingsDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1LanguagePreferenceWelsh",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1LastName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1LastNameChangedWhenMarried",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1LegalProceedings",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1LegalProceedingsDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1LegalProceedingsDetailsTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1MiddleName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1NameChangedHow",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1NameChangedHowOtherDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1NameDifferentToMarriageCertificate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1Offline",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1PcqId",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1PhoneNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1PrayerDissolveDivorce",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1PrayerEndCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1PrayerFinancialOrdersChild",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1PrayerFinancialOrdersThemselves",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1ScreenHasMarriageBroken",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorAddress",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorAgreeToReceiveEmailsCheckbox",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorEmail",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorFirmName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicant1SolicitorLabel-Applicant1SolDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorOrganisationPolicy",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorPhone",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorReference",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorRepresented",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1StatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1WantsToHavePapersServedAnotherWay",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2Address",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2AgreedToReceiveEmails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2CannotUpload",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2CannotUploadSupportingDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2ContactDetailsType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2DocumentsUploaded",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2Email",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2FinancialOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2FinancialOrdersFor",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2FirstName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2Gender",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2HWFAppliedForFees",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicant2HWFLabel-CorrectApp2HWFDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2HWFNeedHelp",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2HWFReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicant2Label-CorrectApplicant2FODetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2LanguagePreferenceWelsh",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2LastName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2LastNameChangedWhenMarried",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2LegalProceedings",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2LegalProceedingsDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2LegalProceedingsDetailsTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2MiddleName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2NameChangedHow",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2NameChangedHowOtherDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2NameDifferentToMarriageCertificate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2Offline",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2PcqId",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2PhoneNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2PrayerDissolveDivorce",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2PrayerEndCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2PrayerFinancialOrdersChild",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2PrayerFinancialOrdersThemselves",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2ScreenHasMarriageBroken",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolSignStatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolStatementOfReconciliationFirm",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolStatementOfReconciliationName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorAddress",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2SolicitorAgreeToReceiveEmailsCheckbox",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorEmail",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorFirmName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicant2SolicitorLabel-CorrectApplicant2SolDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2SolicitorOrganisationPolicy",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorPhone",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorReference",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorRepresented",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2StatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicationType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "bulkListCaseReferenceLink",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "bulkScanCaseReference",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "bulkScanEnvelopes",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "caseHistory",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "certificateOfServiceDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1ReasonInformationNotCorrectTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2ReasonInformationNotCorrectTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coCertificateOfEntitlementDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coRefusalClarificationAdditionalInfoTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "createdDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "dateSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "divorceOrDissolution",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "divorceUnit",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "divorceWho",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "documentsGenerated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "documentsUploaded",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "dueDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "evidenceHandled",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalEmails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalOrders",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalReferralUrgentCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "howToRespondApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "hyphenatedCaseRef",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "issueDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "jurisdictionConnections",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentApplicant2",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentApplicant2UC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentApplicantOrApplicant1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentApplicantOrApplicant1UC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentApplicantsOrApplicant1s",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentDivorceOrCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentDivorceOrCivilPartnershipApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentDivorceOrEndCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentDivorceOrLegallyEnd",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentFinaliseDivorceOrEndCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentGotMarriedOrFormedCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentMarriageOrCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentMarriageOrCivilPartnershipUC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentRespondentsOrApplicant2s",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentTheApplicant2",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentTheApplicant2UC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentTheApplicantOrApplicant1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentTheApplicantOrApplicant1UC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentUnionType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentUnionTypeUC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageApplicant1Name",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageApplicant2Name",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageCertificateInEnglish",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageCertifiedTranslation",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageCertifyMarriageCertificateIsCorrect",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageCountryOfMarriage",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageFormationType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageIssueApplicationWithoutMarriageCertificate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageMarriageCertificateIsIncorrectDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageMarriedInUk",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriagePlaceOfMarriage",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "newPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormApplicant1LegalRepPosition",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormApplicant1LegalRepSigningSOT",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormApplicant1NoPaymentIncluded",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormApplicant1SOTSignedOn",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormApplicant1SigningSOT",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormApplicant2LegalRepPosition",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormApplicant2LegalRepSigningSOT",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormApplicant2NoPaymentIncluded",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormApplicant2PaymentOther",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormApplicant2PaymentOtherDetail",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormApplicant2SOTSignedOn",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormApplicant2SigningSOT",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormApplicantWillServeApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormChequeOrPostalOrderPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormDebitCreditCardPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormDebitCreditCardPaymentPhone",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormFeeInPounds",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormHowToPayEmail",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormPaymentDetailEmail",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormRespondentDifferentServiceAddress",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormRespondentServePostOnly",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormServeOutOfUK",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormSoleOrApplicant1PaymentOther",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormSoleOrApplicant1PaymentOtherDetail",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormSummaryApplicant1FinancialOrdersFor",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "paperFormSummaryApplicant2FinancialOrdersFor",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "scannedDocumentNames",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "scannedDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "screenHasMarriageCert",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "serviceMethod",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solPaymentHowToPay",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceAddressServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceBeingThe",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceDateOfService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceDocumentsServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceHowServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceLocationServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceOnWhomServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceServiceDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceServiceSotFirm",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceServiceSotName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceSpecifyLocationServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceTruthStatement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solSignStatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solStatementOfReconciliationCertify",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solStatementOfReconciliationDiscussed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solStatementOfReconciliationFirm",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solStatementOfReconciliationName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solUrgentCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solUrgentCaseSupportingInformation",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "stateToTransitionApplicationTo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "statementOfReconciliationComments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "typeOfDocumentAttached",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "warnings",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-bulkscan"
+  }
+]

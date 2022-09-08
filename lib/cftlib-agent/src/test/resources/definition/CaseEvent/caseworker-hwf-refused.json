@@ -1,0 +1,16 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "HWF refused",
+    "DisplayOrder": 56,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-hwf-refused",
+    "LiveFrom": "01/01/2017",
+    "Name": "HWF refused",
+    "PostConditionState": "AwaitingDocuments",
+    "PreConditionState(s)": "AwaitingHWFDecision",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

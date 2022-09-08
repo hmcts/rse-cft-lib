@@ -1,0 +1,2998 @@
+[
+  {
+    "CRUD": "R",
+    "CaseFieldID": "Label-SolicitorService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant1-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant1DetailsAreConfidential-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant1OtherProceedings-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant1sSolicitor-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2DetailsAreConfidential-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2OtherProceedings-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2sSolicitorNewCases-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelApplicant2sSolicitorOldCases-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelCivilPartnership-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelGeneralApplicationPayAccountHeading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelGeneralApplicationPayAccountReference1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelGeneralApplicationPayHWFHeading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelGeneralApplicationPayHWFReference",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelGeneralApplicationPayTelephoneHeading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelGeneralReferralPayAccountHeading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelGeneralReferralPayAccountReference1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelGeneralReferralPayAccountReference2",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelGeneralReferralPayHWFHeading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelGeneralReferralPayHWFReference",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelGeneralReferralPayTelephoneHeading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelJurisdiction-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelLanguageDetails-Applicant",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelLanguageDetails-Respondent",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "LabelMarriage-Heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "LabelUploadDocumentsPara-1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "MarriageNotIrretrievablyBroken",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "accessCode",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "alternativeServiceMedium",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "alternativeServiceOutcomes",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "alternativeServiceType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "amendedApplications",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "answerReceivedSupportingDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "app2ContactMethodIsDigital",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1Address",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1AgreedToReceiveEmails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1CannotUpload",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1CannotUploadSupportingDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1ConfirmReceipt",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1ContactDetailsType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1ContinueApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1DocumentsUploaded",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1Email",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1FinalOrderLateExplanation",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1FinalOrderLateExplanationTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1FinalOrderStatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1FinancialOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1FinancialOrdersFor",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1FirstName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1Gender",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1HWFAppliedForFees",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1HWFNeedHelp",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1HWFReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1IsApplicant2Represented",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1KnowsApplicant2Address",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1KnowsApplicant2EmailAddress",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicant1LabelHorizontalLine1-SolAboutApplicant1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1LanguagePreferenceWelsh",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1LastName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1LastNameChangedWhenMarried",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1LegalProceedings",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1LegalProceedingsDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1LegalProceedingsDetailsTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1LegalProceedingsDetailsTranslatedTo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1MiddleName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1NameChangedHow",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1NameChangedHowOtherDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1NameDifferentToMarriageCertificate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1Offline",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1PcqId",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1PhoneNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1PrayerDissolveDivorce",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1PrayerEndCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1PrayerFinancialOrdersChild",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1PrayerFinancialOrdersThemselves",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1PrayerHasBeenGivenCheckbox",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1ReminderSent",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1ScreenHasMarriageBroken",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorAddress",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorAgreeToReceiveEmailsCheckbox",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorAnswersLink",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorEmail",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1SolicitorFirmName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseFieldID": "applicant1SolicitorOrganisationPolicy",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorPhone",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorReference",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant1SolicitorRepresented",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1StatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1UsedWelshTranslationOnSubmission",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant1WantsToHavePapersServedAnotherWay",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2Address",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2AgreeToReceiveEmails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2AgreedToReceiveEmails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2CannotUpload",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2CannotUploadSupportingDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2ConfirmReceipt",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2ContactDetailsType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2ContinueApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2DocumentsUploaded",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2Email",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2FinancialOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2FinancialOrdersFor",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2FirstName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2Gender",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2HWFAppliedForFees",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2HWFNeedHelp",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2HWFReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2InviteEmailAddress",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2LanguagePreferenceWelsh",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2LastName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2LastNameChangedWhenMarried",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2LegalProceedings",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2LegalProceedingsDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2LegalProceedingsDetailsTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2LegalProceedingsDetailsTranslatedTo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2MiddleName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2NameChangedHow",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2NameChangedHowOtherDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2NameDifferentToMarriageCertificate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2Offline",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2PcqId",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2PhoneNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2PrayerDissolveDivorce",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2PrayerEndCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2PrayerFinancialOrdersChild",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2PrayerFinancialOrdersThemselves",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2PrayerHasBeenGivenCheckbox",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2ReminderSent",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicant2Respondents-service-details-heading",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicant2Respondents-service-details-text1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicant2Respondents-service-details-text2",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicant2Respondents-service-details-text3",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2ScreenHasMarriageBroken",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2SolSignStatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2SolStatementOfReconciliationFirm",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2SolStatementOfReconciliationName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorAddress",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2SolicitorAgreeToReceiveEmailsCheckbox",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2SolicitorAnswersLink",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorEmail",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2SolicitorFirmName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRUD",
+    "CaseFieldID": "applicant2SolicitorOrganisationPolicy",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorPhone",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorReference",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2SolicitorRepresented",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2StatementOfReconciliationComments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2StatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicant2UsedWelshTranslationOnSubmission",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicant2UserId",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "applicantLabel",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicantNotifiedDisputeFormOverdue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicantsRemindedCanApplyForConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicationFeeOrderSummary",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "applicationPayments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "applicationType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "bulkListCaseReference",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "bulkListCaseReferenceLink",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "caseHistory",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "certificateOfServiceDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "certificateOfServiceDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1ApplyForConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1ApplyForConditionalOrderIfNo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1ApplyForConditionalOrderStarted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1ChangeOrAddToApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1ConfirmInformationStillCorrect",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant1IsDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1IsEverythingInApplicationTrue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant1IsSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1ReasonInformationNotCorrect",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1ReasonInformationNotCorrectTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1ReasonInformationNotCorrectTranslatedTo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1SolicitorAdditionalComments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1SolicitorFirm",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1SolicitorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1StatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant1SubmittedDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2ApplyForConditionalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2ApplyForConditionalOrderIfNo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2ApplyForConditionalOrderStarted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2ChangeOrAddToApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2ConfirmInformationStillCorrect",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2IsDrafted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2IsEverythingInApplicationTrue",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "coApplicant2IsSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2ReasonInformationNotCorrect",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2ReasonInformationNotCorrectTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2ReasonInformationNotCorrectTranslatedTo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2SolicitorAdditionalComments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2SolicitorFirm",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2SolicitorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2StatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coApplicant2SubmittedDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coCannotUploadClarificationDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coCertificateOfEntitlementDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coClaimsCostsOrderInformation",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coClaimsGranted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coClarificationResponses",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coClarificationResponsesSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coClarificationUploadDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coConditionalOrderGrantedDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coCourt",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coDateAndTimeOfHearing",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coDecisionDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coGranted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coGrantedDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coJudgeCostsClaimGranted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coJudgeCostsOrderAdditionalInfo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coLastAlternativeServiceDocumentLink",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coLegalAdvisorDecisions",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coOnlinePetitionLink",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coOutcomeCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coPronouncementJudge",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coRefusalAdminErrorInfo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coRefusalClarificationAdditionalInfo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coRefusalClarificationAdditionalInfoTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coRefusalClarificationAdditionalInfoTranslatedTo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coRefusalClarificationReason",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coRefusalDecision",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coRefusalOrderDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coRefusalRejectionAdditionalInfo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coRefusalRejectionReason",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coRescindedDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "coRespondentAnswersLink",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "confidentialDocumentsGenerated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "confidentialDocumentsUploaded",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "contactDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "createdDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "currentState",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "d11Document",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "dataVersion",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "dateAosSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "dateFinalOrderEligibleFrom",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "dateFinalOrderEligibleToRespondent",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "dateFinalOrderNoLongerEligible",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "dateFinalOrderSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "dateOfPayment",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "dateSubmitted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "deemedServiceDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "disputingFeeAccountNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "disputingFeeAccountReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "disputingFeeHelpWithFeesReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "disputingFeeOrderSummary",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "disputingFeePaymentMethod",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "disputingFeePbaNumbers",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "divorceOrDissolution",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "divorceUnit",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "divorceWho",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "documentUploadComplete",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "documentsGenerated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "documentsUploaded",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "documentsUploadedOnConfirmService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "doesApplicant1WantToApplyForFinalOrder",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "dueDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "evidenceHandled",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "exampleRetiredField",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "feeAccountReference",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "finalOrderReminderSentApplicant1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "finalOrderReminderSentApplicant2",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "generalApplicationDocument",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "generalApplicationDocumentComments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "generalApplicationFeeAccountNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "generalApplicationFeeAccountReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "generalApplicationFeeHelpWithFeesReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "generalApplicationFeeOrderSummary",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "generalApplicationFeePaymentMethod",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "generalApplicationFeePbaNumbers",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "generalApplicationFeeType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalApplicationFrom",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalApplicationReferralDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "generalApplicationType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "generalApplicationTypeOtherComments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalEmailDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalEmailOtherRecipientEmail",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalEmailOtherRecipientName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalEmailParties",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalEmails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalLetterAttachments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalLetterDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalLetterParties",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalOrderDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalOrderDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalOrderDivorceParties",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalOrderDraft",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalOrderJudgeOrLegalAdvisorName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalOrderJudgeOrLegalAdvisorType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalOrderRecitals",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalOrders",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalReferralFeeAccountNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalReferralFeeAccountReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalReferralFeeHelpWithFeesReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalReferralFeeOrderSummary",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalReferralFeePaymentMethod",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalReferralFeeRequired",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalReferralJudgeOrLegalAdvisorDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalReferralReason",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalReferralType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalReferralUrgentCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "generalReferralUrgentCaseReason",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "granted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "grantedDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "hyphenatedCaseRef",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "isJudicialSeparation",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "issueDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "jointApplicantNotifiedCanSwitchToSole",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "jointLabel",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "jurisdictionApp1HabituallyResLastSixMonths",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "jurisdictionApp1HabituallyResLastTwelveMonths",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "jurisdictionApplicant1Domicile",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "jurisdictionApplicant1Residence",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "jurisdictionApplicant2Domicile",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "jurisdictionApplicant2Residence",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "jurisdictionBothLastHabituallyResident",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "jurisdictionConnections",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "jurisdictionResidualEligible",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentApplicant2",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentApplicant2UC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentApplicantOrApplicant1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "labelContentApplicantOrApplicant1UC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentApplicantsOrApplicant1s",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentDivorceOrCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentDivorceOrCivilPartnershipApplication",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentDivorceOrEndCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "labelContentDivorceOrEndingCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentDivorceOrLegallyEnd",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentFinaliseDivorceOrEndCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentGotMarriedOrFormedCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentMarriageOrCivilPartnership",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentMarriageOrCivilPartnershipUC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentRespondentsOrApplicant2s",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentTheApplicant2",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentTheApplicant2UC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentTheApplicantOrApplicant1",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentTheApplicantOrApplicant1UC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentUnionType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "labelContentUnionTypeUC",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "labelSolAboutTheSol",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "localCourtDetailsIntro",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "localCourtDetailsLabel",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "localCourtEmail",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "localCourtName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageApplicant1Name",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageApplicant2Name",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageCertificateInEnglish",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageCertifiedTranslation",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageCertifyMarriageCertificateIsCorrect",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageCountryOfMarriage",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageFormationType",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageIssueApplicationWithoutMarriageCertificate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "marriageMarriageCertificateIsIncorrectDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriageMarriedInUk",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "marriagePlaceOfMarriage",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "miniApplicationLink",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "newPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "nocAreTheyDigital",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "nocAreTheyRepresented",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "nocWhichApplicant",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "note",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "notes",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "noticeOfProceedingsEmail",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "otherRecipientAddress",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "otherRecipientName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "overdueNotificationSent",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "paperCasePaymentMethod",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "paperFormServiceOutsideUK",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "pbaNumbers",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "petitionerLabel",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "previousCaseId",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "previousReissueOption",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "previousState",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "progressPaperCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "reasonFailureToServeByBailiff",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "receivedServiceAddedDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "receivedServiceApplicationDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "regenerateCourtOrdersWarningLabel",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "reissueDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "reissueOption",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "rejectReason",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "respondentLabel",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "respondentSolicitorReminderSent",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "scannedDocumentNames",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "scannedDocuments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "screenHasMarriageCert",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "serviceApplicationDecisionDate",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "serviceApplicationGranted",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "serviceApplicationRefusalReason",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "serviceMethod",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "servicePaymentFeeAccountNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "servicePaymentFeeAccountReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "servicePaymentFeeHelpWithFeesReferenceNumber",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "servicePaymentFeeOrderSummary",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "servicePaymentFeePaymentMethod",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "servicePaymentFeePbaNumbers",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solApplicationFeeInPounds",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solPaymentHowToPay",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solServiceAddressServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solServiceBeingThe",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solServiceDateOfService",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solServiceDocumentsServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solServiceHowServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solServiceLocationServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceMethod",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solServiceOnWhomServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solServiceServiceDetails",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solServiceServiceSotFirm",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solServiceServiceSotName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solServiceSpecifyLocationServed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solServiceStatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "solServiceTruthStatement",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solSignStatementOfTruth",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solStatementOfReconciliationCertify",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solStatementOfReconciliationDiscussed",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solStatementOfReconciliationFirm",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solStatementOfReconciliationName",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solUrgentCase",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "solUrgentCaseSupportingInformation",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "soleLabelDissolution",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "soleLabelDivorce",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseFieldID": "stateToTransitionApplicationTo",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "statementOfReconciliationComments",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "successfulServedByBailiff",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "CR",
+    "CaseFieldID": "userIdLabel",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "warnings",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "CaseFieldID": "welshPreviousState",
+    "CaseTypeID": "NFD",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor"
+  }
+]

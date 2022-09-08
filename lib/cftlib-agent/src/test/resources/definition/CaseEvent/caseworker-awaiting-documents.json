@@ -1,0 +1,16 @@
+[
+  {
+    "CaseTypeID": "NFD",
+    "Description": "Awaiting documents from the applicant",
+    "DisplayOrder": 26,
+    "EndButtonLabel": "Save and continue",
+    "ID": "caseworker-awaiting-documents",
+    "LiveFrom": "01/01/2017",
+    "Name": "Awaiting documents",
+    "PostConditionState": "AwaitingDocuments",
+    "PreConditionState(s)": "AwaitingHWFDecision;AwaitingPayment;Submitted",
+    "SecurityClassification": "Public",
+    "ShowEventNotes": "Y",
+    "ShowSummary": "N"
+  }
+]

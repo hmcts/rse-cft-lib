@@ -1,0 +1,14 @@
+[
+  {
+    "CaseFieldID": "amendedApplications",
+    "CaseTypeID": "NFD",
+    "Channel": "CaseWorker",
+    "LiveFrom": "01/01/2017",
+    "TabDisplayOrder": 61,
+    "TabFieldDisplayOrder": 1,
+    "TabID": "amendedApplicationcaseworker-divorce-superuser",
+    "TabLabel": "Amended application",
+    "TabShowCondition": "amendedApplications=\"*\"",
+    "UserRole": "caseworker-divorce-superuser"
+  }
+]

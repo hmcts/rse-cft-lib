@@ -1,0 +1,30 @@
+[
+  {
+    "CaseEventID": "caseworker-notice-of-change",
+    "CaseFieldID": "applicant1SolicitorOrganisationPolicy",
+    "DefaultValue": "[APPONESOLICITOR]",
+    "DisplayContext": "OPTIONAL",
+    "FieldDisplayOrder": 10,
+    "FieldShowCondition": "nocWhichApplicant=\"never\"",
+    "ListElementCode": "OrgPolicyCaseAssignedRole",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseEventID": "caseworker-notice-of-change",
+    "CaseFieldID": "applicant1SolicitorOrganisationPolicy",
+    "DisplayContext": "OPTIONAL",
+    "FieldDisplayOrder": 11,
+    "FieldShowCondition": "nocWhichApplicant=\"never\"",
+    "ListElementCode": "OrgPolicyReference",
+    "LiveFrom": "01/01/2017"
+  },
+  {
+    "CaseEventID": "caseworker-notice-of-change",
+    "CaseFieldID": "applicant1SolicitorOrganisationPolicy",
+    "DisplayContext": "MANDATORY",
+    "FieldDisplayOrder": 9,
+    "FieldShowCondition": "nocWhichApplicant=\"applicant1\"",
+    "ListElementCode": "Organisation.OrganisationID",
+    "LiveFrom": "01/01/2017"
+  }
+]
