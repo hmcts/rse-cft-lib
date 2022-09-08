@@ -103,14 +103,16 @@ public class JsonDefinitionReader extends SpreadsheetParser {
                 .collect(Collectors.toList());
     }
 
+    private static final Map<String, String> defEnvVars = System.getenv().entrySet().stream()
+            .filter((e) -> e.getKey().startsWith("CCD_DEF"))
+            .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+
     @SneakyThrows
     private static Stream<Map<String, String>> readFile(File file) {
         var s = FileUtils.readFileToString(file);
-        // TODO - this is highly inefficient and will be slow if a project uses lots of env vars.
-        for (String s1 : System.getenv().keySet()) {
-            if (s1.startsWith("CCD_DEF")) {
-                s = s.replace("${" + s1 + "}", System.getenv(s1));
-            }
+        // TODO - this is highly inefficient and may become a performance bottleneck if a project uses lots of env vars.
+        for (var entry : defEnvVars.entrySet()) {
+            s = s.replace("${" + entry.getKey() + "}", entry.getValue());
         }
 
         List<Map<String, String>> entries = asList(mapper.readValue(s, Map[].class));
