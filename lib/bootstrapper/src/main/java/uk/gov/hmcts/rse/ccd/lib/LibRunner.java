@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -142,6 +143,13 @@ public class LibRunner {
 
         var lines = Files.readAllLines(new File(classpathFile).toPath());
         var jars = lines.subList(1, lines.size());
+
+        // temp foldero
+        var dir = Files.createTempDirectory("cftlib");
+        var f = new File(dir.toFile(), "cftlib.properties");
+        Files.write(f.toPath(), List.of("cftlib_name=" + new File(classpathFile).getName()));
+        jars.add(dir.toFile().getCanonicalPath());
+
         var urls = jars.stream().map(LibRunner::toURL).toArray(URL[]::new);
         ClassLoader classLoader = new URLClassLoader(classpathFile, urls, ClassLoader.getSystemClassLoader());
         Thread.currentThread().setContextClassLoader(classLoader);
