@@ -58,6 +58,7 @@ services:
       SERVICES_EM_ANNO_API: http://${JVM_HOST:-host.docker.internal}:4452
       SERVICES_CCD_COMPONENT_API: http://${JVM_HOST:-host.docker.internal}:4452
       SERVICES_CCD_DATA_STORE_API: http://${JVM_HOST:-host.docker.internal}:4452
+      SERVICES_CCD_CASE_ASSIGNMENT_API: http://${JVM_HOST:-host.docker.internal}:4454
       SERVICES_IDAM_API_URL: "${XUI_IDAM_API_URL:-https://idam-api.aat.platform.hmcts.net}"
       SERVICES_IDAM_CLIENT_ID: xuiwebapp
       SERVICES_IDAM_LOGIN_URL: "${XUI_IDAM_LOGIN_URL:-https://idam-web-public.aat.platform.hmcts.net}"
