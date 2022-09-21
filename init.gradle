@@ -63,6 +63,13 @@ def configurePublishing(p) {
                 }
             }
         }
+
+        // Spring configures jar artifacts to have a "-plain" suffix
+        // which we need to remove for POM publishing to work.
+        // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#packaging-executable.and-plain-archives
+        tasks.named("jar") {
+            archiveClassifier = ''
+        }
     }
     })
 }
