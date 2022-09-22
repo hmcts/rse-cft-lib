@@ -11,7 +11,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -22,6 +23,24 @@ import lombok.SneakyThrows;
 
 public class LibRunner {
     public static void main(String[] args) throws Exception {
+        try {
+            doRun(args);
+        } catch (Exception e) {
+            System.out.println("*** cftlib failed to start ***");
+            System.out.println("This is a cftlib bug, please report it in the rse-devtools slack channel");
+            System.out.println("https://hmcts-reform.slack.com/archives/C033F1GDD6Z");
+            e.printStackTrace();
+
+            // Immediately terminate upon an unhandled error in the runner.
+            // This will ensure the JVM terminates even if we've started other threads.
+            Runtime.getRuntime().halt(-1);
+            // Unreachable
+            throw e;
+        }
+    }
+
+    @SneakyThrows
+    private static void doRun(String[] args) {
         Thread.currentThread().setName("**** cftlib bootstrap");
         setConfigProperties();
         if (args.length == 0) {
@@ -30,7 +49,7 @@ public class LibRunner {
         var threads = new ArrayList<Thread>();
         {
             var runtime = args[0];
-            var t = new Thread(() -> launchApp(runtime));
+            var t = new Thread(() -> launchApp(new File(runtime)));
             t.setName("runtime");
             t.start();
             threads.add(t);
@@ -41,7 +60,7 @@ public class LibRunner {
 
         var rest = Arrays.copyOfRange(args, 1, args.length);
         Arrays.stream(rest).forEach(f -> {
-            var t = new Thread(() -> launchApp(f));
+            var t = new Thread(() -> launchApp(new File(f)));
             t.start();
             threads.add(t);
         });
@@ -137,21 +156,22 @@ public class LibRunner {
     }
 
     @SneakyThrows
-    private static void launchApp(String classpathFile) {
+    private static void launchApp(File classpathFile) {
         // We must initially use a thread name of 'main' for spring boot devtools to work.
         Thread.currentThread().setName("main");
 
-        var lines = Files.readAllLines(new File(classpathFile).toPath());
-        var jars = lines.subList(1, lines.size());
+        var lines = Files.readAllLines(classpathFile.toPath());
+        var jars = lines.subList(1, lines.size())
+                .stream().map(LibRunner::toURL)
+                .collect(Collectors.toList());
 
-        // temp foldero
-        var dir = Files.createTempDirectory("cftlib");
-        var f = new File(dir.toFile(), "cftlib.properties");
-        Files.write(f.toPath(), List.of("cftlib_name=" + new File(classpathFile).getName()));
-        jars.add(dir.toFile().getCanonicalPath());
+        var props = Map.of(
+                "cftlib_name", classpathFile.getName()
+        );
+        jars.add(createPropertiesFolder(props).toURI().toURL());
 
-        var urls = jars.stream().map(LibRunner::toURL).toArray(URL[]::new);
-        ClassLoader classLoader = new URLClassLoader(classpathFile, urls, ClassLoader.getSystemClassLoader());
+        var urls = jars.stream().toArray(URL[]::new);
+        ClassLoader classLoader = new URLClassLoader(classpathFile.getName(), urls, ClassLoader.getSystemClassLoader());
         Thread.currentThread().setContextClassLoader(classLoader);
 
         fixTomcat(classLoader);
@@ -164,7 +184,18 @@ public class LibRunner {
         mainMethod.invoke(null, new Object[] {args});
 
         // Once initialised we can rename the main thread without breaking spring boot devtools.
-        Thread.currentThread().setName(classpathFile);
+        Thread.currentThread().setName(classpathFile.getName());
+    }
+
+    @SneakyThrows
+    private static File createPropertiesFolder(Map<String, String> properties) {
+        var dir = Files.createTempDirectory("cftlib");
+        var f = new File(dir.toFile(), "cftlib.properties");
+        var lines = properties.entrySet().stream()
+                .map(e -> e.getKey() + "=" + e.getValue())
+                .collect(Collectors.toList());
+        Files.write(f.toPath(), lines);
+        return dir.toFile();
     }
 
     // TomcatURLStreamHandlerFactory registers a handler by calling
