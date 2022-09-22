@@ -19,7 +19,7 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>${cftlib_name}.log</file>
+        <file>${cftlib_log_file}</file>
         <encoder>
             <pattern>%msg%n</pattern>
         </encoder>
@@ -27,12 +27,12 @@
 
     <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
 
-    <root level="${ROOT_LOGGING_LEVEL:-INFO}">
-        <appender-ref ref="${ROOT_APPENDER:-ASYNC_CONSOLE}"/>
-    </root>
-    <root level="${ROOT_LOGGING_LEVEL:-INFO}">
+    <!--Info level logging to file for all services-->
+    <root level="INFO">
         <appender-ref ref="FILE"/>
     </root>
 
-
+    <root level="${cftlib_console_log_level}">
+        <appender-ref ref="ASYNC_CONSOLE"/>
+    </root>
 </configuration>

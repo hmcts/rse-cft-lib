@@ -266,6 +266,11 @@ dependencies {
 
 With spring devtools on the classpath your application will automatically reload as you edit and build your java classes.
 
+
+### Logging
+
+The cftlib maintains a log file per service in your build directory; `build/cftlib/logs`.
+
 ## How the cftlib works
 
 The cftlib uses isolated classloaders to run multiple spring boot applications in a single Java Virtual Machine (JVM).

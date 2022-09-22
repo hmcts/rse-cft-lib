@@ -165,8 +165,13 @@ public class LibRunner {
                 .stream().map(LibRunner::toURL)
                 .collect(Collectors.toList());
 
+        // Logs go in the cftlib log folder if defined, or the working directory
+        var logFolder = System.getenv("RSE_LIB_LOG_FOLDER");
+        logFolder = logFolder != null ? logFolder : Paths.get("").toAbsolutePath().normalize().toString();
+
         var props = Map.of(
-                "cftlib_name", classpathFile.getName()
+                "cftlib_log_file", new File(logFolder, classpathFile.getName() + ".log").getCanonicalPath(),
+                "cftlib_console_log_level", classpathFile.getName().contains("application") ? "INFO" : "WARN"
         );
         jars.add(createPropertiesFolder(props).toURI().toURL());
 
