@@ -20,8 +20,9 @@
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>${cftlib_log_file}</file>
+        <append>false</append>
         <encoder>
-            <pattern>%msg%n</pattern>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 

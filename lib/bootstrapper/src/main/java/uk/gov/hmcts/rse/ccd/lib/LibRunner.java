@@ -165,15 +165,8 @@ public class LibRunner {
                 .stream().map(LibRunner::toURL)
                 .collect(Collectors.toList());
 
-        // Logs go in the cftlib log folder if defined, or the working directory
-        var logFolder = System.getenv("RSE_LIB_LOG_FOLDER");
-        logFolder = logFolder != null ? logFolder : Paths.get("").toAbsolutePath().normalize().toString();
-
-        var props = Map.of(
-                "cftlib_log_file", new File(logFolder, classpathFile.getName() + ".log").getCanonicalPath(),
-                "cftlib_console_log_level", classpathFile.getName().contains("application") ? "INFO" : "WARN"
-        );
-        jars.add(createPropertiesFolder(props).toURI().toURL());
+        // We inject some custom properties into the classpath to assist logging.
+        jars.add(createPropertiesFolder(classpathFile).toURI().toURL());
 
         var urls = jars.stream().toArray(URL[]::new);
         ClassLoader classLoader = new URLClassLoader(classpathFile.getName(), urls, ClassLoader.getSystemClassLoader());
@@ -192,11 +185,25 @@ public class LibRunner {
         Thread.currentThread().setName(classpathFile.getName());
     }
 
+    /**
+     * Create a folder containing custom properties for injection to the classpath.
+     * These properties are used by our logback configuration to pipe log output
+     * into a file per service.
+     */
     @SneakyThrows
-    private static File createPropertiesFolder(Map<String, String> properties) {
+    private static File createPropertiesFolder(File classpathFile) {
+        // Logs go in the cftlib log folder if defined, otherwise the working directory
+        var logFolder = System.getenv("RSE_LIB_LOG_FOLDER");
+        logFolder = logFolder != null ? logFolder : Paths.get("").toAbsolutePath().normalize().toString();
+
+        var props = Map.of(
+                "cftlib_log_file", new File(logFolder, classpathFile.getName() + ".log").getCanonicalPath(),
+                "cftlib_console_log_level", classpathFile.getName().contains("application") ? "INFO" : "WARN"
+        );
+
         var dir = Files.createTempDirectory("cftlib");
         var f = new File(dir.toFile(), "cftlib.properties");
-        var lines = properties.entrySet().stream()
+        var lines = props.entrySet().stream()
                 .map(e -> e.getKey() + "=" + e.getValue())
                 .collect(Collectors.toList());
         Files.write(f.toPath(), lines);
