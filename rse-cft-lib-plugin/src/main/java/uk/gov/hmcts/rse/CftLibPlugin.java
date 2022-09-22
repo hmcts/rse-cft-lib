@@ -264,6 +264,8 @@ public class CftLibPlugin implements Plugin<Project> {
             );
             if (e.getKey().equals("ccd-data-store-api-lib")) {
                 args.add("--idam.client.secret=${IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET:}");
+            } else if (e.getKey().equals("aac-manage-case-assignment-lib")) {
+                args.add("--idam.client.secret=${IDAM_OAUTH2_AAC_CLIENT_SECRET:}");
             }
             manifestTasks.add(
                 createCFTManifestTask(project, e.getKey(), e.getValue(), file, args.toArray(String[]::new)));
