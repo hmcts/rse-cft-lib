@@ -34,8 +34,6 @@ public class LibRunner {
             // Immediately terminate upon an unhandled error in the runner.
             // This will ensure the JVM terminates even if we've started other threads.
             Runtime.getRuntime().halt(-1);
-            // Unreachable
-            throw e;
         }
     }
 
