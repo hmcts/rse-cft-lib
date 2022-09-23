@@ -27,7 +27,7 @@ public class LibRunner {
             doRun(args);
         } catch (Exception e) {
             System.out.println("*** cftlib failed to start ***");
-            System.out.println("This is a cftlib bug, please report it in the rse-devtools slack channel");
+            System.out.println("This is a cftlib bug, please report it in the #rse-dev-tools slack channel");
             System.out.println("https://hmcts-reform.slack.com/archives/C033F1GDD6Z");
             e.printStackTrace();
 
