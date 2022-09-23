@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -21,6 +23,22 @@ import lombok.SneakyThrows;
 
 public class LibRunner {
     public static void main(String[] args) throws Exception {
+        try {
+            doRun(args);
+        } catch (Exception e) {
+            System.out.println("*** cftlib failed to start ***");
+            System.out.println("This is a cftlib bug, please report it in the #rse-dev-tools slack channel");
+            System.out.println("https://hmcts-reform.slack.com/archives/C033F1GDD6Z");
+            e.printStackTrace();
+
+            // Immediately terminate upon an unhandled error in the runner.
+            // This will ensure the JVM terminates even if we've started other threads.
+            Runtime.getRuntime().halt(-1);
+        }
+    }
+
+    @SneakyThrows
+    private static void doRun(String[] args) {
         Thread.currentThread().setName("**** cftlib bootstrap");
         setConfigProperties();
         if (args.length == 0) {
@@ -29,7 +47,7 @@ public class LibRunner {
         var threads = new ArrayList<Thread>();
         {
             var runtime = args[0];
-            var t = new Thread(() -> launchApp(runtime));
+            var t = new Thread(() -> launchApp(new File(runtime)));
             t.setName("runtime");
             t.start();
             threads.add(t);
@@ -40,7 +58,7 @@ public class LibRunner {
 
         var rest = Arrays.copyOfRange(args, 1, args.length);
         Arrays.stream(rest).forEach(f -> {
-            var t = new Thread(() -> launchApp(f));
+            var t = new Thread(() -> launchApp(new File(f)));
             t.start();
             threads.add(t);
         });
@@ -136,14 +154,20 @@ public class LibRunner {
     }
 
     @SneakyThrows
-    private static void launchApp(String classpathFile) {
+    private static void launchApp(File classpathFile) {
         // We must initially use a thread name of 'main' for spring boot devtools to work.
         Thread.currentThread().setName("main");
 
-        var lines = Files.readAllLines(new File(classpathFile).toPath());
-        var jars = lines.subList(1, lines.size());
-        var urls = jars.stream().map(LibRunner::toURL).toArray(URL[]::new);
-        ClassLoader classLoader = new URLClassLoader(classpathFile, urls, ClassLoader.getSystemClassLoader());
+        var lines = Files.readAllLines(classpathFile.toPath());
+        var jars = lines.subList(1, lines.size())
+                .stream().map(LibRunner::toURL)
+                .collect(Collectors.toList());
+
+        // We inject some custom properties into the classpath to assist logging.
+        jars.add(createPropertiesFolder(classpathFile).toURI().toURL());
+
+        var urls = jars.stream().toArray(URL[]::new);
+        ClassLoader classLoader = new URLClassLoader(classpathFile.getName(), urls, ClassLoader.getSystemClassLoader());
         Thread.currentThread().setContextClassLoader(classLoader);
 
         fixTomcat(classLoader);
@@ -156,7 +180,32 @@ public class LibRunner {
         mainMethod.invoke(null, new Object[] {args});
 
         // Once initialised we can rename the main thread without breaking spring boot devtools.
-        Thread.currentThread().setName(classpathFile);
+        Thread.currentThread().setName(classpathFile.getName());
+    }
+
+    /**
+     * Create a folder containing custom properties for injection to the classpath.
+     * These properties are used by our logback configuration to pipe log output
+     * into a file per service.
+     */
+    @SneakyThrows
+    private static File createPropertiesFolder(File classpathFile) {
+        // Logs go in the cftlib log folder if defined, otherwise the working directory
+        var logFolder = System.getenv("RSE_LIB_LOG_FOLDER");
+        logFolder = logFolder != null ? logFolder : Paths.get("").toAbsolutePath().normalize().toString();
+
+        var props = Map.of(
+                "cftlib_log_file", new File(logFolder, classpathFile.getName() + ".log").getCanonicalPath(),
+                "cftlib_console_log_level", classpathFile.getName().contains("application") ? "INFO" : "WARN"
+        );
+
+        var dir = Files.createTempDirectory("cftlib");
+        var f = new File(dir.toFile(), "cftlib.properties");
+        var lines = props.entrySet().stream()
+                .map(e -> e.getKey() + "=" + e.getValue())
+                .collect(Collectors.toList());
+        Files.write(f.toPath(), lines);
+        return dir.toFile();
     }
 
     // TomcatURLStreamHandlerFactory registers a handler by calling

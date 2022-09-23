@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="${LOGBACK_CONFIGURATION_DEBUG:-false}">
+    <variable resource="cftlib.properties" />
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator"/>
+
+    <property name="LOGBACK_DATE_FORMAT" value="${LOGBACK_DATE_FORMAT:-yyyy-MM-dd'T'HH:mm:ss.SSS}"/>
+    <property name="EXCEPTION_LENGTH" value="${EXCEPTION_LENGTH:-50}"/>
+    <property name="LOGGER_LENGTH" value="${LOGGER_LENGTH:-50}"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="${CONSOLE_LOG_PATTERN:-%d{${LOGBACK_DATE_FORMAT}} %-5level [%thread] %logger{${LOGGER_LENGTH}}%ex{${EXCEPTION_LENGTH}} %msg%n}"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    <appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="CONSOLE"/>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${cftlib_log_file}</file>
+        <append>false</append>
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+
+    <!--Info level logging to file for all services-->
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+    </root>
+
+    <root level="${cftlib_console_log_level}">
+        <appender-ref ref="ASYNC_CONSOLE"/>
+    </root>
+</configuration>
