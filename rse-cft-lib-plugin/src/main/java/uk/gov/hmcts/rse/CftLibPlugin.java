@@ -171,7 +171,6 @@ public class CftLibPlugin implements Plugin<Project> {
         project.getConfigurations().getByName("cftlibTestImplementation")
             .extendsFrom(project.getConfigurations().getByName("cftlibImplementation"))
             .getDependencies().addAll(List.of(
-                project.getDependencies().create("org.junit.platform:junit-platform-console-standalone:1.8.2"),
                 project.getDependencies().create("com.github.hmcts.rse-cft-lib:test-runner:" + getLibVersion(project))
             ));
 
