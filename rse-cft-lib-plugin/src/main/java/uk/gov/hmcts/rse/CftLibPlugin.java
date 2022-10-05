@@ -262,16 +262,16 @@ public class CftLibPlugin implements Plugin<Project> {
                 args.add("--idam.client.secret=${IDAM_OAUTH2_AAC_CLIENT_SECRET:}");
             }
             manifestTasks.add(
-                createCFTManifestTask(project, p, p.mainClass, file, args.toArray(String[]::new)));
+                createCFTManifestTask(project, p, file, args.toArray(String[]::new)));
             manifests.add(file);
         }
     }
 
-    private ManifestTask createCFTManifestTask(Project project, Library depName, String mainClass, File file,
+    private ManifestTask createCFTManifestTask(Project project, Library lib, File file,
                                                String... args) {
         Configuration classpath = project.getConfigurations().detachedConfiguration(
-            libDependencies(project, depName, Library.CftlibAgent));
-        return createManifestTask(project, "writeManifest" + depName, classpath, mainClass, file, args);
+            libDependencies(project, lib, Library.CftlibAgent));
+        return createManifestTask(project, "writeManifest" + lib, classpath, lib.mainClass, file, args);
     }
 
     private ManifestTask createManifestTask(Project project, String name, FileCollection configuration,
