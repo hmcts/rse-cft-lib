@@ -124,7 +124,7 @@ public class CftLibPlugin implements Plugin<Project> {
 
         var jar = project.getTasks().create("cftlibExecutableJar", Jar.class);
         jar.dependsOn(manifestTasks);
-        jar.manifest(x -> x.attributes(Map.of("Main-Class", "uk.gov.hmcts.rse.ccd.lib.LibRunner")));
+        jar.manifest(x -> x.attributes(Map.of("Main-Class", Library.Bootstrapper.mainClass)));
         jar.getArchiveFileName().set("cftlib-executable.jar");
 
         jar.setEntryCompression(ZipEntryCompression.STORED);
@@ -242,7 +242,7 @@ public class CftLibPlugin implements Plugin<Project> {
             Configuration classpath = project.getConfigurations().detachedConfiguration(
                 libDependencies(project, Library.Runtime));
             var task =
-                createManifestTask(project, "writeManifestRuntime", classpath, "uk.gov.hmcts.rse.ccd.lib.Application",
+                createManifestTask(project, "writeManifestRuntime", classpath, Library.Runtime.mainClass,
                     file);
             manifestTasks.add(task);
             manifests.add(file);
