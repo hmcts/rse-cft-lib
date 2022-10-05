@@ -83,18 +83,7 @@ def configurePublishing(p) {
     })
 }
 
-def configureImportedProject(p) {
-    configurePublishing(p)
-    p.configure(p, {
-        afterEvaluate { project ->
-        }
-    })
-}
-
 allprojects {
-
-    println rootProject.name
     configurePublishing(it)
-
 }
 
