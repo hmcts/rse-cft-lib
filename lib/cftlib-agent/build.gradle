@@ -26,10 +26,10 @@ dependencies {
     implementation 'com.auth0:java-jwt:3.12.0'
 
     // Use the fat definition store code at compile time.
-    compileOnly ('com.github.hmcts.rse-cft-lib.ccd-definition-store-api:application:DEV-SNAPSHOT')
+    compileOnly 'com.github.hmcts.rse-cft-lib:application:DEV-SNAPSHOT'
 
     // Provide definition store for running tests
-    testImplementation 'com.github.hmcts.rse-cft-lib.ccd-definition-store-api:application:DEV-SNAPSHOT'
+    testImplementation 'com.github.hmcts.rse-cft-lib:application:DEV-SNAPSHOT'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.3'
 }
 

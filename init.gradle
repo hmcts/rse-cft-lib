@@ -4,7 +4,7 @@ def configurePublishing(p) {
         apply plugin: 'maven-publish'
         p.afterEvaluate { project ->
 
-        project.group "com.github.hmcts.rse-cft-lib.${project.rootProject.projectDir.name}"
+        project.group 'com.github.hmcts.rse-cft-lib'
         // Override except for the Gradle plugin which sets a version during publish
         if (name != 'rse-cft-lib-plugin') {
             version = 'DEV-SNAPSHOT'

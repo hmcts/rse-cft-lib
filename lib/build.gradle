@@ -15,7 +15,7 @@ subprojects {
         }
     }
 
-    group = "com.github.hmcts.rse-cft-lib.${project.name}"
+    group = 'com.github.hmcts.rse-cft-lib'
     version = 'DEV-SNAPSHOT'
 
     java {
