@@ -1,5 +1,8 @@
 package uk.gov.hmcts.rse;
 
+/**
+ * The libraries that we publish, including common components.
+ */
 public enum Library {
     AMRoleAssignmentService("am-role-assignment-service",
             "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication"),
@@ -9,15 +12,17 @@ public enum Library {
     CCDUserProfile("user-profile-api", "uk.gov.hmcts.ccd.UserProfileApplication"),
     AACManageCaseAssignment("aac-manage-case-assignment", "uk.gov.hmcts.reform.managecase.Application"),
     CCDCaseDocumentAM("ccd-case-document-am-api", "uk.gov.hmcts.reform.ccd.documentam.Application"),
-    CftlibAgent("cftlib-agent", null),
-    TestRunner("test-runner", null),
     Runtime("runtime", "uk.gov.hmcts.rse.ccd.lib.Application"),
-    Bootstrapper("bootstrapper", "uk.gov.hmcts.rse.ccd.lib.LibRunner");
+    Bootstrapper("bootstrapper", "uk.gov.hmcts.rse.ccd.lib.LibRunner"),
+    CftlibAgent("cftlib-agent"),
+    TestRunner("test-runner");
+
+    Library(String name) {
+        this(name, null);
+    }
 
     Library(String name, String mainClass) {
-        this.name = name;
-        this.group = "com.github.hmcts.rse-cft-lib." + name;
-        this.mainClass = mainClass;
+        this(name, mainClass, name);
     }
 
     Library(String name, String mainClass, String group) {
