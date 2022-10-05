@@ -130,7 +130,7 @@ public class CftLibPlugin implements Plugin<Project> {
         jar.setEntryCompression(ZipEntryCompression.STORED);
         jar.doFirst(t -> {
             jar.from(project.zipTree(
-                project.getConfigurations().detachedConfiguration(libDependencies(project, uk.gov.hmcts.rse.Project.Bootstrapper))
+                project.getConfigurations().detachedConfiguration(libDependencies(project, Library.Bootstrapper))
                     .getSingleFile()));
         });
         jar.from(archive);
@@ -149,21 +149,21 @@ public class CftLibPlugin implements Plugin<Project> {
             .create("cftlibIDE");
         var config = project.getConfigurations().getByName("cftlibIDEImplementation");
         config.getDependencies().addAll(Arrays.asList(
-            libDependencies(project, uk.gov.hmcts.rse.Project.values())
+            libDependencies(project, Library.values())
         ));
     }
 
     private void createConfigurations(Project project) {
         project.getConfigurations().getByName("cftlibImplementation")
             .extendsFrom(project.getConfigurations().getByName("implementation"))
-            .getDependencies().addAll(List.of(libDependencies(project, uk.gov.hmcts.rse.Project.Bootstrapper, uk.gov.hmcts.rse.Project.CftlibAgent)));
+            .getDependencies().addAll(List.of(libDependencies(project, Library.Bootstrapper, Library.CftlibAgent)));
 
         project.getConfigurations().getByName("cftlibRuntimeOnly")
             .extendsFrom(project.getConfigurations().getByName("runtimeOnly"));
         project.getConfigurations().getByName("cftlibTestImplementation")
             .extendsFrom(project.getConfigurations().getByName("cftlibImplementation"))
             .getDependencies().addAll(List.of(
-                project.getDependencies().create(uk.gov.hmcts.rse.Project.TestRunner.mavenCoordinates(getLibVersion(project)))
+                project.getDependencies().create(Library.TestRunner.mavenCoordinates(getLibVersion(project)))
             ));
 
         project.getConfigurations().getByName("cftlibTestRuntimeOnly")
@@ -240,7 +240,7 @@ public class CftLibPlugin implements Plugin<Project> {
             // Runtime is always the first manifest
             var file = cftlibBuildDir(project).file("runtime").getAsFile();
             Configuration classpath = project.getConfigurations().detachedConfiguration(
-                libDependencies(project, uk.gov.hmcts.rse.Project.Runtime));
+                libDependencies(project, Library.Runtime));
             var task =
                 createManifestTask(project, "writeManifestRuntime", classpath, "uk.gov.hmcts.rse.ccd.lib.Application",
                     file);
@@ -248,17 +248,17 @@ public class CftLibPlugin implements Plugin<Project> {
             manifests.add(file);
         }
 
-        for (var p : uk.gov.hmcts.rse.Project.values()) {
-            if (p.mainClass == null || p.equals(uk.gov.hmcts.rse.Project.Runtime)) {
+        for (var p : Library.values()) {
+            if (p.mainClass == null || p.equals(Library.Runtime)) {
                 continue;
             }
             var file = cftlibBuildDir(project).file(p.toString()).getAsFile();
             var args = Lists.newArrayList(
                 "--rse.lib.service_name=" + p.name
             );
-            if (p.equals(uk.gov.hmcts.rse.Project.CCDDataStore)) {
+            if (p.equals(Library.CCDDataStore)) {
                 args.add("--idam.client.secret=${IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET:}");
-            } else if (p.equals(uk.gov.hmcts.rse.Project.AACManageCaseAssignment)) {
+            } else if (p.equals(Library.AACManageCaseAssignment)) {
                 args.add("--idam.client.secret=${IDAM_OAUTH2_AAC_CLIENT_SECRET:}");
             }
             manifestTasks.add(
@@ -267,10 +267,10 @@ public class CftLibPlugin implements Plugin<Project> {
         }
     }
 
-    private ManifestTask createCFTManifestTask(Project project, uk.gov.hmcts.rse.Project depName, String mainClass, File file,
+    private ManifestTask createCFTManifestTask(Project project, Library depName, String mainClass, File file,
                                                String... args) {
         Configuration classpath = project.getConfigurations().detachedConfiguration(
-            libDependencies(project, depName, uk.gov.hmcts.rse.Project.CftlibAgent));
+            libDependencies(project, depName, Library.CftlibAgent));
         return createManifestTask(project, "writeManifest" + depName, classpath, mainClass, file, args);
     }
 
@@ -318,13 +318,14 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private CftlibExec createRunTask(Project project, String name) {
         CftlibExec j = project.getTasks().create(name, CftlibExec.class);
-        j.setMain(uk.gov.hmcts.rse.Project.Bootstrapper.mainClass);
+        j.setMain(Library.Bootstrapper.mainClass);
 
 
         j.doFirst(x -> {
             // Resolve the configuration as a detached configuration for isolation from
             // the project's build (eg. to prevent interference from spring boot's dependency mgmt plugin)
-            j.classpath(project.getConfigurations().detachedConfiguration(libDependencies(project, uk.gov.hmcts.rse.Project.Bootstrapper)));
+            j.classpath(project.getConfigurations().detachedConfiguration(libDependencies(project,
+                    Library.Bootstrapper)));
         });
 
         j.args(manifests);
@@ -333,7 +334,7 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
 
-    Dependency[] libDependencies(Project project, uk.gov.hmcts.rse.Project... libDeps) {
+    Dependency[] libDependencies(Project project, Library... libDeps) {
         return Arrays.stream(libDeps)
             .map(d -> project.getDependencies()
                 .create(d.mavenCoordinates(getLibVersion(project))))
