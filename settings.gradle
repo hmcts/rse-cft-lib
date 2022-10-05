@@ -5,9 +5,7 @@ pluginManagement {
     }
 }
 
-includeBuild 'projects/ccd-definition-store-api'
 includeBuild 'rse-cft-lib-plugin'
-include 'projects:definition-store-fat'
 include 'test-project'
 
 new File(rootDir, "lib").listFiles().each {

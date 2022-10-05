@@ -25,19 +25,11 @@ dependencies {
     // This is needed at runtime to decode JWTs
     implementation 'com.auth0:java-jwt:3.12.0'
 
-    // Intellij cannot resolve classes from the shadow configuration
-    // so to fix intellisense we make definition store available as compile only dependencies.
-    // https://youtrack.jetbrains.com/issue/IDEA-163411
-    rootProject.ext.importedDefStoreModules.each {
-        compileOnly ("uk.gov.hmcts.ccd.definition:${it}") {
-            transitive = false
-        }
-    }
     // Use the fat definition store code at compile time.
-    compileOnly (project (path: ':projects:definition-store-fat', configuration: 'shadow'))
+    compileOnly ('com.github.hmcts.rse-cft-lib.ccd-definition-store-api:application:DEV-SNAPSHOT')
 
     // Provide definition store for running tests
-    testImplementation 'com.github.hmcts.rse-cft-lib:definition-store-fat:DEV-SNAPSHOT'
+    testImplementation 'com.github.hmcts.rse-cft-lib.ccd-definition-store-api:application:DEV-SNAPSHOT'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.3'
 }
 
@@ -46,4 +38,17 @@ test {
     useJUnitPlatform()
     // Test environment variable substitution - this value should be subbed into one of our FixedLists
     environment 'CCD_DEF_CHANGED_NAME_HOW', '"ID": "ChangedNameHow"'
+}
+
+// We depend on definition store code which must be published to maven local
+compileJava.dependsOn rootProject.task('publishccd-case-definition-store-api')
+
+
+// The cftlib brings in the cftlib Gradle plugin as a composite build.
+// This means Gradle attempts to resolve dependency configurations at configuration time instead of execution time,
+// which would fail for this project if we haven't yet published definition store to maven local.
+// We turn this behaviour off since we don't need dependency substitution
+// https://docs.gradle.org/current/userguide/composite_builds.html
+configurations.each {
+    it.resolutionStrategy.useGlobalDependencySubstitutionRules = false
 }
