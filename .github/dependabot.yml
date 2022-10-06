@@ -1,12 +1,12 @@
 version: 2
 updates:
   - package-ecosystem: "gradle"
-    directory: "/"
+    directory: "cftlib"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 50
   - package-ecosystem: "gitsubmodule"
-    directory: "/"
+    directory: "projects
     schedule:
       interval: "daily"
     open-pull-requests-limit: 50

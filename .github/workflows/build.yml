@@ -31,4 +31,4 @@ jobs:
           java-version: '11'
           cache: 'gradle'
       - name: LocalPublish
-        run: ./gradlew -i publish
+        run: ./cftlib/gradlew -i publish
