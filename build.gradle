@@ -7,26 +7,22 @@ task publish
 // We invoke each subproject's build separately using its own Gradle wrapper since each
 // project may require a different Gradle version.
 project.file('projects').listFiles().each { dir ->
-    // TODO: remove special casing for definition store when we merge def store into a single-module project.
-    if (!(dir.name =~ /definition-store/)) {
-        def t = task "publish${dir.name}"(type: Exec) {
-            // Enable Gradle's up-to-date checks so we only rebuild the git submodules if they change.
-            // Up to date checks require inputs and outputs to be defined, so we use the submodule's git tag as input
-            // and the maven local folder of the project as output.
-            inputs.property('sha', ['git', 'submodule', 'status', "projects/${dir.name}"].execute().text)
-            outputs.dir "${project.repositories.mavenLocal().url}/com/github/hmcts/rse-cft-lib/${dir.name}-lib"
-            workingDir dir
-            commandLine './gradlew', '-i', '-I', project.file('init.gradle').path, 'publishToMavenLocal'
-            doFirst {
-                // Gradle requires this in nested builds.
-                new File(dir, 'settings.gradle').createNewFile()
-            }
+    def t = task "publish${dir.name}"(type: Exec) {
+        // Enable Gradle's up-to-date checks so we only rebuild the git submodules if they change.
+        // Up to date checks require inputs and outputs to be defined, so we use the submodule's git tag as input
+        // and the maven local folder of the project as output.
+        inputs.property('sha', ['git', 'submodule', 'status', "projects/${dir.name}"].execute().text)
+        outputs.dir "${project.repositories.mavenLocal().url}/com/github/hmcts/rse-cft-lib/${dir.name}"
+        workingDir dir
+        commandLine './gradlew', '-i', '-I', project.file('init.gradle').path, 'publishToMavenLocal'
+        doFirst {
+            // Gradle requires this in nested builds.
+            new File(dir, 'settings.gradle').createNewFile()
         }
-        publish.dependsOn t
     }
+    publish.dependsOn t
 }
 
-publish.dependsOn ':projects:definition-store-fat:doPublish'
 publish.dependsOn gradle.includedBuild('rse-cft-lib-plugin').task(':publishToMavenLocal')
 
 tasks.check.dependsOn gradle.includedBuild('rse-cft-lib-plugin').task(':check')

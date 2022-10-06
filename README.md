@@ -357,11 +357,3 @@ Copy and run the complete fat jars from the docker images in the hmcts container
 cons:
  * Transient images - HMCTS container images are cleared down after a time
  * Classpath injection harder with fat jars
-
-
-### :warning: Note to maintainers :warning:
-
-This repository features a modified `gradlew`!
-
-A Gradle init script is used to customise the included CFT projects. gradlew has been modified to invoke this script so **any upgrade to the gradle wrapper must preserve this modification**.
-
