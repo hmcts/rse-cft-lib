@@ -139,10 +139,17 @@ public class CftLibPlugin implements Plugin<Project> {
         jar.setEntryCompression(ZipEntryCompression.STORED);
         jar.doFirst(t -> {
             jar.from(project.zipTree(
-                    project.getConfigurations().detachedConfiguration(libDependencies(project, "bootstrapper"))
+                    detachedConfiguration(project, libDependencies(project, "bootstrapper"))
                             .getSingleFile()));
         });
         jar.from(archive);
+    }
+
+    private Configuration detachedConfiguration(Project project, Dependency... deps) {
+        var result = project.getConfigurations().detachedConfiguration(deps);
+        // We don't want Gradle to swap in dependency substitutions in composite builds.
+        result.getResolutionStrategy().getUseGlobalDependencySubstitutionRules().set(false);
+        return result;
     }
 
     /**
@@ -249,7 +256,7 @@ public class CftLibPlugin implements Plugin<Project> {
         {
             // Runtime is always the first manifest
             var file = cftlibBuildDir(project).file("runtime").getAsFile();
-            Configuration classpath = project.getConfigurations().detachedConfiguration(
+            Configuration classpath = detachedConfiguration(project,
                     libDependencies(project, "runtime"));
             var task =
                     createManifestTask(project, "writeManifestRuntime", classpath,
@@ -276,7 +283,7 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private ManifestTask createCFTManifestTask(Project project, String depName, String mainClass, File file,
                                                String... args) {
-        Configuration classpath = project.getConfigurations().detachedConfiguration(
+        Configuration classpath = detachedConfiguration(project,
                 libDependencies(project, depName, "cftlib-agent"));
         return createManifestTask(project, "writeManifest" + depName, classpath, mainClass, file, args);
     }
@@ -331,7 +338,7 @@ public class CftLibPlugin implements Plugin<Project> {
         j.doFirst(x -> {
             // Resolve the configuration as a detached configuration for isolation from
             // the project's build (eg. to prevent interference from spring boot's dependency mgmt plugin)
-            j.classpath(project.getConfigurations().detachedConfiguration(libDependencies(project, "bootstrapper")));
+            j.classpath(detachedConfiguration(project, libDependencies(project, "bootstrapper")));
         });
 
         j.args(manifests);

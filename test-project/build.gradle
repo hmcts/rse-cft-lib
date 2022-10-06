@@ -1,4 +1,5 @@
 import uk.gov.hmcts.rse.AuthMode
+import uk.gov.hmcts.rse.ManifestTask
 
 
 plugins {
@@ -102,3 +103,11 @@ task publishSecrets(type: Exec) {
     commandLine 'az', 'keyvault', 'secret', 'set', "--vault-name", "rse-cft-lib", "--name", "aat-env", "--file", layout.buildDirectory.file('cftlib/.aat-env')
 }
 
+// Ensure we publish all required dependencies to maven local
+tasks.compileCftlibJava.dependsOn rootProject.publish
+tasks.withType(ManifestTask).each {
+    it.dependsOn rootProject.publish
+}
+configurations.each {
+    it.resolutionStrategy.useGlobalDependencySubstitutionRules = false
+}
