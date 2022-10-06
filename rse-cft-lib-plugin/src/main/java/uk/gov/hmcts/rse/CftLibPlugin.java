@@ -30,14 +30,13 @@ import org.gradle.jvm.tasks.Jar;
 
 public class CftLibPlugin implements Plugin<Project> {
 
-    final Map<String, String> projects = Map.of(
-            "am-role-assignment-service", "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication",
-            "ccd-data-store-api", "uk.gov.hmcts.ccd.CoreCaseDataApplication",
-            // 'application' is the name of the definition store entry point module
-            "application", "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication",
-            "user-profile-api", "uk.gov.hmcts.ccd.UserProfileApplication",
-            "aac-manage-case-assignment", "uk.gov.hmcts.reform.managecase.Application",
-            "ccd-case-document-am-api", "uk.gov.hmcts.reform.ccd.documentam.Application"
+    final Map<Service, String> projects = Map.of(
+            Service.amRoleAssignmentService, "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication",
+            Service.ccdDataStoreApi, "uk.gov.hmcts.ccd.CoreCaseDataApplication",
+            Service.ccdDefinitionStoreApi, "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication",
+            Service.ccdUserProfileApi, "uk.gov.hmcts.ccd.UserProfileApplication",
+            Service.aacManageCaseAssignment, "uk.gov.hmcts.reform.managecase.Application",
+            Service.ccdCaseDocumentAmApi, "uk.gov.hmcts.reform.ccd.documentam.Application"
     );
     private final List<File> manifests = new ArrayList<>();
     private final List<ManifestTask> manifestTasks = Lists.newArrayList();
@@ -164,8 +163,9 @@ public class CftLibPlugin implements Plugin<Project> {
         project.getExtensions().getByType(SourceSetContainer.class)
                 .create("cftlibIDE");
         var config = project.getConfigurations().getByName("cftlibIDEImplementation");
+        var deps = projects.keySet().stream().map(Service::id).toArray(String[]::new);
         config.getDependencies().addAll(Arrays.asList(
-                libDependencies(project, projects.keySet().toArray(String[]::new))
+                libDependencies(project, deps)
         ));
     }
 
@@ -264,19 +264,20 @@ public class CftLibPlugin implements Plugin<Project> {
             manifestTasks.add(task);
             manifests.add(file);
         }
+        var foo = 1;
 
         for (var e : projects.entrySet()) {
-            var file = cftlibBuildDir(project).file(e.getKey()).getAsFile();
+            var file = cftlibBuildDir(project).file(e.getKey().id()).getAsFile();
             var args = Lists.newArrayList(
                     "--rse.lib.service_name=" + e.getKey()
             );
-            if (e.getKey().equals("ccd-data-store-api-lib")) {
+            if (e.getKey().equals(Service.ccdDataStoreApi)) {
                 args.add("--idam.client.secret=${IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET:}");
-            } else if (e.getKey().equals("aac-manage-case-assignment-lib")) {
+            } else if (e.getKey().equals(Service.aacManageCaseAssignment)) {
                 args.add("--idam.client.secret=${IDAM_OAUTH2_AAC_CLIENT_SECRET:}");
             }
             manifestTasks.add(
-                    createCFTManifestTask(project, e.getKey(), e.getValue(), file, args.toArray(String[]::new)));
+                    createCFTManifestTask(project, e.getKey().id(), e.getValue(), file, args.toArray(String[]::new)));
             manifests.add(file);
         }
     }
