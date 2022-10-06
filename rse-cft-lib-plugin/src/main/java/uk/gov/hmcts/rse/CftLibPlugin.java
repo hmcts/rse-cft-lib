@@ -264,7 +264,6 @@ public class CftLibPlugin implements Plugin<Project> {
             manifestTasks.add(task);
             manifests.add(file);
         }
-        var foo = 1;
 
         for (var e : projects.entrySet()) {
             var file = cftlibBuildDir(project).file(e.getKey().id()).getAsFile();
