@@ -109,8 +109,10 @@ public class LibRunner {
         System.setProperty("elasticsearch.failimportiferror", "true");
 
         // Allow more time for definitions to import to reduce test flakeyness
-        System.setProperty("CCD_TX-TIMEOUT_DEFAULT", "120");
-        System.setProperty("DEFINITION_STORE_TX_TIMEOUT_DEFAULT", "120");
+        // These timeouts are large since definition imports can start before elastic search is ready,
+        // in which case the import will block waiting for elastic search whilst the transaction is pending.
+        System.setProperty("CCD_TX-TIMEOUT_DEFAULT", "240");
+        System.setProperty("DEFINITION_STORE_TX_TIMEOUT_DEFAULT", "240");
 
         System.setProperty("ROLE_ASSIGNMENT_URL", "http://localhost:4096");
         System.setProperty("DEFINITION_STORE_HOST", "http://localhost:4451");
