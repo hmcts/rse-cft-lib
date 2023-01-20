@@ -145,10 +145,7 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
     private Configuration detachedConfiguration(Project project, Dependency... deps) {
-        var result = project.getConfigurations().detachedConfiguration(deps);
-        // We don't want Gradle to swap in dependency substitutions in composite builds.
-        result.getResolutionStrategy().getUseGlobalDependencySubstitutionRules().set(false);
-        return result;
+        return project.getConfigurations().detachedConfiguration(deps);
     }
 
     /**
