@@ -179,7 +179,8 @@ tasks.withType(uk.gov.hmcts.rse.CftlibExec) {
 #### IDAM & S2S
 
 Use either AAT's IDAM & S2S or local simulators, configurable via the ```authMode``` gradle task property.
-Local
+
+##### Local
 
 ```groovy
 bootWithCCD {
@@ -189,7 +190,7 @@ bootWithCCD {
 }
 ```
 
-AAT (VPN required)
+##### AAT (VPN required)
 
 ```groovy
 bootWithCCD {
