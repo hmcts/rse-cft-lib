@@ -165,10 +165,22 @@ Tests must be placed in the `cftlibTest` sourceset.
 
 ### 6. Configuration
 
+#### Configuring the Cftlib tasks
+
+`bootWithCCD` and `cftlibTest` can be configured individually or alternatively configured in common by configuring the `CftlibExec` task type:
+
+```groovy
+tasks.withType(uk.gov.hmcts.rse.CftlibExec) {
+    environment ...
+}
+```
+
 #### IDAM & S2S
 
 Use either AAT's IDAM & S2S or local simulators, configurable via the ```authMode``` gradle task property.
-
+tasks.withType(uk.gov.hmcts.rse.CftlibExec).each {
+  it.environment 'XUI_JURISDICTIONS', 'ST_CIC,ST_SEND,ST_PHL,ST_CS,ST_MH'
+}
 Local
 
 ```groovy
