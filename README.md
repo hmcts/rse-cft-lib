@@ -167,7 +167,7 @@ Tests must be placed in the `cftlibTest` sourceset.
 
 #### Configuring the Cftlib tasks
 
-`bootWithCCD` and `cftlibTest` can be configured individually or alternatively configured in common by configuring the `CftlibExec` task type:
+`bootWithCCD` and `cftlibTest` can be configured individually or common configuration can be applied to the `CftlibExec` task type:
 
 ```groovy
 tasks.withType(uk.gov.hmcts.rse.CftlibExec) {
