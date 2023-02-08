@@ -6,6 +6,9 @@
 
 Improved local development and robust automated tests when working with CCD:
 
+* Bring CCD & other common components into your project as libraries
+  * Ensure consistent cross-team development environments
+  * Manage breaking common component changes
 * Rapid & reliable creation of isolated CCD environments
 * Reduced RAM requirements & improved performance
   * Run your application + CCD in a single JVM
