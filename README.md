@@ -1,14 +1,19 @@
 # RSE CFT lib ![Java CI](https://github.com/hmcts/rse-cft-lib/workflows/Java%20CI/badge.svg) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hmcts/rse-cft-lib?label=release)
 
-## Run your application + CCD in a single JVM
+## A reform common component SDK
 
 ### Rationale
 
-Improved local development and robust automated tests:
+Improved local development and robust automated tests when working with CCD:
 
+* Bring CCD & other common components into your project as library dependencies
+  * Ensure consistent cross-team development environments
+  * Manage breaking common component changes
+* Rapid & reliable creation of isolated CCD environments
 * Reduced RAM requirements & improved performance
+  * Run Java common components in the same JVM as your application
 * Improved debugging
-  * Set a breakpoint anywhere in any included CFT service
+  * Set breakpoints & step through the source of included CFT services
 * A [Java API](lib/bootstrapper/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) for:
   * Definition imports
   * Role creation
