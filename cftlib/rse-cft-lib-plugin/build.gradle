@@ -27,7 +27,7 @@ dependencies {
     // Use JUnit test framework for unit tests
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.26'
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.26'
-    implementation 'com.google.guava:guava:31.0.1-jre'
+    implementation 'com.google.guava:guava:31.1-jre'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
