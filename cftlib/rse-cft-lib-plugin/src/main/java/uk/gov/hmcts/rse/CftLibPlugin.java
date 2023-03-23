@@ -332,7 +332,7 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private CftlibExec createRunTask(Project project, String name) {
         CftlibExec j = project.getTasks().create(name, CftlibExec.class);
-        j.setMain("uk.gov.hmcts.rse.ccd.lib.LibRunner");
+        j.getMainClass().set("uk.gov.hmcts.rse.ccd.lib.LibRunner");
 
 
         j.doFirst(x -> {
