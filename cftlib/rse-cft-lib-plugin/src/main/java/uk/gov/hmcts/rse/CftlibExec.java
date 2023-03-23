@@ -14,6 +14,10 @@ import org.gradle.jvm.toolchain.JavaToolchainService;
 public class CftlibExec extends JavaExec {
     public AuthMode authMode = AuthMode.AAT;
 
+    public CftlibExec() {
+        setJavaToolChain();
+    }
+
     @Override
     public void exec() {
         configure();
@@ -21,7 +25,6 @@ public class CftlibExec extends JavaExec {
     }
 
     private void configure() {
-        setJavaToolChain();
         setRequiredJvmArgs();
         setStandardEnvVars();
         if (authMode == AuthMode.Local) {
