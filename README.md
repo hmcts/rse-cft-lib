@@ -244,7 +244,10 @@ Database connections can be obtained programmatically via the `Cftlib::getConnec
 | CCD user profile | userprofile |
 | AM role assignment service | am |
 
-eg. to connect to ccd data store db ```psql postgresql://postgres:postgres@localhost:6432/datastore```
+eg. to connect to ccd data store db 
+```
+psql postgresql://postgres:postgres@localhost:6432/datastore
+```
 
 #### Ports
 
