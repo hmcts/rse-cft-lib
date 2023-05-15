@@ -7,14 +7,19 @@ on:
       - main
 jobs:
   test-iteration-1:
+    name: test1
     uses: ./.github/workflows/check.yml
   test-iteration-2:
+    name: test2
     uses: ./.github/workflows/check.yml
   test-iteration-3:
+    name: test3
     uses: ./.github/workflows/check.yml
   test-iteration-4:
+    name: test4
     uses: ./.github/workflows/check.yml
   test-iteration-5:
+    name: test5
     uses: ./.github/workflows/check.yml
   release:
     if: startsWith(github.ref, 'refs/tags')
