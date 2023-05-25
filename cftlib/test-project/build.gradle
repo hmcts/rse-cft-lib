@@ -25,17 +25,17 @@ repositories {
 
 dependencies {
 
-    compileOnly 'org.projectlombok:lombok:1.18.26'
-    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    compileOnly 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
 
     // Enable live reload of just our application
     cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
 
-    cftlibCompileOnly 'org.projectlombok:lombok:1.18.26'
-    cftlibAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+    cftlibCompileOnly 'org.projectlombok:lombok:1.18.28'
+    cftlibAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
 
-    cftlibTestCompileOnly 'org.projectlombok:lombok:1.18.26'
-    cftlibTestAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+    cftlibTestCompileOnly 'org.projectlombok:lombok:1.18.28'
+    cftlibTestAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.github.hmcts:service-auth-provider-java-client:4.0.3'
