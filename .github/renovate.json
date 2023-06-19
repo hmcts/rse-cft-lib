@@ -5,6 +5,7 @@
     "local>hmcts/.github//renovate/automerge-all"
   ],
   "schedule": "before 3am",
+  "includePaths": ["projects/**"],
   "git-submodules": {
     "enabled": true
   }
