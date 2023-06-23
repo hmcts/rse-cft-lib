@@ -6,7 +6,7 @@
   ],
   "ignorePaths": [
     "cftlib/**",
-    "actions/**"
+    ".github/**"
   ],
   "schedule": "before 3am",
   "git-submodules": {
