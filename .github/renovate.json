@@ -4,7 +4,10 @@
     "local>hmcts/.github:renovate-config",
     "local>hmcts/.github//renovate/automerge-all"
   ],
-  "ignorePaths": ["cftlib/**"],
+  "ignorePaths": [
+    "cftlib/**",
+    "actions/**"
+  ],
   "schedule": "before 3am",
   "git-submodules": {
     "enabled": true
