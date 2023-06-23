@@ -1,0 +1,15 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "local>hmcts/.github:renovate-config",
+    "local>hmcts/.github//renovate/automerge-all"
+  ],
+  "ignorePaths": [
+    "cftlib/**",
+    ".github/**"
+  ],
+  "schedule": "before 3am",
+  "git-submodules": {
+    "enabled": true
+  }
+}
