@@ -44,11 +44,6 @@ public class CftLibPlugin implements Plugin<Project> {
     public void apply(Project project) {
         project.getPlugins().apply("java");
 
-        project.afterEvaluate(p -> {
-            // CCD repos still rely on jcenter so add it as last repository.
-            p.getRepositories().jcenter();
-        });
-
         createSourceSets(project);
         createConfigurations(project);
 
