@@ -19,13 +19,6 @@ def configurePublishing(p) {
             }
         }
 
-        // CCD user profile build is broken without this.
-        if (name == "user-profile-api") {
-            repositories {
-                jcenter()
-            }
-        }
-
         // Disable gradle module metadata resolution and rely on maven pom
         tasks.withType(GenerateModuleMetadata) {
             enabled = false
