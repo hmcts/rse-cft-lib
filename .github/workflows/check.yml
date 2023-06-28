@@ -17,5 +17,7 @@ jobs:
         distribution: 'temurin'
         java-version: '11'
         cache: 'gradle'
+    - name: printenv
+      run: (env | grep JAVA_HOME)
     - name: Build
       run: (cd cftlib;./gradlew check -i)
