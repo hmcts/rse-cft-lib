@@ -13,7 +13,7 @@ project.file('../projects').listFiles().each { dir ->
         // and the maven local folder of the project as output.
         inputs.property('sha', ['git', 'submodule', 'status', dir].execute().text)
         outputs.dir "${project.repositories.mavenLocal().url}/com/github/hmcts/rse-cft-lib/${dir.name}"
-        commandLine './gradlew', '-i', '-I', project.file('init.gradle').path, 'publishToMavenLocal'
+        commandLine './gradlew', "-Dorg.gradle.java.home=${System.env.JDK_11}", '-i', '-I', project.file('init.gradle').path, 'publishToMavenLocal'
         workingDir dir
     }
     publish.dependsOn t
