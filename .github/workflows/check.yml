@@ -5,6 +5,7 @@ on:
     inputs:
       test_spring_boot_version:
         required: false
+        type: string
         default: '2.4.12'
 jobs:
   build:
