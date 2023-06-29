@@ -2,10 +2,10 @@ name: Java CI
 
 on:
   workflow_call:
-inputs:
-  test_spring_boot_version:
-    required: false
-    default: '2.4.12'
+    inputs:
+      test_spring_boot_version:
+        required: false
+        default: '2.4.12'
 jobs:
   build:
     runs-on: ubuntu-latest
