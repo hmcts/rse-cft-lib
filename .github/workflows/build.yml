@@ -10,7 +10,7 @@ jobs:
     name: SpringBoot2
     uses: ./.github/workflows/check.yml
     with:
-      test_spring_boot_version: 2.4.12
+      test_spring_boot_version: 2.6.10
   spring-boot-3:
     name: SpringBoot3
     uses: ./.github/workflows/check.yml
