@@ -26,4 +26,4 @@ jobs:
     - name: Set JDK 11 location
       run: echo "JDK_11=$JAVA_HOME_11_X64" >> "$GITHUB_ENV"
     - name: Build
-      run: (cd cftlib;./gradlew -PtestSpringBootVersion=${{inputs.test_spring_boot_version}} -P check -i)
+      run: (cd cftlib;./gradlew -PtestSpringBootVersion=${{inputs.test_spring_boot_version}} check -i)
