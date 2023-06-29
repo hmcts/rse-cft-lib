@@ -3,15 +3,12 @@ import uk.gov.hmcts.rse.ManifestTask
 
 
 plugins {
-    id 'org.springframework.boot' version '3.1.1'
+    id 'org.springframework.boot' version "${testSpringBootVersion}"
     id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
     id 'com.github.hmcts.rse-cft-lib'
     id 'uk.gov.hmcts.java' version '0.12.43'
 }
-
-group = 'uk.gov.hmcts'
-version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
