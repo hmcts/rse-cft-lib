@@ -21,9 +21,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.TextCodec;
 import lombok.SneakyThrows;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -49,11 +46,10 @@ import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 class LibConsumerApplicationTests extends CftlibTest {
 
     public static String generateDummyS2SToken(String serviceName) {
-        return Jwts.builder()
-            .setSubject(serviceName)
-            .setIssuedAt(new Date())
-            .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.encode("AA"))
-            .compact();
+        return JWT.create()
+                .withSubject(serviceName)
+                .withIssuedAt(new Date())
+                .sign(Algorithm.HMAC256("secret"));
     }
 
     public static String buildJwt() {
