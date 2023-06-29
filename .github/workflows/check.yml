@@ -6,7 +6,7 @@ on:
       test_spring_boot_version:
         required: false
         type: string
-        default: '2.4.12'
+        default: '2.6.10'
 jobs:
   build:
     runs-on: ubuntu-latest
