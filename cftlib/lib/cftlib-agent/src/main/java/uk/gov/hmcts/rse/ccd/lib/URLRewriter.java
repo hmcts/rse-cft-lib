@@ -20,7 +20,7 @@ import uk.gov.hmcts.reform.idam.client.IdamApi;
  * Implements URL remappings handled by the CCD API Gateway.
  */
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
-@ConditionalOnClass(IdamApi.class)
+@ConditionalOnClass({IdamApi.class, HttpServletRequest.class})
 @Component
 public class URLRewriter extends OncePerRequestFilter {
 

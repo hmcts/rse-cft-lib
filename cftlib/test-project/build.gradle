@@ -24,6 +24,8 @@ repositories {
     }
 }
 
+def springBoot2 = testSpringBootVersion.startsWith("2")
+
 dependencies {
 
     compileOnly 'org.projectlombok:lombok:1.18.28'
@@ -40,8 +42,10 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation group: 'com.google.guava', name: 'guava', version: '32.0.1-jre'
-    implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.1.1'
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.3'
+    implementation group: 'com.github.hmcts', name: 'idam-java-client', version: (springBoot2 ? '2.1.1' : '3.0.1')
+    if (springBoot2) {
+      implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.3'
+    }
     cftlibTestImplementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
 
     cftlibTestImplementation 'org.springframework.boot:spring-boot-starter-test'
