@@ -23,7 +23,7 @@ jobs:
       test_spring_boot_version: 4.0.0
   release:
     if: startsWith(github.ref, 'refs/tags')
-    needs: [test-iteration-1, test-iteration-2, test-iteration-3, test-iteration-4, test-iteration-5]
+    needs: [spring-boot-2, spring-boot-3]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
