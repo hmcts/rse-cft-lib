@@ -1,6 +1,8 @@
 server:
   port: 4013
 idam:
+  api:
+    url: ${IDAM_API_URL}
   s2s-auth:
     url: http://localhost:7431
     totp_secret: AAAAAAAAAAAAAAAC

@@ -23,3 +23,10 @@ task zipCompose(type: Zip) {
 processResources {
     from zipCompose
 }
+
+java {
+    withJavadocJar()
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}

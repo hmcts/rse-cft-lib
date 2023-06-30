@@ -2,7 +2,11 @@ name: Java CI
 
 on:
   workflow_call:
-
+    inputs:
+      test_spring_boot_version:
+        required: false
+        type: string
+        default: '2.6.10'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,7 +19,11 @@ jobs:
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
-        java-version: '11'
+        java-version: |
+          11
+          17
         cache: 'gradle'
+    - name: Set JDK 11 location
+      run: echo "JDK_11=$JAVA_HOME_11_X64" >> "$GITHUB_ENV"
     - name: Build
-      run: (cd cftlib;./gradlew check -i)
+      run: (cd cftlib;./gradlew -PtestSpringBootVersion=${{inputs.test_spring_boot_version}} check -i)

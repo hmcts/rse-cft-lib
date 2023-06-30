@@ -52,3 +52,9 @@ compileJava.dependsOn rootProject.task('publishccd-case-definition-store-api')
 configurations.each {
     it.resolutionStrategy.useGlobalDependencySubstitutionRules = false
 }
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}

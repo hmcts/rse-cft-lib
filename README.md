@@ -290,6 +290,14 @@ With spring devtools on the classpath your application will automatically reload
 
 The cftlib maintains a log file per service in your build directory; `build/cftlib/logs`.
 
+## Building the cftlib
+
+The Cftlib build uses both JDK 17 & 11 (for common components still on Java 11).
+
+Environment variables JAVA_HOME must be set to JDK 17 and JDK_11 must point to your Java 11 JDK location.
+
+TODO: Remove the use of JDK 11 once all common components are on Java 17.
+
 ## How the cftlib works
 
 The cftlib uses isolated classloaders to run multiple spring boot applications in a single Java Virtual Machine (JVM).
