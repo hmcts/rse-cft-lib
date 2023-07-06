@@ -16,19 +16,3 @@ jobs:
     uses: ./.github/workflows/check.yml
     with:
       test_spring_boot_version: 3.1.1
-  release:
-    if: startsWith(github.ref, 'refs/tags')
-    needs: [spring-boot-2, spring-boot-3]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'temurin'
-          java-version: '11'
-          cache: 'gradle'
-      - name: LocalPublish
-        run: ./cftlib/gradlew -i publish
