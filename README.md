@@ -189,7 +189,7 @@ Use either AAT's IDAM & S2S or local simulators, configurable via the ```authMod
 
 ```groovy
 bootWithCCD {
-    // IDAM simulator will be started on port 5000,
+    // IDAM simulator will be started on port 5061,
     // S2S simulator on port 8489
     authMode = uk.gov.hmcts.rse.AuthMode.Local
 }
@@ -263,7 +263,7 @@ Services run on the following default ports:
 | AAC assign access to a case | 4454 |
 | XUI Manage cases | 4454 |
 | XUI Manage org | 4454 |
-| IDAM Simulator* | 5000 |
+| IDAM Simulator* | 5061 |
 | S2S Simulator* | 8489 |
 
 \* When running AuthMode.Local
