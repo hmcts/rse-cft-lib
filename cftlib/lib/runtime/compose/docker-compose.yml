@@ -132,9 +132,9 @@ services:
     image: "hmctspublic.azurecr.io/hmcts/rse/rse-idam-simulator:latest"
     profiles: ["localAuth"]
     ports:
-      - 5061:5061
+      - 5062:5062
     environment:
-      SIMULATOR_JWT_ISSUER: "${IDAM_SIMULATOR_BASE_URL:-http://localhost:5061}"
-      SIMULATOR_OPENID_BASE-URL: "${IDAM_SIMULATOR_BASE_URL:-http://localhost:5061}"
-      SERVER_PORT: 5061
+      SIMULATOR_JWT_ISSUER: "${IDAM_SIMULATOR_BASE_URL:-http://localhost:5062}"
+      SIMULATOR_OPENID_BASE-URL: "${IDAM_SIMULATOR_BASE_URL:-http://localhost:5062}"
+      SERVER_PORT: 5062
 
