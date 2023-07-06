@@ -125,12 +125,12 @@ public class ComposeRunner {
                 hostEnv != null
                     ? hostEnv
                     : "host.docker.internal");
-            var runtime = host + ":5000";
+            var runtime = host + ":5061";
 
             builder.putAll(Map.of(
                 "XUI_S2S_URL", host + ":" + ControlPlane.getEnvVar("RSE_LIB_S2S_PORT", 8489),
                 "XUI_IDAM_API_URL", runtime,
-                "XUI_IDAM_LOGIN_URL", "http://localhost:5000",
+                "XUI_IDAM_LOGIN_URL", "http://localhost:5061",
                 // TODO: placeholder to pass health checks
                 "XUI_EM_DOCASSEMBLY_API", ControlPlane.getEnvVar("XUI_EM_DOCASSEMBLY_API", runtime),
                 "XUI_DOCUMENTS_API", ControlPlane.getEnvVar("XUI_DOCUMENTS_API", runtime),
@@ -145,7 +145,7 @@ public class ComposeRunner {
         if ("localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
             try {
                 // Wait for Idam Simulator to come up.
-                var c = (HttpURLConnection) new URL("http://localhost:5000/health")
+                var c = (HttpURLConnection) new URL("http://localhost:5061/health")
                     .openConnection();
                 if (c.getResponseCode() != 200) {
                     throw new RuntimeException();
