@@ -8,7 +8,7 @@
     "cftlib/**",
     ".github/**"
   ],
-  "schedule": "before 3am",
+  "schedule": "after 6pm every weekday",
   "git-submodules": {
     "enabled": true
   }
