@@ -152,6 +152,9 @@ Right click the bootWithCCD/cftlibTest Gradle task and select 'Debug...'
 
 Launch with `--debug-jvm` and attach the debugger from your IDE.
 
+```sh
+./gradlew bootWithCCD --debug-jvm
+```
 
 ### 5. Writing integration tests
 
