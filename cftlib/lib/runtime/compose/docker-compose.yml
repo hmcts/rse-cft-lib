@@ -79,6 +79,7 @@ services:
       LAUNCH_DARKLY_CLIENT_ID: "${XUI_LD_ID:-5de6610b23ce5408280f2268}"
       SERVICES_ROLE_ASSIGNMENT_API: http://${JVM_HOST:-host.docker.internal}:4096
       HEALTH_ROLE_ASSIGNMENT_API: http://${JVM_HOST:-host.docker.internal}:4096/health
+      SERVICES_PRD_COMMONDATA_API: "${SERVICES_PRD_COMMONDATA_API:-http://host.docker.internal:8765}"
     ports:
       - ${XUI_PORT:-3000}:3000
     extra_hosts:
