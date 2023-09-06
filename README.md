@@ -25,7 +25,7 @@ Improved local development and robust automated tests when working with CCD:
 
 ## Prerequisites
 
-- Java 11
+- Java 17
 - Gradle 7.6
 - Docker
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) (when using automated AAT secret management)
@@ -296,11 +296,7 @@ The cftlib maintains a log file per service in your build directory; `build/cftl
 
 ## Building the cftlib
 
-The Cftlib build uses both JDK 17 & 11 (for common components still on Java 11).
-
-Environment variables JAVA_HOME must be set to JDK 17 and JDK_11 must point to your Java 11 JDK location.
-
-TODO: Remove the use of JDK 11 once all common components are on Java 17.
+The Cftlib build requires JDK 17.
 
 ## How the cftlib works
 
