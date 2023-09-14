@@ -80,8 +80,8 @@ services:
       SERVICES_ROLE_ASSIGNMENT_API: http://${JVM_HOST:-host.docker.internal}:4096
       HEALTH_ROLE_ASSIGNMENT_API: http://${JVM_HOST:-host.docker.internal}:4096/health
       SERVICES_PRD_COMMONDATA_API: ${SERVICES_PRD_COMMONDATA_API}
-      SERVICES_WORK_ALLOCATION_TASK_API: "${XUI_SERVICE_WA_TASK_API}:-http://wa-task-management-api-aat.service.core-compute-aat.internal}"
-      HEALTH_WORK_ALLOCATION_TASK_API: "${XUI_SERVICE_WA_TASK_API}:-http://wa-task-management-api-aat.service.core-compute-aat.internal}/health"
+      SERVICES_WORK_ALLOCATION_TASK_API: "http://wa-task-management-api-aat.service.core-compute-aat.internal"
+      HEALTH_WORK_ALLOCATION_TASK_API: "http://wa-task-management-api-aat.service.core-compute-aat.internal/health"
     ports:
       - ${XUI_PORT:-3000}:3000
     extra_hosts:
