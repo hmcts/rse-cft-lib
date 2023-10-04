@@ -82,6 +82,7 @@ services:
       SERVICES_PRD_COMMONDATA_API: ${SERVICES_PRD_COMMONDATA_API}
       SERVICES_WORK_ALLOCATION_TASK_API: "http://wa-task-management-api-aat.service.core-compute-aat.internal"
       HEALTH_WORK_ALLOCATION_TASK_API: "http://wa-task-management-api-aat.service.core-compute-aat.internal/health"
+      SERVICES_LOCATION_REF_API_URL: ${SERVICES_LOCATION_REF_API_URL}
     ports:
       - ${XUI_PORT:-3000}:3000
     extra_hosts:
