@@ -122,6 +122,8 @@ public class LibRunner {
         // Used by AAC manage case assignment
         System.setProperty("CASE_DATA_STORE_BASE_URL", "http://localhost:4452");
         System.setProperty("CCD_DEFINITION_STORE_API_BASE_URL", "http://localhost:4451");
+
+        System.setProperty("CASE_DOCUMENT_AM_URL", "http://localhost:4455");
     }
 
 
