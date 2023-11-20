@@ -10,7 +10,7 @@ public enum Service {
     ccdUserProfileApi("user-profile-api"),
     aacManageCaseAssignment,
     ccdCaseDocumentAmApi,
-    dgDocassemblyApi;
+    dgDocassemblyApi("rpa-dg-docassembly");
 
     private final String id;
 
