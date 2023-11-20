@@ -7,5 +7,6 @@ public enum Project {
     CaseDocumentAccessManagement,
     AM,
     AacManageCaseAssignment,
-    Application
+    Application,
+    DocAssembly,
 }

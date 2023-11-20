@@ -36,7 +36,8 @@ public class CftLibPlugin implements Plugin<Project> {
             Service.ccdDefinitionStoreApi, "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication",
             Service.ccdUserProfileApi, "uk.gov.hmcts.ccd.UserProfileApplication",
             Service.aacManageCaseAssignment, "uk.gov.hmcts.reform.managecase.Application",
-            Service.ccdCaseDocumentAmApi, "uk.gov.hmcts.reform.ccd.documentam.Application"
+            Service.ccdCaseDocumentAmApi, "uk.gov.hmcts.reform.ccd.documentam.Application",
+            Service.dgDocassemblyApi, "uk.gov.hmcts.reform.dg.docassembly.Application"
     );
     private final List<File> manifests = new ArrayList<>();
     private final List<ManifestTask> manifestTasks = Lists.newArrayList();

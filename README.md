@@ -71,6 +71,7 @@ This will define the following in your Gradle build:
     - CCD Case document Access Management (CDAM)
     - Access Management role assignment service
     - Assign access to a case
+    - Doc Assembly
   - (in docker)
     - Required dependencies (postgres, elasticsearch etc)
     - XUI Manage cases
@@ -131,6 +132,7 @@ This will launch (in a single JVM):
 * CCD data, definition & user profile services
 * AM role assignment service
 * Assign access to a case
+* Doc assembly
 
 Plus (in docker):
 
@@ -265,6 +267,7 @@ Services run on the following default ports:
 | CCD case document Access Management | 4455 |
 | AM role assignment service | 4096 |
 | AAC assign access to a case | 4454 |
+| Doc assembly | 8080 |
 | XUI Manage cases | 4454 |
 | XUI Manage org | 4454 |
 | IDAM Simulator* | 5062 |
