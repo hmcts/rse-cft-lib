@@ -97,9 +97,9 @@ services:
       RD_PROFESSIONAL_API_SERVICE: "${RD_PROFESSIONAL_API_URL:-http://rd-professional-api-aat.service.core-compute-aat.internal}"
       S2S_SERVICE: "${XUI_S2S_URL:-http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}"
       FEE_AND_PAY_API: http://payment-api-aat.service.core-compute-aat.internal
-
       SERVICES_CCD_DATA_STORE_API: http://${JVM_HOST:-host.docker.internal}:4452
-
+      SYSTEM_USER_NAME: "${XUI_SYSTEM_USER_NAME:-cwd_system@mailinator.com}"
+      SYSTEM_USER_PASSWORD: "${XUI_SYSTEM_USER_PASSWORD:-password}"
       ACA_SERVICE_API_BASEURL: http://${JVM_HOST:-host.docker.internal}:4454
       SERVICES_MCA_PROXY_API: http://${JVM_HOST:-host.docker.internal}:4454
       APPINSIGHTS_INSTRUMENTATIONKEY: "AAAAAAAAAAAAAAAC"
