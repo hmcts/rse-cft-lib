@@ -72,7 +72,7 @@ public class ComposeRunner {
             .redirectError(System.err)
             .directory(dir.toFile())
             .exitValueNormal()
-            .timeout(10, TimeUnit.MINUTES)
+            .timeout(30, TimeUnit.MINUTES)
             .execute();
 
     }
