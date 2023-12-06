@@ -70,6 +70,8 @@ public class CftLibPlugin implements Plugin<Project> {
         project.afterEvaluate(p -> {
             p.getRepositories().mavenCentral();
             p.getRepositories().maven(m -> m.setUrl("https://jitpack.io"));
+            // Some cft projects (eg. docassembly) make use of milestone releases of spring boot.
+            p.getRepositories().maven(m -> m.setUrl("https://repo.spring.io/milestone"));
         });
     }
 
