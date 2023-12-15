@@ -65,7 +65,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     @SneakyThrows
     @Test
     void testController() {
-        var request = buildGet("http://localhost:7431/index");
+        var request = buildGet("http://localhost:7431/health");
         var response = HttpClientBuilder.create().build().execute(request);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
     }
@@ -96,7 +96,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     @SneakyThrows
     @Test
     void listJurisdictions() {
-        var request = buildGet("http://localhost:7431/aggregated/caseworkers/:uid/jurisdictions?access=read");
+        var request = buildGet("http://localhost:4452/aggregated/caseworkers/:uid/jurisdictions?access=read");
         // Test xui talking direct to ccd without the gateway.
         // The s2s subject should be rewritten to ccd_gw by the lib.
         request.removeHeaders("ServiceAuthorization");
@@ -113,7 +113,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     @SneakyThrows
     @Test
     void getWorkbasketInputs() {
-        var request = buildGet("http://localhost:7431/data/internal/case-types/NFD/work-basket-inputs");
+        var request = buildGet("http://localhost:4452/data/internal/case-types/NFD/work-basket-inputs");
         request.addHeader("experimental", "true");
 
         var response = HttpClientBuilder.create().build().execute(request);
@@ -130,7 +130,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     @Test
     void getPaginationMetadata() {
         var request = buildGet(
-            "http://localhost:7431/data/caseworkers/:uid/jurisdictions/DIVORCE/case-types/NFD/cases/pagination_metadata");
+            "http://localhost:4452/data/caseworkers/:uid/jurisdictions/DIVORCE/case-types/NFD/cases/pagination_metadata");
 
         var response = HttpClientBuilder.create().build().execute(request);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
@@ -188,7 +188,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     @Test
     void caseCreation() throws IOException {
         var request = buildGet(
-            "http://localhost:7431/data/internal/case-types/NFD/event-triggers/create-test-application?ignore-warning=false");
+            "http://localhost:4452/data/internal/case-types/NFD/event-triggers/create-test-application?ignore-warning=false");
         request.addHeader("experimental", "true");
         request.addHeader("Accept",
             "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-start-case-trigger.v2+json;charset=UTF-8");

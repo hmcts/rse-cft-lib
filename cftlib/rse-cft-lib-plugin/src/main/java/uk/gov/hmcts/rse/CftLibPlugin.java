@@ -3,7 +3,6 @@ package uk.gov.hmcts.rse;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,20 +11,15 @@ import java.util.Map;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.google.common.collect.ObjectArrays;
 import lombok.SneakyThrows;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.file.Directory;
-import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.file.RelativePath;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSetContainer;
-import org.gradle.api.tasks.bundling.Zip;
-import org.gradle.api.tasks.bundling.ZipEntryCompression;
 import org.gradle.jvm.tasks.Jar;
 
 public class CftLibPlugin implements Plugin<Project> {
@@ -54,7 +48,6 @@ public class CftLibPlugin implements Plugin<Project> {
         createTestTask(project);
         surfaceSourcesToIDE(project);
         createCftlibJarTask(project);
-        createExecutableJarTask(project, createZipRuntimeTask(project));
     }
 
     static Directory cftlibBuildDir(Project project) {
@@ -75,71 +68,11 @@ public class CftLibPlugin implements Plugin<Project> {
         });
     }
 
-    @SneakyThrows
-    private Zip createZipRuntimeTask(Project project) {
-        var zip = project.getTasks().create("cftlibRuntimeArchive", Zip.class);
-        zip.getArchiveFileName().set("cftlib-runtime.zip");
-        // Jars are already compressed so switch off compression.
-        zip.setEntryCompression(ZipEntryCompression.STORED);
-        zip.setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE);
-        zip.from(cftlibBuildDir(project), z -> {
-            z.include("**/*_packed");
-            z.exclude("**/*libTest*");
-        });
-
-        zip.eachFile(f -> {
-            f.setRelativePath(zipPath(project, f.getFile()));
-        });
-
-        for (ManifestTask manifestTask : manifestTasks) {
-            zip.from(manifestTask.classpath, x -> x.into("lib"));
-            zip.dependsOn(manifestTask);
-        }
-        return zip;
-    }
-
-    /**
-     * Calculate the correct path that files should be placed inside the zip file.
-     * We pack files from both the project folder (into 'build') and Gradle's dependency cache (into 'lib').
-     */
-    @SneakyThrows
-    private RelativePath zipPath(Project project, File f) {
-        var projectRoot = project.getLayout().getBuildDirectory().get().dir("../").getAsFile().getCanonicalPath();
-        if (f.getCanonicalPath().startsWith(projectRoot)) {
-            // File should go into 'build'
-            var relativePath = Paths.get(projectRoot).relativize(f.toPath());
-            return RelativePath.parse(true, relativePath.toString());
-        } else {
-            // File should go into 'lib'
-            var p = RelativePath.parse(true, f.getPath());
-            // The last 4 segments of the jar's directory path include its group, name and version.
-            var tail = Arrays.copyOfRange(p.getSegments(), p.getSegments().length - 4, p.getSegments().length);
-            var result = ObjectArrays.concat("lib", tail);
-            return new RelativePath(true, result);
-        }
-    }
-
     private void createCftlibJarTask(Project project) {
         var jar = project.getTasks().create("cftlibJar", Jar.class);
         jar.getArchiveFileName().set("cftlib-application.jar");
         SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
         jar.from(s.getByName("main").getOutput().plus(s.getByName("cftlib").getOutput()));
-    }
-
-    private void createExecutableJarTask(Project project, Zip archive) {
-
-        var jar = project.getTasks().create("cftlibExecutableJar", Jar.class);
-        jar.dependsOn(manifestTasks);
-        jar.manifest(x -> x.attributes(Map.of("Main-Class", "uk.gov.hmcts.rse.ccd.lib.LibRunner")));
-        jar.getArchiveFileName().set("cftlib-executable.jar");
-
-        jar.setEntryCompression(ZipEntryCompression.STORED);
-        jar.doFirst(t -> {
-            jar.from(project.zipTree(
-                    detachedConfiguration(project, libDependencies(project, "bootstrapper"))
-                            .getSingleFile()));
-        });
-        jar.from(archive);
     }
 
     private Configuration detachedConfiguration(Project project, Dependency... deps) {
@@ -309,8 +242,6 @@ public class CftLibPlugin implements Plugin<Project> {
                                 String... args) {
         cftlibBuildDir(project).getAsFile().mkdirs();
         writeManifest(file, mainClass, classpath, File::getAbsolutePath, args);
-        writeManifest(new File(file.getPath() + "_packed"), mainClass, classpath,
-            x -> zipPath(project, x).getPathString(), args);
     }
 
     @SneakyThrows

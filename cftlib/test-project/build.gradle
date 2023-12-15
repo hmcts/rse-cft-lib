@@ -89,18 +89,6 @@ tasks.test.dependsOn(cftlibTest)
 cftlibTest.dependsOn(rootProject.tasks.publish)
 cftlibTestClasses.dependsOn(rootProject.tasks.publish)
 
-// Relies on bootWithCCD starting up the dockerised dependencies.
-task testGigaJar(type: uk.gov.hmcts.rse.CftlibExec, dependsOn: [cftlibExecutableJar, bootWithCCD]) {
-    workingDir project.layout.buildDirectory.dir('gigatest')
-    outputs.dir workingDir
-    authMode = AuthMode.Local
-    main = "-jar"
-    environment 'CFT_LIB_NO_DOCKER', true
-    args cftlibExecutableJar.archiveFile.get()
-}
-
-tasks.test.dependsOn(testGigaJar)
-
 task publishSecrets(type: Exec) {
     commandLine 'az', 'keyvault', 'secret', 'set', "--vault-name", "rse-cft-lib", "--name", "aat-env", "--file", layout.buildDirectory.file('cftlib/.aat-env').get().asFile.path
 }
