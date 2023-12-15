@@ -176,10 +176,7 @@ public class CFTLibApiImpl implements CFTLib {
 
     @SneakyThrows
     private void postDefinition(byte[] data) {
-        // Route the request via the gateway embedded in the runtime project.
-        // Our port is overridable
-        var port = ControlPlane.getEnvVar("RSE_LIB_S2S_PORT", 8489);
-        HttpPost uploadFile = new HttpPost("http://localhost:" + port + "/import");
+        HttpPost uploadFile = new HttpPost("http://localhost:4451/import");
         uploadFile.addHeader("Authorization", "Bearer " + buildJwt());
         uploadFile.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();

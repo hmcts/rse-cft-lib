@@ -1,21 +1,15 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import static java.lang.System.getenv;
 
@@ -41,9 +35,6 @@ public class LibRunner {
     private static void doRun(String[] args) {
         Thread.currentThread().setName("**** cftlib bootstrap");
         setConfigProperties();
-        if (args.length == 0) {
-            args = extractRuntime();
-        }
         var threads = new ArrayList<Thread>();
         {
             var runtime = args[0];
@@ -126,36 +117,6 @@ public class LibRunner {
         System.setProperty("CASE_DOCUMENT_AM_URL", "http://localhost:4455");
     }
 
-
-    @SneakyThrows
-    public static String[] extractRuntime() throws IOException {
-        // Turn off devtools when packaged as a jar.
-        System.setProperty("spring.devtools.restart.enabled", "false");
-        var is = LibRunner.class.getResourceAsStream("/cftlib-runtime.zip");
-
-        if (null != is) {
-            try (ZipInputStream zipIn = new ZipInputStream(is)) {
-                for (ZipEntry ze; (ze = zipIn.getNextEntry()) != null; ) {
-                    var targetDir = Paths.get("");
-                    Path resolvedPath = targetDir.resolve(ze.getName()).normalize();
-                    if (ze.isDirectory()) {
-                        Files.createDirectories(resolvedPath);
-                    } else {
-                        Files.createDirectories(resolvedPath.getParent());
-                        Files.copy(zipIn, resolvedPath, StandardCopyOption.REPLACE_EXISTING);
-                    }
-                }
-            }
-        }
-
-        var result =
-            Stream.concat(Stream.of("build/cftlib/runtime_packed"),
-                    Files.list(Paths.get("build/cftlib"))
-                        .filter(x -> !x.getFileName().endsWith("runtime_packed"))
-                        .map(x -> x.toAbsolutePath().toString()))
-                .toArray(String[]::new);
-        return result;
-    }
 
     @SneakyThrows
     private static void launchApp(File classpathFile) {
