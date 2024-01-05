@@ -24,6 +24,9 @@ def springBoot2 = testSpringBootVersion.startsWith("2")
 
 dependencies {
 
+    // Test this conflicting dependency doesn't break us on spring boot 3.
+    cftlibImplementation 'javax.servlet:javax.servlet-api:4.0.1'
+
     compileOnly 'org.projectlombok:lombok:1.18.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
 
