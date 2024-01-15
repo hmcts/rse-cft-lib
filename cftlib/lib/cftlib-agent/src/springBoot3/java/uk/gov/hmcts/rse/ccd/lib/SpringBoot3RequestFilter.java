@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ import java.io.IOException;
  */
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnClass({IdamApi.class, HttpServletRequest.class})
+@ConditionalOnExpression("#{T(org.springframework.boot.SpringBootVersion).getVersion().startsWith('3')}")
 @Component
 public class SpringBoot3RequestFilter extends OncePerRequestFilter {
 

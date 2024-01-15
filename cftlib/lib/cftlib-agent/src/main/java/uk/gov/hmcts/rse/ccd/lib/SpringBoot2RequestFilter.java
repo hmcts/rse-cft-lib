@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ import uk.gov.hmcts.reform.idam.client.IdamApi;
  */
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnClass({IdamApi.class, HttpServletRequest.class})
+@ConditionalOnExpression("#{T(org.springframework.boot.SpringBootVersion).getVersion().startsWith('2')}")
 @Component
 public class SpringBoot2RequestFilter extends OncePerRequestFilter {
 
