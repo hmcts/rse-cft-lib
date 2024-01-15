@@ -9,7 +9,6 @@ import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringBootVersion;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -29,9 +28,6 @@ public class URLRewriter extends OncePerRequestFilter {
     private final IdamApi idam;
 
     private final String name;
-
-    @Value("#{T(org.springframework.boot.SpringBootVersion).getVersion()}")
-    private String springBootVersion;
 
     @Autowired
     public URLRewriter(IdamApi idam,
