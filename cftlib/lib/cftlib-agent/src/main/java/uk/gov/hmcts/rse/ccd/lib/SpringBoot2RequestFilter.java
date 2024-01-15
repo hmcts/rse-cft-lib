@@ -17,12 +17,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
 /**
+ * Names threads for easier debugging.
  * Implements URL remappings handled by the CCD API Gateway.
+ * TODO: delete this and consolidate the springBoot3 sourceset when we can drop support for Spring Boot 2.
  */
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnClass({IdamApi.class, HttpServletRequest.class})
 @Component
-public class URLRewriter extends OncePerRequestFilter {
+public class SpringBoot2RequestFilter extends OncePerRequestFilter {
 
     @Autowired
     private final IdamApi idam;
@@ -30,8 +32,8 @@ public class URLRewriter extends OncePerRequestFilter {
     private final String name;
 
     @Autowired
-    public URLRewriter(IdamApi idam,
-                       @Value("${rse.lib.service_name:***CFT lib***}") String name) {
+    public SpringBoot2RequestFilter(IdamApi idam,
+                                    @Value("${rse.lib.service_name:***CFT lib***}") String name) {
         this.idam = idam;
         this.name = name;
     }

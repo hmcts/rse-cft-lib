@@ -3,6 +3,13 @@ repositories {
     mavenLocal()
 }
 
+// Used to compile classes for Spring Boot 3 that cannot be compiled with a Spring Boot 2 classpath.
+// These are all packaged into the same jar and @ConditionalOnClass is used to load the correct class for
+// the spring boot version in use.
+sourceSets {
+    springBoot3
+}
+
 dependencies {
     // All these dependencies will be provided at runtime by the service this
     // library is injected into.
@@ -15,6 +22,14 @@ dependencies {
     compileOnly 'com.github.hmcts:service-auth-provider-java-client:4.0.2'
     compileOnly 'org.springframework.security:spring-security-oauth2-jose:5.4.9'
 
+    springBoot3CompileOnly 'org.springframework.boot:spring-boot:3.2.0'
+    springBoot3CompileOnly 'org.springframework.boot:spring-boot-autoconfigure:3.2.0'
+    springBoot3CompileOnly group: 'org.springframework', name: 'spring-web', version: '6.1.3'
+    springBoot3CompileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+    springBoot3CompileOnly('com.github.hmcts:idam-java-client:2.0.1') {
+        transitive = false
+    }
 
     compileOnly('com.github.hmcts:idam-java-client:2.0.1') {
         transitive = false
@@ -53,8 +68,6 @@ configurations.each {
     it.resolutionStrategy.useGlobalDependencySubstitutionRules = false
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
+jar {
+    from sourceSets.springBoot3.output
 }

@@ -24,9 +24,4 @@ processResources {
     from zipCompose
 }
 
-java {
-    withJavadocJar()
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
+

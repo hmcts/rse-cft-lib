@@ -1,16 +1,6 @@
-java {
-    withJavadocJar()
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
 
 dependencies {
-
     // Dependency free to avoid polluting the system classloader.
-
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.13.2'
 }
 
 
