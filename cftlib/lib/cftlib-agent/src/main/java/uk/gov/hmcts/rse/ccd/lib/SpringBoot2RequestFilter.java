@@ -33,11 +33,14 @@ public class SpringBoot2RequestFilter extends OncePerRequestFilter {
 
     private final String name;
 
+    private final boolean isCCD;
+
     @Autowired
     public SpringBoot2RequestFilter(IdamApi idam,
                                     @Value("${rse.lib.service_name:***CFT lib***}") String name) {
         this.idam = idam;
         this.name = name;
+        this.isCCD = name.toLowerCase().contains("ccd");
     }
 
     @Override
@@ -46,7 +49,9 @@ public class SpringBoot2RequestFilter extends OncePerRequestFilter {
         String name = Thread.currentThread().getName();
         try {
             Thread.currentThread().setName("*** " + this.name);
-            filterChain.doFilter(new Rewriter(request), response);
+            // Only emulate the CCD gateway for CCD services
+            request = isCCD ? new Rewriter(request) : request;
+            filterChain.doFilter(request, response);
         } finally {
             Thread.currentThread().setName(name);
         }
