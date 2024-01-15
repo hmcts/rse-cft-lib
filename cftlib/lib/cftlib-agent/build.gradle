@@ -4,10 +4,14 @@ repositories {
 }
 
 // Used to compile classes for Spring Boot 3 that cannot be compiled with a Spring Boot 2 classpath.
-// These are all packaged into the same jar and @ConditionalOnClass is used to load the correct class for
+// These are all packaged into the same jar and @Conditional annotations are used to load the correct class for
 // the spring boot version in use.
 sourceSets {
     springBoot3
+}
+
+jar {
+    from sourceSets.springBoot3.output
 }
 
 dependencies {
@@ -68,6 +72,3 @@ configurations.each {
     it.resolutionStrategy.useGlobalDependencySubstitutionRules = false
 }
 
-jar {
-    from sourceSets.springBoot3.output
-}
