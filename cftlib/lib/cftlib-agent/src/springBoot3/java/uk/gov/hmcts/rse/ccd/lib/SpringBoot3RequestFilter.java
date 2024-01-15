@@ -1,39 +1,46 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
+import java.io.IOException;
+
 /**
+ * Names threads for easier debugging.
  * Implements URL remappings handled by the CCD API Gateway.
  */
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnClass({IdamApi.class, HttpServletRequest.class})
+@ConditionalOnExpression("#{T(org.springframework.boot.SpringBootVersion).getVersion().startsWith('3')}")
 @Component
-public class URLRewriter extends OncePerRequestFilter {
+public class SpringBoot3RequestFilter extends OncePerRequestFilter {
 
     @Autowired
     private final IdamApi idam;
 
     private final String name;
 
+    private final boolean isCCD;
+
+
     @Autowired
-    public URLRewriter(IdamApi idam,
-                       @Value("${rse.lib.service_name:***CFT lib***}") String name) {
+    public SpringBoot3RequestFilter(IdamApi idam,
+                                    @Value("${rse.lib.service_name:***CFT lib***}") String name) {
         this.idam = idam;
         this.name = name;
+        this.isCCD = name.toLowerCase().contains("ccd");
     }
 
     @Override
@@ -42,6 +49,10 @@ public class URLRewriter extends OncePerRequestFilter {
         String name = Thread.currentThread().getName();
         try {
             Thread.currentThread().setName("*** " + this.name);
+            // Only emulate the CCD gateway for CCD services
+            request = isCCD ? new Rewriter(request) : request;
+            filterChain.doFilter(request, response);
+
             filterChain.doFilter(new Rewriter(request), response);
         } finally {
             Thread.currentThread().setName(name);
