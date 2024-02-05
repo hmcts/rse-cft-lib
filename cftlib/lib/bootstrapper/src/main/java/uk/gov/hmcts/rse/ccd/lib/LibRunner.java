@@ -38,7 +38,7 @@ public class LibRunner {
         var threads = new ArrayList<Thread>();
         {
             var runtime = args[0];
-            var t = new Thread(() -> launchApp(new File(runtime)));
+            var t = new Thread(() -> launchAppOrFailFast(new File(runtime)));
             t.setName("runtime");
             t.start();
             threads.add(t);
@@ -49,7 +49,7 @@ public class LibRunner {
 
         var rest = Arrays.copyOfRange(args, 1, args.length);
         Arrays.stream(rest).forEach(f -> {
-            var t = new Thread(() -> launchApp(new File(f)));
+            var t = new Thread(() -> launchAppOrFailFast(new File(f)));
             t.start();
             threads.add(t);
         });
@@ -117,6 +117,17 @@ public class LibRunner {
         System.setProperty("CASE_DOCUMENT_AM_URL", "http://localhost:4455");
     }
 
+    private static void launchAppOrFailFast(File classpathFile) {
+        try {
+            launchApp(classpathFile);
+        } catch (Throwable e) {
+            System.out.println("*** cftlib failed to start ***");
+            e.printStackTrace();
+
+            // Immediately terminate the JVM if one of our services fails.
+            Runtime.getRuntime().halt(-1);
+        }
+    }
 
     @SneakyThrows
     private static void launchApp(File classpathFile) {
