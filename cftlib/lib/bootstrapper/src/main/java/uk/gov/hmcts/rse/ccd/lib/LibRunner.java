@@ -121,6 +121,12 @@ public class LibRunner {
         try {
             launchApp(classpathFile);
         } catch (Throwable e) {
+            // Spring boot devtools throws a SilentExitException which we should tolerate
+            if (e.getCause() != null && e.getCause().getClass().getSimpleName().equals("SilentExitException")) {
+                return;
+            }
+            // Shut down immediately on any other error
+            // eg. trying to load a classfile built against a higher version than our JVM.
             System.out.println("*** cftlib failed to start ***");
             e.printStackTrace();
 
