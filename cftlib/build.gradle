@@ -14,7 +14,7 @@ project.file('../projects').listFiles().each { dir ->
         inputs.property('sha', ['git', 'submodule', 'status', dir].execute().text)
         outputs.dir "${project.repositories.mavenLocal().url}/com/github/hmcts/rse-cft-lib/${dir.name}"
         executable './gradlew'
-        args '--no-daemon','-i', '-I', project.file('init.gradle').path, 'publishToMavenLocal'
+        args '--no-daemon','-i', '-s', '-I', project.file('init.gradle').path, 'publishToMavenLocal'
         workingDir dir
     }
     publish.dependsOn t
