@@ -27,6 +27,15 @@ def configurePublishing(p) {
             publications {
                 mavenJava(MavenPublication) {
                     from components.java
+                    // Remap these service entry point project to fit our naming convention
+                    if (project.name == "application")     {
+                       artifactId 'ccd-definition-store-api'
+                    } else if (project.name == "user-profile-api")     {
+                        artifactId 'ccd-user-profile-api'
+                    } else if (project.name == "rpa-dg-docassembly") {
+                        artifactId 'dg-docassembly-api'
+                    }
+
 
                     // We need to be able to reproduce the exact runtime classpath of each project.
                     // To do this we replace the pom dependencies with the complete runtime classpath.

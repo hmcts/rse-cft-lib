@@ -207,13 +207,9 @@ public class CftLibPlugin implements Plugin<Project> {
         for (var e : projects.entrySet()) {
             var file = cftlibBuildDir(project).file(e.getKey().id()).getAsFile();
             var args = Lists.newArrayList(
-                    "--rse.lib.service_name=" + e.getKey()
-            );
-            if (e.getKey().equals(Service.ccdDataStoreApi)) {
-                args.add("--idam.client.secret=${IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET:}");
-            } else if (e.getKey().equals(Service.aacManageCaseAssignment)) {
-                args.add("--idam.client.secret=${IDAM_OAUTH2_AAC_CLIENT_SECRET:}");
-            }
+                    "--rse.lib.service_name=" + e.getKey());
+
+            args.addAll(e.getKey().args);
             manifestTasks.add(
                     createCFTManifestTask(project, e.getKey().id(), e.getValue(), file, args.toArray(String[]::new)));
             manifests.add(file);

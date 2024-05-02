@@ -45,10 +45,10 @@ dependencies {
     implementation 'com.auth0:java-jwt:3.12.0'
 
     // Use the fat definition store code at compile time.
-    compileOnly 'com.github.hmcts.rse-cft-lib:application:DEV-SNAPSHOT'
+    compileOnly 'com.github.hmcts.rse-cft-lib:ccd-definition-store-api:DEV-SNAPSHOT'
 
     // Provide definition store for running tests
-    testImplementation 'com.github.hmcts.rse-cft-lib:application:DEV-SNAPSHOT'
+    testImplementation 'com.github.hmcts.rse-cft-lib:ccd-definition-store-api:DEV-SNAPSHOT'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.3'
 }
 
@@ -60,7 +60,7 @@ test {
 }
 
 // We depend on definition store code which must be published to maven local
-compileJava.dependsOn rootProject.task('publishccd-case-definition-store-api')
+compileJava.dependsOn (':publishccd-definition-store-api')
 
 
 // The cftlib brings in the cftlib Gradle plugin as a composite build.
