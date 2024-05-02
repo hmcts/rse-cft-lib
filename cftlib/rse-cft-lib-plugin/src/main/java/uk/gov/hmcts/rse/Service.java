@@ -2,30 +2,28 @@ package uk.gov.hmcts.rse;
 
 import com.google.common.base.CaseFormat;
 
+import java.util.List;
+
 public enum Service {
     amRoleAssignmentService,
-    ccdDataStoreApi,
-    // 'application' is definition store entry module
-    ccdDefinitionStoreApi("application"),
-    ccdUserProfileApi("user-profile-api"),
-    aacManageCaseAssignment,
+    ccdDataStoreApi("--idam.client.secret=${IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET:}"),
+    ccdDefinitionStoreApi,
+    ccdUserProfileApi,
+    aacManageCaseAssignment("--idam.client.secret=${IDAM_OAUTH2_AAC_CLIENT_SECRET:}"),
     ccdCaseDocumentAmApi,
-    dgDocassemblyApi("rpa-dg-docassembly");
+    dgDocassemblyApi;
 
-    private final String id;
+    public final List<String> args;
 
     Service() {
-        this.id = null;
+        this.args = List.of();
     }
 
-    Service(String id) {
-        this.id = id;
+    Service(String... args) {
+        this.args = List.of(args);
     }
 
     public String id() {
-        if (id != null) {
-            return id;
-        }
         return CaseFormat.LOWER_CAMEL
                 .to(CaseFormat.LOWER_HYPHEN, toString())
                 .replace("_", "-");
