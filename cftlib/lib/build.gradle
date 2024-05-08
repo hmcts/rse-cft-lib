@@ -46,4 +46,10 @@ subprojects {
             languageVersion.set(JavaLanguageVersion.of(17))
         }
     }
+
+   afterEvaluate {
+       checkstyle {
+           toolVersion = "8.36"
+       }
+   }
 }
