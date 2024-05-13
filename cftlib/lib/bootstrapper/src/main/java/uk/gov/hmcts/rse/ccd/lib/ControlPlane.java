@@ -87,4 +87,14 @@ public class ControlPlane {
             ? defaultIfNull.toString()
             : v;
     }
+
+    // Immediately terminate upon an unhandled error that has caused a service to terminate.
+    // This will ensure the JVM terminates even if we've started other threads.
+    public static final Thread.UncaughtExceptionHandler failFast = (thread, exception) -> {
+        exception.printStackTrace();
+        System.out.println("*** Cftlib thread " + thread.getName() + " terminated with an unhandled exception ***");
+        System.out.println("Logs are available in build/cftlib/logs");
+        System.out.println("For further support visit https://moj.enterprise.slack.com/archives/C033F1GDD6Z");
+        Runtime.getRuntime().halt(-1);
+    };
 }

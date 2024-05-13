@@ -231,7 +231,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     @SneakyThrows
     @Test
     void searchCases() {
-        // Give logstash some time to index the case created by the previous test
+        // Give some time to index the case created by the previous test
         await()
             .timeout(Duration.ofSeconds(20))
             .until(this::caseAppearsInSearch);

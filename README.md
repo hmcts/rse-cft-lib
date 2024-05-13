@@ -136,11 +136,13 @@ This will launch (in a single JVM):
 
 Plus (in docker):
 
-* CCD & AM dependencies (postgres, logstash & elastic search
+* CCD & AM dependencies (postgres & elastic search)
 * XUI manage cases, available on http://localhost:3000
 * XUI manage org, available on http://localhost:3001
 
 The manage cases port can be overridden using the environment variable `XUI_PORT` and manage orgs can be overridden with `XUI_MO_PORT`.
+
+ElasticSearch indexing is handled by a simple poller [functionally equivalent to logstash](cftlib/lib/runtime/src/main/java/uk/gov/hmcts/rse/ccd/lib/ESIndexer.java)
 
 ### 4. Debugging
 

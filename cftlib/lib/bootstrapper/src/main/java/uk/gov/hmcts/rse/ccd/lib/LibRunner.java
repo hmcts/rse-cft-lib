@@ -17,23 +17,13 @@ import lombok.SneakyThrows;
 
 public class LibRunner {
     public static void main(String[] args) throws Exception {
-        try {
-            doRun(args);
-        } catch (Exception e) {
-            System.out.println("*** cftlib failed to start ***");
-            System.out.println("This is a cftlib bug, please report it in the #rse-dev-tools slack channel");
-            System.out.println("https://hmcts-reform.slack.com/archives/C033F1GDD6Z");
-            e.printStackTrace();
-
-            // Immediately terminate upon an unhandled error in the runner.
-            // This will ensure the JVM terminates even if we've started other threads.
-            Runtime.getRuntime().halt(-1);
-        }
+        Thread.currentThread().setName("**** cftlib bootstrap");
+        Thread.currentThread().setUncaughtExceptionHandler(ControlPlane.failFast);
+        doRun(args);
     }
 
     @SneakyThrows
     private static void doRun(String[] args) {
-        Thread.currentThread().setName("**** cftlib bootstrap");
         setConfigProperties();
         var threads = new ArrayList<Thread>();
         {
@@ -118,6 +108,7 @@ public class LibRunner {
     }
 
     private static void launchAppOrFailFast(File classpathFile) {
+        Thread.currentThread().setUncaughtExceptionHandler(ControlPlane.failFast);
         try {
             launchApp(classpathFile);
         } catch (Throwable e) {
@@ -125,13 +116,7 @@ public class LibRunner {
             if (e.getCause() != null && e.getCause().getClass().getSimpleName().equals("SilentExitException")) {
                 return;
             }
-            // Shut down immediately on any other error
-            // eg. trying to load a classfile built against a higher version than our JVM.
-            System.out.println("*** cftlib failed to start ***");
-            e.printStackTrace();
-
-            // Immediately terminate the JVM if one of our services fails.
-            Runtime.getRuntime().halt(-1);
+            throw e;
         }
     }
 
