@@ -8,9 +8,7 @@ import org.springframework.boot.diagnostics.FailureAnalysis;
 public class FailFast extends AbstractFailureAnalyzer {
     @Override
     protected FailureAnalysis analyze(Throwable rootFailure, Throwable cause) {
-        cause.printStackTrace();
-        System.out.println("**** CFTLIB failed to start ****");
-        Runtime.getRuntime().halt(-1);
+        ControlPlane.failFast.uncaughtException(Thread.currentThread(), rootFailure);
         // Unreachable
         throw new RuntimeException();
     }
