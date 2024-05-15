@@ -209,4 +209,19 @@ public class CFTLibApiImpl implements CFTLib {
                 "jdbc:postgresql://" + host + ":" + port + "/" + String.valueOf(database).toLowerCase(),
                 "postgres", "postgres");
     }
+
+    @SneakyThrows
+    @Override
+    public void createGlobalSearchIndex() {
+        HttpPost create = new HttpPost("http://localhost:4451/elastic-support/global-search/index");
+        create.addHeader("Authorization", "Bearer " + buildJwt());
+        create.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
+        var response = HttpClients.createDefault().execute(create);
+
+        if (!String.valueOf(response.getStatusLine().getStatusCode()).startsWith("2")) {
+            var body = EntityUtils.toString(response.getEntity());
+            throw new RuntimeException(
+                    "Failed to create GlobalSearch ElasticSearch index: HTTP " + response.getStatusLine().getStatusCode() + " " + body);
+        }
+    }
 }

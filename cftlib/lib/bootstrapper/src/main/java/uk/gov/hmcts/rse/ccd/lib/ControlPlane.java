@@ -50,9 +50,15 @@ public class ControlPlane {
         ES_READY.countDown();
     }
 
+    private static volatile boolean booted;
     @SneakyThrows
-    public static void waitForBoot() {
+    public static synchronized void waitForBoot() {
         APPS_READY.await();
+        if (!booted) {
+            API_READY.await();
+            api.createGlobalSearchIndex();
+            booted = true;
+        }
     }
 
     @SneakyThrows
