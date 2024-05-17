@@ -221,7 +221,8 @@ public class CFTLibApiImpl implements CFTLib {
         if (!String.valueOf(response.getStatusLine().getStatusCode()).startsWith("2")) {
             var body = EntityUtils.toString(response.getEntity());
             throw new RuntimeException(
-                    "Failed to create GlobalSearch ElasticSearch index: HTTP " + response.getStatusLine().getStatusCode() + " " + body);
+                    "Failed to create GlobalSearch ElasticSearch index: HTTP "
+                            + response.getStatusLine().getStatusCode() + " " + body);
         }
     }
 }

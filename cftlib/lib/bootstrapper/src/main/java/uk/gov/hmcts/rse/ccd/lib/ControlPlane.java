@@ -51,6 +51,7 @@ public class ControlPlane {
     }
 
     private static volatile boolean booted;
+
     @SneakyThrows
     public static synchronized void waitForBoot() {
         APPS_READY.await();

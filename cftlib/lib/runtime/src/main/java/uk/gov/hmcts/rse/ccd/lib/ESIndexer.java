@@ -1,5 +1,7 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
+import java.util.Map;
+import java.util.Set;
 
 // Simple indexer replicating logstash functionality
 // but saving up to ~1GB of RAM.
@@ -61,7 +65,7 @@ public class ESIndexer {
                               reference,
                               last_modified,
                               last_state_modified_date,
-                              supplementary_data as json_supplementary_data,
+                              supplementary_data,
                               lower(case_type_id) || '_cases' as index_id,
                               state,
                               security_classification
@@ -70,9 +74,31 @@ public class ESIndexer {
 
                 BulkRequest request = new BulkRequest();
                 while (results.next()) {
+                    var row = results.getString("row");
                     request.add(new IndexRequest(results.getString("index_id"))
                             .id(results.getString("id"))
-                            .source(results.getString("row"), XContentType.JSON));
+                            .source(row, XContentType.JSON));
+                    var mapper = new ObjectMapper();
+                    Map<String, Object> map = mapper.readValue(row, new TypeReference<>() {});
+                    var data = (Map<String, Object>) map.get("data");
+                    if (data.containsKey("SearchCriteria")) {
+                        // Replicate CCD's globalsearch logstash setup.
+                        // https://github.com/hmcts/cnp-flux-config/blob/master/apps/ccd/ccd-logstash/ccd-logstash.yaml#L99-L175
+                        filter(data, "SearchCriteria", "caseManagementLocation", "CaseAccessCategory",
+                                "caseNameHmctsInternal", "caseManagementCategory");
+                        filter((Map<String, Object>) map.get("supplementary_data"), "HMCTSServiceId");
+                        filter((Map<String, Object>) map.get("data_classification"), "SearchCriteria",
+                                "CaseAccessCategory", "caseManagementLocation", "caseNameHmctsInternal",
+                                "caseManagementCategory");
+                        map.remove("last_state_modified_date");
+                        map.remove("last_modified");
+                        map.remove("created_date");
+                        map.put("index_id", "global_search");
+
+                        request.add(new IndexRequest("global_search")
+                                .id(results.getString("id"))
+                                .source(mapper.writeValueAsString(map), XContentType.JSON));
+                    }
                 }
                 if (request.numberOfActions() > 0) {
                     var r = client.bulk(request, RequestOptions.DEFAULT);
@@ -82,6 +108,13 @@ public class ESIndexer {
                     }
                 }
             }
+        }
+    }
+
+    public void filter(Map<String, Object> map, String... forKeys) {
+        if (null != map) {
+            var keyset = Set.of(forKeys);
+            map.keySet().removeIf(k -> !keyset.contains(k));
         }
     }
 }
