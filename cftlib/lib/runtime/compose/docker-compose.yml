@@ -25,21 +25,6 @@ services:
     ports:
       - 9200:9200
 
-  ccd-logstash:
-    build:
-      context: logstash
-    environment:
-      - JAVA_TOOL_OPTIONS=-Xms128m -Xmx400m
-      - XPACK_MONITORING_ENABLED=false
-      - DB_URL=jdbc:postgresql://shared-database-pg12:5432/datastore?stringtype=unspecified&ssl=false
-      - DB_USER=postgres
-      - DB_PWD=postgres
-      - ES_DATA_NODES_URL=http://ccd-elasticsearch:9200
-      - LOG_LEVEL=warn
-    depends_on:
-      - ccd-elasticsearch
-      - shared-database-pg12
-
   xui-manage-cases:
     image: "${XUI_MANAGE_CASES_USE_LOCAL-hmctspublic.azurecr.io/}xui/webapp:${XUI_MANAGE_CASES_TAG:-latest}"
     environment:

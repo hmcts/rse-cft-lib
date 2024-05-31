@@ -27,6 +27,15 @@ def configurePublishing(p) {
             publications {
                 mavenJava(MavenPublication) {
                     from components.java
+                    // Remap these service entry point project to fit our naming convention
+                    if (project.name == "application")     {
+                       artifactId 'ccd-definition-store-api'
+                    } else if (project.name == "user-profile-api")     {
+                        artifactId 'ccd-user-profile-api'
+                    } else if (project.name == "rpa-dg-docassembly") {
+                        artifactId 'dg-docassembly-api'
+                    }
+
 
                     // We need to be able to reproduce the exact runtime classpath of each project.
                     // To do this we replace the pom dependencies with the complete runtime classpath.
@@ -34,9 +43,8 @@ def configurePublishing(p) {
                     // We can also then disable transitive dependencies with an exclusion, since they
                     // will now be direct dependencies.
                     pom.withXml {
-
                         asNode().dependencies.replaceNode {}
-                        asNode().dependencyManagement.replaceNode {}
+                        asNode().dependencyManagement.each { it.parent().remove(it) }
 
                         def dependenciesNode = asNode().appendNode('dependencies')
 
