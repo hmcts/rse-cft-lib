@@ -28,7 +28,7 @@ def configurePublishing(p) {
                 mavenJava(MavenPublication) {
                     from components.java
                     // Remap these service entry point project to fit our naming convention
-                    if (project.name == "application")     {
+                    if (project.name == "case-definition-store-api")     {
                        artifactId 'ccd-definition-store-api'
                     } else if (project.name == "user-profile-api")     {
                         artifactId 'ccd-user-profile-api'
@@ -48,15 +48,19 @@ def configurePublishing(p) {
 
                         def dependenciesNode = asNode().appendNode('dependencies')
 
-                        configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each {
-                            def dependencyNode = dependenciesNode.appendNode('dependency')
-                            dependencyNode.appendNode('groupId', it.moduleVersion.id.group)
-                            dependencyNode.appendNode('artifactId', it.moduleVersion.id.name)
-                            dependencyNode.appendNode('version', it.moduleVersion.id.version)
+                        // Only the root project contains the dependency set.
+                        // For multimodule subprojects (eg. definition store) we do not publish dependencies.
+                        if (project == rootProject) {
+                            configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each {
+                                def dependencyNode = dependenciesNode.appendNode('dependency')
+                                dependencyNode.appendNode('groupId', it.moduleVersion.id.group)
+                                dependencyNode.appendNode('artifactId', it.moduleVersion.id.name)
+                                dependencyNode.appendNode('version', it.moduleVersion.id.version)
 
-                            def exclusion = dependencyNode.appendNode('exclusions').appendNode('exclusion')
-                            exclusion.appendNode('groupId', '*')
-                            exclusion.appendNode('artifactId', '*')
+                                def exclusion = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                                exclusion.appendNode('groupId', '*')
+                                exclusion.appendNode('artifactId', '*')
+                            }
                         }
                     }
                 }
