@@ -1,6 +1,5 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.http.HttpHost;
@@ -78,12 +77,15 @@ public class ESIndexer {
                     request.add(new IndexRequest(results.getString("index_id"))
                             .id(results.getString("id"))
                             .source(row, XContentType.JSON));
+
+                    // Replicate CCD's globalsearch logstash setup.
+                    // Where cases define a 'SearchCriteria' field we index certain fields into CCD's central
+                    // 'global search' index.
+                    // https://github.com/hmcts/cnp-flux-config/blob/master/apps/ccd/ccd-logstash/ccd-logstash.yaml#L99-L175
                     var mapper = new ObjectMapper();
-                    Map<String, Object> map = mapper.readValue(row, new TypeReference<>() {});
+                    Map<String, Object> map = mapper.readValue(row, Map.class);
                     var data = (Map<String, Object>) map.get("data");
                     if (data.containsKey("SearchCriteria")) {
-                        // Replicate CCD's globalsearch logstash setup.
-                        // https://github.com/hmcts/cnp-flux-config/blob/master/apps/ccd/ccd-logstash/ccd-logstash.yaml#L99-L175
                         filter(data, "SearchCriteria", "caseManagementLocation", "CaseAccessCategory",
                                 "caseNameHmctsInternal", "caseManagementCategory");
                         filter((Map<String, Object>) map.get("supplementary_data"), "HMCTSServiceId");
