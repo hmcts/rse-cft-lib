@@ -53,4 +53,9 @@ public interface CFTLib {
      * Obtain connections to common component databases.
      */
     Connection getConnection(Database database);
+
+    /**
+     * Private method invoked automatically to create CCD's global search elasticsearch index.
+     */
+    void createGlobalSearchIndex();
 }

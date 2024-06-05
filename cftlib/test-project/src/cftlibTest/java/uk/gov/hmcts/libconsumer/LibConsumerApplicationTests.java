@@ -240,6 +240,24 @@ class LibConsumerApplicationTests extends CftlibTest {
     @Order(4)
     @SneakyThrows
     @Test
+    void globalSearchCases() {
+        // Case must have SearchCriteria to be indexed into globalsearch index.
+        try (var c = cftlib().getConnection(Database.Datastore)) {
+            var query = """
+                    update case_data set data = data || '{"SearchCriteria": {}}';
+                """;
+            c.prepareStatement(query).execute();
+        }
+        // Give some time to index the case created by the previous test
+        await()
+                .timeout(Duration.ofSeconds(20))
+                .until(this::caseAppearsInGlobalSearch);
+    }
+
+
+    @Order(5)
+    @SneakyThrows
+    @Test
     void testJsonDefinitionImport() {
         cftlib().importJsonDefinition(new File("../lib/cftlib-agent/src/test/resources/definition"));
     }
@@ -260,6 +278,46 @@ class LibConsumerApplicationTests extends CftlibTest {
             .get("total").toString());
         return total > 0;
     }
+
+    @SneakyThrows
+    private Boolean caseAppearsInGlobalSearch() {
+        var request = buildRequest(
+                "http://localhost:4452/globalSearch",
+                HttpPost::new);
+        var body = """
+                {
+                  "searchCriteria": {
+                    "CCDJurisdictionIds": [
+                      "DIVORCE"
+                    ]
+                  },
+                  "sortCriteria": [
+                    {
+                      "sortBy": "caseName",
+                      "sortDirection": "descending"
+                    },
+                    {
+                      "sortBy": "caseManagementCategoryName",
+                      "sortDirection": "ascending"
+                    },
+                    {
+                      "sortBy": "createdDate",
+                      "sortDirection": "ascending"
+                    }
+                  ],
+                  "maxReturnRecordCount": 500,
+                  "startRecordNumber": 1
+                }
+                """;
+        request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+        var response = HttpClientBuilder.create().build().execute(request);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+
+        var result = new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class);
+        var total = (double) ((Map)result.get("resultInfo")).get("casesReturned");
+        return total > 0;
+    }
+
 
     HttpGet buildGet(String url) {
         return buildRequest(url, HttpGet::new);
