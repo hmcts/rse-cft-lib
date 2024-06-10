@@ -62,6 +62,10 @@ test {
 // We depend on definition store code which must be published to maven local
 compileJava.dependsOn (':publishccd-definition-store-api')
 
+// https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-6.x#parameter-name-retention
+tasks.withType(JavaCompile).configureEach {
+//    options.compilerArgs.add("-parameters")
+}
 
 // The cftlib brings in the cftlib Gradle plugin as a composite build.
 // This means Gradle attempts to resolve dependency configurations at configuration time instead of execution time,
