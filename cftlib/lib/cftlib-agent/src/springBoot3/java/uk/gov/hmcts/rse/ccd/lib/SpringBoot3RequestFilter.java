@@ -52,8 +52,6 @@ public class SpringBoot3RequestFilter extends OncePerRequestFilter {
             // Only emulate the CCD gateway for CCD services
             request = isCCD ? new Rewriter(request) : request;
             filterChain.doFilter(request, response);
-
-            filterChain.doFilter(new Rewriter(request), response);
         } finally {
             Thread.currentThread().setName(name);
         }
