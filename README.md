@@ -6,22 +6,21 @@
 
 Improved local development and robust automated tests when working with CCD:
 
-* Bring CCD & other common components into your project as library dependencies
-  * Ensure consistent cross-team development environments
-  * Manage breaking common component changes
-* Rapid & reliable creation of isolated CCD environments
-* Reduced RAM requirements & improved performance
-  * Run Java common components in the same JVM as your application
-* Improved debugging
-  * Set breakpoints & step through the source of included CFT services
-* A [Java API](lib/bootstrapper/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) for:
-  * Definition imports
-  * Role creation
-* Includes a test runner for automated integration tests
-* Simple setup
-* Fast reload your application with [spring boot devtools](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools) for productive development
-* Inbuilt AAT secret management ([az cli](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) required)
-
+- Bring CCD & other common components into your project as library dependencies
+  - Ensure consistent cross-team development environments
+  - Manage breaking common component changes
+- Rapid & reliable creation of isolated CCD environments
+- Reduced RAM requirements & improved performance
+  - Run Java common components in the same JVM as your application
+- Improved debugging
+  - Set breakpoints & step through the source of included CFT services
+- A [Java API](lib/bootstrapper/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) for:
+  - Definition imports
+  - Role creation
+- Includes a test runner for automated integration tests
+- Simple setup
+- Fast reload your application with [spring boot devtools](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools) for productive development
+- Inbuilt AAT secret management ([az cli](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) required)
 
 ## Prerequisites
 
@@ -39,7 +38,7 @@ Improved local development and robust automated tests when working with CCD:
 
 ### Add Jitpack as a Gradle plugin repository
 
-The plugin is hosted on [jitpack](https://jitpack.io/) so you must add the following to your project's `settings.gradle`; 
+The plugin is hosted on [jitpack](https://jitpack.io/) so you must add the following to your project's `settings.gradle`;
 
 ```gradle
 pluginManagement {
@@ -62,7 +61,7 @@ plugins {
 
 This will define the following in your Gradle build:
 
-- A ```bootwithCCD``` task which launches
+- A `bootwithCCD` task which launches
   - (in one JVM)
     - Your spring boot application
     - CCD Data store
@@ -77,10 +76,10 @@ This will define the following in your Gradle build:
     - XUI Manage cases
     - XUI Manage org
 - A `cftlibTest` task
-  - Run automated CCD integration tests  
+  - Run automated CCD integration tests
 - Sourcesets
   - `cftlib`
-    - For code that should run when running with CCD 
+    - For code that should run when running with CCD
   - `cftlibTest`
     - For integration tests
 - Dependency configurations
@@ -111,7 +110,7 @@ public class CFTLibConfig implements CFTLibConfigurer {
     // Configure the AM role assignment service
     var json = Resources.toString(Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8);
     lib.configureRoleAssignments(json);
-    
+
     // Import a CCD definition xlsx
     var def = getClass().getClassLoader().getResourceAsStream("NFD-dev.xlsx").readAllBytes();
     lib.importDefinition(def);
@@ -122,23 +121,24 @@ public class CFTLibConfig implements CFTLibConfigurer {
 Note that your CFTLibConfigurer implementation must be in the cftlib sourceset.
 
 ### 3. Launch your application + CCD
+
 ```gradle
 ./gradlew bootWithCCD
 ```
 
 This will launch (in a single JVM):
 
-* Your application
-* CCD data, definition & user profile services
-* AM role assignment service
-* Assign access to a case
-* Doc assembly
+- Your application
+- CCD data, definition & user profile services
+- AM role assignment service
+- Assign access to a case
+- Doc assembly
 
 Plus (in docker):
 
-* CCD & AM dependencies (postgres & elastic search)
-* XUI manage cases, available on http://localhost:3000
-* XUI manage org, available on http://localhost:3001
+- CCD & AM dependencies (postgres & elastic search)
+- XUI manage cases, available on http://localhost:3000
+- XUI manage org, available on http://localhost:3001
 
 The manage cases port can be overridden using the environment variable `XUI_PORT` and manage orgs can be overridden with `XUI_MO_PORT`.
 
@@ -191,7 +191,7 @@ tasks.withType(uk.gov.hmcts.rse.CftlibExec) {
 
 #### IDAM & S2S
 
-Use either AAT's IDAM & S2S or local simulators, configurable via the ```authMode``` gradle task property.
+Use either AAT's IDAM & S2S or local simulators, configurable via the `authMode` gradle task property.
 
 ##### Local
 
@@ -217,7 +217,6 @@ Secrets for AAT dependencies are automatically pulled and configured (from a cft
 ##### Overriding default S2S & IDAM ports
 
 The default S2S port can be overridden by setting the `RSE_LIB_S2S_PORT` environment variable.
-
 
 #### XUI LaunchDarkly client ID
 
@@ -245,14 +244,15 @@ Database connections can be obtained programmatically via the `Cftlib::getConnec
 
 ##### Database names
 
-| Service | Database name |
-| ------- | ---- |
-| CCD definition store | definitionstore |
-| CCD data store | datastore |
-| CCD user profile | userprofile |
-| AM role assignment service | am |
+| Service                    | Database name   |
+| -------------------------- | --------------- |
+| CCD definition store       | definitionstore |
+| CCD data store             | datastore       |
+| CCD user profile           | userprofile     |
+| AM role assignment service | am              |
 
-eg. to connect to ccd data store db 
+eg. to connect to ccd data store db
+
 ```
 psql postgresql://postgres:postgres@localhost:6432/datastore
 ```
@@ -261,19 +261,19 @@ psql postgresql://postgres:postgres@localhost:6432/datastore
 
 Services run on the following default ports:
 
-| Service | Port |
-| ------- | ---- |
-| CCD definition store | 4451 |
-| CCD data store | 4452 |
-| CCD user profile | 4453 |
+| Service                             | Port |
+| ----------------------------------- | ---- |
+| CCD definition store                | 4451 |
+| CCD data store                      | 4452 |
+| CCD user profile                    | 4453 |
 | CCD case document Access Management | 4455 |
-| AM role assignment service | 4096 |
-| AAC assign access to a case | 4454 |
-| Doc assembly | 8080 |
-| XUI Manage cases | 4454 |
-| XUI Manage org | 4454 |
-| IDAM Simulator* | 5062 |
-| S2S Simulator* | 8489 |
+| AM role assignment service          | 4096 |
+| AAC assign access to a case         | 4454 |
+| Doc assembly                        | 8080 |
+| XUI Manage cases                    | 4454 |
+| XUI Manage org                      | 4454 |
+| IDAM Simulator\*                    | 5062 |
+| S2S Simulator\*                     | 8489 |
 
 \* When running AuthMode.Local
 
@@ -283,7 +283,7 @@ For a clean boot define the RSE_LIB_CLEAN_BOOT environment variable, which will 
 
 ### Live reload
 
-[Spring boot's devtools](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools) can be used to fast-reload your application whilst leaving other CFT services running, significantly 
+[Spring boot's devtools](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools) can be used to fast-reload your application whilst leaving other CFT services running, significantly
 improving the edit-compile-test cycle.
 
 ```groovy
@@ -293,7 +293,6 @@ dependencies {
 ```
 
 With spring devtools on the classpath your application will automatically reload as you edit and build your java classes.
-
 
 ### Logging
 
@@ -329,7 +328,7 @@ The lib folder contains libraries that are published to the jitpack maven reposi
 
 ##### lib/bootstrapper
 
-An application that creates each of the necessary classloaders to run our spring applications and defines the [Cftlib API](lib/bootstrapper/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) (but not its implementation). 
+An application that creates each of the necessary classloaders to run our spring applications and defines the [Cftlib API](lib/bootstrapper/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) (but not its implementation).
 
 This project runs on the system classloader (meaning it is on the classpath to the JVM upon launch). Since the system classloader is parent to the isolated classloaders that run our applications, classes in this project are accessible to all running services.
 
@@ -345,7 +344,7 @@ For example, to coordinate the boot process a Spring boot event listener detects
 
 ```mermaid
 graph BT;
-    boot[Bootstrap classloader <br> ControlPlane::appReady]; 
+    boot[Bootstrap classloader <br> ControlPlane::appReady];
     app[App <br> libagent]--ApplicationReadyEvent-->boot;
     data[Datastore <br> libagent]--ApplicationReadyEvent-->boot;
     definition[Definition store <br> libagent]--ApplicationReadyEvent-->boot;
@@ -358,7 +357,7 @@ A minimal spring boot application that provides the s2s simulator and [CftLibApi
 
 ##### lib/test-runner
 
-Provides integration testing support using a junit runner. 
+Provides integration testing support using a junit runner.
 
 #### projects/
 
@@ -374,18 +373,21 @@ This falls down on the shared classpath; irreconcilable dependency conflicts can
 
 I encountered this with the Jackson library when prototyping this idea; one CFT service would only work with jackson version X and another with version Y.
 
-pros: 
-* Significant further reduction in resource requirements
-* Faster boot times
+pros:
 
-cons: 
-* dependency conflicts
-* colliding URLs; two different services might define the same URL mappings
+- Significant further reduction in resource requirements
+- Faster boot times
+
+cons:
+
+- dependency conflicts
+- colliding URLs; two different services might define the same URL mappings
 
 ### Extract fat jars from CNP pipeline docker images
 
 Copy and run the complete fat jars from the docker images in the hmcts container registries.
 
 cons:
- * Transient images - HMCTS container images are cleared down after a time
- * Classpath injection harder with fat jars
+
+- Transient images - HMCTS container images are cleared down after a time
+- Classpath injection harder with fat jars
