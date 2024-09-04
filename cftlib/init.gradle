@@ -93,9 +93,9 @@ allprojects {
     afterEvaluate { project ->
         java {
             toolchain {
-                // Cftlib currently runs on Java 17 so we build all services using Java 17
-                // TODO: move Cftlib to Java 21 when one or more bundled services require it.
-                languageVersion = JavaLanguageVersion.of(17)
+                // Cftlib currently runs on Java 21 so we build all services using Java 21.
+                // moved Cftlib to Java 21 as one or more bundled services require it.
+                languageVersion = JavaLanguageVersion.of(21)
             }
         }
     }
