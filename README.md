@@ -25,8 +25,8 @@ Improved local development and robust automated tests when working with CCD:
 
 ## Prerequisites
 
-- Java 17
-- Gradle 7.6
+- Java 21
+- Gradle 8
 - Docker
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) (when using automated AAT secret management)
 
