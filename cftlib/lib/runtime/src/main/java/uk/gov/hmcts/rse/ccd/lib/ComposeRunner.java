@@ -184,6 +184,7 @@ public class ComposeRunner {
             }
         } catch (SQLException s) {
             System.out.println("DB not yet available...");
+            System.err.println(s);
             throw s;
         }
         return true;
