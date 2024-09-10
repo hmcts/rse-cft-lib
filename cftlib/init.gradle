@@ -19,6 +19,7 @@ def configurePublishing(p) {
             }
         }
 
+        //Configure sourcesJar for ccd-data-store for dependency fix
         if (project.name == 'ccd-data-store-api'){
             tasks.named('sourcesJar'){
                 dependsOn(tasks.named('generateJsonSchema2Pojo'))
