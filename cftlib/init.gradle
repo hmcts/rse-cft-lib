@@ -19,6 +19,13 @@ def configurePublishing(p) {
             }
         }
 
+        //Configure sourcesJar for ccd-data-store for dependency fix
+        if (project.name == 'ccd-data-store-api'){
+            tasks.named('sourcesJar'){
+                dependsOn(tasks.named('generateJsonSchema2Pojo'))
+            }
+        }
+
         // Disable gradle module metadata resolution and rely on maven pom
         tasks.withType(GenerateModuleMetadata) {
             enabled = false
