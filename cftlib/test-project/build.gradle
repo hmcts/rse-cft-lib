@@ -27,17 +27,17 @@ dependencies {
     // Test this conflicting dependency doesn't break us on spring boot 3.
     cftlibImplementation 'javax.servlet:javax.servlet-api:4.0.1'
 
-    compileOnly 'org.projectlombok:lombok:1.18.28'
-    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     // Enable live reload of just our application
     cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
 
-    cftlibCompileOnly 'org.projectlombok:lombok:1.18.28'
-    cftlibAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
+    cftlibCompileOnly 'org.projectlombok:lombok:1.18.30'
+    cftlibAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 
-    cftlibTestCompileOnly 'org.projectlombok:lombok:1.18.28'
-    cftlibTestAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
+    cftlibTestCompileOnly 'org.projectlombok:lombok:1.18.30'
+    cftlibTestAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation group: 'com.google.guava', name: 'guava', version: '32.0.1-jre'

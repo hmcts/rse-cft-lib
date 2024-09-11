@@ -12,7 +12,7 @@ dependencies {
     implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.13'
-    implementation 'org.springframework.cloud:spring-cloud-starter-gateway:3.1.2'
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway:4.0.6'
     // https://www.elastic.co/guide/en/elasticsearch/client/java-rest/7.11/java-rest-high-getting-started-maven.html
     implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.11.2'
 }

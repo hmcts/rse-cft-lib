@@ -44,7 +44,7 @@ services:
       SERVICES_CCD_COMPONENT_API: http://${JVM_HOST:-host.docker.internal}:4452
       SERVICES_CCD_DATA_STORE_API: http://${JVM_HOST:-host.docker.internal}:4452
       SERVICES_CCD_CASE_ASSIGNMENT_API: http://${JVM_HOST:-host.docker.internal}:4454
-      SERVICES_IDAM_API_URL: "${XUI_IDAM_API_URL:-https://idam-api.aat.platform.hmcts.net}"
+      SERVICES_IDAM_API_URL: "${XUI_IDAM_API_URL:-https://idam-web-public.aat.platform.hmcts.net}"
       SERVICES_IDAM_CLIENT_ID: xuiwebapp
       SERVICES_IDAM_LOGIN_URL: "${XUI_IDAM_LOGIN_URL:-https://idam-web-public.aat.platform.hmcts.net}"
       SERVICES_IDAM_INDEX_URL: /
@@ -79,7 +79,7 @@ services:
     image: hmctspublic.azurecr.io/xui/mo-webapp:latest
     environment:
       DEBUG: '*:*'
-      IDAM_API_SERVICE: "${XUI_IDAM_API_URL:-https://idam-api.aat.platform.hmcts.net}"
+      IDAM_API_SERVICE: "${XUI_IDAM_API_URL:-https://idam-web-public.aat.platform.hmcts.net}"
       IDAM_WEB_SERVICE: "${XUI_IDAM_LOGIN_URL:-https://idam-web-public.aat.platform.hmcts.net}"
       RD_PROFESSIONAL_API_SERVICE: "${RD_PROFESSIONAL_API_URL:-http://rd-professional-api-aat.service.core-compute-aat.internal}"
       S2S_SERVICE: "${XUI_S2S_URL:-http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}"
