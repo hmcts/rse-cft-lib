@@ -224,7 +224,7 @@ public class CftLibPlugin implements Plugin<Project> {
             // SOW014 - get the classpath via a project dependency
             var datastore = project.project(":ccd-data-store-api");
 
-            var agent = project.getConfigurations().create("cftlibWithAgent");
+            var agent = datastore.getConfigurations().create("cftlibWithAgent");
             agent.getDependencies().add(project.getDependencies().create(datastore));
             agent.getDependencies().addAll(List.of(libDependencies(project, "cftlib-agent")));
             classpath = agent;
