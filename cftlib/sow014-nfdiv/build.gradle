@@ -1,3 +1,5 @@
+import uk.gov.hmcts.rse.ManifestTask
+
 buildscript {
   repositories {
     mavenLocal()
@@ -25,7 +27,7 @@ plugins {
   id 'org.springframework.boot' version '3.3.5'
   id 'com.github.ben-manes.versions' version '0.51.0'
   id 'hmcts.ccd.sdk' version '5.5.11'
-  id 'com.github.hmcts.rse-cft-lib' version 'DEV-SNAPSHOT'
+  id 'com.github.hmcts.rse-cft-lib'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -503,4 +505,3 @@ task fortifyScan(type: JavaExec) {
     classpath += sourceSets.test.runtimeClasspath
     jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
-

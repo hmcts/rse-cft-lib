@@ -77,6 +77,7 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private Configuration detachedConfiguration(Project project, Dependency... deps) {
         var result = project.getConfigurations().detachedConfiguration(deps);
+
         // We don't want Gradle to swap in dependency substitutions in composite builds.
         result.getResolutionStrategy().getUseGlobalDependencySubstitutionRules().set(false);
         return result;
@@ -218,8 +219,19 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private ManifestTask createCFTManifestTask(Project project, String depName, String mainClass, File file,
                                                String... args) {
-        Configuration classpath = detachedConfiguration(project,
-                libDependencies(project, depName, "cftlib-agent"));
+        FileCollection classpath;
+        if (depName.equals("ccd-data-store-api")) {
+            // SOW014 - get the classpath via a project dependency
+            var datastore = project.project(":ccd-data-store-api");
+
+            var agent = project.getConfigurations().create("cftlibWithAgent");
+            agent.getDependencies().add(project.getDependencies().create(datastore));
+            agent.getDependencies().addAll(List.of(libDependencies(project, "cftlib-agent")));
+            classpath = agent;
+        } else {
+            classpath = detachedConfiguration(project,
+                    libDependencies(project, depName, "cftlib-agent"));
+        }
         return createManifestTask(project, "writeManifest" + depName, classpath, mainClass, file, args);
     }
 

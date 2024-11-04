@@ -6,8 +6,8 @@ pluginManagement {
 }
 
 includeBuild 'rse-cft-lib-plugin'
-include 'test-project'
 include 'ccd-data-store-api'
+include 'sow014-nfdiv'
 
 new File(rootDir, "lib").listFiles().each {
   if (it.isDirectory()) {

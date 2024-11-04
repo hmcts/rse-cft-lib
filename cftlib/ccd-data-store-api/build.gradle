@@ -683,13 +683,14 @@ compileTestJava {
     options.annotationProcessorPath = configurations.annotationProcessor
 }
 
-idea.project.settings {
-    compiler {
-        javac {
-            javacAdditionalOptions "-parameters"
-        }
-    }
-}
+//https://github.com/JetBrains/gradle-idea-ext-plugin/issues/58
+//idea.project.settings {
+//    compiler {
+//        javac {
+//            javacAdditionalOptions "-parameters"
+//        }
+//    }
+//}
 
 // adopted from
 // https://github.com/springfox/springfox/blob/fb780ee1f14627b239fba95730a69900b9b2313a/gradle/coverage.gradle
@@ -971,11 +972,11 @@ task runRemoteAAT(type: JavaExec) {
     }
 }
 
-rootProject.tasks.named("processAatResources") {
+project.tasks.named("processAatResources") {
     duplicatesStrategy = 'include'
 }
 
-rootProject.tasks.named("processContractTestResources") {
+project.tasks.named("processContractTestResources") {
     duplicatesStrategy = 'include'
 }
 
@@ -1005,3 +1006,5 @@ void loadEnvSecrets(String env) {
         }
     }
 }
+
+
