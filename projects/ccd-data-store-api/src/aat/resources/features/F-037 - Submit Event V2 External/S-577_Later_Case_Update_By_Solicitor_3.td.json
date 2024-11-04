@@ -1,0 +1,64 @@
+{
+	"_extends_": "S-577_Update_Case_For_Case_Worker_Data_Base",
+	"_guid_": "S-577_Later_Case_Update_By_Solicitor_3",
+	"title": "Update the case by Solicitor",
+
+	"specs": [
+		"to update the same case by Solicitor 3"
+	],
+
+	"user": {
+    "_extends_": "BeftaCaseworker2Solicitor3"
+	},
+
+	"request": {
+		"pathVariables": {
+			"cid": "${[scenarioContext][parentContext][childContexts][Befta_Jurisdiction2_Default_Full_Case_Creation_Data][testData][actualResponse][body][id]}"
+		},
+		"body": {
+			"data": {
+				"DocumentField2": {
+          "document_url": "{{DM_STORE_BASE_URL}}/documents/${[scenarioContext][siblingContexts][Befta_Jurisdiction2_Document_Upload_2][customValues][documentIdInTheResponse]}",
+          "document_binary_url": "{{DM_STORE_BASE_URL}}/documents/${[scenarioContext][siblingContexts][Befta_Jurisdiction2_Document_Upload_2][customValues][documentIdInTheResponse]}/binary",
+		  "document_filename": "Elastic Search test Case.png --> updated by Solicitor 3",
+          "upload_timestamp": "2000-02-29T00:00:00.000000000"
+        }
+			},
+			"event_token": "${[scenarioContext][parentContext][childContexts][S-577-Prerequisite_Solicitor_3_Token_For_Update_Case][testData][actualResponse][body][token]}"
+		}
+	},
+
+	"expectedResponse": {
+		"responseCode": 201,
+		"responseMessage": "OK",
+		"headers": {
+			"Vary": "Accept-Encoding"
+		},
+		"body": {
+			"_links": {
+				"self": {
+					"href": "[[ANYTHING_PRESENT]]"
+				}
+			},
+			"id": "[[ANYTHING_PRESENT]]",
+			"jurisdiction": "BEFTA_JURISDICTION_2",
+			"case_type": "BEFTA_CASETYPE_2_1",
+			"created_on": "[[ANYTHING_PRESENT]]",
+			"last_modified_on": "[[ANYTHING_PRESENT]]",
+			"last_state_modified_on" : "[[ANY_TIMESTAMP_NOT_NULLABLE]]",
+			"state": "TODO",
+			"security_classification": "PUBLIC",
+			"data": {
+				"_extends_": "S-577_Response_Data_Common"
+			},
+			"data_classification": {
+				"_extends_": "S-577_Response_Data_Classification"
+			},
+			"after_submit_callback_response": null,
+			"callback_response_status_code": null,
+			"callback_response_status": null,
+			"delete_draft_response_status_code": null,
+			"delete_draft_response_status": null
+		}
+	}
+}

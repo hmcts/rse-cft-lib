@@ -1,0 +1,33 @@
+{
+  "_guid_": "S-108",
+  "_extends_": "F-051_Test_Data_Base_V1",
+  "title": "must return 403 when request provides authentic credentials without authorised access to the operation",
+
+  "users": {
+    "invokingUser": {
+      "_extends_": "CaseworkerAutotest"
+    }
+  },
+
+  "specs": [
+    "a detailed profile in CCD",
+    "uses an uid of a different user, with no profile access",
+    "has the 403 return code"
+  ],
+
+  "request": {
+    "headers": {
+      "_extends_": "Common_Request_Headers"
+    },
+    "pathVariables": {
+      "uid": "c9545e99-4e30-4cc5-886b-b52c4484251d"
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_403_Response",
+    "body" : {
+      "message" : "Access Denied"
+    }
+  }
+}

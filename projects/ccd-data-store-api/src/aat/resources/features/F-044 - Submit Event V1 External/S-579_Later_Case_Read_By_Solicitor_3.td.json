@@ -1,0 +1,61 @@
+{
+	"_extends_": "S-579_Get_Case_For_Case_Worker_Data_Base",
+	"_guid_": "S-579_Later_Case_Read_By_Solicitor_3",
+	"title": "Get the case for read by a solicitor",
+
+	"specs": [
+		"to get the same case by Solicitor 3, who doesn't have READ permission"
+	],
+
+	"user": {
+    "_extends_": "BeftaCaseworker2Solicitor3"
+	},
+
+	"request": {
+		"pathVariables": {
+			"cid": "${[scenarioContext][parentContext][childContexts][Befta_Jurisdiction2_Default_Full_Case_Creation_Data][testData][actualResponse][body][id]}",
+			"uid": "[[DEFAULT_AUTO_VALUE]]",
+			"jid": "BEFTA_JURISDICTION_2",
+			"ctid": "BEFTA_CASETYPE_2_1"
+		}
+	},
+
+	"expectedResponse": {
+		"body": {
+			"version": 2,
+			"case_data": {
+			},
+			"data_classification": {
+				"MoneyGBPField": "PUBLIC",
+				"FixedListField": "PUBLIC",
+				"AddressUKField": {
+					"value": {
+						"County": "PUBLIC",
+						"Country": "PUBLIC",
+						"PostCode": "PUBLIC",
+						"PostTown": "PUBLIC",
+						"AddressLine1": "PUBLIC",
+						"AddressLine2": "PUBLIC",
+						"AddressLine3": "PUBLIC"
+					},
+					"classification": "PUBLIC"
+				},
+				"FixedRadioListField": "PUBLIC",
+				"DateTimeField": "PUBLIC",
+				"PhoneUKField": "PUBLIC",
+				"NumberField": "PUBLIC",
+				"MultiSelectListField": "PUBLIC",
+				"YesOrNoField": "PUBLIC",
+				"EmailField": "PUBLIC",
+				"TextField": "PUBLIC",
+				"DateField": "PUBLIC",
+				"TextAreaField": "PUBLIC",
+				"CollectionField": {
+					"value": [],
+					"classification": "PUBLIC"
+				}
+			},
+			"supplementary_data": null
+		}
+	}
+}

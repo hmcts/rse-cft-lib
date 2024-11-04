@@ -1,0 +1,45 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+/bin/
+/bin
+/*.log
+
+### Gradle
+.gradle/
+out/
+/BEFTA Report for Smoke Tests/
+/BEFTA Report for Functional Tests/
+
+### MacOS
+.DS_Store
+
+### BEFTA
+befta_recent_executions_info_LOCAL.json
+
+### Remote run configs
+.*-remote-env
+
+lib/applicationinsights-agent-*.jar
+lib/applicationinsights.log

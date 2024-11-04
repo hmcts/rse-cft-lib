@@ -1,0 +1,41 @@
+{
+	"_extends_": "S-577_Get_Case_For_Case_Worker_Data_Base",
+	"_guid_": "S-577_Later_Case_Read_By_Solicitor_1",
+	"title": "Get the case for read by a solicitor",
+
+	"specs": [
+		"to get the same case by Solicitor 1"
+	],
+
+	"user": {
+    "_extends_": "BeftaCaseworker2Solicitor1"
+	},
+
+	"request": {
+		"pathVariables": {
+			"cid": "${[scenarioContext][parentContext][childContexts][Befta_Jurisdiction2_Default_Full_Case_Creation_Data][testData][actualResponse][body][id]}",
+			"uid": "[[DEFAULT_AUTO_VALUE]]",
+			"jid": "BEFTA_JURISDICTION_2",
+			"ctid": "BEFTA_CASETYPE_2_1"
+		}
+	},
+
+	"expectedResponse": {
+		"body": {
+			"version": 1,
+			"case_data": {
+				"DocumentField2": {
+          "document_url": "{{DM_STORE_BASE_URL}}/documents/${[scenarioContext][siblingContexts][Befta_Jurisdiction2_Document_Upload_2][customValues][documentIdInTheResponse]}",
+          "document_binary_url": "{{DM_STORE_BASE_URL}}/documents/${[scenarioContext][siblingContexts][Befta_Jurisdiction2_Document_Upload_2][customValues][documentIdInTheResponse]}/binary",
+					"document_filename": "Elastic Search test Case.png --> updated by Solicitor 2",
+          "upload_timestamp": "2000-02-29T00:00:00.000000000"
+				}
+			},
+			"data_classification": {
+				"_extends_": "S-577_Response_Data_Classification",
+				"DocumentField2": "PUBLIC"
+			},
+			"supplementary_data": null
+		}
+	}
+}

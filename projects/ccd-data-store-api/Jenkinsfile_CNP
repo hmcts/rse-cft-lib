@@ -1,0 +1,182 @@
+#!groovy
+import uk.gov.hmcts.contino.AppPipelineDsl
+import uk.gov.hmcts.contino.GithubAPI
+properties(
+    [
+        [
+            $class       : 'GithubProjectProperty',
+            projectUrlStr: 'https://github.com/hmcts/ccd-data-store-api'
+        ],
+        pipelineTriggers([[$class: 'GitHubPushTrigger']])
+    ]
+)
+
+@Library("Infrastructure@DO-NOT-MERGE-FT-TIMEOUT-EXTENSION")
+
+def type = "java"
+def product = "ccd"
+def component = "data-store-api"
+def branchesToSync = ['demo', 'ithc', 'perftest', 'develop']
+
+// Variables to switch pipeline logic and wiring per type of build
+
+def definitionStoreDevelopPr = "PR-575"  // This doesn't change frequently, but when it does, only change this value.
+def dataStoreApiDevelopPr    = "PR-1260" // This doesn't change frequently, but when it does, only change this value.
+def prsToUseAat              = "PR-1793,PR-1888" // Set this value to a PR number, or add it as a comma-separated value, if it's to follow CI/CD.
+
+def secrets = [
+    'ccd-${env}': [
+        secret('ccd-caseworker-autotest-email', 'CCD_CASEWORKER_AUTOTEST_EMAIL'),
+        secret('ccd-caseworker-autotest-password', 'CCD_CASEWORKER_AUTOTEST_PASSWORD'),
+        secret('ccd-private-caseworker-email', 'CCD_PRIVATE_CASEWORKER_EMAIL'),
+        secret('ccd-private-caseworker-password', 'CCD_PRIVATE_CASEWORKER_PASSWORD'),
+        secret('ccd-private-caseworker-autotest-1and2-password', 'CCD_PRIVATE_CASEWORKER_AUTOTEST_1AND2_PASSWORD'),
+        secret('ccd-restricted-caseworker-email', 'CCD_RESTRICTED_CASEWORKER_EMAIL'),
+        secret('ccd-restricted-caseworker-password', 'CCD_RESTRICTED_CASEWORKER_PASSWORD'),
+        secret('ccd-private-caseworker-solicitor-email', 'CCD_PRIVATE_CASEWORKER_SOLICITOR_EMAIL'),
+        secret('ccd-private-caseworker-solicitor-password', 'CCD_PRIVATE_CASEWORKER_SOLICITOR_PASSWORD'),
+        secret('ccd-private-cross-case-type-worker-email', 'CCD_PRIVATE_CROSS_CASE_TYPE_CASEWORKER_EMAIL'),
+        secret('ccd-private-cross-case-type-caseworker-password', 'CCD_PRIVATE_CROSS_CASE_TYPE_CASEWORKER_PASSWORD'),
+        secret('ccd-private-cross-case-type-solicitor-email', 'CCD_PRIVATE_CROSS_CASE_TYPE_SOLICITOR_EMAIL'),
+        secret('ccd-private-cross-case-type-solicitor-password', 'CCD_PRIVATE_CROSS_CASE_TYPE_SOLICITOR_PASSWORD'),
+        secret('ccd-restricted-cross-case-type-caseworker-email', 'CCD_RESTRICTED_CROSS_CASE_TYPE_CASEWORKER_EMAIL'),
+        secret('ccd-restricted-cross-case-type-caseworker-password', 'CCD_RESTRICTED_CROSS_CASE_TYPE_CASEWORKER_PASSWORD'),
+
+        //Required for FTA test RDM-6943
+        secret('ccd-befta-caseworker-2-solicitor-1-pwd', 'CCD_BEFTA_CASEWORKER_2_SOLICITOR_1_PWD'),
+        secret('ccd-befta-caseworker-2-solicitor-2-pwd', 'CCD_BEFTA_CASEWORKER_2_SOLICITOR_2_PWD'),
+        secret('ccd-befta-caseworker-2-solicitor-3-pwd', 'CCD_BEFTA_CASEWORKER_2_SOLICITOR_3_PWD'),
+        secret('ccd-befta-caseworker-1-pwd', 'CCD_BEFTA_CASEWORKER_1_PWD'),
+        secret('ccd-befta-caseworker-2-pwd', 'CCD_BEFTA_CASEWORKER_2_PWD'),
+        secret('ccd-befta-caseworker-3-pwd', 'CCD_BEFTA_CASEWORKER_3_PWD'),
+        secret('ccd-befta-citizen-2-pwd', 'CCD_BEFTA_CITIZEN_2_PWD'),
+        secret('ccd-befta-citizen-3-pwd', 'CCD_BEFTA_CITIZEN_3_PWD'),
+        secret('ccd-befta-solicitor-3-pwd', 'CCD_BEFTA_SOLICITOR_3_PWD'),
+        secret('ccd-befta-caseworker-1-no-profile-pwd', 'CCD_BEFTA_CASEWORKER_1_NO_PROFILE_PWD'),
+        secret('ccd-befta-caseworker-caa-pwd', 'CCD_BEFTA_CASEWORKER_CAA_PWD'),
+        secret('ccd-befta-master-caseworker-pwd', 'CCD_BEFTA_MASTER_CASEWORKER_PWD'),
+        secret('ccd-befta-master-solicitor1-pwd', 'CCD_BEFTA_MASTER_SOLICITOR_1_PWD'),
+        secret('ccd-befta-master-solicitor2-pwd', 'CCD_BEFTA_MASTER_SOLICITOR_2_PWD'),
+        secret('ccd-befta-master-solicitor4-pwd', 'CCD_BEFTA_MASTER_SOLICITOR_4_PWD'),
+
+        secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
+        secret('definition-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
+        secret('definition-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
+
+        secret('idam-data-store-system-user-username','ROLE_ASSIGNMENT_USER_EMAIL'),
+        secret('idam-data-store-system-user-password','ROLE_ASSIGNMENT_USER_PASSWORD')
+    ],
+    's2s-${env}': [
+        secret('microservicekey-ccd-gw', 'CCD_API_GATEWAY_S2S_KEY'),
+        secret('microservicekey-ccd-gw', 'BEFTA_S2S_CLIENT_SECRET'),
+        secret('microservicekey-aac-manage-case-assignment', 'BEFTA_S2S_CLIENT_SECRET_OF_AAC_MANAGE_CASE_ASSIGNMENT'),
+        secret('microservicekey-ccd-data', 'BEFTA_S2S_CLIENT_SECRET_OF_CCD_DATA'),
+        secret('microservicekey-xui-webapp', 'BEFTA_S2S_CLIENT_SECRET_OF_XUI_WEBAPP')
+    ]
+]
+
+static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
+    [$class     : 'AzureKeyVaultSecret',
+     secretType : 'Secret',
+     name       : secretName,
+     version    : '',
+     envVariable: envVar
+    ]
+}
+
+def vaultOverrides = [
+    'preview' : 'aat',
+    'spreview': 'saat'
+]
+// vars needed for functional tests
+// Other env variables needed for BEFTA.
+env.DM_STORE_BASE_URL = "http://dm-store-aat.service.core-compute-aat.internal"
+env.CASE_DOCUMENT_AM_URL = "http://ccd-case-document-am-api-aat.service.core-compute-aat.internal"
+env.RD_LOCATION_REF_API_BASE_URL = "http://rd-location-ref-api-aat.service.core-compute-aat.internal"
+env.RD_PROFESSIONAL_API_BASE_URL = "http://rd-professional-api-aat.service.core-compute-aat.internal"
+env.BEFTA_RESPONSE_HEADER_CHECK_POLICY="JUST_WARN"
+env.ELASTIC_SEARCH_FTA_ENABLED = "false"
+env.PACT_BROKER_FULL_URL = "https://pact-broker.platform.hmcts.net"
+env.PACT_BROKER_URL = "pact-broker.platform.hmcts.net"
+env.PACT_BROKER_PORT = "443"
+env.PACT_BROKER_SCHEME = "https"
+env.DEFAULT_COLLECTION_ASSERTION_MODE="UNORDERED"
+env.MAX_NUM_PARALLEL_THREADS=6
+env.BEFTA_S2S_CLIENT_ID = "ccd_gw"
+env.ROLE_ASSIGNMENT_API_GATEWAY_S2S_CLIENT_ID = "ccd_data"
+env.BEFTA_TEST_STUB_SERVICE_BASE_URL = "http://ccd-test-stubs-service-aat.service.core-compute-aat.internal"
+env.BEFTA_S2S_CLIENT_ID_OF_CCD_DATA = "ccd_data"
+env.BEFTA_S2S_CLIENT_ID_OF_XUI_WEBAPP = "xui_webapp"
+// BEFTA retry env variables
+env.BEFTA_RETRY_MAX_ATTEMPTS = "3"
+env.BEFTA_RETRY_STATUS_CODES = "500,502,503,504"
+env.BEFTA_RETRY_MAX_DELAY = "1000"
+env.BEFTA_RETRY_NON_RETRYABLE_HTTP_METHODS = "POST,PUT"
+// Prevent Docker hub rate limit errors by ensuring that testcontainers uses images from hmctspublic ACR
+env.TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = "hmctspublic.azurecr.io/imported/"
+
+withPipeline(type, product, component) {
+    onMaster {
+        enableSlackNotifications('#ccd-master-builds')
+        enablePactAs([
+            AppPipelineDsl.PactRoles.PROVIDER
+        ])
+    }
+    if (env.BRANCH_NAME.equalsIgnoreCase(dataStoreApiDevelopPr)) {
+        enableSlackNotifications('#ccd-develop-builds')
+        env.ELASTIC_SEARCH_FTA_ENABLED = "true"
+    }
+    onDemo {
+        enableSlackNotifications('#ccd-demo-builds')
+    }
+    onPR {
+        enableSlackNotifications('#ccd-pr-builds')
+        enablePactAs([
+            AppPipelineDsl.PactRoles.PROVIDER
+        ])
+    }
+
+    // Check if the build should be wired to an environment higher than 'preview'.
+    if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'demo' || env.BRANCH_NAME == 'perftest' || env.BRANCH_NAME == 'ithc' || prsToUseAat.toLowerCase().contains(env.BRANCH_NAME.toLowerCase())) {
+        env.ELASTIC_SEARCH_FTA_ENABLED = "true"
+        env.DEFINITION_STORE_HOST = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+    } else {
+        env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-api-${definitionStoreDevelopPr}.preview.platform.hmcts.net".toLowerCase()
+        env.DEFINITION_STORE_HOST = env.DEFINITION_STORE_URL_BASE
+    }
+
+    echo "ES FTA Enabled = ${env.ELASTIC_SEARCH_FTA_ENABLED} on branch ${env.BRANCH_NAME}"
+
+    syncBranchesWithMaster(branchesToSync)
+    overrideVaultEnvironments(vaultOverrides)
+    enableAksStagingDeployment()
+    disableLegacyDeploymentOnAAT()
+    loadVaultSecrets(secrets)
+    disableLegacyDeployment()
+    enableHighLevelDataSetup()
+
+    afterAlways('test') {
+        // hmcts/cnp-jenkins-library may fail to copy artifacts after checkstyle error so repeat command (see /src/uk/gov/hmcts/contino/GradleBuilder.groovy)
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/checkstyle/*.html'
+    }
+
+    afterAlways('smoketest:preview') {
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/BEFTA Report for Smoke Tests/**/*'
+    }
+
+    afterAlways('smoketest:aat') {
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/BEFTA Report for Smoke Tests/**/*'
+    }
+
+    afterAlways('functionalTest:preview') {
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/BEFTA Report for Functional Tests/**/*'
+    }
+
+    afterAlways('functionalTest:aat') {
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/BEFTA Report for Functional Tests/**/*'
+    }
+
+    afterAlways('pact-provider-verification') {
+        steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/tests/**/*'
+    }
+}

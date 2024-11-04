@@ -1,0 +1,16 @@
+{
+	"_guid_": "S-161_Case_Creation_Data",
+	"_extends_": "Standard_Full_Case_Creation_Data",
+
+	"users": {
+		"invokingUser": {
+      "_extends_": "PrivateCaseworker"
+		}
+	},
+
+	"request": {
+		"pathVariables": {
+			"ctid": "AAT_AUTH_8"
+		}
+	}
+}
