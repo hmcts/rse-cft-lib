@@ -1,0 +1,247 @@
+#!groovy
+
+@Library("Infrastructure")
+
+import uk.gov.hmcts.contino.GradleBuilder
+import uk.gov.hmcts.contino.AppPipelineConfig
+import uk.gov.hmcts.contino.MetricsPublisher
+import uk.gov.hmcts.contino.GithubAPI
+
+def type = "java"
+def product = "nfdiv"
+def component = "case-api"
+
+GradleBuilder builder = new GradleBuilder(this, product)
+
+static Map<String, Object> secret(String secretName, String envVariable) {
+  [$class     : 'AzureKeyVaultSecret',
+   secretType : 'Secret',
+   name       : secretName,
+   envVariable: envVariable
+  ]
+}
+
+def secrets = [
+        's2s-${env}'      : [
+                secret('microservicekey-ccd-data', 'DATA_STORE_S2S_KEY'),
+                secret('microservicekey-ccd-definition', 'DEFINITION_STORE_S2S_KEY'),
+                secret('microservicekey-ccd-gw', 'CCD_API_GATEWAY_S2S_KEY'),
+                secret('microservicekey-ccd-admin', 'ADMIN_S2S_KEY'),
+                secret('microservicekey-ccd-data', 'CCD_DATA_STORE_S2S_SECRET'),
+                secret('microservicekey-ccd-definition', 'CCD_DEFINITION_STORE_S2S_SECRET')
+        ],
+        'ccd-${env}'      : [
+                secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
+                secret('ccd-admin-web-oauth2-client-secret', 'ADMIN_WEB_IDAM_SECRET'),
+                secret('postcode-info-address-lookup-token', 'ADDRESS_LOOKUP_TOKEN'),
+                secret('AppInsightsInstrumentationKey', 'APPINSIGHTS_INSTRUMENTATIONKEY'),
+                secret('idam-data-store-client-secret','IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET'),
+                secret('idam-data-store-system-user-username','IDAM_DATA_STORE_SYSTEM_USER_USERNAME'),
+                secret('idam-data-store-system-user-password','IDAM_DATA_STORE_SYSTEM_USER_PASSWORD'),
+        ],
+        'nfdiv-${env}'    :[
+                secret('ccd-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
+                secret('ccd-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
+                secret('idam-secret', 'OAUTH2_CLIENT_SECRET'),
+                secret('idam-solicitor-username', 'IDAM_SOLICITOR_USERNAME'),
+                secret('idam-solicitor-password', 'IDAM_SOLICITOR_PASSWORD'),
+                secret('idam-systemupdate-username', 'IDAM_SYSTEM_UPDATE_USERNAME'),
+                secret('idam-systemupdate-password', 'IDAM_SYSTEM_UPDATE_PASSWORD')
+        ]
+]
+
+def pipelineConf = new AppPipelineConfig()
+pipelineConf.vaultSecrets = secrets
+
+withPipeline(type, product, component) {
+  enableAksStagingDeployment()
+  disableLegacyDeployment()
+  loadVaultSecrets(secrets)
+  syncBranchesWithMaster(['perftest', 'ithc', 'demo'])
+  enableSlackNotifications('#no-fault-divorce-builds')
+  MetricsPublisher metricsPublisher = new MetricsPublisher(this, currentBuild, product, component)
+  approvedEnvironmentRepository(params.environment, metricsPublisher) {
+    enableHighLevelDataSetup()
+  }
+
+  afterAlways('test') {
+    builder.gradle('jacocoTestReport')
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "main.html",
+      reportName           : "Checkstyle Main Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "test.html",
+      reportName           : "Checkstyle Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "functionalTest.html",
+      reportName           : "Checkstyle Functional Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "integrationTest.html",
+      reportName           : "Checkstyle Integration Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/test",
+      reportFiles          : "index.html",
+      reportName           : "Unit Tests Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/pmd",
+      reportFiles          : "main.html",
+      reportName           : "PMD Report"
+    ]
+  }
+
+  afterAlways('functionalTest') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/functional",
+      reportFiles          : "index.html",
+      reportName           : "Functional Tests Report"
+    ]
+  }
+
+  afterAlways('smoketest:preview') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/smoke",
+      reportFiles          : "index.html",
+      reportName           : "Smoke Test Report"
+    ]
+  }
+
+  afterAlways('smoketest:aat') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/smoke",
+      reportFiles          : "index.html",
+      reportName           : "Smoke Test Report"
+    ]
+  }
+
+  afterAlways('checkout') {
+    builder.setupToolVersion()
+    builder.gradle('generateCCDConfig')
+    generateDefinitions()
+  }
+
+  onPR {
+    env.ENVIRONMENT="preview"
+    env.CASE_API_URL = "https://nfdiv-case-api-pr-${CHANGE_ID}.preview.platform.hmcts.net"
+    env.CCD_DEF_NAME = "preview"
+    env.TEST_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
+    env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
+    env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+
+    setCommonEnvVariables()
+  }
+
+  onMaster {
+    env.ENVIRONMENT="aat"
+    env.CASE_API_URL="http://nfdiv-case-api-aat.service.core-compute-aat.internal"
+    env.CCD_DEF_NAME="aat"
+    env.ELASTIC_SEARCH_ENABLED=true
+    env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
+    env.ADMIN_UNLINK_APPLICANT_2_ENABLED=true
+    env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
+    env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    setCommonEnvVariables()
+  }
+
+  afterAlways('functionalTest:aat') {
+    env.ENVIRONMENT="prod"
+    env.CASE_API_URL="http://nfdiv-case-api-prod.service.core-compute-prod.internal"
+    env.CCD_DEF_NAME="prod"
+    env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-prod.service.core-compute-prod.internal"
+    env.CITIZEN_UPDATE_CASE_STATE_ENABLED=false
+    env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
+    env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-prod.service.core-compute-prod.internal"
+    env.IDAM_API_URL_BASE = "https://idam-api.platform.hmcts.net"
+    env.S2S_URL_BASE = "http://rpe-service-auth-provider-prod.service.core-compute-prod.internal"
+    env.BEFTA_S2S_CLIENT_ID = "ccd_data"
+
+    // re-run to generate prod definition
+    builder.gradle('generateCCDConfig --rerun-tasks')
+    generateDefinitions()
+  }
+
+  onDemo {
+    env.ENVIRONMENT="demo"
+    env.CASE_API_URL = "http://nfdiv-case-api-demo.service.core-compute-demo.internal"
+    env.CCD_DEF_NAME = "demo"
+    env.IDAM_API_URL_BASE = "https://idam-api.demo.platform.hmcts.net"
+    env.S2S_URL_BASE = "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
+  }
+
+  onPerftest {
+    env.ENVIRONMENT="perftest"
+    env.CASE_API_URL = "http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
+    env.CCD_DEF_NAME = "perftest"
+    env.IDAM_API_URL_BASE = "https://idam-api.perftest.platform.hmcts.net"
+    env.S2S_URL_BASE = "http://rpe-service-auth-provider-perftest.service.core-compute-perftest.internal"
+    env.FEE_API_URL = "http://fees-register-api-perftest.service.core-compute-perftest.internal"
+  }
+
+  onIthc {
+    env.ENVIRONMENT="ithc"
+    env.CASE_API_URL = "http://nfdiv-case-api-ithc.service.core-compute-ithc.internal"
+    env.CCD_DEF_NAME = "ithc"
+    env.IDAM_API_URL_BASE = "https://idam-api.ithc.platform.hmcts.net"
+    env.S2S_URL_BASE = "http://rpe-service-auth-provider-ithc.service.core-compute-ithc.internal"
+    env.FEE_API_URL = "http://fees-register-api-ithc.service.core-compute-ithc.internal"
+  }
+
+}
+
+def setCommonEnvVariables() {
+  env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
+  env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+  env.FEE_API_URL = "http://fees-register-api-aat.service.core-compute-aat.internal"
+  env.BEFTA_S2S_CLIENT_ID = "ccd_data"
+}
+
+def generateDefinitions() {
+  dir("${WORKSPACE}/bin") {
+    sh "./ccd-build-definition.sh"
+  }
+  dir("${WORKSPACE}") {
+    steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
+  }
+}

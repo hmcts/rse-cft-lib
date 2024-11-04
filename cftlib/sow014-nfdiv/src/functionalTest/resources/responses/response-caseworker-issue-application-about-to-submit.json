@@ -1,0 +1,109 @@
+{
+  "data": {
+    "applicant1ContactDetailsType": "public",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1FirstName": "test_first_name",
+    "applicant1Gender": "female",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1LastName": "test_last_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1SolicitorName": "Applicant 1 Solicitor",
+    "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
+    "applicant1SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE",
+    "applicant1SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationName": "Test 1 Organisation",
+        "OrganisationID": "ABC456"
+      }
+    },
+    "applicant2ContactDetailsType": "public",
+    "applicant2Email": "applicant2@example.com",
+    "applicant2FirstName": "test_first_name",
+    "applicant2Gender": "female",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2LastName": "test_last_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2SolicitorName": "Applicant 2 Solicitor",
+    "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
+    "applicant2SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE",
+    "applicant2SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationName": "Test 2 Organisation",
+        "OrganisationID": "ABC123"
+      }
+    },
+    "applicant2SolicitorRepresented": "Yes",
+    "accessCode": "${json-unit.any-string}",
+    "applicationFeeOrderSummary": {
+      "PaymentTotal": "55000"
+    },
+    "divorceOrDissolution": "divorce",
+    "documentUploadComplete": "Yes",
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "application",
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "noticeOfProceedingsApp2",
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "noticeOfProceedings",
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
+      }
+    ],
+    "applicant1FinancialOrder": "No",
+    "issueDate": "${json-unit.any-string}",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "A"
+    ],
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriageDate": "1990-06-10",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "applicationPayments": [
+      {
+        "value": {
+          "amount": 55000,
+          "channel": "online",
+          "feeCode": "FEE0001",
+          "reference": "paymentRef",
+          "status": "success",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
+      }
+    ],
+    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "solSignStatementOfTruth": "Yes",
+    "applicant1StatementOfTruth": "Yes"
+  },
+  "state": "AwaitingAos"
+}

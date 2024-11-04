@@ -1,0 +1,17 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "notes": [
+      {
+        "id": "1",
+        "value": {
+          "author": "User Test",
+          "date": "${json-unit.any-string}"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "notApplicable",
+    "dataVersion": "${json-unit.any-number}",
+    "applicant1FirstName": "John",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2Gender": "female",
+    "changeOfRepresentatives": [],
+    "generalOrders": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "generalOrderDocument": {
+            "documentFileName": "generalOrder2021-07-19 11:00:50.pdf",
+            "documentType": "generalOrder",
+            "documentLink": {
+              "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/999229d5-25d5-4c18-876e-f1ee5d818077",
+              "document_filename": "generalOrder2021-07-19 11:00:50.pdf",
+              "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/999229d5-25d5-4c18-876e-f1ee5d818077/binary"
+            }
+          },
+          "generalOrderDivorceParties": [
+            "respondent"
+          ]
+        }
+      }
+    ],
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "warnings": []
+  }
+}

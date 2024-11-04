@@ -1,0 +1,44 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "notApplicable",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1FinancialOrder": "No",
+    "marriageDate": "2009-04-20",
+    "divorceWho": "wife",
+    "sentNotifications": {},
+    "changeOfRepresentatives": [],
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "marriageFormationType": "oppositeSexCouple",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "solPaymentHowToPay": "feePayByAccount",
+    "pbaNumbers": {
+      "list_items": [
+        {
+          "code": "${json-unit.any-string}",
+          "label": "PBA0087672"
+        },
+        {
+          "code": "${json-unit.any-string}",
+          "label": "PBA0082311"
+        },
+        {
+          "code": "${json-unit.any-string}",
+          "label": "PBA3344555"
+        },
+        {
+          "code": "${json-unit.any-string}",
+          "label": "PBA4564561"
+        },
+        {
+          "code": "${json-unit.any-string}",
+          "label": "PBA0023444"
+        }
+      ]
+    },
+    "dataVersion": "${json-unit.any-number}",
+    "warnings": []
+  }
+}

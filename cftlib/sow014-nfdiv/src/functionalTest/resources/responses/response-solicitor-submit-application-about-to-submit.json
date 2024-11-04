@@ -1,0 +1,97 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicationType": "soleApplication",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "applicant1@example.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1ContactDetailsType": "public",
+    "applicant1Gender": "female",
+    "applicant1SolicitorRepresented": "Yes",
+    "applicant1SolicitorName": "Applicant 1 Solicitor",
+    "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
+    "applicant1SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+    "applicant2FirstName": "test_first_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name",
+    "applicant2Email": "applicant2@example.com",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2ContactDetailsType": "public",
+    "applicant2Gender": "female",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "marriageDate": "1990-06-10",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "A"
+    ],
+    "applicant1LegalProceedings": "Yes",
+    "applicant1FinancialOrder": "No",
+    "applicant2FinancialOrder": "No",
+    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant1StatementOfTruth": "Yes",
+    "documentUploadComplete": "Yes",
+    "applicant1SolicitorReference": "customerRef1",
+    "applicant1SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationName": "Test 1 Organisation",
+        "OrganisationID": "ABC456"
+      }
+    },
+    "solPaymentHowToPay": "feePayByAccount",
+    "pbaNumbers": {
+      "value": {
+        "code": "93018b67-a1af-4c1e-afa0-22de272bb5f2",
+        "label": "PBA0082311"
+      },
+      "list_items": [
+        {
+          "code": "93018b67-a1af-4c1e-afa0-22de272bb5f2",
+          "label": "PBA0082311"
+        },
+        {
+          "code": "93018b67-a1af-4c1e-afa0-22de272bb5f2",
+          "label": "PBA0087672"
+        }
+      ],
+      "valueLabel": "PBA0082311",
+      "valueCode": "93018b67-a1af-4c1e-afa0-22de272bb5f2"
+    },
+    "applicationFeeOrderSummary": {
+      "Fees": [
+        {
+          "value": {
+            "FeeAmount": "55000",
+            "FeeCode": "FEE0002",
+            "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+            "FeeVersion": "5"
+          }
+        }
+      ],
+      "PaymentTotal": "55000"
+    },
+    "dateSubmitted": "${json-unit.any-string}",
+    "solSignStatementOfTruth": "Yes",
+    "applicationPayments": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "feeCode": "FEE0002",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "${json-unit.any-string}"
+        }
+      }
+    ],
+    "selectedDivorceCentreSiteId": "AA04",
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": "${json-unit.any-number}",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true."
+  },
+  "state": "Submitted"
+}

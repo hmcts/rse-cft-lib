@@ -1,0 +1,36 @@
+{
+  "data": {
+    "applicationType": "jointApplication",
+    "divorceOrDissolution": "divorce",
+    "applicant1Gender": "female",
+    "applicant2Gender": "male",
+    "marriageMarriedInUk": "Yes",
+    "marriageDate": "${json-unit.ignore}",
+    "applicant1HWFNeedHelp": "No",
+    "applicant2HWFNeedHelp": "No",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1ContactDetailsType": "private",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "A"
+    ],
+    "applicant2FirstName": "test_first_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name",
+    "applicant2InviteEmailAddress": "applicant2@test.com",
+    "applicant2Email": "test@test.com",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "applicant1FinancialOrder": "No",
+    "applicant1PrayerDissolveDivorce": [
+      "dissolveDivorce"
+    ],
+    "applicant1StatementOfTruth": "Yes"
+  },
+  "state": "AwaitingPayment"
+}

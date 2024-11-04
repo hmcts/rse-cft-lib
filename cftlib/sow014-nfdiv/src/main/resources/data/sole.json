@@ -1,0 +1,118 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicationType": "soleApplication",
+  "applicant1Offline": "No",
+  "applicant2Offline": "No",
+  "applicant1FirstName": "app1_first_name",
+  "applicant1MiddleName": "app1_middle_name",
+  "applicant1LastName": "app1_last_name",
+  "applicant1Email": "TEST_SOLICITOR@mailinator.com",
+  "applicant1ContactDetailsType": "public",
+  "applicant2ContactDetailsType": "public",
+  "applicant1Address": {
+    "AddressLine1": "App 1 221a Baker Street",
+    "PostTown": "London",
+    "County": "Greater London",
+    "PostCode": "NW1 6XE",
+    "Country": "United Kingdom"
+  },
+  "applicant2Address": {
+    "AddressLine1": "App 2 221a Baker Street",
+    "PostTown": "London",
+    "County": "Greater London",
+    "PostCode": "NW1 6XE",
+    "Country": "France"
+  },
+  "dueDate": "2020-04-28",
+  "issueDate": "2020-05-28",
+  "accessCode": "",
+  "applicant1LanguagePreferenceWelsh": "No",
+  "applicant1KeepContactDetailsConfidential": "Yes",
+  "applicant1Gender": "female",
+  "applicant1SolicitorName": "Applicant 1 Solicitor",
+  "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
+  "applicant1SolicitorAddress": "App 1 Solicitor 221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+  "applicant1SolicitorOrganisationPolicy": {
+    "Organisation": {
+      "OrganisationName": "Test 1 Organisation",
+      "OrganisationID": "0FA7S8S"
+    },
+    "OrgPolicyCaseAssignedRole": "[APPONESOLICITOR]"
+  },
+  "applicant2FirstName": "app2_first_name",
+  "applicant2MiddleName": "app2_middle_name",
+  "applicant2LastName": "app2_last_name",
+  "applicant2Email": "applicant2@example.com",
+  "applicant2LanguagePreferenceWelsh": "No",
+  "applicant2KeepContactDetailsConfidential": "No",
+  "applicant2Gender": "female",
+  "applicant2SolicitorName": "Applicant 2 Solicitor",
+  "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
+  "applicant2SolicitorAddress": "App 2 Solicitor 221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+  "applicant2SolicitorOrganisationPolicy": {
+    "Organisation": {
+      "OrganisationName": "Test 2 Organisation",
+      "OrganisationID": "N5AFUXG"
+    },
+    "OrgPolicyCaseAssignedRole": "[APPTWOSOLICITOR]"
+  },
+  "marriageApplicant1Name": "test_first_name test_last_name",
+  "marriageApplicant2Name": "test_first_name test_last_name",
+  "marriagePlaceOfMarriage": "Somewhere",
+  "marriageDate": "1990-06-10",
+  "jurisdictionApplicant1Residence": "Yes",
+  "jurisdictionApplicant2Residence": "Yes",
+  "jurisdictionConnections": [
+    "A"
+  ],
+  "applicant1LegalProceedings": "Yes",
+  "applicant1FinancialOrder": "No",
+  "applicant2FinancialOrder": "No",
+  "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+  "applicant1StatementOfTruth": "Yes",
+  "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
+  "applicant2StatementOfTruth": "Yes",
+  "applicationFeeOrderSummary": {
+    "PaymentReference": null,
+    "Fees": null,
+    "PaymentTotal": "55000"
+  },
+  "applicationPayments": [
+    {
+      "id": null,
+      "value": {
+        "created": null,
+        "feeCode": "FEE0001",
+        "amount": 55000,
+        "status": "success",
+        "channel": "online",
+        "reference": "paymentRef",
+        "transactionId": "ge7po9h5bhbtbd466424src9tk"
+      }
+    }
+  ],
+  "documentUploadComplete": "Yes",
+  "labelContentApplicant2": "respondent",
+  "labelContentTheApplicant2": "the respondent",
+  "labelContentTheApplicant2UC": "Respondent",
+  "labelContentApplicant2UC": "The respondent",
+  "labelContentUnionType": "divorce",
+  "labelContentUnionTypeUC": "Divorce",
+  "labelContentApplicantOrApplicant1": "the applicant’s",
+  "labelContentApplicantsOrApplicant1s": "Applicant’s",
+  "labelContentTheApplicantOrApplicant1": "the applicant",
+  "labelContentTheApplicantOrApplicant1UC": "The applicant",
+  "labelContentRespondentsOrApplicant2s": "Respondent's",
+  "labelContentDivorceOrCivilPartnershipApplication": "divorce application",
+  "labelContentDivorceOrEndCivilPartnership": "for divorce",
+  "labelContentDivorceOrCivilPartnership": "divorce",
+  "labelContentFinaliseDivorceOrEndCivilPartnership": "finalise the divorce",
+  "labelContentMarriageOrCivilPartnership": "marriage",
+  "labelContentMarriageOrCivilPartnershipUC": "Marriage",
+  "labelContentDivorceOrLegallyEnd": "get a divorce",
+  "labelContentGotMarriedOrFormedCivilPartnership": "got married",
+  "labelContentFinaliseDivorceOrLegallyEndYourCivilPartnership": "finalise the divorce",
+  "coApplicant1IsSubmitted": "No",
+  "coApplicant1IsDrafted": "No",
+  "supplementaryCaseType": "notApplicable"
+}
