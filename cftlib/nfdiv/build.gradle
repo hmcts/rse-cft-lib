@@ -318,7 +318,8 @@ dependencies {
   testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
   testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.3'
-  testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
+// Conflicts with logback during cftlib tests
+//  testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
   testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.3', classifier: 'all'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
@@ -479,19 +480,9 @@ configurations.cftlibTestImplementation {
   exclude group: 'ch.qos.logback', module: 'logback-classic'
 }
 
-task installChromium(type: JavaExec) {
-  // group = "Execution"
-  // description = "Run the main class with JavaExecTask"
-  classpath = sourceSets.cftlibTest.runtimeClasspath
-  main = 'com.microsoft.playwright.CLI'
-  args = ['install', 'chromium']
-}
-
 configurations.all {
   exclude group: 'com.vaadin.external.google', module: 'android-json'
 }
-
-tasks.cftlibTest.dependsOn(installChromium)
 
 generateCCDConfig.doLast {
   copy {
