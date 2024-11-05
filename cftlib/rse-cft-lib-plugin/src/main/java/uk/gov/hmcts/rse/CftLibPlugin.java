@@ -294,8 +294,17 @@ public class CftLibPlugin implements Plugin<Project> {
 
     Dependency[] libDependencies(Project project, String... libDeps) {
         return Arrays.stream(libDeps)
-                .map(d -> project.getDependencies()
-                        .create("com.github.hmcts.rse-cft-lib:" + d + ":" + getLibVersion(project)))
+                .map(d -> {
+                    // If the project exists in our build use a project dependency
+                    var proj = project.getRootProject().getAllprojects().stream().filter(x -> x.getName().equals(d)).findFirst();
+                    if (proj.isPresent()) {
+                        return project.getDependencies().create(proj.get());
+                    }
+
+                    // Otherwise bring it in from maven local
+                    return project.getDependencies()
+                            .create("com.github.hmcts.rse-cft-lib:" + d + ":" + getLibVersion(project));
+                })
                 .toArray(Dependency[]::new);
     }
 }
