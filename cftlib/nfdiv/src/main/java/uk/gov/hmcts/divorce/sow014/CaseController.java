@@ -1,7 +1,9 @@
 package uk.gov.hmcts.divorce.sow014;
 
+import ch.qos.logback.core.util.StringUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.SQLException;
+import java.sql.Types;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,22 +45,45 @@ public class CaseController {
     @PostMapping("/cases")
     public String createEvent(@RequestBody POCCaseDetails event) {
         log.info("case Details: {}", event);
-        db.update(
-            """
-                insert into case_data (jurisdiction, case_type_id, state, data, data_classification, reference, security_classification, version)
-                values (?, ?, ?, ?::jsonb, ?::jsonb, ?, ?::securityclassification, ?)
-                """,
-            "DIVORCE",
-            "NFD",
-            event.getCaseDetails().get("state"),
-            mapper.writeValueAsString(event.getCaseDetails().get("case_data")),
-            mapper.writeValueAsString(event.getCaseDetails().get("data_classification")),
-            event.getCaseDetails().get("id"),
-            event.getCaseDetails().get("security_classification"),
-            1
-        );
+
+        Map<String, Object> caseDetails = event.getCaseDetails();
+
+        long caseRef = (long) caseDetails.get("id");
+        if (StringUtil.isNullOrEmpty(getCase(caseRef))) {
+
+            db.update(
+                    """
+                            
+                                    insert into case_data (jurisdiction, case_type_id, state, data, data_classification, reference, security_classification, version)
+                            values (?, ?, ?, ?::jsonb, ?::jsonb, ?, ?::securityclassification, ?)
+                            """,
+                    "DIVORCE",
+                    "NFD",
+                    caseDetails.get("state"),
+                    mapper.writeValueAsString(caseDetails.get("case_data")),
+                    mapper.writeValueAsString(caseDetails.get("data_classification")),
+                    caseDetails.get("id"),
+                    caseDetails.get("security_classification"),
+                    1
+            );
+
+        } else {
+            db.update(
+                    """
+                        update case_data set data = ?::jsonb, data_classification = ?::jsonb, security_classification = ?::securityclassification, state = ?
+                           where reference = ?
+                        """,
+                    mapper.writeValueAsString(caseDetails.get("case_data")),
+                    mapper.writeValueAsString(caseDetails.get("data_classification")),
+                    caseDetails.get("security_classification"),
+                    caseDetails.get("state"),
+                    caseDetails.get("id")
+            );
+        }
+
         saveAuditRecord(event, 1);
-        String response = getCase((long) event.getCaseDetails().get("id"));
+
+        String response = getCase(caseRef);
         log.info("case response: {}", response);
         return response;
     }
@@ -70,12 +95,12 @@ public class CaseController {
     public String loadHistory(@PathVariable("caseRef") long caseRef) {
         return db.queryForObject(
                 """
-                        select jsonb_agg(to_jsonb(e) - 'event_id' - 'case_reference'
-                        || jsonb_build_object('id', event_id)
-                       -- || jsonb_build_object('internal_id', id)
-                         order by id desc)
-                        from case_event e
-                        where case_reference = ?
+                         select jsonb_agg(to_jsonb(e) - 'event_id' - 'case_reference'
+                         || jsonb_build_object('id', event_id)
+                        -- || jsonb_build_object('internal_id', id)
+                          order by id desc)
+                         from case_event e
+                         where case_reference = ?
                         """,
                 new Object[]{caseRef}, String.class);
     }
@@ -86,22 +111,24 @@ public class CaseController {
         var data = details.getCaseDetails();
         db.update(
                 """
-                    insert into case_event (
-                      data,
-                      data_classification,
-                      event_id,
-                      user_id,
-                      case_reference,
-                      case_type_id,
-                      case_type_version,
-                      state_id,
-                      user_first_name,
-                      user_last_name,
-                      event_name,
-                      state_name,
-                      security_classification)
-                    values (?::jsonb,?::jsonb,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
-                    """,
+                        insert into case_event (
+                          data,
+                          data_classification,
+                          event_id,
+                          user_id,
+                          case_reference,
+                          case_type_id,
+                          case_type_version,
+                          state_id,
+                          user_first_name,
+                          user_last_name,
+                          event_name,
+                          state_name,
+                          summary,
+                          description,
+                          security_classification)
+                        values (?::jsonb,?::jsonb,?,?,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
+                        """,
                 mapper.writeValueAsString(data.get("case_data")),
                 mapper.writeValueAsString(data.get("data_classification")),
                 event.getEventId(),
@@ -114,6 +141,8 @@ public class CaseController {
                 "a-last-name",
                 event.getEventName(),
                 event.getStateName(),
+                event.getSummary(),
+                event.getDescription(),
                 data.get("security_classification")
         );
     }

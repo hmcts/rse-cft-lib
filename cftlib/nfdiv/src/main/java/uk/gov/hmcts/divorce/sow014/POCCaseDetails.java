@@ -10,10 +10,13 @@ import java.util.Map;
 public class POCCaseDetails {
 
     private Map<String, Object> caseDetails;
+    private Map<String, Object> caseDetailsBefore;
     private POCEventDetails eventDetails;
 
     @JsonCreator
-    public POCCaseDetails(Map<String, Object> caseDetails, POCEventDetails eventDetails) {
+    public POCCaseDetails(Map<String, Object> caseDetails, POCEventDetails eventDetails,
+                          Map<String, Object> caseDetailsBefore) {
+        this.caseDetailsBefore = caseDetailsBefore;
         this.caseDetails = caseDetails;
         this.eventDetails = eventDetails;
     }
