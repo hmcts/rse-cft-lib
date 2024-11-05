@@ -124,8 +124,10 @@ public class CaseController {
                           user_last_name,
                           event_name,
                           state_name,
+                          summary,
+                          description,
                           security_classification)
-                        values (?::jsonb,?::jsonb,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
+                        values (?::jsonb,?::jsonb,?,?,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
                         """,
                 mapper.writeValueAsString(data.get("case_data")),
                 mapper.writeValueAsString(data.get("data_classification")),
@@ -139,6 +141,8 @@ public class CaseController {
                 "a-last-name",
                 event.getEventName(),
                 event.getStateName(),
+                event.getSummary(),
+                event.getDescription(),
                 data.get("security_classification")
         );
     }
