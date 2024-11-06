@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.cftlib;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import lombok.SneakyThrows;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
@@ -33,20 +36,16 @@ public class TestWithCCD extends CftlibTest {
     @Autowired
     private ObjectMapper mapper;
 
+    @Autowired
+    private CoreCaseDataApi ccdApi;
+
     @Order(1)
     @Test
     public void caseCreation() throws Exception {
-        var request = buildGet("TEST_SOLICITOR@mailinator.com",
-            "http://localhost:4452/data/internal/case-types/NFD/event-triggers/create-test-application?ignore-warning=false");
-        request.addHeader("experimental", "true");
-        request.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-start-case-trigger.v2+json;charset=UTF-8");
-
-        var response = HttpClientBuilder.create().build().execute(request);
-        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
-
-        var token = new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class)
-            .get("event_token");
+        var token = ccdApi.startCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"),
+            getServiceAuth(),
+            "NFD",
+            "create-test-application").getToken();
 
         var body = Map.of(
             "data", Map.of(
@@ -73,27 +72,40 @@ public class TestWithCCD extends CftlibTest {
             "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-case.v2+json;charset=UTF-8");
 
         createCase.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
-        response = HttpClientBuilder.create().build().execute(createCase);
+        var response = HttpClientBuilder.create().build().execute(createCase);
         var r = new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class);
         caseRef = Long.parseLong((String) r.get("id"));
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
-
     }
 
     private long caseRef;
     @Order(2)
     @Test
-    public void addNote() throws Exception {
-        var request = buildGet("TEST_CASE_WORKER_USER@mailinator.com",
-            "http://localhost:4452/cases/" + caseRef + "/event-triggers/caseworker-add-note");
-        request.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.start-event-trigger.v2+json;charset=UTF-8");
+    public void addNotes() throws Exception {
 
-        var response = HttpClientBuilder.create().build().execute(request);
+        addNote();
+        addNote();
+
+        var get =
+            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
+                "http://localhost:4452/cases/" + caseRef, HttpGet::new);
+        get.addHeader("experimental", "true");
+        get.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.case.v2+json;charset=UTF-8");
+
+        var response = HttpClientBuilder.create().build().execute(get);
+        var result = mapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+        var data = (Map) result.get("data");
+        var caseData = mapper.readValue(mapper.writeValueAsString(data), CaseData.class);
+        assertThat(caseData.getNotes().size(), equalTo(2));
+    }
 
-        var token = new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class)
-            .get("token");
+    private void addNote() throws Exception {
+
+        var token = ccdApi.startEvent(
+            getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
+            getServiceAuth(), String.valueOf(caseRef), "caseworker-add-note").getToken();
 
         var body = Map.of(
             "event_data", Map.of(
@@ -108,36 +120,27 @@ public class TestWithCCD extends CftlibTest {
             "ignore_warning", false
         );
 
-        var createCase =
+        var e =
             buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
                 "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
-        createCase.addHeader("experimental", "true");
-        createCase.addHeader("Accept",
+        e.addHeader("experimental", "true");
+        e.addHeader("Accept",
             "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
 
-        createCase.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
-        response = HttpClientBuilder.create().build().execute(createCase);
+        e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        var response = HttpClientBuilder.create().build().execute(e);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
-
-
-        var get =
-            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-                "http://localhost:4452/cases/" + caseRef, HttpGet::new);
-        get.addHeader("experimental", "true");
-        get.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.case.v2+json;charset=UTF-8");
-
-        response = HttpClientBuilder.create().build().execute(get);
-        var result = mapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
-        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
-        var data = (Map) result.get("data");
-        var caseData = mapper.readValue(mapper.writeValueAsString(data), CaseData.class);
-        assertThat(caseData.getNotes().size(), equalTo(1));
-
     }
-
     HttpGet buildGet(String user, String url) {
         return buildRequest(user, url, HttpGet::new);
+    }
+
+    private String getAuthorisation(String user) {
+        return idam.getAccessToken(user, "");
+    }
+
+    private String getServiceAuth() {
+        return cftlib().generateDummyS2SToken("ccd_gw");
     }
 
     <T extends HttpRequestBase> T buildRequest(String user, String url, Function<String, T> ctor) {
