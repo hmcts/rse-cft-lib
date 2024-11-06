@@ -80,17 +80,10 @@ public class TestWithCCD extends CftlibTest {
     private long caseRef;
     @Order(2)
     @Test
-    public void addNote() throws Exception {
-        var request = buildGet("TEST_CASE_WORKER_USER@mailinator.com",
-            "http://localhost:4452/cases/" + caseRef + "/event-triggers/caseworker-add-note");
-        request.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.start-event-trigger.v2+json;charset=UTF-8");
-
-        var response = HttpClientBuilder.create().build().execute(request);
-        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
-
-        var token = new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class)
-            .get("token");
+    public void addNotes() throws Exception {
+        var token = ccdApi.startEvent(
+            getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
+                getServiceAuth(), String.valueOf(caseRef), "caseworker-add-note").getToken();
 
         var body = Map.of(
             "event_data", Map.of(
@@ -113,7 +106,7 @@ public class TestWithCCD extends CftlibTest {
             "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
 
         createCase.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
-        response = HttpClientBuilder.create().build().execute(createCase);
+        var response = HttpClientBuilder.create().build().execute(createCase);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
 
 
