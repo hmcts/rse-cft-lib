@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.runtime.CallbackController;
+import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.util.Map;
 
@@ -23,6 +26,9 @@ public class CaseController {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
+    private CallbackController runtime;
 
     @GetMapping(
             value = "/cases/{caseRef}",
@@ -46,7 +52,9 @@ public class CaseController {
     public String createEvent(@RequestBody POCCaseDetails event) {
         log.info("case Details: {}", event);
 
-        Map<String, Object> caseDetails = event.getCaseDetails();
+        event = aboutToSubmit(event);
+
+        var caseDetails = event.getCaseDetails();
         // Upsert the case - create if it doesn't exist, update if it does.
         // TODO: Optimistic lock; throw an exception if the version is out of date (ie. zero rows changed in resultset).
         db.update(
@@ -64,7 +72,7 @@ public class CaseController {
                     """,
             "DIVORCE",
             "NFD",
-            caseDetails.get("state"),
+            event.getEventDetails().getStateName(),
             mapper.writeValueAsString(caseDetails.get("case_data")),
             mapper.writeValueAsString(caseDetails.get("data_classification")),
             caseDetails.get("id"),
@@ -77,6 +85,19 @@ public class CaseController {
         String response = getCase((Long) caseDetails.get("id"));
         log.info("case response: {}", response);
         return response;
+    }
+
+    @SneakyThrows
+    private POCCaseDetails aboutToSubmit(POCCaseDetails event) {
+        var req = CallbackRequest.builder()
+            .caseDetails(toCaseDetails(event.getCaseDetails()))
+            .caseDetailsBefore(toCaseDetails(event.getCaseDetailsBefore()))
+            .eventId(event.getEventDetails().getEventId())
+            .build();
+        var cb = runtime.aboutToSubmit(req);
+        event.getCaseDetails().put("case_data", mapper.readValue(mapper.writeValueAsString(cb.getData()), Map.class));
+        event.getEventDetails().setStateName(cb.getState().toString());
+        return event;
     }
 
     @GetMapping(
@@ -136,5 +157,12 @@ public class CaseController {
                 event.getDescription(),
                 data.get("security_classification")
         );
+    }
+    @SneakyThrows
+    private CaseDetails toCaseDetails(Map<String, Object> data) {
+        if (data == null) {
+            return null;
+        }
+        return mapper.readValue(mapper.writeValueAsString(data), CaseDetails.class);
     }
 }
