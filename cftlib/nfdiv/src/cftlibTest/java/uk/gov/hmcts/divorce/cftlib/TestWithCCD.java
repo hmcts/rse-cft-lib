@@ -13,6 +13,8 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
@@ -33,20 +35,16 @@ public class TestWithCCD extends CftlibTest {
     @Autowired
     private ObjectMapper mapper;
 
+    @Autowired
+    private CoreCaseDataApi ccdApi;
+
     @Order(1)
     @Test
     public void caseCreation() throws Exception {
-        var request = buildGet("TEST_SOLICITOR@mailinator.com",
-            "http://localhost:4452/data/internal/case-types/NFD/event-triggers/create-test-application?ignore-warning=false");
-        request.addHeader("experimental", "true");
-        request.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-start-case-trigger.v2+json;charset=UTF-8");
-
-        var response = HttpClientBuilder.create().build().execute(request);
-        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
-
-        var token = new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class)
-            .get("event_token");
+        var token = ccdApi.startCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"),
+            getServiceAuth(),
+            "NFD",
+            "create-test-application").getToken();
 
         var body = Map.of(
             "data", Map.of(
@@ -73,11 +71,10 @@ public class TestWithCCD extends CftlibTest {
             "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-case.v2+json;charset=UTF-8");
 
         createCase.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
-        response = HttpClientBuilder.create().build().execute(createCase);
+        var response = HttpClientBuilder.create().build().execute(createCase);
         var r = new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class);
         caseRef = Long.parseLong((String) r.get("id"));
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
-
     }
 
     private long caseRef;
@@ -138,6 +135,14 @@ public class TestWithCCD extends CftlibTest {
 
     HttpGet buildGet(String user, String url) {
         return buildRequest(user, url, HttpGet::new);
+    }
+
+    private String getAuthorisation(String user) {
+        return idam.getAccessToken(user, "");
+    }
+
+    private String getServiceAuth() {
+        return cftlib().generateDummyS2SToken("ccd_gw");
     }
 
     <T extends HttpRequestBase> T buildRequest(String user, String url, Function<String, T> ctor) {
