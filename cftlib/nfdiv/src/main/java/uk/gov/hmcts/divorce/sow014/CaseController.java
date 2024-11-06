@@ -47,43 +47,34 @@ public class CaseController {
         log.info("case Details: {}", event);
 
         Map<String, Object> caseDetails = event.getCaseDetails();
-
-        long caseRef = (long) caseDetails.get("id");
-        if (StringUtil.isNullOrEmpty(getCase(caseRef))) {
-
-            db.update(
-                    """
-                            
-                                    insert into case_data (jurisdiction, case_type_id, state, data, data_classification, reference, security_classification, version)
-                            values (?, ?, ?, ?::jsonb, ?::jsonb, ?, ?::securityclassification, ?)
-                            """,
-                    "DIVORCE",
-                    "NFD",
-                    caseDetails.get("state"),
-                    mapper.writeValueAsString(caseDetails.get("case_data")),
-                    mapper.writeValueAsString(caseDetails.get("data_classification")),
-                    caseDetails.get("id"),
-                    caseDetails.get("security_classification"),
-                    1
-            );
-
-        } else {
-            db.update(
-                    """
-                        update case_data set data = ?::jsonb, data_classification = ?::jsonb, security_classification = ?::securityclassification, state = ?
-                           where reference = ?
-                        """,
-                    mapper.writeValueAsString(caseDetails.get("case_data")),
-                    mapper.writeValueAsString(caseDetails.get("data_classification")),
-                    caseDetails.get("security_classification"),
-                    caseDetails.get("state"),
-                    caseDetails.get("id")
-            );
-        }
+        // Upsert the case - create if it doesn't exist, update if it does.
+        // TODO: Optimistic lock; throw an exception if the version is out of date (ie. zero rows changed in resultset).
+        db.update(
+            """
+                insert into case_data (jurisdiction, case_type_id, state, data, data_classification, reference, security_classification, version)
+                values (?, ?, ?, ?::jsonb, ?::jsonb, ?, ?::securityclassification, ?)
+                on conflict (reference)
+                do update set
+                    state = excluded.state,
+                    data = excluded.data,
+                    data_classification = excluded.data_classification,
+                    security_classification = excluded.security_classification,
+                    version = case_data.version + 1
+                    WHERE case_data.version = EXCLUDED.version;
+                    """,
+            "DIVORCE",
+            "NFD",
+            caseDetails.get("state"),
+            mapper.writeValueAsString(caseDetails.get("case_data")),
+            mapper.writeValueAsString(caseDetails.get("data_classification")),
+            caseDetails.get("id"),
+            caseDetails.get("security_classification"),
+            1
+        );
 
         saveAuditRecord(event, 1);
 
-        String response = getCase(caseRef);
+        String response = getCase((Long) caseDetails.get("id"));
         log.info("case response: {}", response);
         return response;
     }
