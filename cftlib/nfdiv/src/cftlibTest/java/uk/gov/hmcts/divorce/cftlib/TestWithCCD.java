@@ -131,6 +131,42 @@ public class TestWithCCD extends CftlibTest {
         assertThat(caseData.getNotes().size(), equalTo(2));
     }
 
+    @Order(4)
+    @Test
+    public void testOptimisticLock() throws Exception {
+        var firstEvent = ccdApi.startEvent(
+            getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
+            getServiceAuth(), String.valueOf(caseRef), "caseworker-add-note").getToken();
+
+        var body = Map.of(
+            "event_data", Map.of(
+                "note", "Test!"
+            ),
+            "event", Map.of(
+                "id", "caseworker-add-note",
+                "summary", "summary",
+                "description", "description"
+            ),
+            "event_token", firstEvent,
+            "ignore_warning", false
+        );
+
+        // Conflicting change!
+        addNote();
+
+        var e =
+            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
+                "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
+        e.addHeader("experimental", "true");
+        e.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
+
+        e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        var response = HttpClientBuilder.create().build().execute(e);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(409));
+    }
+
+
     private void addNote() throws Exception {
 
         var token = ccdApi.startEvent(
