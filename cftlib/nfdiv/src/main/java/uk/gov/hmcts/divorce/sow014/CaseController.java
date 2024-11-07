@@ -57,8 +57,8 @@ public class CaseController {
         log.info("case Details: {}", event);
 
         event = aboutToSubmit(event);
-
-        var caseDetails = event.getCaseDetails();
+        Map<String, Object> caseDetails = event.getCaseDetails();
+        int version = event.getCaseDetailsBefore() == null ? 1 : (int) event.getCaseDetailsBefore().get("version");
         // Upsert the case - create if it doesn't exist, update if it does.
         // TODO: Optimistic lock; throw an exception if the version is out of date (ie. zero rows changed in resultset).
         db.update(
@@ -81,7 +81,7 @@ public class CaseController {
             mapper.writeValueAsString(caseDetails.get("data_classification")),
             caseDetails.get("id"),
             caseDetails.get("security_classification"),
-            1
+            version
         );
 
         saveAuditRecord(event, 1);
