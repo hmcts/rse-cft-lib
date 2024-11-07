@@ -21,7 +21,7 @@ public interface PocApiClient {
 
     @PostMapping(value = "/ccd/cases", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<CaseDetails> createCase(@RequestBody POCCaseDetails caseDetails);
+    CaseDetails createCase(@RequestBody POCCaseDetails caseDetails);
 
     @GetMapping(value = "/ccd/cases/{case-ref}/history")
     List<AuditEvent> getEvents(@PathVariable("case-ref") String caseReference);
