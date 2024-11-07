@@ -1,39 +1,29 @@
 package uk.gov.hmcts.ccd.domain.model.std;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.MappedSuperclass;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
+@SuperBuilder(toBuilder = true)
+@MappedSuperclass
 @ToString
 public class Event {
-    @JsonProperty("id")
+    @JsonProperty("event_id")
     private String eventId;
     @JsonProperty("summary")
     private String summary;
     @JsonProperty("description")
     private String description;
-
-    public String getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(String eventId) {
-        this.eventId = eventId;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
 }

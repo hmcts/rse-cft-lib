@@ -133,7 +133,6 @@ public class DefaultGetCaseViewOperation extends AbstractDefaultGetCaseViewOpera
             .filter(event -> this.caseEventEnablingService.isEventEnabled(event.getEventEnablingCondition(),
                 caseDetails, updatedMetadataFields))
             .map(event -> {
-                log.info("Case event details {}", event);
                 final CaseViewActionableEvent caseViewActionableEvent = new CaseViewActionableEvent();
                 caseViewActionableEvent.setId(event.getId());
                 caseViewActionableEvent.setName(event.getName());

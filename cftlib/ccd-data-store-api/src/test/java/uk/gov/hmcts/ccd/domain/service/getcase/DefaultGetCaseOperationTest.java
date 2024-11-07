@@ -34,10 +34,6 @@ class DefaultGetCaseOperationTest {
 
     @Mock
     private UIDService uidService;
-    @Mock
-    private ApplicationParams applicationParams;
-    @Mock
-    private PocApiClient pocApiClient;
 
     private DefaultGetCaseOperation getCaseOperation;
 
@@ -47,8 +43,7 @@ class DefaultGetCaseOperationTest {
 
         doReturn(Boolean.TRUE).when(uidService).validateUID(CASE_REFERENCE);
 
-        getCaseOperation = new DefaultGetCaseOperation(caseDetailsRepository,
-                uidService, applicationParams, pocApiClient);
+        getCaseOperation = new DefaultGetCaseOperation(caseDetailsRepository, uidService);
     }
 
 
@@ -70,8 +65,8 @@ class DefaultGetCaseOperationTest {
             doReturn(Boolean.FALSE).when(uidService).validateUID(CASE_REFERENCE);
 
             assertAll(
-                () -> assertThrows(BadRequestException.class, () -> getCaseOperation.execute(CASE_REFERENCE)),
-                () -> verify(uidService).validateUID(CASE_REFERENCE)
+                    () -> assertThrows(BadRequestException.class, () -> getCaseOperation.execute(CASE_REFERENCE)),
+                    () -> verify(uidService).validateUID(CASE_REFERENCE)
             );
         }
 
@@ -83,8 +78,8 @@ class DefaultGetCaseOperationTest {
             final Optional<CaseDetails> output = getCaseOperation.execute(CASE_REFERENCE);
 
             assertAll(
-                () -> assertThat(output.isPresent(), is(false)),
-                () -> verify(caseDetailsRepository).findByReference(CASE_REFERENCE_LONG)
+                    () -> assertThat(output.isPresent(), is(false)),
+                    () -> verify(caseDetailsRepository).findByReference(CASE_REFERENCE_LONG)
             );
         }
 
@@ -96,8 +91,8 @@ class DefaultGetCaseOperationTest {
             final Optional<CaseDetails> output = getCaseOperation.execute(CASE_REFERENCE);
 
             assertAll(
-                () -> assertThat(output.get(), sameInstance(CASE_DETAILS)),
-                () -> verify(caseDetailsRepository).findByReference(CASE_REFERENCE_LONG)
+                    () -> assertThat(output.get(), sameInstance(CASE_DETAILS)),
+                    () -> verify(caseDetailsRepository).findByReference(CASE_REFERENCE_LONG)
             );
         }
 

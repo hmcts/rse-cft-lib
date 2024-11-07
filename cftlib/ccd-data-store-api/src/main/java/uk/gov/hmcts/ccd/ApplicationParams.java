@@ -238,6 +238,9 @@ public class ApplicationParams {
     @Value("#{'${ccd.callback.passthru-header-contexts}'.split(',')}")
     private List<String> callbackPassthruHeaderContexts;
 
+    @Value("${poc.feature.enabled}")
+    private boolean isPocFeatureEnabled;
+
     public static String encode(final String stringToEncode) {
         try {
             return URLEncoder.encode(stringToEncode, "UTF-8");
@@ -635,5 +638,13 @@ public class ApplicationParams {
 
     public List<String> getUploadTimestampFeaturedCaseTypes() {
         return uploadTimestampFeaturedCaseTypes;
+    }
+
+    public boolean isPocFeatureEnabled() {
+        return isPocFeatureEnabled;
+    }
+
+    public void setPocFeatureEnabled(boolean pocFeatureEnabled) {
+        isPocFeatureEnabled = pocFeatureEnabled;
     }
 }
