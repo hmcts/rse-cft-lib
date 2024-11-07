@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -47,6 +48,9 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
     @Autowired
     private Clock clock;
 
+    @Autowired
+    private JdbcTemplate db;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -74,7 +78,28 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
 
         final User caseworkerUser = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
 
-        var caseData = details.getData();
+        db.update(
+            """
+                    insert into case_event (
+                      data,
+                      data_classification,
+                      event_id,
+                      user_id,
+                      case_reference,
+                      case_type_id,
+                      case_type_version,
+                      state_id,
+                      user_first_name,
+                      user_last_name,
+                      event_name,
+                      state_name,
+                      summary,
+                      description,
+                      security_classification)
+                    values (?::jsonb,?::jsonb,?,?,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
+                    """,
+
+            var caseData = details.getData();
 
         String note = caseData.getNote();
 

@@ -56,8 +56,12 @@ public class CaseController {
     public String createEvent(@RequestBody POCCaseDetails event) {
         log.info("case Details: {}", event);
 
-        event = aboutToSubmit(event);
         Map<String, Object> caseDetails = event.getCaseDetails();
+
+        event = aboutToSubmit(event);
+        var state = event.getEventDetails().getStateId() != null
+            ? event.getEventDetails().getStateId()
+            : caseDetails.get("state");
         int version = event.getCaseDetailsBefore() == null ? 1 : (int) event.getCaseDetailsBefore().get("version");
         // Upsert the case - create if it doesn't exist, update if it does.
         // TODO: Optimistic lock; throw an exception if the version is out of date (ie. zero rows changed in resultset).
@@ -76,7 +80,7 @@ public class CaseController {
                     """,
             "DIVORCE",
             "NFD",
-            event.getEventDetails().getStateName(),
+            state,
             mapper.writeValueAsString(caseDetails.get("case_data")),
             mapper.writeValueAsString(caseDetails.get("data_classification")),
             caseDetails.get("id"),
@@ -93,11 +97,12 @@ public class CaseController {
 
     @SneakyThrows
     private POCCaseDetails aboutToSubmit(POCCaseDetails event) {
-        var before = mapper.readTree(mapper.writeValueAsString(event.getCaseDetailsBefore()));
-        var after = mapper.readTree(mapper.writeValueAsString(event.getCaseDetails()));
-        Files.write(Paths.get("before.json"), mapper.writeValueAsBytes(event.getCaseDetailsBefore()));
-        Files.write(Paths.get("after.json"), mapper.writeValueAsBytes(event.getCaseDetails()));
-        System.out.println(before.equals(after));
+        if (event.getCaseDetailsBefore() != null) {
+            var before = mapper.writeValueAsString(event.getCaseDetailsBefore().get("case_data"));
+            var after = mapper.writeValueAsString(event.getCaseDetails().get("case_data"));
+            Files.writeString(Paths.get("before.json"), before);
+            Files.writeString(Paths.get("after.json"), after);
+        }
         var req = CallbackRequest.builder()
             .caseDetails(toCaseDetails(event.getCaseDetails()))
             .caseDetailsBefore(toCaseDetails(event.getCaseDetailsBefore()))
@@ -106,7 +111,7 @@ public class CaseController {
         var cb = runtime.aboutToSubmit(req);
         event.getCaseDetails().put("case_data", mapper.readValue(mapper.writeValueAsString(cb.getData()), Map.class));
         if (cb.getState() != null) {
-            event.getEventDetails().setStateName(cb.getState().toString());
+            event.getEventDetails().setStateId(cb.getState().toString());
         }
         return event;
     }

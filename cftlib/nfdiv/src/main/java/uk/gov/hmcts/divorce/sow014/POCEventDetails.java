@@ -14,6 +14,7 @@ public class POCEventDetails {
     private String eventName;
     @JsonProperty("state_name")
     private String stateName;
+    private String stateId;
     private String description;
     private String summary;
     @JsonProperty("proxied_by")
