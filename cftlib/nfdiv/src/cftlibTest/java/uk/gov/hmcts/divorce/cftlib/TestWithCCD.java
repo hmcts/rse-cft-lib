@@ -1,8 +1,11 @@
 package uk.gov.hmcts.divorce.cftlib;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import lombok.SneakyThrows;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -10,20 +13,19 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.junit.jupiter.api.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
-
-import java.util.Map;
-import java.util.function.Function;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -76,6 +78,11 @@ public class TestWithCCD extends CftlibTest {
         var r = new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class);
         caseRef = Long.parseLong((String) r.get("id"));
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
+        assertThat(r.get("state"), equalTo("Holding"));
+
+        // Check we can load the case
+        var c = ccdApi.getCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"), getServiceAuth(), String.valueOf(caseRef));
+        assertThat(c.getState(), equalTo("Holding"));
     }
 
     private long caseRef;
@@ -99,6 +106,25 @@ public class TestWithCCD extends CftlibTest {
         var data = (Map) result.get("data");
         var caseData = mapper.readValue(mapper.writeValueAsString(data), CaseData.class);
         assertThat(caseData.getNotes().size(), equalTo(2));
+    }
+
+    @Order(3)
+    @Test
+    public void getEventHistory() throws Exception {
+        var get =
+                buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
+                        "http://localhost:4452/cases/" + caseRef + "/events", HttpGet::new);
+        get.addHeader("experimental", "true");
+        get.addHeader("Accept",
+                "application/vnd.uk.gov.hmcts.ccd-data-store-api.case-events.v2+json;charset=UTF-8");
+
+        var response = HttpClientBuilder.create().build().execute(get);
+        System.out.println(response.getEntity().getContent());
+        Map<String, Object> result
+                = mapper.readValue(EntityUtils.toString(response.getEntity()), new TypeReference<>() {});
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+        var auditEvents = (List) result.get("auditEvents");
+        assertThat(auditEvents.size(), equalTo(3));
     }
 
     private void addNote() throws Exception {
