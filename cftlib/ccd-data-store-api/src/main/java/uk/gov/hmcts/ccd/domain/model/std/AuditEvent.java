@@ -4,9 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import uk.gov.hmcts.ccd.data.casedetails.SecurityClassification;
 import uk.gov.hmcts.ccd.domain.model.callbacks.SignificantItem;
 
@@ -14,11 +20,14 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @SuppressWarnings("checkstyle:SummaryJavadoc") // Javadoc predates checkstyle implementation in module
-@Data
-@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder(toBuilder = true)
+@EqualsAndHashCode(callSuper = true)
 public class AuditEvent extends Event {
-    @JsonIgnore
+    @JsonProperty("event_instance_id")
     private Long id;
     @JsonProperty("user_id")
     private String userId;
@@ -28,7 +37,7 @@ public class AuditEvent extends Event {
     private String userFirstName;
     @JsonProperty("event_name")
     private String eventName;
-    @JsonIgnore
+    @JsonProperty("case_data_id")
     private String caseDataId;
     @JsonProperty("created_date")
     private LocalDateTime createdDate;

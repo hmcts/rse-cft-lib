@@ -106,7 +106,7 @@ public class DefaultCaseDetailsRepositoryTest extends WireMockBaseTest {
     private AccessControlService accessControlService;
 
     @MockBean
-    private PocApiClient pocApiClient;
+    private POCCaseDetailsRepository pocCaseDetailsRepository;
     @Inject
     @Qualifier(DefaultCaseDetailsRepository.QUALIFIER)
     private CaseDetailsRepository caseDetailsRepository;
@@ -142,7 +142,7 @@ public class DefaultCaseDetailsRepositoryTest extends WireMockBaseTest {
 
         DefaultCaseDetailsRepository defaultCaseDetailsRepository =
             new DefaultCaseDetailsRepository(caseDetailsMapper, null, null,
-                applicationParams, pocApiClient);
+                applicationParams, pocCaseDetailsRepository);
 
         Field emField = DefaultCaseDetailsRepository.class.getDeclaredField("em");
         emField.setAccessible(true);

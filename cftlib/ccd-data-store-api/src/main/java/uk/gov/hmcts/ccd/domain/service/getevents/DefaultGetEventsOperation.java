@@ -3,6 +3,7 @@ package uk.gov.hmcts.ccd.domain.service.getevents;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,13 +51,8 @@ public class DefaultGetEventsOperation implements GetEventsOperation {
 
     @Override
     public List<AuditEvent> getEvents(CaseDetails caseDetails) {
-        if (this.applicationParams.getPocCaseTypes().contains(caseDetails.getCaseTypeId())) {
-            List<AuditEvent> events = pocApiClient.getEvents(caseDetails.getReference().toString());
-            log.info("case event Details {}", events);
-            return events;
-        } else {
-            return auditEventRepository.findByCase(caseDetails);
-        }
+        List<AuditEvent> events = auditEventRepository.findByCase(caseDetails);
+        return events;
     }
 
     @Override
@@ -83,7 +79,12 @@ public class DefaultGetEventsOperation implements GetEventsOperation {
 
     @Override
     public Optional<AuditEvent> getEvent(CaseDetails caseDetails, String caseTypeId, Long eventId) {
-        return auditEventRepository.findByEventId(eventId).map(Optional::of)
-            .orElseThrow(() -> new ResourceNotFoundException(CASE_EVENT_NOT_FOUND));
+        if (this.applicationParams.getPocCaseTypes().contains(caseDetails.getCaseTypeId())) {
+            List<AuditEvent> events = auditEventRepository.findByCase(caseDetails);
+            return events.stream().filter(e -> e.getId().equals(eventId)).findFirst();
+        } else {
+            return auditEventRepository.findByEventId(eventId).map(Optional::of)
+                    .orElseThrow(() -> new ResourceNotFoundException(CASE_EVENT_NOT_FOUND));
+        }
     }
 }
