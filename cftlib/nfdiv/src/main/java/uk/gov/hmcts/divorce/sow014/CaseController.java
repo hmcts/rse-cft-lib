@@ -2,6 +2,10 @@ package uk.gov.hmcts.divorce.sow014;
 
 import ch.qos.logback.core.util.StringUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.sql.Types;
 import lombok.SneakyThrows;
@@ -89,6 +93,11 @@ public class CaseController {
 
     @SneakyThrows
     private POCCaseDetails aboutToSubmit(POCCaseDetails event) {
+        var before = mapper.readTree(mapper.writeValueAsString(event.getCaseDetailsBefore()));
+        var after = mapper.readTree(mapper.writeValueAsString(event.getCaseDetails()));
+        Files.write(Paths.get("before.json"), mapper.writeValueAsBytes(event.getCaseDetailsBefore()));
+        Files.write(Paths.get("after.json"), mapper.writeValueAsBytes(event.getCaseDetails()));
+        System.out.println(before.equals(after));
         var req = CallbackRequest.builder()
             .caseDetails(toCaseDetails(event.getCaseDetails()))
             .caseDetailsBefore(toCaseDetails(event.getCaseDetailsBefore()))
@@ -96,7 +105,9 @@ public class CaseController {
             .build();
         var cb = runtime.aboutToSubmit(req);
         event.getCaseDetails().put("case_data", mapper.readValue(mapper.writeValueAsString(cb.getData()), Map.class));
-        event.getEventDetails().setStateName(cb.getState().toString());
+        if (cb.getState() != null) {
+            event.getEventDetails().setStateName(cb.getState().toString());
+        }
         return event;
     }
 
