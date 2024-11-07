@@ -19,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 @MappedSuperclass
 @ToString
 public class Event {
-    @JsonProperty("event_id")
+    @JsonProperty("id")
     private String eventId;
     @JsonProperty("summary")
     private String summary;

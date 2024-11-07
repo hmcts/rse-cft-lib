@@ -87,9 +87,10 @@ public class CaseController {
     public String loadHistory(@PathVariable("caseRef") long caseRef) {
         return db.queryForObject(
                 """
-                         select jsonb_agg(to_jsonb(e) - 'case_reference'
+                         select jsonb_agg(to_jsonb(e) - 'case_reference' - 'event_id'
                          || jsonb_build_object('case_data_id', case_reference)
-                        -- || jsonb_build_object('internal_id', id)
+                         || jsonb_build_object('event_instance_id', id)
+                         || jsonb_build_object('id', event_id)
                           order by id desc)
                          from case_event e
                          where case_reference = ?

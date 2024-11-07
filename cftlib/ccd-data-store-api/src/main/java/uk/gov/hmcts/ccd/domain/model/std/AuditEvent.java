@@ -27,7 +27,7 @@ import java.util.Map;
 @SuperBuilder(toBuilder = true)
 @EqualsAndHashCode(callSuper = true)
 public class AuditEvent extends Event {
-//    @JsonIgnore
+    @JsonProperty("event_instance_id")
     private Long id;
     @JsonProperty("user_id")
     private String userId;
