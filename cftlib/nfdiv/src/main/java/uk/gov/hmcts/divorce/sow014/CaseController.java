@@ -7,11 +7,14 @@ import java.sql.Types;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -43,14 +46,14 @@ public class CaseController {
 
     @SneakyThrows
     @PostMapping("/cases")
-    public String createEvent(@RequestBody POCCaseDetails event) {
+    public ResponseEntity<String> createEvent(@RequestBody POCCaseDetails event) {
         log.info("case Details: {}", event);
 
         Map<String, Object> caseDetails = event.getCaseDetails();
-        int version = event.getCaseDetailsBefore() == null ? 1 : (int) event.getCaseDetailsBefore().get("version");
+        int version = (int) Optional.ofNullable(event.getCaseDetails().get("version")).orElse(1);
         // Upsert the case - create if it doesn't exist, update if it does.
         // TODO: Optimistic lock; throw an exception if the version is out of date (ie. zero rows changed in resultset).
-        db.update(
+        var rowsAffected = db.update(
             """
                 insert into case_data (jurisdiction, case_type_id, state, data, data_classification, reference, security_classification, version)
                 values (?, ?, ?, ?::jsonb, ?::jsonb, ?, ?::securityclassification, ?)
@@ -72,12 +75,15 @@ public class CaseController {
             caseDetails.get("security_classification"),
             version
         );
+        if (rowsAffected != 1) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Case concurrently modified");
+        }
 
         saveAuditRecord(event, 1);
 
         String response = getCase((Long) caseDetails.get("id"));
         log.info("case response: {}", response);
-        return response;
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping(

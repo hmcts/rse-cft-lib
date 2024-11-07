@@ -1,7 +1,9 @@
 package uk.gov.hmcts.ccd.domain.service.createevent;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.clients.PocApiClient;
 import uk.gov.hmcts.ccd.domain.model.aggregated.POCCaseDetails;
@@ -12,8 +14,8 @@ import uk.gov.hmcts.ccd.domain.model.definition.CaseStateDefinition;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseTypeDefinition;
 import uk.gov.hmcts.ccd.domain.model.std.Event;
 import uk.gov.hmcts.ccd.domain.service.common.CaseTypeService;
-import uk.gov.hmcts.ccd.domain.service.message.MessageContext;
 import uk.gov.hmcts.ccd.domain.service.message.MessageService;
+import uk.gov.hmcts.ccd.endpoint.exceptions.CaseConcurrencyException;
 
 @Slf4j
 @Service
@@ -32,10 +34,10 @@ public class POCCreateCaseEventService {
     }
 
     public CaseDetails saveAuditEventForCaseDetails(final Event event,
-                                                     final CaseEventDefinition caseEventDefinition,
-                                                     final CaseDetails caseDetails,
-                                                     final CaseTypeDefinition caseTypeDefinition,
-                                                     final CaseDetails caseDetailsBefore
+                                                    final CaseEventDefinition caseEventDefinition,
+                                                    final CaseDetails caseDetails,
+                                                    final CaseTypeDefinition caseTypeDefinition,
+                                                    final CaseDetails caseDetailsBefore
     ) {
 
         CaseStateDefinition caseStateDefinition =
@@ -57,7 +59,15 @@ public class POCCreateCaseEventService {
                 .eventDetails(eventDetails.build())
                 .build();
 
-        final CaseDetails savedPocCaseDetails = pocApiClient.createCase(pocCaseDetails);
+        try {
+            return pocApiClient.createCase(pocCaseDetails);
+        } catch (FeignException.Conflict conflict) {
+            throw new CaseConcurrencyException("""
+                    Unfortunately we were unable to save your work to the case as \
+                    another action happened at the same time.
+                    Please review the case and try again.""");
+
+        }
 
         //TODO need to enable this feature
 //        messageService.handleMessage(MessageContext.builder()
@@ -67,7 +77,5 @@ public class POCCreateCaseEventService {
 //                .oldState(caseDetailsBefore.getState())
 //                .build());
 
-        log.info("pocCaseDetails: {}", savedPocCaseDetails);
-        return savedPocCaseDetails;
     }
 }
