@@ -147,7 +147,8 @@ public class CaseController {
     @SneakyThrows
     private void saveAuditRecord(POCCaseDetails details, int version) {
         var event = details.getEventDetails();
-        var data = details.getCaseDetails();
+        var caseView = getCase((Long) details.getCaseDetails().get("id"));
+        var currentView = mapper.readValue(caseView, Map.class);
         db.update(
                 """
                         insert into case_event (
@@ -168,21 +169,21 @@ public class CaseController {
                           security_classification)
                         values (?::jsonb,?::jsonb,?,?,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
                         """,
-                mapper.writeValueAsString(data.get("case_data")),
-                mapper.writeValueAsString(data.get("data_classification")),
+                mapper.writeValueAsString(currentView.get("case_data")),
+                mapper.writeValueAsString(currentView.get("data_classification")),
                 event.getEventId(),
                 "user-id",
-                data.get("id"),
+                currentView.get("id"),
                 "NFD",
                 version,
-                data.get("state"),
+                currentView.get("state"),
                 "a-first-name",
                 "a-last-name",
                 event.getEventName(),
                 event.getStateName(),
                 event.getSummary(),
                 event.getDescription(),
-                data.get("security_classification")
+                currentView.get("security_classification")
         );
     }
     @SneakyThrows

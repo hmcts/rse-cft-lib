@@ -125,6 +125,9 @@ public class TestWithCCD extends CftlibTest {
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
         var auditEvents = (List) result.get("auditEvents");
         assertThat(auditEvents.size(), equalTo(3));
+        var eventData = ((Map)auditEvents.get(0)).get("data");
+        var caseData = mapper.readValue(mapper.writeValueAsString(eventData), CaseData.class);
+        assertThat(caseData.getNotes().size(), equalTo(2));
     }
 
     private void addNote() throws Exception {
@@ -156,9 +159,6 @@ public class TestWithCCD extends CftlibTest {
         e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
         var response = HttpClientBuilder.create().build().execute(e);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
-    }
-    HttpGet buildGet(String user, String url) {
-        return buildRequest(user, url, HttpGet::new);
     }
 
     private String getAuthorisation(String user) {
