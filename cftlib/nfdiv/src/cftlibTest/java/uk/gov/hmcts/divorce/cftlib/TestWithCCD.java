@@ -76,6 +76,11 @@ public class TestWithCCD extends CftlibTest {
         var r = new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class);
         caseRef = Long.parseLong((String) r.get("id"));
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
+        assertThat(r.get("state"), equalTo("Holding"));
+
+        // Check we can load the case
+        var c = ccdApi.getCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"), getServiceAuth(), String.valueOf(caseRef));
+        assertThat(c.getState(), equalTo("Holding"));
     }
 
     private long caseRef;
