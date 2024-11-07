@@ -24,12 +24,12 @@ select
 reference,
 jsonb_agg(
   json_build_object(
-    'id', id,
     'value', jsonb_build_object(
       'date', date,
       'note', note,
       'author', author
     )
-  )
+  -- Ensure most recent case notes are first
+  ) order by id desc
 ) notes from case_notes
 group by reference;

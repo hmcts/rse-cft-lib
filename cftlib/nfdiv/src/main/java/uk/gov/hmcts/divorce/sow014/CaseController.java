@@ -42,16 +42,22 @@ public class CaseController {
         return db.queryForObject(
                 """
                         select
-                        (((r - 'data') - 'marked_by_logstash') - 'reference') - 'resolved_ttl'
-                        || jsonb_build_object('case_data', r->'data')
-                        || jsonb_build_object('id', reference)
-                        from (
-                        select
-                        reference,
-                         to_jsonb(c) r
-                         from case_data c
-                         where reference = ?
-                        ) s""",
+    (((r - 'data') - 'marked_by_logstash') - 'reference') - 'resolved_ttl'
+    || jsonb_build_object('case_data', (
+    r->'data'
+    || jsonb_build_object('notes', notes)
+    ))
+    || jsonb_build_object('id', reference)
+    from (
+      select
+        reference,
+        coalesce(n.notes, '[]'::jsonb) as notes,
+         to_jsonb(c) r
+       from case_data c left join notes_by_case n using(reference)
+       where reference = ?
+
+    ) s
+                        """,
                 new Object[]{caseRef}, String.class);
     }
 
