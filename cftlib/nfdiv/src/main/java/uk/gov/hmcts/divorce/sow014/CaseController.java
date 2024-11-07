@@ -36,7 +36,11 @@ public class CaseController {
                         || jsonb_build_object('case_data', r->'data')
                         || jsonb_build_object('id', reference)
                         from (
-                        select reference, to_jsonb(c) r from case_data c where reference = ?
+                        select
+                        reference,
+                         to_jsonb(c) r
+                         from case_data c
+                         where reference = ?
                         ) s""",
                 new Object[]{caseRef}, String.class);
     }

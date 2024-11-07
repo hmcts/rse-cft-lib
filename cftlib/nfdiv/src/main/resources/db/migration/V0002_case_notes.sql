@@ -1,14 +1,13 @@
-drop table case_notes;
 create table case_notes(
-                         case_ref bigint references case_data(reference) ,
-                         id bigserial,
-                         date date not null,
-                         note varchar(10000),
-                         author varchar(200) not null,
-                         primary key(case_id, id)
+   reference bigint references case_data(reference) ,
+   id bigserial,
+   date date not null,
+   note varchar(10000),
+   author varchar(200) not null,
+   primary key(reference, id)
 );
 
-insert into case_notes(case_ref, id, date, note, author)
+insert into case_notes(reference, id, date, note, author)
 select
   reference,
   (note->>'id')::bigint,
@@ -20,5 +19,17 @@ from
   jsonb_array_elements(data->'notes') note;
 
 
-select * from case_notes
-where case_ref = 1730929821931214;
+create view notes_by_case as
+select
+reference,
+jsonb_agg(
+  json_build_object(
+    'id', id,
+    'value', jsonb_build_object(
+      'date', date,
+      'note', note,
+      'author', author
+    )
+  )
+) notes from case_notes
+group by reference;
