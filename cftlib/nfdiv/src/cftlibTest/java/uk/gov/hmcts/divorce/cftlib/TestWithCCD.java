@@ -106,6 +106,7 @@ public class TestWithCCD extends CftlibTest {
         var data = (Map) result.get("data");
         var caseData = mapper.readValue(mapper.writeValueAsString(data), CaseData.class);
         assertThat(caseData.getNotes().size(), equalTo(2));
+        assertThat(caseData.getNotes().get(0).getValue().getNote(), equalTo("Test!"));
     }
 
     @Order(3)
@@ -137,7 +138,7 @@ public class TestWithCCD extends CftlibTest {
             getServiceAuth(), String.valueOf(caseRef), "caseworker-add-note").getToken();
 
         var body = Map.of(
-            "event_data", Map.of(
+            "data", Map.of(
                 "note", "Test!"
             ),
             "event", Map.of(
