@@ -106,9 +106,7 @@ public class CaseController {
             : caseDetails.get("state");
         int version = (int) Optional.ofNullable(event.getCaseDetails().get("version")).orElse(1);
         // Upsert the case - create if it doesn't exist, update if it does.
-        // TODO: Optimistic lock; throw an exception if the version is out of date (ie. zero rows changed in resultset).
-        var rowsAffected = db.update(
-            """
+        var rowsAffected = db.update( """
                 insert into case_data (jurisdiction, case_type_id, state, data, data_classification, reference, security_classification, version)
                 -- TODO: separate private data model from public view so we don't duplicate eg. notes in the json
                 values (?, ?, ?, (?::jsonb - 'notes'), ?::jsonb, ?, ?::securityclassification, ?)
