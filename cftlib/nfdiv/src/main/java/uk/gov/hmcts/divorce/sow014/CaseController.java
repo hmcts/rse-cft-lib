@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.ccd.sdk.runtime.CallbackController;
@@ -24,6 +27,9 @@ public class CaseController {
 
     @Autowired
     private JdbcTemplate db;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
     @Autowired
     private ObjectMapper mapper;
@@ -63,8 +69,12 @@ public class CaseController {
     public ResponseEntity<String> createEvent(@RequestBody POCCaseDetails event) {
         log.info("case Details: {}", event);
 
-        dispatchAboutToSubmit(event);
-        saveCase(event);
+        transactionTemplate.execute( status -> {
+                dispatchAboutToSubmit(event);
+                saveCase(event);
+                return status;
+        });
+        // About to submit must happen post submit.
         dispatchSubmitted(event);
 
         String response = getCase((Long) event.getCaseDetails().get("id"));
@@ -88,7 +98,8 @@ public class CaseController {
         }
     }
 
-    private void saveCase(POCCaseDetails event) throws Exception {
+    @SneakyThrows
+    private void saveCase(POCCaseDetails event) {
         Map<String, Object> caseDetails = event.getCaseDetails();
         var state = event.getEventDetails().getStateId() != null
             ? event.getEventDetails().getStateId()
