@@ -80,14 +80,18 @@ public class CaseController {
         var rowsAffected = db.update(
             """
                 insert into case_data (jurisdiction, case_type_id, state, data, data_classification, reference, security_classification, version)
-                values (?, ?, ?, ?::jsonb, ?::jsonb, ?, ?::securityclassification, ?)
+                -- TODO: separate private data model from public view so we don't duplicate eg. notes in the json
+                values (?, ?, ?, (?::jsonb - 'notes'), ?::jsonb, ?, ?::securityclassification, ?)
                 on conflict (reference)
                 do update set
                     state = excluded.state,
                     data = excluded.data,
                     data_classification = excluded.data_classification,
                     security_classification = excluded.security_classification,
-                    version = case_data.version + 1
+                    version = case
+                                when case_data.data is distinct from excluded.data then case_data.version + 1
+                                else case_data.version
+                              end
                     WHERE case_data.version = EXCLUDED.version;
                     """,
             "DIVORCE",
@@ -112,18 +116,19 @@ public class CaseController {
 
     @SneakyThrows
     private POCCaseDetails aboutToSubmit(POCCaseDetails event) {
-        if (event.getCaseDetailsBefore() != null) {
-            var before = mapper.writeValueAsString(event.getCaseDetailsBefore().get("case_data"));
-            var after = mapper.writeValueAsString(event.getCaseDetails().get("case_data"));
-            Files.writeString(Paths.get("before.json"), before);
-            Files.writeString(Paths.get("after.json"), after);
-        }
         var req = CallbackRequest.builder()
             .caseDetails(toCaseDetails(event.getCaseDetails()))
             .caseDetailsBefore(toCaseDetails(event.getCaseDetailsBefore()))
             .eventId(event.getEventDetails().getEventId())
             .build();
         var cb = runtime.aboutToSubmit(req);
+
+        if (event.getCaseDetailsBefore() != null) {
+            var before = mapper.writeValueAsString(event.getCaseDetailsBefore().get("case_data"));
+            var after = mapper.writeValueAsString(cb.getData());
+            Files.writeString(Paths.get("before.json"), before);
+            Files.writeString(Paths.get("after.json"), after);
+        }
         event.getCaseDetails().put("case_data", mapper.readValue(mapper.writeValueAsString(cb.getData()), Map.class));
         if (cb.getState() != null) {
             event.getEventDetails().setStateId(cb.getState().toString());
