@@ -2,9 +2,6 @@ package uk.gov.hmcts.divorce.sow014;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.ccd.sdk.runtime.CallbackController;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -65,8 +63,33 @@ public class CaseController {
     public ResponseEntity<String> createEvent(@RequestBody POCCaseDetails event) {
         log.info("case Details: {}", event);
 
+        dispatchAboutToSubmit(event);
+        saveCase(event);
+        dispatchSubmitted(event);
+
+        String response = getCase((Long) event.getCaseDetails().get("id"));
+        log.info("case response: {}", response);
+        return ResponseEntity.ok(response);
+    }
+
+    private void dispatchSubmitted(POCCaseDetails event) {
+        try {
+            var req = CallbackRequest.builder()
+                .caseDetails(toCaseDetails(event.getCaseDetails()))
+                .caseDetailsBefore(toCaseDetails(event.getCaseDetailsBefore()))
+                .eventId(event.getEventDetails().getEventId())
+                .build();
+            runtime.submitted(req);
+        } catch (NoSuchMethodError e) {
+            // TODO: There is a config generator classpath bug - this exception is thrown when a callback doesn't exist for an event!
+            // There's nothing to do anyway if there's no callback so deferred for now.
+        } catch (Throwable e) {
+            log.error("Error in submitted callback", e);
+        }
+    }
+
+    private void saveCase(POCCaseDetails event) throws Exception {
         Map<String, Object> caseDetails = event.getCaseDetails();
-        event = aboutToSubmit(event);
         var state = event.getEventDetails().getStateId() != null
             ? event.getEventDetails().getStateId()
             : caseDetails.get("state");
@@ -100,18 +123,14 @@ public class CaseController {
             version
         );
         if (rowsAffected != 1) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Case concurrently modified");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Case was updated concurrently");
         }
 
         saveAuditRecord(event, 1);
-
-        String response = getCase((Long) caseDetails.get("id"));
-        log.info("case response: {}", response);
-        return ResponseEntity.ok(response);
     }
 
     @SneakyThrows
-    private POCCaseDetails aboutToSubmit(POCCaseDetails event) {
+    private POCCaseDetails dispatchAboutToSubmit(POCCaseDetails event) {
         try {
             var req = CallbackRequest.builder()
                 .caseDetails(toCaseDetails(event.getCaseDetails()))

@@ -22,6 +22,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.hmcts.divorce.common.event.CreateTestCase;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
@@ -54,7 +55,8 @@ public class TestWithCCD extends CftlibTest {
                 "applicationType", "soleApplication",
                 "applicant1SolicitorRepresented", "No",
                 "applicant2SolicitorRepresented", "No",
-                "applicant2UserId", "93b108b7-4b26-41bf-ae8f-6e356efb11b3",
+                // applicant2@gmail.com  =  6e508b49-1fa8-3d3c-8b53-ec466637315b
+                "applicant2UserId", "6e508b49-1fa8-3d3c-8b53-ec466637315b",
                 "stateToTransitionApplicationTo", "Holding"
             ),
             "event", Map.of(
@@ -83,6 +85,7 @@ public class TestWithCCD extends CftlibTest {
         // Check we can load the case
         var c = ccdApi.getCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"), getServiceAuth(), String.valueOf(caseRef));
         assertThat(c.getState(), equalTo("Holding"));
+        assertThat(CreateTestCase.submittedCallbackTriggered, equalTo(true));
     }
 
     private long caseRef;
