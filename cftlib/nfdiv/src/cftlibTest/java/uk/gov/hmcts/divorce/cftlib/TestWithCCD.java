@@ -83,6 +83,9 @@ public class TestWithCCD extends CftlibTest {
         // Check we can load the case
         var c = ccdApi.getCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"), getServiceAuth(), String.valueOf(caseRef));
         assertThat(c.getState(), equalTo("Holding"));
+        var caseData = mapper.readValue(mapper.writeValueAsString(c.getData()), CaseData.class);
+        assertThat(caseData.getApplicant1().getFirstName(), equalTo("app1_first_name"));
+        assertThat(caseData.getApplicant2().getFirstName(), equalTo("app2_first_name"));
     }
 
     private long caseRef;
