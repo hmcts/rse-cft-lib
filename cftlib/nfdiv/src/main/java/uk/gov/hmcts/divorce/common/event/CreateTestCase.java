@@ -63,6 +63,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
         if (env.contains(ENVIRONMENT_AAT)) {
             roles.add(SOLICITOR);
+            roles.add(CASE_WORKER);
         }
 
         new PageBuilder(configBuilder

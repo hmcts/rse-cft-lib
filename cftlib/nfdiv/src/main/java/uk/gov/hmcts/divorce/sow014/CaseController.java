@@ -1,13 +1,10 @@
 package uk.gov.hmcts.divorce.sow014;
 
-import ch.qos.logback.core.util.StringUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.sql.Types;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.runtime.CallbackController;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -116,24 +112,24 @@ public class CaseController {
 
     @SneakyThrows
     private POCCaseDetails aboutToSubmit(POCCaseDetails event) {
-        var req = CallbackRequest.builder()
-            .caseDetails(toCaseDetails(event.getCaseDetails()))
-            .caseDetailsBefore(toCaseDetails(event.getCaseDetailsBefore()))
-            .eventId(event.getEventDetails().getEventId())
-            .build();
-        var cb = runtime.aboutToSubmit(req);
+        try {
+            var req = CallbackRequest.builder()
+                .caseDetails(toCaseDetails(event.getCaseDetails()))
+                .caseDetailsBefore(toCaseDetails(event.getCaseDetailsBefore()))
+                .eventId(event.getEventDetails().getEventId())
+                .build();
+            var cb = runtime.aboutToSubmit(req);
 
-        if (event.getCaseDetailsBefore() != null) {
-            var before = mapper.writeValueAsString(event.getCaseDetailsBefore().get("case_data"));
-            var after = mapper.writeValueAsString(cb.getData());
-            Files.writeString(Paths.get("before.json"), before);
-            Files.writeString(Paths.get("after.json"), after);
+            event.getCaseDetails().put("case_data", mapper.readValue(mapper.writeValueAsString(cb.getData()), Map.class));
+            if (cb.getState() != null) {
+                event.getEventDetails().setStateId(cb.getState().toString());
+            }
+            return event;
+        } catch (NoSuchMethodError e) {
+            // TODO: There is a config generator classpath bug - this exception is thrown when a callback doesn't exist for an event!
+            // There's nothing to do anyway if there's no callback so deferred for now.
+            return event;
         }
-        event.getCaseDetails().put("case_data", mapper.readValue(mapper.writeValueAsString(cb.getData()), Map.class));
-        if (cb.getState() != null) {
-            event.getEventDetails().setStateId(cb.getState().toString());
-        }
-        return event;
     }
 
     @GetMapping(
