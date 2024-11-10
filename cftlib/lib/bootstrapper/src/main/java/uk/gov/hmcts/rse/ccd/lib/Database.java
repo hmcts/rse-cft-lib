@@ -4,5 +4,6 @@ public enum Database {
     Datastore,
     Definitionstore,
     Userprofile,
-    AM
+    AM,
+    nfd,
 }

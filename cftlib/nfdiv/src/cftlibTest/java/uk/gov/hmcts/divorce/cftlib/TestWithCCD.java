@@ -3,9 +3,13 @@ package uk.gov.hmcts.divorce.cftlib;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+
+import lombok.SneakyThrows;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -13,6 +17,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.MethodOrderer;
@@ -206,6 +212,40 @@ public class TestWithCCD extends CftlibTest {
         var response = HttpClientBuilder.create().build().execute(e);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(409));
     }
+
+    @Order(6)
+    @SneakyThrows
+    @Test
+    void searchCases() {
+        // Give some time to index the case created by the previous test
+        await()
+            .timeout(Duration.ofSeconds(100))
+            .ignoreExceptions()
+            .until(this::caseAppearsInSearch);
+    }
+
+    @SneakyThrows
+    private Boolean caseAppearsInSearch() {
+        var request = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
+            "http://localhost:4452/data/internal/searchCases?ctid=NFD&page=1",
+            HttpPost::new);
+        var query = """
+            {
+              "native_es_query":{"from":0,"query":{"bool":{"must":[]}},"size":25,"sort":[{"_id": "desc"}]},
+              "supplementary_data":["*"]
+            }""";
+        request.setEntity(new StringEntity(query, ContentType.APPLICATION_JSON));
+        var response = HttpClientBuilder.create().build().execute(request);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+        var r = mapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
+        var aCase = (Map) ((List)r.get("cases")).get(0);
+        var fields = (Map) aCase.get("fields");
+        assertThat(fields.get("applicant1FirstName"), equalTo("app1_first_name"));;
+        assertThat(fields.get("applicant2FirstName"), equalTo("app2_first_name"));;
+        assertThat(((List)fields.get("notes")).size(), equalTo(4));;
+        return true;
+    }
+
 
     private void updateDueDate() throws Exception {
 

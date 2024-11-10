@@ -300,6 +300,8 @@ dependencies {
 
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  cftlibAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  cftlibTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   testImplementation libraries.junit5
   testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test') {

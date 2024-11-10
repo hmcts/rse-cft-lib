@@ -36,14 +36,15 @@ public class ClassifiedCaseSearchOperation implements CaseSearchOperation {
             return new CaseSearchResult();
         }
 
-        List<CaseDetails> classifiedCases = results.getCases()
-            .stream()
-            .map(classificationService::applyClassification)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .collect(Collectors.toList());
+        // SOW014: Disable this unused CCD feature.
+        //        List<CaseDetails> classifiedCases = results.getCases()
+        //            .stream()
+        //            .map(classificationService::applyClassification)
+        //            .filter(Optional::isPresent)
+        //            .map(Optional::get)
+        //            .collect(Collectors.toList());
 
         return new CaseSearchResult(results.getTotal(),
-            classifiedCases, results.getCaseTypesResults());
+            results.getCases(), results.getCaseTypesResults());
     }
 }
