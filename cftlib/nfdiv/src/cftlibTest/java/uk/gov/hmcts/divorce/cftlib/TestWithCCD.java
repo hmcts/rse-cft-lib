@@ -22,6 +22,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.hmcts.divorce.common.event.CreateTestCase;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
@@ -54,7 +55,8 @@ public class TestWithCCD extends CftlibTest {
                 "applicationType", "soleApplication",
                 "applicant1SolicitorRepresented", "No",
                 "applicant2SolicitorRepresented", "No",
-                "applicant2UserId", "93b108b7-4b26-41bf-ae8f-6e356efb11b3",
+                // applicant2@gmail.com  =  6e508b49-1fa8-3d3c-8b53-ec466637315b
+                "applicant2UserId", "6e508b49-1fa8-3d3c-8b53-ec466637315b",
                 "stateToTransitionApplicationTo", "Holding"
             ),
             "event", Map.of(
@@ -83,6 +85,7 @@ public class TestWithCCD extends CftlibTest {
         // Check we can load the case
         var c = ccdApi.getCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"), getServiceAuth(), String.valueOf(caseRef));
         assertThat(c.getState(), equalTo("Holding"));
+        assertThat(CreateTestCase.submittedCallbackTriggered, equalTo(true));
         var caseData = mapper.readValue(mapper.writeValueAsString(c.getData()), CaseData.class);
         assertThat(caseData.getApplicant1().getFirstName(), equalTo("app1_first_name"));
         assertThat(caseData.getApplicant2().getFirstName(), equalTo("app2_first_name"));
@@ -109,6 +112,7 @@ public class TestWithCCD extends CftlibTest {
         var data = (Map) result.get("data");
         var caseData = mapper.readValue(mapper.writeValueAsString(data), CaseData.class);
         assertThat(caseData.getNotes().size(), equalTo(2));
+        assertThat(caseData.getNotes().get(0).getValue().getNote(), equalTo("Test!"));
     }
 
     @Order(3)
@@ -128,11 +132,14 @@ public class TestWithCCD extends CftlibTest {
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
         var auditEvents = (List) result.get("auditEvents");
         assertThat(auditEvents.size(), equalTo(3));
+        var eventData = ((Map)auditEvents.get(0)).get("data");
+        var caseData = mapper.readValue(mapper.writeValueAsString(eventData), CaseData.class);
+        assertThat(caseData.getNotes().size(), equalTo(2));
     }
 
     @Order(4)
     @Test
-    public void testOptimisticLock() throws Exception {
+    public void testAddNoteRunsConcurrently() throws Exception {
         var firstEvent = ccdApi.startEvent(
             getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
             getServiceAuth(), String.valueOf(caseRef), "caseworker-add-note").getToken();
@@ -150,8 +157,43 @@ public class TestWithCCD extends CftlibTest {
             "ignore_warning", false
         );
 
-        // Conflicting change!
+        // Concurrent change to case notes should be allowed without raising a conflict
         addNote();
+
+        var e =
+            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
+                "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
+        e.addHeader("experimental", "true");
+        e.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
+
+        e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        var response = HttpClientBuilder.create().build().execute(e);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
+    }
+
+    @Order(5)
+    @Test
+    public void testOptimisticLockOnJsonBlob() throws Exception {
+        var firstEvent = ccdApi.startEvent(
+            getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
+            getServiceAuth(), String.valueOf(caseRef), "caseworker-update-due-date").getToken();
+
+        var body = Map.of(
+            "data", Map.of(
+                "dueDate", "2020-01-01"
+            ),
+            "event", Map.of(
+                "id", "caseworker-update-due-date",
+                "summary", "summary",
+                "description", "description"
+            ),
+            "event_token", firstEvent,
+            "ignore_warning", false
+        );
+
+        // Concurrent change to json blob should be rejected
+        updateDueDate();
 
         var e =
             buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
@@ -165,6 +207,37 @@ public class TestWithCCD extends CftlibTest {
         assertThat(response.getStatusLine().getStatusCode(), equalTo(409));
     }
 
+    private void updateDueDate() throws Exception {
+
+        var token = ccdApi.startEvent(
+            getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
+            getServiceAuth(), String.valueOf(caseRef), "caseworker-update-due-date").getToken();
+
+        var body = Map.of(
+            "data", Map.of(
+                "dueDate", "2020-01-01"
+            ),
+            "event", Map.of(
+                "id", "caseworker-update-due-date",
+                "summary", "summary",
+                "description", "description"
+            ),
+            "event_token", token,
+            "ignore_warning", false
+        );
+
+        var e =
+            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
+                "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
+        e.addHeader("experimental", "true");
+        e.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
+
+        e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        var response = HttpClientBuilder.create().build().execute(e);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
+    }
+
 
     private void addNote() throws Exception {
 
@@ -173,7 +246,7 @@ public class TestWithCCD extends CftlibTest {
             getServiceAuth(), String.valueOf(caseRef), "caseworker-add-note").getToken();
 
         var body = Map.of(
-            "event_data", Map.of(
+            "data", Map.of(
                 "note", "Test!"
             ),
             "event", Map.of(
@@ -195,9 +268,6 @@ public class TestWithCCD extends CftlibTest {
         e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
         var response = HttpClientBuilder.create().build().execute(e);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
-    }
-    HttpGet buildGet(String user, String url) {
-        return buildRequest(user, url, HttpGet::new);
     }
 
     private String getAuthorisation(String user) {

@@ -23,13 +23,13 @@ public class ClassifiedGetCaseOperation implements GetCaseOperation {
 
     @Override
     public Optional<CaseDetails> execute(String jurisdictionId, String caseTypeId, String caseReference) {
-        return getCaseOperation.execute(jurisdictionId, caseTypeId, caseReference)
-                               .flatMap(classificationService::applyClassification);
+        // SOW014: Disable this unused feature
+        return getCaseOperation.execute(jurisdictionId, caseTypeId, caseReference);
     }
 
     @Override
     public Optional<CaseDetails> execute(String caseReference) {
-        return getCaseOperation.execute(caseReference)
-                               .flatMap(classificationService::applyClassification);
+        // SOW014: Disable this unused feature
+        return getCaseOperation.execute(caseReference);
     }
 }
