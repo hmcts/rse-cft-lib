@@ -1,7 +1,8 @@
-package uk.gov.hmcts.divorce.sow014;
+package uk.gov.hmcts.divorce.sow014.lib;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,45 +36,46 @@ public class CaseController {
     @Autowired
     private CallbackController runtime;
 
+    @Autowired
+    private CaseRepository caseRepository;
+
     @GetMapping(
             value = "/cases/{caseRef}",
             produces = "application/json"
     )
-    public String getCase(@PathVariable("caseRef") long caseRef) {
-        return db.queryForObject(
+    @SneakyThrows
+    public Map<String, Object> getCase(@PathVariable("caseRef") long caseRef) {
+        var result = db.queryForMap(
                 """
                     select
-                        (((r - 'data') - 'marked_by_logstash') - 'reference') - 'resolved_ttl'
-                        || jsonb_build_object('case_data', (
-                        r->'data'
-                        || jsonb_build_object('notes', notes)
-                        ))
-                        || jsonb_build_object('id', reference)
-                        || jsonb_build_object('last_state_modified_date', last_state_modified_date)
-                        || jsonb_build_object('last_modified', last_modified)
-                    from (
-                    select
-                      reference,
-                      coalesce(n.notes, '[]'::jsonb) as notes,
-                      coalesce(last_event.created_date, c.created_date) as last_modified,
-                      last_state_modified_date,
-                       to_jsonb(c) r
+                          reference as id,
+                          -- Format timestamp in iso 8601
+                          to_json(c.created_date)#>>'{}' as created_date,
+                          jurisdiction,
+                          case_type_id,
+                          state,
+                          data::text as case_data,
+                          '{}'::jsonb as data_classification,
+                          security_classification,
+                          version,
+                          to_json(last_state_modified_date)#>>'{}' as last_state_modified_date,
+                          to_json(coalesce(last_event.created_date, c.created_date))#>>'{}' as last_modified,
+                          supplementary_data::text
                      from case_data c
-                          left join notes_by_case n using(reference)
-                         left join lateral (
-                          select created_date from case_event
-                          where case_reference = c.reference
-                          order by id desc limit 1
-                        ) last_event on true
+                             left join lateral (
+                              select created_date from case_event
+                              where case_reference = c.reference
+                              order by id desc limit 1
+                            ) last_event on true
                      where reference = ?
-                    ) s
-                        """,
-                new Object[]{caseRef}, String.class);
+                        """, caseRef);
+        result.put("case_data", caseRepository.getCase(caseRef, (ObjectNode) mapper.readTree((String) result.get("case_data"))));
+        return result;
     }
 
     @SneakyThrows
     @PostMapping("/cases")
-    public ResponseEntity<String> createEvent(@RequestBody POCCaseEvent event) {
+    public ResponseEntity<Map<String, Object>> createEvent(@RequestBody POCCaseEvent event) {
         log.info("case Details: {}", event);
 
         transactionTemplate.execute( status -> {
@@ -84,7 +86,7 @@ public class CaseController {
         // Submitted must happen post submit.
         dispatchSubmitted(event);
 
-        String response = getCase((Long) event.getCaseDetails().get("id"));
+        var response = getCase((Long) event.getCaseDetails().get("id"));
         log.info("case response: {}", response);
         return ResponseEntity.ok(response);
     }
@@ -188,8 +190,7 @@ public class CaseController {
     @SneakyThrows
     private void saveAuditRecord(POCCaseEvent details, int version) {
         var event = details.getEventDetails();
-        var caseView = getCase((Long) details.getCaseDetails().get("id"));
-        var currentView = mapper.readValue(caseView, Map.class);
+        var currentView = getCase((Long) details.getCaseDetails().get("id"));
         db.update(
                 """
                         insert into case_event (

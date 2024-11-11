@@ -222,7 +222,7 @@ public class TestWithCCD extends CftlibTest {
     void searchCases() {
         // Give some time to index the case created by the previous test
         await()
-            .timeout(Duration.ofSeconds(100))
+            .timeout(Duration.ofSeconds(10))
             .ignoreExceptions()
             .until(this::caseAppearsInSearch);
     }
