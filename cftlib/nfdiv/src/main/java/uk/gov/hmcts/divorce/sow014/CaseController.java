@@ -81,7 +81,7 @@ public class CaseController {
                 saveCase(event);
                 return status;
         });
-        // About to submit must happen post submit.
+        // Submitted must happen post submit.
         dispatchSubmitted(event);
 
         String response = getCase((Long) event.getCaseDetails().get("id"));
