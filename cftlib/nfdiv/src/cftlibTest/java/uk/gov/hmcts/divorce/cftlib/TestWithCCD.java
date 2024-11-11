@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -20,7 +21,8 @@ import org.apache.http.util.EntityUtils;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
+
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -92,6 +94,7 @@ public class TestWithCCD extends CftlibTest {
         var c = ccdApi.getCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"), getServiceAuth(), String.valueOf(caseRef));
         assertThat(c.getState(), equalTo("Holding"));
         assertThat(CreateTestCase.submittedCallbackTriggered, equalTo(true));
+        assertThat(c.getLastModified(), greaterThan(LocalDateTime.now().minusMinutes(5)));
         var caseData = mapper.readValue(mapper.writeValueAsString(c.getData()), CaseData.class);
         assertThat(caseData.getApplicant1().getFirstName(), equalTo("app1_first_name"));
         assertThat(caseData.getApplicant2().getFirstName(), equalTo("app2_first_name"));
@@ -243,6 +246,9 @@ public class TestWithCCD extends CftlibTest {
         assertThat(fields.get("applicant1FirstName"), equalTo("app1_first_name"));;
         assertThat(fields.get("applicant2FirstName"), equalTo("app2_first_name"));;
         assertThat(((List)fields.get("notes")).size(), equalTo(4));;
+        assertThat(fields.get("[LAST_MODIFIED_DATE]"), notNullValue());
+        assertThat(fields.get("[LAST_STATE_MODIFIED_DATE]"), notNullValue());
+
         return true;
     }
 

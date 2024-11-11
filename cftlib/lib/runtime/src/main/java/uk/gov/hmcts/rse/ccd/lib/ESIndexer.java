@@ -61,7 +61,7 @@ public class ESIndexer {
                               ce.data_classification,
                               jurisdiction,
                               cd.reference,
-                              last_modified,
+                              ce.created_date as last_modified,
                               last_state_modified_date,
                               supplementary_data,
                               lower(cd.case_type_id) || '_cases' as index_id,
