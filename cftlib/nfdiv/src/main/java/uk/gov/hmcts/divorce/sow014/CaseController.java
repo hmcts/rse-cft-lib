@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -75,7 +73,7 @@ public class CaseController {
 
     @SneakyThrows
     @PostMapping("/cases")
-    public ResponseEntity<String> createEvent(@RequestBody POCCaseDetails event) {
+    public ResponseEntity<String> createEvent(@RequestBody POCCaseEvent event) {
         log.info("case Details: {}", event);
 
         transactionTemplate.execute( status -> {
@@ -91,7 +89,7 @@ public class CaseController {
         return ResponseEntity.ok(response);
     }
 
-    private void dispatchSubmitted(POCCaseDetails event) {
+    private void dispatchSubmitted(POCCaseEvent event) {
         try {
             var req = CallbackRequest.builder()
                 .caseDetails(toCaseDetails(event.getCaseDetails()))
@@ -108,7 +106,7 @@ public class CaseController {
     }
 
     @SneakyThrows
-    private void saveCase(POCCaseDetails event) {
+    private void saveCase(POCCaseEvent event) {
         Map<String, Object> caseDetails = event.getCaseDetails();
         var state = event.getEventDetails().getStateId() != null
             ? event.getEventDetails().getStateId()
@@ -148,7 +146,7 @@ public class CaseController {
     }
 
     @SneakyThrows
-    private POCCaseDetails dispatchAboutToSubmit(POCCaseDetails event) {
+    private POCCaseEvent dispatchAboutToSubmit(POCCaseEvent event) {
         try {
             var req = CallbackRequest.builder()
                 .caseDetails(toCaseDetails(event.getCaseDetails()))
@@ -188,7 +186,7 @@ public class CaseController {
     }
 
     @SneakyThrows
-    private void saveAuditRecord(POCCaseDetails details, int version) {
+    private void saveAuditRecord(POCCaseEvent details, int version) {
         var event = details.getEventDetails();
         var caseView = getCase((Long) details.getCaseDetails().get("id"));
         var currentView = mapper.readValue(caseView, Map.class);
