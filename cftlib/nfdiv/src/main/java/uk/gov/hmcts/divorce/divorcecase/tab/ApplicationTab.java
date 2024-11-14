@@ -39,6 +39,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        buildMDTab(configBuilder);
         buildSoleApplicationTabWithAllContactDetails(configBuilder);
         buildSoleApplicationTabWithApplicant1ContactDetails(configBuilder);
         buildSoleApplicationTabWithApplicant2ContactDetails(configBuilder);
@@ -48,7 +49,14 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         buildJointApplicationTabWithApplicant2ContactDetails(configBuilder);
     }
 
-    private void buildSoleApplicationTabWithAllContactDetails(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    private void buildMDTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("markdown", "Example")
+            .forRoles(UserRole.values())
+            .field(CaseData::getMarkdownTabField)
+            .build();
+    }
+
+        private void buildSoleApplicationTabWithAllContactDetails(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final Tab.TabBuilder<CaseData, UserRole> tabBuilderForSoleApplication = configBuilder.tab("applicationDetailsSole", "Application")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .showCondition("applicationType=\"soleApplication\"");

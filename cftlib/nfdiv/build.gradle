@@ -297,6 +297,7 @@ dependencies {
   implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.9.0'
   implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.1.8'
+  implementation 'io.pebbletemplates:pebble-spring-boot-starter:3.2.2'
 
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
