@@ -20,16 +20,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
-import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.*;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
@@ -253,7 +244,6 @@ public class CaseData {
     )
     private CaseLink bulkListCaseReferenceLink;
 
-    @CCD(typeOverride = Label)
     private String markdownTabField;
 
     @CCD(access = {DefaultAccess.class})

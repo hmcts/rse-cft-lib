@@ -52,7 +52,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildMDTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("markdown", "Example")
             .forRoles(UserRole.values())
-            .field(CaseData::getMarkdownTabField)
+            .label("myLabel", null, "${markdownTabField}")
+            .field("markdownTabField", NEVER_SHOW)
             .build();
     }
 

@@ -118,7 +118,7 @@ public class CaseController {
         var rowsAffected = db.update( """
                 insert into case_data (jurisdiction, case_type_id, state, data, data_classification, reference, security_classification, version)
                 -- TODO: separate private data model from public view so we don't duplicate eg. notes in the json
-                values (?, ?, ?, (?::jsonb - 'notes'), ?::jsonb, ?, ?::securityclassification, ?)
+                values (?, ?, ?, (?::jsonb - 'notes' - 'markdownTabField'), ?::jsonb, ?, ?::securityclassification, ?)
                 on conflict (reference)
                 do update set
                     state = excluded.state,
