@@ -2,6 +2,9 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.jooq.DSLContext;
+import org.jooq.nfdiv.public_.tables.CaseNotes;
+import org.jooq.nfdiv.public_.tables.records.CaseNotesRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.jooq.nfdiv.public_.Tables.CASE_NOTES;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
@@ -51,7 +55,7 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     @Lazy
-    private JdbcTemplate db;
+    private DSLContext db;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -78,18 +82,17 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
     ) {
         log.info("Caseworker add notes callback invoked for Case Id: {}", details.getId());
 
+        var caseData = details.getData();
         final User caseworkerUser = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
 
-        var caseData = details.getData();
-        db.update(
-            """
-            insert into case_notes(reference, date, note, author)
-            values (?, ?, ?, ?)
-            """,
-            details.getId(),
-            LocalDate.now(clock),
-            caseData.getNote(),
-            caseworkerUser.getUserDetails().getName());
+        // Insert the note into the case notes table
+        db.insertInto(CASE_NOTES, CASE_NOTES.REFERENCE, CASE_NOTES.DATE, CASE_NOTES.AUTHOR, CASE_NOTES.NOTE)
+            .values(
+                details.getId(),
+                LocalDate.now(clock),
+                caseworkerUser.getUserDetails().getName(),
+                caseData.getNote())
+            .execute();
 
         caseData.setNote(null); //Clear note text area as notes value is stored in notes table
 

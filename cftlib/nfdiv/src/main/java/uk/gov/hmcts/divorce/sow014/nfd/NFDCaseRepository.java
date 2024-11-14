@@ -5,9 +5,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.pebbletemplates.pebble.PebbleEngine;
 import io.pebbletemplates.pebble.template.PebbleTemplate;
 import lombok.SneakyThrows;
+import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
@@ -20,11 +19,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.jooq.nfdiv.public_.Tables.CASE_NOTES;
+
 @Component
 public class NFDCaseRepository implements CaseRepository {
 
     @Autowired
-    private JdbcTemplate db;
+    private DSLContext db;
+
     @Autowired
     private ObjectMapper mapper;
 
@@ -40,16 +42,12 @@ public class NFDCaseRepository implements CaseRepository {
     }
 
     private List<ListValue<CaseNote>> loadNotes(long caseRef) {
-        var notes = db.query("""
-                select date, note, author from case_notes where reference = ? order by id desc
-                """,
-            new BeanPropertyRowMapper<>(CaseNote.class),
-            caseRef);
-        return notes.stream().map(x -> {
-            ListValue<CaseNote> result = new ListValue<>();
-            result.setValue(new CaseNote(x.getAuthor(), x.getDate(), x.getNote()));
-            return result;
-        }).toList();
+        return db.select()
+           .from(CASE_NOTES)
+           .where(CASE_NOTES.REFERENCE.eq(caseRef))
+           .fetchInto(CaseNote.class)
+           .stream().map(n -> new ListValue<>(null, n))
+           .toList();
     }
 
     @SneakyThrows

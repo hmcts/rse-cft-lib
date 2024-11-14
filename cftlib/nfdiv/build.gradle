@@ -28,6 +28,7 @@ plugins {
   id 'com.github.ben-manes.versions' version '0.51.0'
   id 'hmcts.ccd.sdk' version '5.5.11'
   id 'com.github.hmcts.rse-cft-lib'
+  id 'org.jooq.jooq-codegen-gradle' version '3.19.15'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -42,6 +43,11 @@ ccd {
 }
 
 sourceSets {
+  main {
+    java {
+      srcDirs 'build/generated-sources/jooq'
+    }
+  }
   functionalTest {
     java {
       compileClasspath += main.output
@@ -298,6 +304,7 @@ dependencies {
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.9.0'
   implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.1.8'
   implementation 'io.pebbletemplates:pebble-spring-boot-starter:3.2.2'
+  implementation 'org.jooq:jooq:3.19.15'
 
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
@@ -337,6 +344,15 @@ dependencies {
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
   cftlibTestImplementation 'com.microsoft.playwright:playwright:1.48.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.3.0'
+//  jooqCodegen 'org.testcontainers:testcontainers:1.20.3'
+  // https://mvnrepository.com/artifact/org.testcontainers/postgresql
+  jooqCodegen group: 'org.testcontainers', name: 'postgresql', version: '1.20.3'
+  jooqCodegen group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+  jooqCodegen project(':lib:flyway')
+
+
+//  jooqCodegen group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
@@ -500,3 +516,18 @@ task fortifyScan(type: JavaExec) {
     classpath += sourceSets.test.runtimeClasspath
     jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
+
+jooq {
+  configuration {
+    jdbc {
+      url = 'jdbc:tc:postgresql:15.8:///databasename?TC_INITFUNCTION=uk.gov.hmcts.rse.Migrator::init'
+      driver = 'org.testcontainers.jdbc.ContainerDatabaseDriver'
+    }
+    generator {
+      target {
+        packageName = "org.jooq.nfdiv"
+      }
+    }
+  }
+}
+
