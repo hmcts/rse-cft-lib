@@ -1,3 +1,4 @@
+import uk.gov.hmcts.rse.AuthMode
 import uk.gov.hmcts.rse.ManifestTask
 
 buildscript {
@@ -344,14 +345,9 @@ dependencies {
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
   cftlibTestImplementation 'com.microsoft.playwright:playwright:1.48.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.3.0'
-//  jooqCodegen 'org.testcontainers:testcontainers:1.20.3'
-  // https://mvnrepository.com/artifact/org.testcontainers/postgresql
   jooqCodegen group: 'org.testcontainers', name: 'postgresql', version: '1.20.3'
   jooqCodegen group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
   jooqCodegen project(':lib:flyway')
-
-
-//  jooqCodegen group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
 
 }
 
@@ -442,14 +438,15 @@ ccd {
 bootWithCCD {
   group = 'ccd tasks'
   dependsOn(loadEnvSecrets)
+  authMode = AuthMode.Local
 
   doFirst() {
-    project.file('./.aat-env').readLines().each() {
-      def index = it.indexOf("=")
-      def key = it.substring(0, index)
-      def value = it.substring(index + 1)
-      environment key, value
-    }
+//    project.file('./.aat-env').readLines().each() {
+//      def index = it.indexOf("=")
+//      def key = it.substring(0, index)
+//      def value = it.substring(index + 1)
+//      environment key, value
+//    }
     environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
     environment 'LOGGING_LEVEL_UK_GOV_HMCTS_DIVORCE', 'info'
     environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'

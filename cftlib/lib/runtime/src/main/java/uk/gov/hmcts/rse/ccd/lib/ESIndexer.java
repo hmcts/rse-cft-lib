@@ -34,6 +34,7 @@ public class ESIndexer {
     @SneakyThrows
     private void index() {
         ControlPlane.waitForBoot();
+        ControlPlane.waitForES();
 
         RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
                 new HttpHost("localhost", 9200)));

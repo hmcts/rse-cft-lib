@@ -40,6 +40,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         buildMDTab(configBuilder);
+        buildLeadCaseTab(configBuilder);
+        buildSubCaseTab(configBuilder);
         buildSoleApplicationTabWithAllContactDetails(configBuilder);
         buildSoleApplicationTabWithApplicant1ContactDetails(configBuilder);
         buildSoleApplicationTabWithApplicant2ContactDetails(configBuilder);
@@ -57,7 +59,29 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .build();
     }
 
-        private void buildSoleApplicationTabWithAllContactDetails(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    private void buildLeadCaseTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("leadCaseTab", "SubCases")
+            .showCondition("leadCase=\"Yes\"")
+            .forRoles(UserRole.values())
+            .label("leadCaseLabel", null, "${leadCaseMd}")
+            .field("leadCaseMd", NEVER_SHOW)
+            .field("leadCase", NEVER_SHOW)
+            .build();
+    }
+
+    private void buildSubCaseTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("subCase", "Lead Case")
+            .showCondition("leadCase=\"No\"")
+            .forRoles(UserRole.values())
+            .label("subCase", null, "${subCaseMd}")
+            .field("subCaseMd", NEVER_SHOW)
+            .field("leadCase", NEVER_SHOW)
+            .build();
+    }
+
+
+
+    private void buildSoleApplicationTabWithAllContactDetails(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final Tab.TabBuilder<CaseData, UserRole> tabBuilderForSoleApplication = configBuilder.tab("applicationDetailsSole", "Application")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .showCondition("applicationType=\"soleApplication\"");

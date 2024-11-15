@@ -11,6 +11,8 @@ public class Migrator {
     public static void init(Connection connection) throws SQLException {
         PgConnection c = (PgConnection) connection;
         Flyway.configure().dataSource(c.getURL(), "test", "test")
+                .detectEncoding(true)
+                .locations("filesystem:nfdiv/src/main/resources/db/migration")
                           .load()
                           .migrate();
     }

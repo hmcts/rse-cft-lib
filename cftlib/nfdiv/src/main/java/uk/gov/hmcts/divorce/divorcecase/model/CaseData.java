@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.*;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
+import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -244,11 +245,22 @@ public class CaseData {
     )
     private CaseLink bulkListCaseReferenceLink;
 
+    @CCD
     private String markdownTabField;
+    @CCD
+    private YesOrNo leadCase;
+    @CCD
+    private String leadCaseMd;
+    @CCD
+    private String subCaseMd;
 
     @CCD(access = {DefaultAccess.class})
     @JsonUnwrapped
     private RetiredFields retiredFields;
+
+    @CCD(typeOverride = DynamicRadioList)
+    private MyRadioList caseSearchResults;
+    private String caseSearchTerm;
 
     @CCD(access = {CaseworkerAccess.class})
     private String hyphenatedCaseRef;

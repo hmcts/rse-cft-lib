@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.sow014.lib.CaseRepository;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
@@ -19,7 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jooq.nfdiv.public_.Tables.CASE_NOTES;
+import static org.jooq.impl.DSL.jsonGetAttribute;
+import static org.jooq.nfdiv.public_.Tables.*;
+import static org.jooq.JSON.json;
 
 @Component
 public class NFDCaseRepository implements CaseRepository {
@@ -33,13 +36,64 @@ public class NFDCaseRepository implements CaseRepository {
     @Autowired
     private PebbleEngine pebl;
 
+    @SneakyThrows
     @Override
     public ObjectNode getCase(long caseRef, ObjectNode caseData) {
         var notes = loadNotes(caseRef);
         caseData.set("notes", mapper.valueToTree(notes));
+
         caseData.put("markdownTabField", renderExampleTab(caseRef, notes));
+
+        var isLeadCase = db.fetchOptional(MULTIPLES, MULTIPLES.LEAD_CASE_ID.eq(caseRef));
+        if (isLeadCase.isPresent()) {
+            addLeadCaseInfo(caseRef, caseData);
+        } else {
+            addSubCaseInfo(caseRef, caseData);
+        }
+
         return caseData;
     }
+
+    private void addLeadCaseInfo(long caseRef, ObjectNode caseData) throws IOException {
+        // Fetch first 50
+        var total = db.fetchCount(SUB_CASES, SUB_CASES.LEAD_CASE_ID.eq(caseRef));
+        var subCases = db.selectFrom(SUB_CASES)
+                .where(SUB_CASES.LEAD_CASE_ID.eq(caseRef))
+                .limit(50)
+                .fetch();
+        if (subCases.isNotEmpty()) {
+            caseData.put("leadCase", "Yes");
+
+            PebbleTemplate compiledTemplate = pebl.getTemplate("subcases");
+            Writer writer = new StringWriter();
+
+            Map<String, Object> context = new HashMap<>();
+            context.put("subcases", subCases);
+            context.put("total", total);
+
+            compiledTemplate.evaluate(writer, context);
+            caseData.put("leadCaseMd", writer.toString());
+        } else {
+            caseData.put("leadCase", "No");
+        }
+    }
+
+    private void addSubCaseInfo(long caseRef, ObjectNode caseData) throws IOException {
+        var leadCase = db.fetchOptional(SUB_CASES, SUB_CASES.SUB_CASE_ID.eq(caseRef));
+        if (leadCase.isPresent()) {
+            caseData.put("leadCase", "No");
+
+            PebbleTemplate compiledTemplate = pebl.getTemplate("leadcase");
+            Writer writer = new StringWriter();
+
+            Map<String, Object> context = new HashMap<>();
+            context.put("leadCase", leadCase.get());
+
+            compiledTemplate.evaluate(writer, context);
+            caseData.put("subCaseMd", writer.toString());
+        }
+    }
+
 
     private List<ListValue<CaseNote>> loadNotes(long caseRef) {
         return db.select()

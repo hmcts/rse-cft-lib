@@ -116,15 +116,16 @@ public class CaseController {
         int version = (int) Optional.ofNullable(event.getCaseDetails().get("version")).orElse(1);
         // Upsert the case - create if it doesn't exist, update if it does.
         var rowsAffected = db.update( """
-                insert into case_data (jurisdiction, case_type_id, state, data, data_classification, reference, security_classification, version)
+                insert into case_data (last_modified, jurisdiction, case_type_id, state, data, data_classification, reference, security_classification, version)
                 -- TODO: separate private data model from public view so we don't duplicate eg. notes in the json
-                values (?, ?, ?, (?::jsonb - 'notes' - 'markdownTabField'), ?::jsonb, ?, ?::securityclassification, ?)
+                values (now(), ?, ?, ?, (?::jsonb - 'notes' - 'markdownTabField'), ?::jsonb, ?, ?::securityclassification, ?)
                 on conflict (reference)
                 do update set
                     state = excluded.state,
                     data = excluded.data,
                     data_classification = excluded.data_classification,
                     security_classification = excluded.security_classification,
+                    last_modified = now(),
                     version = case
                                 when case_data.data is distinct from excluded.data then case_data.version + 1
                                 else case_data.version
