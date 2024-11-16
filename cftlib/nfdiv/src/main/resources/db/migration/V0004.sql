@@ -1,7 +1,7 @@
 
 create table multiples (
   multiple_id serial primary key,
-  lead_case_id bigint not null unique references case_data(reference) on delete cascade,
+  lead_case_id bigint not null unique,
   name text not null
 );
 
@@ -10,6 +10,11 @@ create table multiple_members(
     sub_case_id bigint not null references case_data(reference) on delete cascade,
     unique (multiple_id, sub_case_id)
 );
+
+alter table multiples
+    add foreign key (multiple_id, lead_case_id)
+    references multiple_members(multiple_id, sub_case_id)
+    deferrable initially deferred;
 
 create view sub_cases as (
   select
@@ -27,6 +32,7 @@ create view sub_cases as (
     join case_data cd on cd.reference = s.sub_case_id
   order by cd.last_modified desc
 );
+
 
 
 
