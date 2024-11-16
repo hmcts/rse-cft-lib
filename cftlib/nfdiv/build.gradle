@@ -46,7 +46,7 @@ ccd {
 sourceSets {
   main {
     java {
-      srcDirs 'build/generated-sources/jooq'
+      srcDirs jooqCodegen.outputs
     }
   }
   functionalTest {
@@ -528,3 +528,6 @@ jooq {
   }
 }
 
+jooqCodegen {
+  inputs.files project.file('nfdiv/src/main/resources/db/migration')
+}
