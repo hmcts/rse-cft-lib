@@ -61,7 +61,7 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_ADD_NOTE)
-            .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
+            .forAllStates()
             .name("Add note")
             .description("Add note")
             .aboutToSubmitCallback(this::aboutToSubmit)

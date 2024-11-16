@@ -6,11 +6,13 @@ create table multiples (
 );
 
 create table multiple_members(
-    multiple_id bigint not null references multiples(multiple_id) on delete cascade,
-    sub_case_id bigint not null references case_data(reference) on delete cascade,
-    unique (multiple_id, sub_case_id)
+    multiple_id bigint references multiples(multiple_id) on delete cascade,
+    -- A case can only be in a single multiple
+    sub_case_id bigint unique references case_data(reference) on delete cascade,
+    primary key (multiple_id, sub_case_id)
 );
 
+-- A multiple points to its lead case in a circular reference
 alter table multiples
     add foreign key (multiple_id, lead_case_id)
     references multiple_members(multiple_id, sub_case_id)
