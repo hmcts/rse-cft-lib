@@ -39,17 +39,18 @@ public class NFDCaseRepository implements CaseRepository {
     @SneakyThrows
     @Override
     public ObjectNode getCase(long caseRef, ObjectNode caseData) {
+        var isLeadCase = db.fetchOptional(MULTIPLES, MULTIPLES.LEAD_CASE_ID.eq(caseRef));
+        if (isLeadCase.isPresent()) {
+            addLeadCaseInfo(caseRef, caseData);
+        } else {
+            caseData = addSubCaseInfo(caseRef, caseData);
+        }
+
         var notes = loadNotes(caseRef);
         caseData.set("notes", mapper.valueToTree(notes));
 
         caseData.put("markdownTabField", renderExampleTab(caseRef, notes));
 
-        var isLeadCase = db.fetchOptional(MULTIPLES, MULTIPLES.LEAD_CASE_ID.eq(caseRef));
-        if (isLeadCase.isPresent()) {
-            addLeadCaseInfo(caseRef, caseData);
-        } else {
-            addSubCaseInfo(caseRef, caseData);
-        }
 
         return caseData;
     }
@@ -78,9 +79,12 @@ public class NFDCaseRepository implements CaseRepository {
         }
     }
 
-    private void addSubCaseInfo(long caseRef, ObjectNode caseData) throws IOException {
+    private ObjectNode addSubCaseInfo(long caseRef, ObjectNode caseData) throws IOException {
         var leadCase = db.fetchOptional(SUB_CASES, SUB_CASES.SUB_CASE_ID.eq(caseRef));
+
         if (leadCase.isPresent()) {
+            var derivedData = db.fetchOptional(DERIVED_CASES, DERIVED_CASES.SUB_CASE_ID.eq(caseRef));
+            caseData = mapper.readValue(derivedData.get().getData().data(), ObjectNode.class);
             caseData.put("leadCase", "No");
 
             PebbleTemplate compiledTemplate = pebl.getTemplate("leadcase");
@@ -92,6 +96,7 @@ public class NFDCaseRepository implements CaseRepository {
             compiledTemplate.evaluate(writer, context);
             caseData.put("subCaseMd", writer.toString());
         }
+        return caseData;
     }
 
 

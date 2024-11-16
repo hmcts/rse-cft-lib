@@ -3,10 +3,12 @@ package uk.gov.hmcts.divorce.divorcecase.tab;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.DisplayContext;
 import uk.gov.hmcts.ccd.sdk.api.Tab;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Permissions;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -42,6 +44,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         buildMDTab(configBuilder);
         buildLeadCaseTab(configBuilder);
         buildSubCaseTab(configBuilder);
+        buildContactTab(configBuilder);
+        editContactInfo(configBuilder);
         buildSoleApplicationTabWithAllContactDetails(configBuilder);
         buildSoleApplicationTabWithApplicant1ContactDetails(configBuilder);
         buildSoleApplicationTabWithApplicant2ContactDetails(configBuilder);
@@ -49,6 +53,18 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         buildJointApplicationTabWithAllContactDetails(configBuilder);
         buildJointApplicationTabWithApplicant1ContactDetails(configBuilder);
         buildJointApplicationTabWithApplicant2ContactDetails(configBuilder);
+    }
+
+    private void editContactInfo(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.event("edit-lead-contact")
+            .forAllStates()
+            .grant(Permissions.CREATE_READ_UPDATE_DELETE, CASE_WORKER)
+            .showCondition("leadCase=\"Yes\"")
+            .name("Edit lead contact information")
+            .fields()
+            .field("applicant1Address", DisplayContext.Mandatory)
+            .build();
+
     }
 
     private void buildMDTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -78,6 +94,14 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("leadCase", NEVER_SHOW)
             .build();
     }
+
+    private void buildContactTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("contactInfo", "Contact information")
+            .forRoles(UserRole.values())
+            .field("applicant1Address")
+            .build();
+    }
+
 
 
 

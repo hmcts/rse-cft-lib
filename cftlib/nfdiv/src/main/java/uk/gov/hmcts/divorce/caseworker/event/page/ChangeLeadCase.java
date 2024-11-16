@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.sow014.lib.DynamicRadioListElement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jooq.impl.DSL.upper;
 import static org.jooq.nfdiv.public_.Tables.*;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -58,12 +59,17 @@ public class ChangeLeadCase implements CCDConfig<CaseData, State, UserRole> {
     private AboutToStartOrSubmitResponse<CaseData, State> searchCases(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
 
         var choices = new ArrayList<DynamicRadioListElement>();
-        for (SubCasesRecord fetch : db.fetch(SUB_CASES, SUB_CASES.LEAD_CASE_ID.eq(details.getId()))) {
-            choices.add(DynamicRadioListElement.builder()
+        // Search subcases by applicantFirstName
+        db.selectFrom(SUB_CASES)
+            .where( SUB_CASES.LEAD_CASE_ID.eq(details.getId())
+                    .and(upper(SUB_CASES.APPLICANT1FIRSTNAME).eq(upper(details.getData().getCaseSearchTerm())))
+            )
+            .limit(100)
+            .fetch()
+            .forEach(fetch -> choices.add(DynamicRadioListElement.builder()
                 .code(fetch.getSubCaseId().toString())
                 .label(fetch.getSubCaseId() + " - " + fetch.getApplicant1firstname() + " - " + fetch.getApplicant1lastname())
-                .build());
-        }
+                .build()));
 
         MyRadioList radioList = MyRadioList.builder()
             .value(choices.get(0))
