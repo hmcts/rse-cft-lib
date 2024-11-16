@@ -260,6 +260,7 @@ public class CaseData {
 
     @CCD(typeOverride = DynamicRadioList)
     private MyRadioList caseSearchResults;
+    @CCD(label = "Search by applicant name")
     private String caseSearchTerm;
 
     @CCD(access = {CaseworkerAccess.class})
@@ -328,7 +329,7 @@ public class CaseData {
     private SentNotifications sentNotifications = new SentNotifications();
 
     @JsonIgnore
-    public String formatCaseRef(long caseId) {
+    public static String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
         return String.format("%4s-%4s-%4s-%4s",
             temp.substring(0, 4),

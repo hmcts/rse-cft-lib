@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.sow014.lib.CaseRepository;
 
 import java.io.IOException;
@@ -51,6 +52,7 @@ public class NFDCaseRepository implements CaseRepository {
 
         caseData.put("markdownTabField", renderExampleTab(caseRef, notes));
 
+        caseData.put("hyphenatedCaseRef", CaseData.formatCaseRef(caseRef));
 
         return caseData;
     }
