@@ -521,6 +521,16 @@ jooq {
       driver = 'org.testcontainers.jdbc.ContainerDatabaseDriver'
     }
     generator {
+      database {
+        schemata {
+          schema {
+            inputSchema = 'public'
+          }
+          schema {
+            inputSchema = 'ccd'
+          }
+        }
+      }
       target {
         packageName = "org.jooq.nfdiv"
       }

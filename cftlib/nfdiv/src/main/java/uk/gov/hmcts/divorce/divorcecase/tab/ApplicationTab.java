@@ -73,6 +73,14 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .label("myLabel", null, "${markdownTabField}")
             .field("markdownTabField", NEVER_SHOW)
             .build();
+
+        configBuilder.tab("adminPanel", "Admin Panel")
+            .forRoles(UserRole.values())
+            .displayOrder(99)
+            .label("myAdminLabel", null, "${adminMd}")
+            .field("adminMd", NEVER_SHOW)
+            .build();
+
     }
 
     private void buildLeadCaseTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

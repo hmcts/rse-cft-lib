@@ -13,17 +13,15 @@ import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.sow014.lib.CaseRepository;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jooq.impl.DSL.jsonGetAttribute;
+import static org.jooq.nfdiv.ccd.Ccd.CCD;
+import static org.jooq.nfdiv.ccd.Tables.FAILED_JOBS;
 import static org.jooq.nfdiv.public_.Tables.*;
-import static org.jooq.JSON.json;
 
 @Component
 public class NFDCaseRepository implements CaseRepository {
@@ -54,7 +52,22 @@ public class NFDCaseRepository implements CaseRepository {
 
         caseData.put("hyphenatedCaseRef", CaseData.formatCaseRef(caseRef));
 
+        addAdminPanel(caseRef, caseData);
+
         return caseData;
+    }
+
+    private void addAdminPanel(long caseRef, ObjectNode caseData) throws IOException {
+        PebbleTemplate compiledTemplate = pebl.getTemplate("admin");
+        Writer writer = new StringWriter();
+
+        var failedJobs = db.fetch(FAILED_JOBS, FAILED_JOBS.REFERENCE.eq(caseRef));
+        Map<String, Object> context = new HashMap<>();
+        context.put("failedJobs", failedJobs);
+        context.put("caseRef", caseRef);
+
+        compiledTemplate.evaluate(writer, context);
+        caseData.put("adminMd", writer.toString());
     }
 
     private void addLeadCaseInfo(long caseRef, ObjectNode caseData) throws IOException {

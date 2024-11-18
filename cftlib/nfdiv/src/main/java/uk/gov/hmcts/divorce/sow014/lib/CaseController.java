@@ -3,9 +3,11 @@ package uk.gov.hmcts.divorce.sow014.lib;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -37,7 +39,14 @@ public class CaseController {
     private CallbackController runtime;
 
     @Autowired
+    private CallbackEnumerator callbackEnumerator;
+
+    @Autowired
     private CaseRepository caseRepository;
+
+    @Autowired
+    private HttpServletRequest request;
+
 
     @GetMapping(
             value = "/cases/{caseRef}",
@@ -75,40 +84,47 @@ public class CaseController {
 
     @SneakyThrows
     @PostMapping("/cases")
-    public ResponseEntity<Map<String, Object>> createEvent(@RequestBody POCCaseEvent event) {
+    public ResponseEntity<Map<String, Object>> createEvent(
+        @RequestBody POCCaseEvent event,
+        @RequestHeader HttpHeaders headers) {
         log.info("case Details: {}", event);
 
         transactionTemplate.execute( status -> {
                 dispatchAboutToSubmit(event);
-                saveCase(event);
+                var id = saveCaseReturningAuditId(event);
+                if (callbackEnumerator.hasSubmittedCallbackForEvent(event.getEventDetails().getEventId())) {
+                    enqueueSubmittedCallback(id, event, headers);
+                }
                 return status;
         });
-        // Submitted must happen post submit.
-        dispatchSubmitted(event);
 
         var response = getCase((Long) event.getCaseDetails().get("id"));
         log.info("case response: {}", response);
         return ResponseEntity.ok(response);
     }
 
-    private void dispatchSubmitted(POCCaseEvent event) {
-        try {
-            var req = CallbackRequest.builder()
-                .caseDetails(toCaseDetails(event.getCaseDetails()))
-                .caseDetailsBefore(toCaseDetails(event.getCaseDetailsBefore()))
-                .eventId(event.getEventDetails().getEventId())
-                .build();
-            runtime.submitted(req);
-        } catch (NoSuchMethodError e) {
-            // TODO: There is a config generator classpath bug - this exception is thrown when a callback doesn't exist for an event!
-            // There's nothing to do anyway if there's no callback so deferred for now.
-        } catch (Throwable e) {
-            log.error("Error in submitted callback", e);
-        }
+    @SneakyThrows
+    private void enqueueSubmittedCallback(long auditEventId, POCCaseEvent event, HttpHeaders headers) {
+        var req = CallbackRequest.builder()
+            .caseDetails(toCaseDetails(event.getCaseDetails()))
+            .caseDetailsBefore(toCaseDetails(event.getCaseDetailsBefore()))
+            .eventId(event.getEventDetails().getEventId())
+            .build();
+
+        db.update(
+            """
+            insert into ccd.submitted_callback_queue (case_event_id, event_id, payload, headers)
+            values (?, ?, ?::jsonb, ?::jsonb)
+            """,
+            auditEventId,
+            event.getEventDetails().getEventId(),
+            mapper.writeValueAsString(req),
+            mapper.writeValueAsString(headers.toSingleValueMap())
+        );
     }
 
     @SneakyThrows
-    private void saveCase(POCCaseEvent event) {
+    private long saveCaseReturningAuditId(POCCaseEvent event) {
         Map<String, Object> caseDetails = event.getCaseDetails();
         var state = event.getEventDetails().getStateId() != null
             ? event.getEventDetails().getStateId()
@@ -145,12 +161,12 @@ public class CaseController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Case was updated concurrently");
         }
 
-        saveAuditRecord(event, 1);
+        return saveAuditRecord(event, 1);
     }
 
     @SneakyThrows
     private POCCaseEvent dispatchAboutToSubmit(POCCaseEvent event) {
-        try {
+        if (callbackEnumerator.hasAboutToSubmitCallbackForEvent(event.getEventDetails().getEventId())) {
             var req = CallbackRequest.builder()
                 .caseDetails(toCaseDetails(event.getCaseDetails()))
                 .caseDetailsBefore(toCaseDetails(event.getCaseDetailsBefore()))
@@ -162,12 +178,8 @@ public class CaseController {
             if (cb.getState() != null) {
                 event.getEventDetails().setStateId(cb.getState().toString());
             }
-            return event;
-        } catch (NoSuchMethodError e) {
-            // TODO: There is a config generator classpath bug - this exception is thrown when a callback doesn't exist for an event!
-            // There's nothing to do anyway if there's no callback so deferred for now.
-            return event;
         }
+        return event;
     }
 
     @GetMapping(
@@ -189,10 +201,10 @@ public class CaseController {
     }
 
     @SneakyThrows
-    private void saveAuditRecord(POCCaseEvent details, int version) {
+    private long saveAuditRecord(POCCaseEvent details, int version) {
         var event = details.getEventDetails();
         var currentView = getCase((Long) details.getCaseDetails().get("id"));
-        db.update(
+        var result = db.queryForMap(
                 """
                         insert into case_event (
                           data,
@@ -211,6 +223,7 @@ public class CaseController {
                           description,
                           security_classification)
                         values (?::jsonb,?::jsonb,?,?,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
+                        returning id
                         """,
                 mapper.writeValueAsString(currentView.get("case_data")),
                 mapper.writeValueAsString(currentView.get("data_classification")),
@@ -228,6 +241,7 @@ public class CaseController {
                 event.getDescription(),
                 currentView.get("security_classification")
         );
+        return (long) result.get("id");
     }
     @SneakyThrows
     private CaseDetails toCaseDetails(Map<String, Object> data) {

@@ -254,6 +254,8 @@ public class CaseData {
     @CCD
     private String subCaseMd;
 
+    private String adminMd;
+
     @CCD(access = {DefaultAccess.class})
     @JsonUnwrapped
     private RetiredFields retiredFields;
@@ -262,6 +264,12 @@ public class CaseData {
     private MyRadioList caseSearchResults;
     @CCD(label = "Search by applicant name")
     private String caseSearchTerm;
+
+    @CCD(label = "Search by applicant name")
+    private String callbackJobId;
+    @CCD(typeOverride = DynamicRadioList)
+    private MyRadioList callbackJobs;
+
 
     @CCD(access = {CaseworkerAccess.class})
     private String hyphenatedCaseRef;
