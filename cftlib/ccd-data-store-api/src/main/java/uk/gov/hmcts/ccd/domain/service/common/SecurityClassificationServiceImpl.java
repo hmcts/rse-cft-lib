@@ -54,7 +54,8 @@ public class SecurityClassificationServiceImpl implements SecurityClassification
     }
 
     public Optional<CaseDetails> applyClassification(CaseDetails caseDetails) {
-        return applyClassification(caseDetails, false);
+        // SOW014: Classification is an unused CCD feature that can be dropped.
+        return Optional.of(caseDetails);
     }
 
     public Optional<CaseDetails> applyClassification(CaseDetails caseDetails, boolean create) {

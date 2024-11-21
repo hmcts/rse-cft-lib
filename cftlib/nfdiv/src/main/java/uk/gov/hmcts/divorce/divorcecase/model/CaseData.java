@@ -20,19 +20,11 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
-import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.*;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
+import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -48,10 +40,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.*;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
@@ -256,9 +245,31 @@ public class CaseData {
     )
     private CaseLink bulkListCaseReferenceLink;
 
+    @CCD
+    private String markdownTabField;
+    @CCD
+    private YesOrNo leadCase;
+    @CCD
+    private String leadCaseMd;
+    @CCD
+    private String subCaseMd;
+
+    private String adminMd;
+
     @CCD(access = {DefaultAccess.class})
     @JsonUnwrapped
     private RetiredFields retiredFields;
+
+    @CCD(typeOverride = DynamicRadioList)
+    private MyRadioList caseSearchResults;
+    @CCD(label = "Search by applicant name")
+    private String caseSearchTerm;
+
+    @CCD(label = "Search by applicant name")
+    private String callbackJobId;
+    @CCD(typeOverride = DynamicRadioList)
+    private MyRadioList callbackJobs;
+
 
     @CCD(access = {CaseworkerAccess.class})
     private String hyphenatedCaseRef;
@@ -326,7 +337,7 @@ public class CaseData {
     private SentNotifications sentNotifications = new SentNotifications();
 
     @JsonIgnore
-    public String formatCaseRef(long caseId) {
+    public static String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
         return String.format("%4s-%4s-%4s-%4s",
             temp.substring(0, 4),
