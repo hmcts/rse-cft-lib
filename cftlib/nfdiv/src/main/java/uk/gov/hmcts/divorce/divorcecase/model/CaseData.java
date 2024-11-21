@@ -270,6 +270,11 @@ public class CaseData {
     @CCD(typeOverride = DynamicRadioList)
     private MyRadioList callbackJobs;
 
+    @CCD(label = "Document to scrub")
+    private String documentToScrub;
+    @CCD(typeOverride = DynamicRadioList, label = "Choose the document to scrub")
+    private MyRadioList scrubbableDocs;
+
 
     @CCD(access = {CaseworkerAccess.class})
     private String hyphenatedCaseRef;
