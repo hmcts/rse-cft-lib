@@ -86,11 +86,7 @@ public class ClassifiedStartEventOperation implements StartEventOperation {
 
     private StartEventResult applyClassificationIfCaseDetailsExist(String caseReference,
                                                                    StartEventResult startEventResult) {
-        CaseDetails caseDetails = startEventResult.getCaseDetails();
-        if (null != caseDetails) {
-            startEventResult.setCaseDetails(classificationService.applyClassification(caseDetails)
-                .orElseThrow(() -> new CaseNotFoundException(caseReference)));
-        }
+        // SOW014: Classification is an unused CCD feature.
         return startEventResult;
     }
 }

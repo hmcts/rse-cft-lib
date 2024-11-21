@@ -454,6 +454,7 @@ bootWithCCD {
     environment 'XUI_MO_PORT', '3009'
     environment 'RSE_LIB_ADDITIONAL_DATABASES', 'nfd'
     environment 'CCD_POCS_URL', 'http://localhost:4013'
+    environment 'CCD_DOCUMENT_URL_PATTERN', '.*'
   }
 }
 
@@ -522,6 +523,7 @@ jooq {
     }
     generator {
       database {
+        recordVersionFields = "version"
         schemata {
           schema {
             inputSchema = 'public'

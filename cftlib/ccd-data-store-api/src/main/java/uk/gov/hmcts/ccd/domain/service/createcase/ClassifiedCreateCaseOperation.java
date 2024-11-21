@@ -31,6 +31,7 @@ public class ClassifiedCreateCaseOperation implements CreateCaseOperation {
         if (null == caseDetails) {
             return null;
         }
-        return classificationService.applyClassification(caseDetails, true).orElse(null);
+        // SOW014: Classification is an unused CCD feature.
+        return caseDetails;
     }
 }
