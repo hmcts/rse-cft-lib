@@ -18,10 +18,11 @@ public interface PocApiClient {
     @GetMapping(value = "/ccd/cases/{case-ref}")
     CaseDetails getCase(@PathVariable("case-ref") String caseRef);
 
+    @GetMapping(value = "/ccd/cases/{case-ref}/history")
+    List<AuditEvent> getCaseHistory(@PathVariable("case-ref") String caseReference);
+
     @PostMapping(value = "/ccd/cases", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     CaseDetails createEvent(@RequestBody POCCaseEvent caseEvent);
 
-    @GetMapping(value = "/ccd/cases/{case-ref}/history")
-    List<AuditEvent> getEvents(@PathVariable("case-ref") String caseReference);
 }

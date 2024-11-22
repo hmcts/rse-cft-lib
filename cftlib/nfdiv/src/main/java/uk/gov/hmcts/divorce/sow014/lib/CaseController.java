@@ -44,10 +44,6 @@ public class CaseController {
     @Autowired
     private CaseRepository caseRepository;
 
-    @Autowired
-    private HttpServletRequest request;
-
-
     @GetMapping(
             value = "/cases/{caseRef}",
             produces = "application/json"
