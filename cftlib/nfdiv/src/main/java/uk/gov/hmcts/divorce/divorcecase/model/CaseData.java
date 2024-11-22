@@ -234,7 +234,8 @@ public class CaseData {
         label = "Add a case note",
         hint = "Enter note",
         typeOverride = TextArea,
-        access = {CaseworkerAndSuperUserAccess.class}
+        access = {CaseworkerAndSuperUserAccess.class},
+        external = true
     )
     private String note;
 
@@ -245,34 +246,35 @@ public class CaseData {
     )
     private CaseLink bulkListCaseReferenceLink;
 
-    @CCD
+    @CCD(external = true)
     private String markdownTabField;
-    @CCD
+    @CCD(external = true)
     private YesOrNo leadCase;
-    @CCD
+    @CCD(external = true)
     private String leadCaseMd;
-    @CCD
+    @CCD(external = true)
     private String subCaseMd;
 
+    @CCD(external = true)
     private String adminMd;
 
     @CCD(access = {DefaultAccess.class})
     @JsonUnwrapped
     private RetiredFields retiredFields;
 
-    @CCD(typeOverride = DynamicRadioList)
+    @CCD(typeOverride = DynamicRadioList, external = true)
     private MyRadioList caseSearchResults;
-    @CCD(label = "Search by applicant name")
+    @CCD(label = "Search by applicant name", external = true)
     private String caseSearchTerm;
 
-    @CCD(label = "Search by applicant name")
+    @CCD(label = "Search by applicant name", external = true)
     private String callbackJobId;
-    @CCD(typeOverride = DynamicRadioList)
+    @CCD(typeOverride = DynamicRadioList, external = true)
     private MyRadioList callbackJobs;
 
-    @CCD(label = "Document to scrub")
+    @CCD(label = "Document to scrub", external = true)
     private String documentToScrub;
-    @CCD(typeOverride = DynamicRadioList, label = "Choose the document to scrub")
+    @CCD(typeOverride = DynamicRadioList, label = "Choose the document to scrub", external = true)
     private MyRadioList scrubbableDocs;
 
 

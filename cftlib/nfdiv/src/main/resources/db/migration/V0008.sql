@@ -1,6 +1,6 @@
 create table case_event_audit (
                                 id bigserial primary key,
-                                case_event_id bigint not null unique references case_event(id),
+                                case_event_id bigint not null references case_event(id),
                                 user_id uuid not null,
                                 data jsonb not null
 );

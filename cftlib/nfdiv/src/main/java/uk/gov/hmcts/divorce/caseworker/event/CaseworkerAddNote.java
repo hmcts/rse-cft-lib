@@ -94,8 +94,6 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
                 caseData.getNote())
             .execute();
 
-        caseData.setNote(null); //Clear note text area as notes value is stored in notes table
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();

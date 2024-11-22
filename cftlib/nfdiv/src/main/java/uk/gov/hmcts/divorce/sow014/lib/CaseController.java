@@ -15,6 +15,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.ccd.sdk.runtime.CallbackController;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
@@ -26,23 +27,27 @@ import java.util.Optional;
 @RequestMapping(path = "/ccd")
 public class CaseController {
 
-    @Autowired
-    private JdbcTemplate db;
+    private final JdbcTemplate db;
+
+    private final TransactionTemplate transactionTemplate;
+
+    private final ObjectMapper mapper;
+
+    private final CallbackController runtime;
+
+    private final CallbackEnumerator callbackEnumerator;
+
+    private final CaseRepository caseRepository;
 
     @Autowired
-    private TransactionTemplate transactionTemplate;
-
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private CallbackController runtime;
-
-    @Autowired
-    private CallbackEnumerator callbackEnumerator;
-
-    @Autowired
-    private CaseRepository caseRepository;
+    public CaseController(JdbcTemplate db, TransactionTemplate transactionTemplate, CallbackController runtime, CallbackEnumerator callbackEnumerator, CaseRepository caseRepository, ObjectMapper mapper) {
+        this.db = db;
+        this.transactionTemplate = transactionTemplate;
+        this.runtime = runtime;
+        this.callbackEnumerator = callbackEnumerator;
+        this.caseRepository = caseRepository;
+        this.mapper = mapper.copy().setAnnotationIntrospector(new FilterExternalFieldsInspector());
+    }
 
     @GetMapping(
             value = "/cases/{caseRef}",
@@ -121,11 +126,14 @@ public class CaseController {
 
     @SneakyThrows
     private long saveCaseReturningAuditId(POCCaseEvent event) {
-        Map<String, Object> caseDetails = event.getCaseDetails();
+        var caseData = mapper.readValue(mapper.writeValueAsString(event.getCaseDetails().get("case_data")), CaseData.class);
+
         var state = event.getEventDetails().getStateId() != null
             ? event.getEventDetails().getStateId()
-            : caseDetails.get("state");
+            : event.getCaseDetails().get("state");
+        var caseDetails = event.getCaseDetails();
         int version = (int) Optional.ofNullable(event.getCaseDetails().get("version")).orElse(1);
+        var data = mapper.writeValueAsString(caseData);
         // Upsert the case - create if it doesn't exist, update if it does.
         var rowsAffected = db.update( """
                 insert into case_data (last_modified, jurisdiction, case_type_id, state, data, data_classification, reference, security_classification, version)
@@ -147,7 +155,7 @@ public class CaseController {
             "DIVORCE",
             "NFD",
             state,
-            mapper.writeValueAsString(caseDetails.get("case_data")),
+            data,
             mapper.writeValueAsString(caseDetails.get("data_classification")),
             caseDetails.get("id"),
             caseDetails.get("security_classification"),
@@ -221,7 +229,7 @@ public class CaseController {
                         values (?::jsonb,?::jsonb,?,?,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
                         returning id
                         """,
-                mapper.writeValueAsString(currentView.get("case_data")),
+         mapper.writeValueAsString(currentView.get("case_data")),
                 mapper.writeValueAsString(currentView.get("data_classification")),
                 event.getEventId(),
                 "user-id",
