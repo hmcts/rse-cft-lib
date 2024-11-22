@@ -8,6 +8,7 @@ pluginManagement {
 includeBuild 'rse-cft-lib-plugin'
 include 'ccd-data-store-api'
 include 'nfdiv'
+include 'nfdiv:flyway'
 
 new File(rootDir, "lib").listFiles().each {
   if (it.isDirectory()) {
