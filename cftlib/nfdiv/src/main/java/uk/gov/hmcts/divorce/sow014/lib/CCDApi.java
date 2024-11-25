@@ -20,7 +20,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Service
 public class CCDApi {
 
-    @Lazy
     @Autowired
     private DSLContext db;
 

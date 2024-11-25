@@ -33,11 +33,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class RetryCallback implements CCDConfig<CaseData, State, UserRole> {
     @Autowired
-    @Lazy
     private DSLContext db;
 
     @Autowired
-    @Lazy
     private JdbcTemplate t;
 
     @Override

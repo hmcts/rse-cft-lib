@@ -119,7 +119,7 @@ public class NFDCaseRepository implements CaseRepository {
         return db.select()
            .from(CASE_NOTES)
            .where(CASE_NOTES.REFERENCE.eq(caseRef))
-           .orderBy(CASE_NOTES.DATE.desc())
+           .orderBy(CASE_NOTES.ID.desc())
            .fetchInto(CaseNote.class)
            .stream().map(n -> new ListValue<>(null, n))
            .toList();

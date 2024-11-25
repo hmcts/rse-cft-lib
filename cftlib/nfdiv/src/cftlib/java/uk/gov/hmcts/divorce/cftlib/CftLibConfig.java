@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.cftlib;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class CftLibConfig implements CFTLibConfigurer {
 
     @Autowired
+    @Lazy
     CCDDefinitionGenerator configWriter;
 
     @Override

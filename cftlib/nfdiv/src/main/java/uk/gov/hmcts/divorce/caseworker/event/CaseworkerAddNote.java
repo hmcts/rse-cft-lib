@@ -54,7 +54,6 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
     private Clock clock;
 
     @Autowired
-    @Lazy
     private DSLContext db;
 
     @Override

@@ -43,7 +43,6 @@ import java.util.function.Consumer;
 @Slf4j
 public class ScrubDocuments implements CCDConfig<CaseData, State, UserRole> {
     @Autowired
-    @Lazy
     private DSLContext db;
 
     @Autowired
