@@ -100,6 +100,11 @@ public class CaseData {
     @CCD(access = {DefaultAccess.class})
     private Applicant applicant1 = new Applicant();
 
+    @CCD(external = true)
+    private String interestedPartyForename;
+    @CCD(external = true)
+    private String interestedPartyReason;
+
     @JsonUnwrapped(prefix = "applicant2")
     @Builder.Default
     @CCD(access = {DefaultAccess.class, Applicant2Access.class})
@@ -254,6 +259,13 @@ public class CaseData {
     private String leadCaseMd;
     @CCD(external = true)
     private String subCaseMd;
+    @CCD(external = true)
+    private String pendingApplicationsMd;
+    @CCD(external = true)
+    private String claimsMd;
+    @CCD(external = true)
+    private String clientsMd;
+
 
     @CCD(external = true)
     private String adminMd;

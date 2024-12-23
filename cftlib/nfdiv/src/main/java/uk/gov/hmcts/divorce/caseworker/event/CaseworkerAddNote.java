@@ -66,7 +66,7 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE,
-                CASE_WORKER)
+                CASE_WORKER, JUDGE)
             .grant(CREATE_READ_UPDATE_DELETE,
                 SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))

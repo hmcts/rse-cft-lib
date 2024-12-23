@@ -7,12 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
 
 @Component
 public class ApplicationEventHistoryTab implements CCDConfig<CaseData, State, UserRole> {
@@ -24,7 +19,7 @@ public class ApplicationEventHistoryTab implements CCDConfig<CaseData, State, Us
 
     private void buildHistoryTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("CaseHistory", "History")
-            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER, APPLICANT_1_SOLICITOR)
+            .forRoles(SOLICITOR, CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER, APPLICANT_1_SOLICITOR)
             .field("caseHistory");
     }
 

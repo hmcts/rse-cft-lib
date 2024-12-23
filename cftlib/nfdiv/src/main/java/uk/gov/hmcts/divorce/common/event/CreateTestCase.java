@@ -98,7 +98,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
         data.setCaseInvite(
             CaseInvite.builder()
                 .applicant2InviteEmailAddress("TEST_SOLICITOR@mailinator.com")
-                .applicant2UserId("93b108b7-4b26-41bf-ae8f-6e356efb11b3")
+                .applicant2UserId("6e508b49-1fa8-3d3c-8b53-ec466637315b")
                 .build()
         );
         data.getApplication().setStateToTransitionApplicationTo(State.AwaitingApplicant1Response);
