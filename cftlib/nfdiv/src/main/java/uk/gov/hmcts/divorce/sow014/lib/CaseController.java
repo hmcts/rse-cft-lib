@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.sow014.lib;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,10 +138,16 @@ public class CaseController {
                     data = excluded.data,
                     security_classification = excluded.security_classification,
                     last_modified = now(),
+                    supplementary_data = excluded.supplementary_data,
+                    resolved_ttl = excluded.resolved_ttl,
                     version = case
                                 when case_data.data is distinct from excluded.data then case_data.version + 1
                                 else case_data.version
-                              end
+                              end,
+                    last_state_modified_date = case
+                                                 when case_data.state is distinct from excluded.state then now()
+                                                 else case_data.last_state_modified_date
+                                               end
                     WHERE case_data.version = EXCLUDED.version;
                     """,
             "DIVORCE",
