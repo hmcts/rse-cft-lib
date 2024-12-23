@@ -137,8 +137,7 @@ public class CaseController {
         // Upsert the case - create if it doesn't exist, update if it does.
         var rowsAffected = db.update( """
                 insert into case_data (last_modified, jurisdiction, case_type_id, state, data, data_classification, reference, security_classification, version)
-                -- TODO: separate private data model from public view so we don't duplicate eg. notes in the json
-                values (now(), ?, ?, ?, (?::jsonb - 'notes' - 'markdownTabField'), ?::jsonb, ?, ?::securityclassification, ?)
+                values (now(), ?, ?, ?, (?::jsonb), ?::jsonb, ?, ?::securityclassification, ?)
                 on conflict (reference)
                 do update set
                     state = excluded.state,

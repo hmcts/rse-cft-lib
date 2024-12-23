@@ -228,6 +228,7 @@ public class CaseData {
     private LocalDate awaitingJsAnswerStartDate;
 
     @CCD(
+        external = true,
         label = "Notes",
         typeOverride = Collection,
         typeParameterOverride = "CaseNote",
