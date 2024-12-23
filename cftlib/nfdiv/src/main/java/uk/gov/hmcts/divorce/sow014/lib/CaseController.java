@@ -69,14 +69,9 @@ public class CaseController {
                           security_classification,
                           version,
                           to_json(last_state_modified_date)#>>'{}' as last_state_modified_date,
-                          to_json(coalesce(last_event.created_date, c.created_date))#>>'{}' as last_modified,
+                          to_json(coalesce(c.last_modified, c.created_date))#>>'{}' as last_modified,
                           supplementary_data::text
                      from case_data c
-                             left join lateral (
-                              select created_date from case_event
-                              where case_reference = c.reference
-                              order by id desc limit 1
-                            ) last_event on true
                      where reference = ?
                         """, caseRef);
         result.put("case_data", caseRepository.getCase(caseRef, (ObjectNode) mapper.readTree((String) result.get("case_data"))));
