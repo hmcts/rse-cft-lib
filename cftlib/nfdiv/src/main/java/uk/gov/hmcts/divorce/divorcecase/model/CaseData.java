@@ -24,6 +24,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.*;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
+import uk.gov.hmcts.divorce.sow014.lib.External;
+import uk.gov.hmcts.divorce.sow014.lib.FilterExternalFieldsInspector;
 import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
 
 import java.time.Clock;
@@ -99,6 +101,11 @@ public class CaseData {
     @Builder.Default
     @CCD(access = {DefaultAccess.class})
     private Applicant applicant1 = new Applicant();
+
+    @External
+    private String interestedPartyForename;
+    @External
+    private String interestedPartyReason;
 
     @JsonUnwrapped(prefix = "applicant2")
     @Builder.Default
@@ -228,6 +235,7 @@ public class CaseData {
         typeParameterOverride = "CaseNote",
         access = {CaseworkerAndSuperUserAccess.class}
     )
+    @External
     private List<ListValue<CaseNote>> notes;
 
     @CCD(
@@ -236,6 +244,7 @@ public class CaseData {
         typeOverride = TextArea,
         access = {CaseworkerAndSuperUserAccess.class}
     )
+    @External
     private String note;
 
     @CCD(
@@ -245,15 +254,23 @@ public class CaseData {
     )
     private CaseLink bulkListCaseReferenceLink;
 
-    @CCD
+    @External
     private String markdownTabField;
-    @CCD
+    @External
     private YesOrNo leadCase;
-    @CCD
+    @External
     private String leadCaseMd;
-    @CCD
+    @External
     private String subCaseMd;
+    @External
+    private String pendingApplicationsMd;
+    @External
+    private String claimsMd;
+    @External
+    private String clientsMd;
 
+
+    @External
     private String adminMd;
 
     @CCD(access = {DefaultAccess.class})
@@ -261,14 +278,24 @@ public class CaseData {
     private RetiredFields retiredFields;
 
     @CCD(typeOverride = DynamicRadioList)
+    @External
     private MyRadioList caseSearchResults;
     @CCD(label = "Search by applicant name")
+    @External
     private String caseSearchTerm;
 
     @CCD(label = "Search by applicant name")
+    @External
     private String callbackJobId;
     @CCD(typeOverride = DynamicRadioList)
+    @External
     private MyRadioList callbackJobs;
+
+    @CCD(label = "Document to scrub")
+    private String documentToScrub;
+    @CCD(typeOverride = DynamicRadioList, label = "Choose the document to scrub")
+    @External
+    private MyRadioList scrubbableDocs;
 
 
     @CCD(access = {CaseworkerAccess.class})

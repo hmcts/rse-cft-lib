@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.cftlib;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class CftLibConfig implements CFTLibConfigurer {
 
     @Autowired
+    @Lazy
     CCDDefinitionGenerator configWriter;
 
     @Override
@@ -31,6 +33,7 @@ public class CftLibConfig implements CFTLibConfigurer {
             "DivCaseWorkerUser@AAT.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta"),
             "TEST_CASE_WORKER_USER@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta"),
             "TEST_SOLICITOR@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-solicitor"),
+            "TEST_SOLICITOR2@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-solicitor"),
             "TEST_JUDGE@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-judge"),
             "dummysystemupdate@test.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-systemupdate"),
             "role.assignment.admin@gmail.com", List.of("caseworker"),
@@ -64,11 +67,6 @@ public class CftLibConfig implements CFTLibConfigurer {
             "pui-organisation-manager",
             "pui-user-manager"
         );
-
-        ResourceLoader resourceLoader = new DefaultResourceLoader();
-        var json = IOUtils.toString(resourceLoader.getResource("classpath:cftlib-am-role-assignments.json")
-            .getInputStream(), Charset.defaultCharset());
-        lib.configureRoleAssignments(json);
 
         // Generate CCD definitions
         configWriter.generateAllCaseTypesToJSON(new File("build/definitions"));

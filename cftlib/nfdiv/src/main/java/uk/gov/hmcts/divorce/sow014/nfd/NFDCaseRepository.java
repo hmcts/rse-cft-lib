@@ -4,14 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.pebbletemplates.pebble.PebbleEngine;
 import io.pebbletemplates.pebble.template.PebbleTemplate;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import org.jooq.DSLContext;
+import org.jooq.nfdiv.civil.Civil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.sow014.lib.CaseRepository;
+import uk.gov.hmcts.divorce.sow014.possessions.PendingApplications;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -21,7 +26,9 @@ import java.util.Map;
 
 import static org.jooq.nfdiv.ccd.Ccd.CCD;
 import static org.jooq.nfdiv.ccd.Tables.FAILED_JOBS;
+import static org.jooq.nfdiv.civil.Civil.CIVIL;
 import static org.jooq.nfdiv.public_.Tables.*;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
 public class NFDCaseRepository implements CaseRepository {
@@ -34,6 +41,12 @@ public class NFDCaseRepository implements CaseRepository {
 
     @Autowired
     private PebbleEngine pebl;
+
+    @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @SneakyThrows
     @Override
@@ -54,7 +67,60 @@ public class NFDCaseRepository implements CaseRepository {
 
         addAdminPanel(caseRef, caseData);
 
+        addPendingApplications(caseRef, caseData);
+        addClaims(caseRef, caseData);
+        addSolicitorClaims(caseRef, caseData);
+
         return caseData;
+    }
+
+    @SneakyThrows
+    private void addSolicitorClaims(long caseRef, ObjectNode caseData) {
+        final User caseworkerUser = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
+
+        var clients = db.fetch(CIVIL.CLAIMS_BY_CLIENT,
+            CIVIL.CLAIMS_BY_CLIENT.REFERENCE.eq(caseRef),
+            CIVIL.CLAIMS_BY_CLIENT.SOLICITOR_ID.eq(caseworkerUser.getUserDetails().getUid())
+            );
+
+        PebbleTemplate compiledTemplate = pebl.getTemplate("yourClients");
+        Writer writer = new StringWriter();
+
+        Map<String, Object> context = new HashMap<>();
+        context.put("clients", clients);
+
+        compiledTemplate.evaluate(writer, context);
+        caseData.put("clientsMd", writer.toString());
+    }
+
+    @SneakyThrows
+    private void addClaims(long caseRef, ObjectNode caseData) {
+        var claims = db.fetch(CIVIL.JUDGE_CLAIMS, CIVIL.JUDGE_CLAIMS.REFERENCE.eq(caseRef));
+
+        PebbleTemplate compiledTemplate = pebl.getTemplate("claims");
+        Writer writer = new StringWriter();
+
+        Map<String, Object> context = new HashMap<>();
+        context.put("claims", claims);
+
+        compiledTemplate.evaluate(writer, context);
+        caseData.put("claimsMd", writer.toString());
+    }
+
+    @SneakyThrows
+    private void addPendingApplications(long caseRef, ObjectNode caseData) {
+        var applications = db.select()
+            .from(CIVIL.PENDING_APPLICATIONS);
+
+        PebbleTemplate compiledTemplate = pebl.getTemplate("pendingApplications");
+        Writer writer = new StringWriter();
+
+        Map<String, Object> context = new HashMap<>();
+        context.put("pendingApplications", applications);
+
+        compiledTemplate.evaluate(writer, context);
+        caseData.put("pendingApplicationsMd", writer.toString());
+
     }
 
     private void addAdminPanel(long caseRef, ObjectNode caseData) throws IOException {
@@ -119,7 +185,7 @@ public class NFDCaseRepository implements CaseRepository {
         return db.select()
            .from(CASE_NOTES)
            .where(CASE_NOTES.REFERENCE.eq(caseRef))
-           .orderBy(CASE_NOTES.DATE.desc())
+           .orderBy(CASE_NOTES.ID.desc())
            .fetchInto(CaseNote.class)
            .stream().map(n -> new ListValue<>(null, n))
            .toList();

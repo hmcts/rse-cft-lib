@@ -54,7 +54,6 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
     private Clock clock;
 
     @Autowired
-    @Lazy
     private DSLContext db;
 
     @Override
@@ -67,7 +66,7 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE,
-                CASE_WORKER)
+                CASE_WORKER, JUDGE)
             .grant(CREATE_READ_UPDATE_DELETE,
                 SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
@@ -93,8 +92,6 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
                 caseworkerUser.getUserDetails().getName(),
                 caseData.getNote())
             .execute();
-
-        caseData.setNote(null); //Clear note text area as notes value is stored in notes table
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
