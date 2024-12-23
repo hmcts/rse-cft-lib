@@ -59,7 +59,6 @@ public class ESIndexer {
                               cd.case_type_id,
                               cd.created_date,
                               ce.data,
-                              ce.data_classification,
                               jurisdiction,
                               cd.reference,
                               ce.created_date as last_modified,
@@ -92,9 +91,6 @@ public class ESIndexer {
                         filter(data, "SearchCriteria", "caseManagementLocation", "CaseAccessCategory",
                                 "caseNameHmctsInternal", "caseManagementCategory");
                         filter((Map<String, Object>) map.get("supplementary_data"), "HMCTSServiceId");
-                        filter((Map<String, Object>) map.get("data_classification"), "SearchCriteria",
-                                "CaseAccessCategory", "caseManagementLocation", "caseNameHmctsInternal",
-                                "caseManagementCategory");
                         map.remove("last_state_modified_date");
                         map.remove("last_modified");
                         map.remove("created_date");

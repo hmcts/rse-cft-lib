@@ -136,13 +136,12 @@ public class CaseController {
         var data = mapper.writeValueAsString(caseData);
         // Upsert the case - create if it doesn't exist, update if it does.
         var rowsAffected = db.update( """
-                insert into case_data (last_modified, jurisdiction, case_type_id, state, data, data_classification, reference, security_classification, version)
-                values (now(), ?, ?, ?, (?::jsonb), ?::jsonb, ?, ?::securityclassification, ?)
+                insert into case_data (last_modified, jurisdiction, case_type_id, state, data, reference, security_classification, version)
+                values (now(), ?, ?, ?, (?::jsonb), ?, ?::securityclassification, ?)
                 on conflict (reference)
                 do update set
                     state = excluded.state,
                     data = excluded.data,
-                    data_classification = excluded.data_classification,
                     security_classification = excluded.security_classification,
                     last_modified = now(),
                     version = case
@@ -155,7 +154,6 @@ public class CaseController {
             "NFD",
             state,
             data,
-            mapper.writeValueAsString(caseDetails.get("data_classification")),
             caseDetails.get("id"),
             caseDetails.get("security_classification"),
             version
@@ -211,7 +209,6 @@ public class CaseController {
                 """
                         insert into case_event (
                           data,
-                          data_classification,
                           event_id,
                           user_id,
                           case_reference,
@@ -225,11 +222,10 @@ public class CaseController {
                           summary,
                           description,
                           security_classification)
-                        values (?::jsonb,?::jsonb,?,?,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
+                        values (?::jsonb,?,?,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
                         returning id
                         """,
          mapper.writeValueAsString(currentView.get("case_data")),
-                mapper.writeValueAsString(currentView.get("data_classification")),
                 event.getEventId(),
                 "user-id",
                 currentView.get("id"),
