@@ -150,8 +150,8 @@ public class CaseController {
                                                end
                     WHERE case_data.version = EXCLUDED.version;
                     """,
-            "DIVORCE",
-            "NFD",
+            caseDetails.get("jurisdiction"),
+            caseDetails.get("case_type_id"),
             state,
             data,
             caseDetails.get("id"),
