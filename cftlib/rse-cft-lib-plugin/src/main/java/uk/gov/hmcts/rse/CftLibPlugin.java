@@ -242,6 +242,7 @@ public class CftLibPlugin implements Plugin<Project> {
         result.doFirst(x -> {
             writeManifests(project, configuration, mainClass, file, args);
         });
+        result.getOutputs().file(file);
         return result;
     }
 
