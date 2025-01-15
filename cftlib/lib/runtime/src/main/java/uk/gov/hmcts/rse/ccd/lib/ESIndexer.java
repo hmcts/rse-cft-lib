@@ -2,7 +2,6 @@ package uk.gov.hmcts.rse.ccd.lib;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -10,20 +9,15 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.postgresql.PGConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
-import java.sql.Statement;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 // Simple indexer replicating logstash functionality
 // but saving up to ~1GB of RAM.
-@Slf4j
 @Component
 public class ESIndexer {
 
@@ -46,28 +40,9 @@ public class ESIndexer {
                 new HttpHost("localhost", 9200)));
 
         try (Connection c = ControlPlane.getApi().getConnection(Database.nfd)) {
-            c.createStatement().execute("LISTEN es_queue");
             c.setAutoCommit(false);
-            PGConnection pgconn = c.unwrap(org.postgresql.PGConnection.class);
             while (true) {
-                pollForIndexing(c, client);
-                waitForNewRecords(pgconn);
-            }
-        }
-    }
-
-    @SneakyThrows
-    private void waitForNewRecords(PGConnection pgconn) {
-        while (true) {
-            var notifications = pgconn.getNotifications(10000);
-            if (notifications.length > 0) {
-                return;
-            }
-        }
-    }
-
-    @SneakyThrows
-    void pollForIndexing(Connection c, RestHighLevelClient client) {
+                Thread.sleep(250);
 
                 // Replicates the behaviour of the previous logstash configuration.
                 // https://github.com/hmcts/rse-cft-lib/blob/94aa0edeb0e1a4337a411ed8e6e20f170ed30bae/cftlib/lib/runtime/compose/logstash/logstash_conf.in#L3
@@ -135,6 +110,8 @@ public class ESIndexer {
                 }
                 c.commit();
             }
+        }
+    }
 
     public void filter(Map<String, Object> map, String... forKeys) {
         if (null != map) {
