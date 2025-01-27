@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import uk.gov.hmcts.divorce.client.RoleAssignmentServiceApi;
 import uk.gov.hmcts.divorce.document.DocAssemblyClient;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
@@ -46,7 +47,8 @@ import java.util.TimeZone;
         PbaRefDataClient.class,
         PaymentPbaClient.class,
         CaseEventsApi.class,
-        PaymentClient.class
+        PaymentClient.class,
+        RoleAssignmentServiceApi.class
     }
 )
 @EnableScheduling
