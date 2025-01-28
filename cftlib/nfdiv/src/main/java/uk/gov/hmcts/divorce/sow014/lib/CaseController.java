@@ -4,9 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+
 import java.util.Base64;
 import java.util.List;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class CaseController {
 
     private final TransactionTemplate transactionTemplate;
 
-    private final ObjectMapper mapper;
+    private final ObjectMapper objectMapper;
     private final IdamService idamService;
     private final RoleAssignmentService roleAssignmentService;
 
@@ -60,7 +61,7 @@ public class CaseController {
                           CallbackController runtime,
                           CallbackEnumerator callbackEnumerator,
                           CaseRepository caseRepository,
-                          ObjectMapper mapper,
+                          ObjectMapper getMapper,
                           IdamService idamService,
                           RoleAssignmentService roleAssignmentService) {
         this.db = db;
@@ -68,8 +69,7 @@ public class CaseController {
         this.runtime = runtime;
         this.callbackEnumerator = callbackEnumerator;
         this.caseRepository = caseRepository;
-        this.mapper = mapper.copy().setAnnotationIntrospector(new FilterExternalFieldsInspector())
-                .registerModule(new Jdk8Module());
+        this.objectMapper = getMapper;
         this.idamService = idamService;
         this.roleAssignmentService = roleAssignmentService;
     }
@@ -100,7 +100,7 @@ public class CaseController {
                      from case_data c
                      where reference = ?
                         """, caseRef);
-        result.put("case_data", caseRepository.getCase(caseRef, (ObjectNode) mapper.readTree((String) result.get("case_data"))));
+        result.put("case_data", caseRepository.getCase(caseRef, (ObjectNode) objectMapper.readTree((String) result.get("case_data"))));
         return result;
     }
 
@@ -112,11 +112,11 @@ public class CaseController {
         log.info("case Details: {}", event);
         String roleAssignments = headers.get("roleAssignments").get(0);
         log.info("roleAssignments size: {}", roleAssignments.getBytes().length);
+        log.info("RoleAssignments: {}", decodeHeader(roleAssignments));
         User user = idamService.retrieveUser(headers.get(RoleAssignmentServiceApi.AUTHORIZATION).get(0));
         log.info("username: {}", user.getUserDetails().getName());
         List<RoleAssignment> roles = roleAssignmentService.getRolesByUserId(user.getUserDetails().getUid());
         log.info("roles size: {}", roles.size());
-        log.info("RoleAssignments: {}", decodeHeader(roleAssignments));
 
         transactionTemplate.execute( status -> {
                 dispatchAboutToSubmit(event);
@@ -136,7 +136,7 @@ public class CaseController {
         String roleAssignments = new String(Base64.getDecoder().decode(roleAssignments2));
         log.info("roleAssignments: {}", roleAssignments);
 
-        RoleAssignments roleAssignments1 = mapper.readValue(roleAssignments, RoleAssignments.class);
+        RoleAssignments roleAssignments1 = objectMapper.readValue(roleAssignments, RoleAssignments.class);
         return roleAssignments1;
     }
 
@@ -155,21 +155,21 @@ public class CaseController {
             """,
             auditEventId,
             event.getEventDetails().getEventId(),
-            mapper.writeValueAsString(req),
-            mapper.writeValueAsString(headers.toSingleValueMap())
+            objectMapper.writeValueAsString(req),
+            objectMapper.writeValueAsString(headers.toSingleValueMap())
         );
     }
 
     @SneakyThrows
     private long saveCaseReturningAuditId(POCCaseEvent event, String roleAssignments) {
-        var caseData = mapper.readValue(mapper.writeValueAsString(event.getCaseDetails().get("case_data")), CaseData.class);
+        var caseData = objectMapper.readValue(objectMapper.writeValueAsString(event.getCaseDetails().get("case_data")), CaseData.class);
 
         var state = event.getEventDetails().getStateId() != null
             ? event.getEventDetails().getStateId()
             : event.getCaseDetails().get("state");
         var caseDetails = event.getCaseDetails();
         int version = (int) Optional.ofNullable(event.getCaseDetails().get("version")).orElse(1);
-        var data = mapper.writeValueAsString(caseData);
+        var data = objectMapper.writeValueAsString(caseData);
         log.info("Case data: {}", data);
         // Upsert the case - create if it doesn't exist, update if it does.
         var rowsAffected = db.update( """
@@ -218,7 +218,7 @@ public class CaseController {
                 .build();
             var cb = runtime.aboutToSubmit(req);
 
-            event.getCaseDetails().put("case_data", mapper.readValue(mapper.writeValueAsString(cb.getData()), Map.class));
+            event.getCaseDetails().put("case_data", objectMapper.readValue(objectMapper.writeValueAsString(cb.getData()), Map.class));
             if (cb.getState() != null) {
                 event.getEventDetails().setStateId(cb.getState().toString());
             }
@@ -268,7 +268,7 @@ public class CaseController {
                         values (?::jsonb,?,?,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
                         returning id
                         """,
-         mapper.writeValueAsString(currentView.get("case_data")),
+         objectMapper.writeValueAsString(currentView.get("case_data")),
                 event.getEventId(),
                 "user-id",
                 currentView.get("id"),
@@ -290,6 +290,6 @@ public class CaseController {
         if (data == null) {
             return null;
         }
-        return mapper.readValue(mapper.writeValueAsString(data), CaseDetails.class);
+        return objectMapper.readValue(objectMapper.writeValueAsString(data), CaseDetails.class);
     }
 }

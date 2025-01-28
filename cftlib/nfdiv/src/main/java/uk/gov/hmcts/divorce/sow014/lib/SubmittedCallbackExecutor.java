@@ -39,9 +39,9 @@ public class SubmittedCallbackExecutor {
 
 
     @Autowired
-    public SubmittedCallbackExecutor(DSLContext db, ObjectMapper mapper) {
+    public SubmittedCallbackExecutor(DSLContext db, ObjectMapper getMapper) {
         this.db = db;
-        this.mapper = mapper;
+        this.mapper = getMapper;
 
         var t = new Thread(this::process);
         t.setDaemon(true);

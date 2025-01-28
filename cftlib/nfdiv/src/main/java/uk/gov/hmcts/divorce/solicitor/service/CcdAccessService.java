@@ -90,9 +90,11 @@ public class CcdAccessService {
     public void linkRespondentToApplication(String caseworkerUserToken, Long caseId, String applicant2UserId) {
         User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
 
+        String generate = authTokenGenerator.generate();
+        log.info("Service Auth: {}", generate);
         caseAssignmentApi.addCaseUserRoles(
             caseworkerUser.getAuthToken(),
-            authTokenGenerator.generate(),
+            generate,
             getCaseAssignmentRequest(caseId, applicant2UserId, null, APPLICANT_2)
         );
 

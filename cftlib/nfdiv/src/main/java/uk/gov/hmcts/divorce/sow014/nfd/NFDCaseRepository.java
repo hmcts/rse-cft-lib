@@ -7,7 +7,6 @@ import io.pebbletemplates.pebble.template.PebbleTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import org.jooq.DSLContext;
-import org.jooq.nfdiv.civil.Civil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -16,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.sow014.lib.CaseRepository;
-import uk.gov.hmcts.divorce.sow014.possessions.PendingApplications;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -24,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jooq.nfdiv.ccd.Ccd.CCD;
 import static org.jooq.nfdiv.ccd.Tables.FAILED_JOBS;
 import static org.jooq.nfdiv.civil.Civil.CIVIL;
 import static org.jooq.nfdiv.public_.Tables.*;
@@ -37,7 +34,7 @@ public class NFDCaseRepository implements CaseRepository {
     private DSLContext db;
 
     @Autowired
-    private ObjectMapper mapper;
+    private ObjectMapper getMapper;
 
     @Autowired
     private PebbleEngine pebl;
@@ -59,7 +56,7 @@ public class NFDCaseRepository implements CaseRepository {
         }
 
         var notes = loadNotes(caseRef);
-        caseData.set("notes", mapper.valueToTree(notes));
+        caseData.set("notes", getMapper.valueToTree(notes));
 
         caseData.put("markdownTabField", renderExampleTab(caseRef, notes));
 
@@ -165,7 +162,7 @@ public class NFDCaseRepository implements CaseRepository {
 
         if (leadCase.isPresent()) {
             var derivedData = db.fetchOptional(DERIVED_CASES, DERIVED_CASES.SUB_CASE_ID.eq(caseRef));
-            caseData = mapper.readValue(derivedData.get().getData().data(), ObjectNode.class);
+            caseData = getMapper.readValue(derivedData.get().getData().data(), ObjectNode.class);
             caseData.put("leadCase", "No");
 
             PebbleTemplate compiledTemplate = pebl.getTemplate("leadcase");

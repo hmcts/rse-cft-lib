@@ -25,8 +25,8 @@ public class FeignConfiguration {
 
     private final ObjectMapper objectMapper;
 
-    public FeignConfiguration(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public FeignConfiguration(ObjectMapper getMapper) {
+        this.objectMapper = getMapper;
     }
 
     @Bean

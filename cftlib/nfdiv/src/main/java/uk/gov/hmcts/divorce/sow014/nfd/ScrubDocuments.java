@@ -1,8 +1,5 @@
 package uk.gov.hmcts.divorce.sow014.nfd;
 
-import static org.jooq.nfdiv.ccd.Tables.FAILED_JOBS;
-import static org.jooq.nfdiv.public_.Tables.MULTIPLES;
-import static org.jooq.nfdiv.public_.Tables.SUB_CASES;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -10,14 +7,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
-import org.jooq.nfdiv.public_.tables.records.SubCasesRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -36,8 +30,6 @@ import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
 import uk.gov.hmcts.divorce.sow014.lib.DynamicRadioListElement;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 
 @Component
 @Slf4j
@@ -49,7 +41,7 @@ public class ScrubDocuments implements CCDConfig<CaseData, State, UserRole> {
     private CCDApi ccdApi;
 
     @Autowired
-    private ObjectMapper mapper;
+    private ObjectMapper getMapper;
 
     @Autowired
     private HttpServletRequest request;
@@ -110,13 +102,13 @@ public class ScrubDocuments implements CCDConfig<CaseData, State, UserRole> {
         );
         final User user = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
         ccdApi.scrubHistory(details.getId(), user.getUserDetails().getUid(), event -> {
-            var h = mapper.readValue(event, CaseData.class);
+            var h = getMapper.readValue(event, CaseData.class);
             if (h.getDocuments().getDocumentsUploaded() != null) {
                 h.getDocuments().getDocumentsUploaded().removeIf(
                     d -> d.getId().equals(details.getData().getScrubbableDocs().getValue().getCode())
                 );
             }
-            return mapper.writeValueAsString(h);
+            return getMapper.writeValueAsString(h);
         });
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
