@@ -46,7 +46,8 @@ public class CftLibPlugin implements Plugin<Project> {
         createManifestTasks(project);
         createBootWithCCDTask(project);
         createTestTask(project);
-        surfaceSourcesToIDE(project);
+        // TODO: Fix for latest intellij
+        //surfaceSourcesToIDE(project);
         createCftlibJarTask(project);
     }
 
