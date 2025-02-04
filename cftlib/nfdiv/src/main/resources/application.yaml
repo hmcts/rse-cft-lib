@@ -4,6 +4,8 @@ server:
   http2:
     enabled: true
 
+pebble:
+  cache: false
 management:
   endpoint:
     health:
