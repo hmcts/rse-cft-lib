@@ -1,0 +1,96 @@
+{
+  "_guid_": "S-262_Org_Role_Creation",
+  "_extends_": "F-018_Test_Data_Base",
+  "specs": [
+    "to create org role assignments for actors & requester",
+    "Befta3 - who is the actor for requested role"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser4"
+    }
+  },
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "S-262_Org_Role_Creation"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+          "roleName": "case-allocator",
+          "roleCategory": "JUDICIAL",
+          "beginTime" : "2020-09-01T00:00:00Z",
+          "attributes":
+          {
+            "jurisdiction": "EMPLOYMENT",
+            "primaryLocation": "123456"
+          }
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][befta3][id]}",
+          "roleName": "judge",
+          "roleCategory": "JUDICIAL",
+          "beginTime" : "2020-09-01T00:00:00Z",
+          "attributes":
+          {
+            "jurisdiction": "EMPLOYMENT",
+            "primaryLocation": "123456",
+            "region": "11"
+          }
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+            "process": "[[ANYTHING_PRESENT]]",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD",
+            "roleCategory": "JUDICIAL",
+            "roleName": "case-allocator",
+            "attributes":
+            {
+              "jurisdiction": "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][jurisdiction]}",
+              "primaryLocation": "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][primaryLocation]}",
+              "substantive": "N"
+            }
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${[scenarioContext][testData][users][befta3][id]}",
+            "process": "[[ANYTHING_PRESENT]]",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD",
+            "roleCategory": "JUDICIAL",
+            "roleName": "judge",
+            "attributes":
+            {
+              "jurisdiction": "${[scenarioContext][testData][request][body][requestedRoles][1][attributes][jurisdiction]}",
+              "primaryLocation": "${[scenarioContext][testData][request][body][requestedRoles][1][attributes][primaryLocation]}",
+              "substantive": "Y",
+              "region": "${[scenarioContext][testData][request][body][requestedRoles][1][attributes][region]}"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

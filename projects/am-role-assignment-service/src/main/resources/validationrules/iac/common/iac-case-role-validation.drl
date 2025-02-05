@@ -1,0 +1,59 @@
+package validationrules.iac.common;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Assignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Classification
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.CaseAllocatorApproval;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.domain.model.FeatureFlag;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.FeatureFlagEnum;
+
+import java.time.ZonedDateTime;
+
+
+
+
+/*
+ * The case roles can be deleted if CaseAllocatorApproval entity is available for requested role assignment.
+ */
+rule "ia_staff_case_allocator_approved_delete_case_role_v11"
+when
+    $f : FeatureFlag(status && flagName == FeatureFlagEnum.IAC_1_1.getValue())
+    $ca: CaseAllocatorApproval(
+                roleAssignment.status == Status.DELETE_REQUESTED,
+                roleAssignment.attributes["jurisdiction"].asText() == "IA")
+then
+    $ca.getRoleAssignment().setStatus(Status.DELETE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : ia_staff_case_allocator_approved_delete_case_role_v11");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : ia_staff_case_allocator_approved_delete_case_role_v11");
+end;
+
+/*
+ */
+rule "ia_delete_creator_case_roles"
+when
+    $rq: Request(clientId == "iac")
+    $ra: RoleAssignment(
+             status == Status.DELETE_REQUESTED,
+             roleType == RoleType.CASE,
+             roleCategory == RoleCategory.CITIZEN,
+             roleName == "[CREATOR]",
+             attributes["caseType"].asText() == "Asylum",
+             attributes["jurisdiction"].asText() == "IA",
+             attributes["caseId"] != null)
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : ia_delete_creator_case_roles");
+
+    update($ra);
+    logMsg("Rule :: ia_delete_creator_case_roles");
+end;
+

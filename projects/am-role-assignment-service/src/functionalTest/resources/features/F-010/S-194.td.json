@@ -1,0 +1,30 @@
+{
+  "title": "must successfully receive the delete records count in headers",
+  "_guid_": "S-194",
+  "_extends_": "F-010_Test_Data_Base",
+  "specs": [
+    "contains list of single search query"
+  ],
+
+  "request": {
+    "body": {
+      "queryRequests": [
+        {
+          "hasAttributes": ["region"],
+          "roleCategory": ["LEGAL_OPERATIONS"],
+          "attributes": {
+            "primaryLocation": ["abc"],
+            "jurisdiction": ["IA"]
+          }
+        }
+      ]
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "headers": {
+      "Total-Records": "2"
+    }
+  }
+}

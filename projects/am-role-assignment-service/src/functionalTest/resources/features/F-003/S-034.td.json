@@ -1,0 +1,16 @@
+{
+  "title": "must receive a positive when trying to delete a Role Assignment twice",
+  "_guid_": "S-034",
+  "_extends_": "F-003_Test_Data_Base",
+  "specs": [
+    "contains the same Assignment Id created above"
+  ],
+  "request": {
+    "pathVariables": {
+      "assignmentId": "${[scenarioContext][childContexts][CreationDataForRoleAssignment][testData][actualResponse][body][roleAssignmentResponse][requestedRoles][0][id]}"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_204_Response"
+  }
+}

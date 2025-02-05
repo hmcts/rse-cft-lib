@@ -1,0 +1,54 @@
+{
+  "title": "must successfully create multiple Role Assignments when ReplaceExisting is True with Process and Reference",
+  "_guid_": "S-013",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "contains multiple Role Assignments",
+    "contains ReplaceExisting is true and have process and Reference values"
+  ],
+  "request": {
+    "body": {
+      "roleRequest": {
+        "reference": "${[scenarioContext][customValues][generateUUID]}",
+        "replaceExisting": true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "roleType": "ORGANISATION",
+          "grantType": "STANDARD",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "roleType": "${[scenarioContext][testData][request][body][requestedRoles][1][roleType]}",
+            "grantType": "${[scenarioContext][testData][request][body][requestedRoles][1][grantType]}"
+          }
+        ]
+      }
+    }
+  }
+}

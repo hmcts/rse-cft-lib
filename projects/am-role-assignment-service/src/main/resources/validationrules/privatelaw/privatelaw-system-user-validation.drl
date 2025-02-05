@@ -1,0 +1,86 @@
+package validationrules.privatelaw;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Classification
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+
+/*
+ * PRIVATELAW system user validation rules.
+ */
+
+rule "private_law_system_user_hearings_roles_create"
+when
+    $rq: Request(
+             clientId == "fis_hmc_api",
+             process == "private-law-system-users",
+             reference == "private-law-hearings-system-user",
+             replaceExisting == true)
+    $ra: RoleAssignment(
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             classification == Classification.PUBLIC,
+             roleName in ("hearing-manager","hearing-viewer"),
+             roleCategory == RoleCategory.SYSTEM,
+             grantType == GrantType.STANDARD,
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "PRIVATELAW")
+then
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Create approved : private_law_system_user_hearings_roles_create");
+    update($ra);
+    logMsg("Rule : private_law_system_user_hearings_roles_create");
+end;
+
+rule "private_law_system_user_hearings_roles_delete"
+when
+    $rq: Request(clientId == "fis_hmc_api")
+    $ra: RoleAssignment(
+             status == Status.DELETE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             roleCategory in (RoleCategory.SYSTEM),
+             roleName in ("hearing-manager","hearing-viewer"),
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "PRIVATELAW")
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : private_law_system_user_hearings_roles_delete");
+    update($ra);
+    logMsg("Rule :: private_law_system_user_hearings_roles_delete");
+end;
+
+rule "private_law_system_user_case_allocator_role_create"
+when
+    $rq: Request(
+             clientId == "prl_cos_api",
+             process == "private-law-system-users",
+             reference == "private-law-case-allocator-system-user",
+             replaceExisting == "true")
+    $ra: RoleAssignment(
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             roleName in ("case-allocator"),
+             roleCategory == RoleCategory.SYSTEM,
+             grantType == GrantType.STANDARD,
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "PRIVATELAW")
+then
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Create approved : private_law_system_user_case_allocator_role_create");
+    update($ra);
+    logMsg("Rule : private_law_system_user_case_allocator_role_create");
+end;
+
+rule "private_law_system_user_case_allocator_role_delete"
+when
+    $rq: Request(clientId == "prl_cos_api")
+    $ra: RoleAssignment(
+             status == Status.DELETE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             roleCategory in (RoleCategory.SYSTEM),
+             roleName in ("case-allocator"),
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "PRIVATELAW")
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : private_law_system_user_case_allocator_role_delete");
+    update($ra);
+end;

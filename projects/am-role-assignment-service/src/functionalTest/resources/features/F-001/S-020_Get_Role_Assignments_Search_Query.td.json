@@ -1,0 +1,40 @@
+{
+  "_guid_": "S-020_Get_Role_Assignments_Search_Query",
+  "productName": "Role Assignment Service",
+  "operationName": "Get Role Assignments By Query Request",
+  "method": "POST",
+  "uri": "/am/role-assignments/query",
+
+  "specs": [
+    "to get role assignments which created initially above"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser2"
+    }
+  },
+  "request": {
+    "headers": {
+      "Authorization": "[[DEFAULT_AUTO_VALUE]]",
+      "ServiceAuthorization": "[[DEFAULT_AUTO_VALUE]]",
+      "X-Correlation-ID": "003352d0-e699-48bc-b6f5-5810411e60af",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "actorId": ["${[scenarioContext][parentContext][childContexts][S-020_Multiple_Role_Creation][testData][request][body][requestedRoles][0][actorId]}"]
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse" : [
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][parentContext][childContexts][S-020_Multiple_Role_Creation][testData][request][body][requestedRoles][0][actorId]}"
+
+        }
+      ]
+    }
+  }
+}

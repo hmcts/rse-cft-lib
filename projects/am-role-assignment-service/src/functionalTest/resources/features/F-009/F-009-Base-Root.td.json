@@ -1,0 +1,21 @@
+{
+  "_guid_": "F-009-Base-Root",
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser2"
+    }
+  },
+  "request": {
+    "headers": {
+      "Authorization": "[[DEFAULT_AUTO_VALUE]]",
+      "ServiceAuthorization": "[[DEFAULT_AUTO_VALUE]]",
+      "Content-Type": "application/vnd.uk.gov.hmcts.role-assignment-service.post-assignment-query-request+json;charset=UTF-8;version=2.0"
+    }
+  },
+  "expectedResponse": {
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    }
+  }
+}

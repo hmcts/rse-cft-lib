@@ -1,0 +1,20 @@
+{
+  "_guid_": "S-059_CreationDataForRoleAssignment",
+  "_extends_": "CreationDataForRoleAssignment",
+  "request": {
+    "body": {
+      "roleRequest": {
+        "reference": "1234567890"
+      }
+    }
+  },
+  "expectedResponse": {
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+        }
+      }
+    }
+  }
+}

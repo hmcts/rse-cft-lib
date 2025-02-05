@@ -1,0 +1,32 @@
+{
+  "title": "must successfully receive Role Assignments without optional headers",
+  "_guid_": "S-186",
+  "_extends_": "F-009_Test_Data_Base",
+  "specs": [
+    "does not have size header",
+    "does not have sort header",
+    "does not have direction header"
+  ],
+
+  "request": {
+    "body": {
+      "queryRequests": [
+        {
+          "actorId": ["${[scenarioContext][childContexts][CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}"]
+        }
+      ]
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse" : [
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][body][queryRequests][0][actorId][0]}"
+        }
+      ]
+    }
+  }
+}

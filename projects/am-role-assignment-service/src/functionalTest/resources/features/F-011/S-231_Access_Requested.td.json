@@ -1,0 +1,92 @@
+{
+  "title": "must successfully create access-requested Case Role Assignment",
+  "_guid_": "S-231_Access_Requested",
+  "_extends_": "F-011_Test_Data_Base",
+  "specs": [
+    "to create role assignments for requested role"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser4"
+    }
+  },
+  "request": {
+    "headers": {
+      "ServiceAuthorization": "${[scenarioContext][customValues][generateS2STokenForXui]}"
+    },
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "1714647999147997/specific-access-judiciary/${[scenarioContext][testData][users][invokingUser][id]}",
+        "process" : "specific-access",
+        "replaceExisting" : true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "roleType" : "CASE",
+          "grantType" : "BASIC",
+          "classification" : "RESTRICTED",
+          "attributes": {
+            "caseId": "1714647999147997",
+            "requestedRole":"specific-access-judiciary"
+          },
+          "roleName": "specific-access-requested",
+          "roleCategory": "JUDICIAL",
+          "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+          "endTime" : "${[scenarioContext][customValues][tomorrow]}T00:00:00Z",
+          "readOnly": true,
+          "notes" : [{
+            "userId": "${[scenarioContext][testData][users][invokingUser][id]}",
+            "time": "2022-01-01T00:00Z",
+            "comment": "Need Access to case number 1714647999147997 for a month"
+          }]
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "process" : "specific-access",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "process" : "specific-access",
+            "actorId": "${[scenarioContext][testData][request][body][requestedRoles][0][actorId]}",
+            "roleName": "${[scenarioContext][testData][request][body][requestedRoles][0][roleName]}",
+            "roleCategory": "${[scenarioContext][testData][request][body][requestedRoles][0][roleCategory]}",
+            "roleType": "${[scenarioContext][testData][request][body][requestedRoles][0][roleType]}",
+            "grantType": "${[scenarioContext][testData][request][body][requestedRoles][0][grantType]}",
+            "classification" : "${[scenarioContext][testData][request][body][requestedRoles][0][classification]}",
+            "readOnly": true,
+            "attributes": {
+              "requestedRole":"specific-access-judiciary",
+              "caseId" : "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][caseId]}",
+              "jurisdiction" : "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][jurisdiction]}",
+              "caseType" : "Asylum",
+              "substantive" : "N"
+            },
+            "notes" : [{
+              "userId": "[[ANYTHING_PRESENT]]",
+              "time": "[[ANYTHING_PRESENT]]",
+              "comment": "[[ANYTHING_PRESENT]]"
+            }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
+

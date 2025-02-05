@@ -1,0 +1,33 @@
+{
+  "_guid_": "S-264_DeleteDataForRoleAssignmentsForOrgRoles",
+  "productName": "Role Assignment Service",
+  "operationName": "Delete Role Assignments by Process",
+  "method": "DELETE",
+  "uri": "/am/role-assignments?process={process}&reference={reference}",
+  "specs": [
+    "to delete role assignments just created above"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser4"
+    }
+  },
+  "request": {
+    "headers": {
+      "Authorization": "[[DEFAULT_AUTO_VALUE]]",
+      "ServiceAuthorization": "[[DEFAULT_AUTO_VALUE]]",
+      "X-Correlation-ID": "003352d0-e699-48bc-b6f5-5810411e60af"
+    },
+    "pathVariables": {
+      "process": "businessProcess1",
+      "reference": "${[scenarioContext][parentContext][childContexts][S-264_Org_Role_Creation][testData][request][body][roleRequest][reference]}"
+    }
+  },
+  "expectedResponse": {
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "_extends_": "Common_204_Response"
+  }
+}

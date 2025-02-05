@@ -1,0 +1,121 @@
+package validationrules.core;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Assignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Classification;
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.CaseAllocatorApproval;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.util.ValidationUtil;
+
+
+rule "case_allocator_approve_create_case_role"
+when
+    // Only allow requests where the assigner is also the authenticated user
+    $rq: Request(assignerId == authenticatedUserId)
+    // When the request is to create:
+    //   - a case role
+    //   - with SPECIFIC or EXCLUDED grant type
+    //   - with a case ID
+    $ra: RoleAssignment(
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.CASE,
+             grantType in (GrantType.SPECIFIC, GrantType.EXCLUDED),
+             attributes["caseId"] != null && $caseId : attributes["caseId"].asText())
+    // And there is a case with that ID
+    $c:  Case(id == $caseId)
+    // And the *assigner* has an existing role assignment
+    //   - with name case-allocator
+    //   - of any role type (not restricted to organisational roles)
+    //   - with a classification at least equal to the case's classification
+    //   - with a jurisdiction which matches the case jurisdiction
+    //   - with no case type or one which matches the case
+    //   - with no case ID or one which matches the case
+    //   - with no region or one which matches the case
+    //   - with no base location or one which matches the case
+    //   - with no allocated role category or one which matches the role being assigned
+    //   - with no allocated role or one which matches the role being assigned
+         ExistingRoleAssignment(
+             actorId == $rq.assignerId,
+             roleName == "case-allocator",
+             $c.securityClassification != null && classification.isAtLeast($c.securityClassification),
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == $c.jurisdiction,
+             attributes["caseType"] == null || attributes["caseType"].asText() == $c.caseTypeId,
+             attributes["caseId"] == null || attributes["caseId"].asText() == $c.id,
+             attributes["region"] == null || attributes["region"].asText() == $c.getRegion(),
+             attributes["baseLocation"] == null || attributes["baseLocation"].asText() == $c.getBaseLocation(),
+             attributes["allocatedRoleCategory"] == null ||
+             ValidationUtil.csvContains($ra.roleCategory.toString(), attributes["allocatedRoleCategory"].asText()),
+             attributes["allocatedRole"] == null ||
+             ValidationUtil.csvContains($ra.roleName, attributes["allocatedRole"].asText()))
+    //   - that CaseAllocatorApproval entity doesn't exist for the same assignment record, this is required  to avoid infinite loop.
+         not CaseAllocatorApproval(roleAssignment.id == $ra.id)
+then
+    $ra.setAttribute("jurisdiction", $c.getJurisdiction());
+    $ra.setAttribute("caseType", $c.getCaseTypeId());
+    insert(new CaseAllocatorApproval($ra));
+    $ra.log("Case Allocator approved : case_allocator_approve_create_case_role");
+    update($ra);
+    logMsg("Rule : case_allocator_approve_create_case_role");
+end;
+
+/*
+ * Common fix to delete case roles when a case is present - see DTSAM-330.
+ */
+rule "case_allocator_approve_delete_case_role_all_wa_services"
+when
+    $f : FeatureFlag(status && flagName == FeatureFlagEnum.ALL_WA_SERVICES_CASE_ALLOCATOR_1_0.getValue())
+    // Only allow requests where the assigner is also the authenticated user
+    $rq: Request(assignerId == authenticatedUserId)
+    // When the request is to delete:
+    //   - a case role
+    //   - with SPECIFIC or EXCLUDED grant type
+    //   - with a case ID
+    $ra: RoleAssignment(
+             status == Status.DELETE_REQUESTED,
+             roleType == RoleType.CASE,
+             grantType in (GrantType.SPECIFIC, GrantType.EXCLUDED),
+             attributes["caseId"] != null && $caseId : attributes["caseId"].asText())
+    // And there is a case with that ID
+    $c:  Case(id == $caseId)
+    // And the *assigner* has an existing role assignment
+    //   - with name case-allocator
+    //   - of any role type (not restricted to organisational roles)
+    //   - with a jurisdiction which matches the case jurisdiction
+    //   - with no case type or one which matches the case
+    //   - with no case ID or one which matches the case
+    //   - with no region or one which matches the case
+    //   - with no base location or one which matches the case
+    //   - with no allocated role category or one which matches the role being assigned
+    //   - with no allocated role or one which matches the role being assigned
+         ExistingRoleAssignment(
+             actorId == $rq.assignerId,
+             roleName == "case-allocator",
+             // matches $c:  Case properties
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == $c.jurisdiction,
+             attributes["caseType"] == null || attributes["caseType"].asText() == $c.caseTypeId,
+             attributes["caseId"] == null || attributes["caseId"].asText() == $c.id,
+             attributes["region"] == null || attributes["region"].asText() == $c.getRegion(),
+             attributes["baseLocation"] == null || attributes["baseLocation"].asText() == $c.getBaseLocation(),
+             // matches $ra: RoleAssignment attributes
+             attributes["jurisdiction"] == $ra.attributes["jurisdiction"],
+             attributes["caseType"] == null || attributes["caseType"] == $ra.attributes["caseType"],
+             attributes["caseId"] == null || attributes["caseId"] == $ra.attributes["caseId"],
+             attributes["allocatedRoleCategory"] == null ||
+             ValidationUtil.csvContains($ra.roleCategory.toString(), attributes["allocatedRoleCategory"].asText()),
+             attributes["allocatedRole"] == null ||
+             ValidationUtil.csvContains($ra.roleName, attributes["allocatedRole"].asText()))
+    //   - that CaseAllocatorApproval entity doesn't exist for the same assignment record, this is required to avoid infinite loop.
+         not CaseAllocatorApproval(roleAssignment.id == $ra.id)
+then
+    insert(new CaseAllocatorApproval($ra));
+    $ra.log("Case Allocator approved : case_allocator_approve_delete_case_role_all_wa_services");
+    update($ra);
+    logMsg("Rule : case_allocator_approve_delete_case_role_all_wa_services");
+end;

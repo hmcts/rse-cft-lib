@@ -1,0 +1,119 @@
+{
+
+  "_guid_": "S-106_Multiple_Org_Role_Creation",
+  "_extends_": "F-008_Test_Data_Base",
+  "specs": [
+    "to create org role assignments for actors & requester",
+    "Befta1 - who is the actor for requested role"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser6"
+    }
+  },
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "Org_Role_For_Multiple_Actors"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][befta1][id]}",
+          "roleName": "tribunal-caseworker",
+          "roleCategory": "LEGAL_OPERATIONS",
+          "beginTime" : "2020-09-01T00:00:00Z",
+          "attributes":
+          {
+            "jurisdiction": "IA",
+            "primaryLocation": "abc"
+          }
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+          "roleName": "tribunal-caseworker",
+          "roleCategory": "LEGAL_OPERATIONS",
+          "beginTime" : "2020-09-01T00:00:00Z",
+          "attributes":
+          {
+            "jurisdiction": "IA",
+            "primaryLocation": "abc"
+          }
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+          "roleName": "case-allocator",
+          "roleCategory": "LEGAL_OPERATIONS",
+          "beginTime" : "2020-09-01T00:00:00Z",
+          "attributes":
+          {
+            "jurisdiction": "IA",
+            "primaryLocation": "abc"
+          }
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "[[ANYTHING_PRESENT]]",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD",
+            "roleCategory": "LEGAL_OPERATIONS",
+            "roleName": "[[ANYTHING_PRESENT]]",
+            "attributes":
+            {
+              "jurisdiction": "IA",
+              "primaryLocation": "abc",
+              "substantive": "Y"
+            }
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "[[ANYTHING_PRESENT]]",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD",
+            "roleCategory": "LEGAL_OPERATIONS",
+            "roleName": "[[ANYTHING_PRESENT]]",
+            "attributes":
+            {
+              "jurisdiction": "IA",
+              "primaryLocation": "abc",
+              "substantive": "Y"
+            }
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "[[ANYTHING_PRESENT]]",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD",
+            "roleCategory": "LEGAL_OPERATIONS",
+            "roleName": "[[ANYTHING_PRESENT]]",
+            "attributes":
+            {
+              "jurisdiction": "IA",
+              "primaryLocation": "abc",
+              "substantive": "N"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

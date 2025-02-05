@@ -1,0 +1,19 @@
+{
+  "title": "must receive an error response for a non-existing ActorId",
+  "_guid_": "S-055",
+  "_extends_": "F-005_Test_Data_Base",
+  "specs": [
+    "contains an invalid Actor Id"
+  ],
+  "request": {
+    "pathVariables": {
+      "actorId": "123e4567-e89b-42d3-a456-5@@642446055"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "BadRequestResponse",
+    "body": {
+      "errorDescription": "The input parameter: \"${[scenarioContext][testData][request][pathVariables][actorId]}\", does not comply with the required pattern"
+    }
+  }
+}
