@@ -8,6 +8,7 @@ import org.jooq.DSLContext;
 import org.jooq.JSONB;
 import org.jooq.nfdiv.ccd.Ccd;
 import org.jooq.nfdiv.ccd.tables.records.SubmittedCallbackQueueRecord;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -32,10 +33,11 @@ import static org.jooq.impl.DSL.not;
 
 @Slf4j
 @Component
-public class SubmittedCallbackExecutor {
+public class SubmittedCallbackExecutor implements DisposableBean {
     private final DSLContext db;
 
     private final ObjectMapper mapper;
+    private volatile boolean finished;
 
 
     @Autowired
@@ -51,7 +53,7 @@ public class SubmittedCallbackExecutor {
 
     @SneakyThrows
     private void process() {
-        while (true) {
+        while (!finished) {
             try {
                 pollForSubmittedCallbacks();
             } catch (Exception e) {
@@ -128,5 +130,10 @@ public class SubmittedCallbackExecutor {
             HttpMethod.POST, requestEntity, CallbackResponse.class);
 
 
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        finished = true;
     }
 }

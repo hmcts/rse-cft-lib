@@ -155,7 +155,9 @@ public class CftLibPlugin implements Plugin<Project> {
             }
 
             var args = "--rse.lib.service_name=" + project.getName();
-            writeManifests(project, lib.getRuntimeClasspath(), clazz, file, args);
+            // Prepend the runtimeclasspath with the project's resources folder to allow live editing of resources
+            var files = project.files("src/main/resources").plus(lib.getRuntimeClasspath());
+            writeManifests(project, files, clazz, file, args);
         });
         manifest.classpath = lib.getRuntimeClasspath();
         // Task performing main class name resolution changed in spring boot 3
