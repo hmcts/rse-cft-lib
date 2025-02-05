@@ -7,6 +7,7 @@ pluginManagement {
 }
 
 includeBuild 'rse-cft-lib-plugin'
+includeBuild 'dtsse-ccd-config-generator'
 include 'ccd-data-store-api'
 include 'nfdiv'
 include 'nfdiv:flyway'
