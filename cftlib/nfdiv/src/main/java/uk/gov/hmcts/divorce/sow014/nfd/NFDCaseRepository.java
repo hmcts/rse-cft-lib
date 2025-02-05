@@ -1,11 +1,13 @@
 package uk.gov.hmcts.divorce.sow014.nfd;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.pebbletemplates.pebble.PebbleEngine;
 import io.pebbletemplates.pebble.template.PebbleTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,18 +17,25 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.sow014.lib.CaseRepository;
+import uk.gov.hmcts.divorce.sow014.lib.RoleAssignment;
+import uk.gov.hmcts.divorce.sow014.lib.RoleAssignmentAttributes;
+import uk.gov.hmcts.divorce.sow014.lib.RoleAssignments;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.management.ManagementFactory;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jooq.nfdiv.ccd.Tables.FAILED_JOBS;
 import static org.jooq.nfdiv.civil.Civil.CIVIL;
 import static org.jooq.nfdiv.public_.Tables.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
+@Slf4j
 @Component
 public class NFDCaseRepository implements CaseRepository {
 
@@ -47,7 +56,7 @@ public class NFDCaseRepository implements CaseRepository {
 
     @SneakyThrows
     @Override
-    public ObjectNode getCase(long caseRef, ObjectNode caseData) {
+    public ObjectNode getCase(long caseRef, ObjectNode caseData, String roleAssignments) {
         var isLeadCase = db.fetchOptional(MULTIPLES, MULTIPLES.LEAD_CASE_ID.eq(caseRef));
         if (isLeadCase.isPresent()) {
             addLeadCaseInfo(caseRef, caseData);
@@ -57,6 +66,17 @@ public class NFDCaseRepository implements CaseRepository {
 
         var notes = loadNotes(caseRef);
         caseData.set("notes", getMapper.valueToTree(notes));
+
+        var assignments = decodeHeader(roleAssignments, caseRef);
+        log.info("RoleAssignments: {}", assignments);
+
+        if (assignments.contains(APPLICANT_2.getRole())) {
+            caseData.put("applicantTwoNote", "applicantTwoNote");
+        }
+
+        if (assignments.contains(CREATOR.getRole())) {
+            caseData.put("caseWorkerNote", "caseWorkerNote");
+        }
 
         caseData.put("markdownTabField", renderExampleTab(caseRef, notes));
 
@@ -202,5 +222,23 @@ public class NFDCaseRepository implements CaseRepository {
         compiledTemplate.evaluate(writer, context);
 
         return writer.toString();
+    }
+
+    private Set<String> decodeHeader(String roleAssignmentsInput, long caseRef) throws JsonProcessingException {
+        String roleAssignments = new String(Base64.getDecoder().decode(roleAssignmentsInput));
+        log.info("roleAssignments: {}", roleAssignments);
+
+        RoleAssignments roleAssignments1 = getMapper.readValue(roleAssignments, RoleAssignments.class);
+
+        return roleAssignments1.getRoleAssignments().stream()
+            .filter(r -> isForCaseId(caseRef, r))
+            .map(RoleAssignment::getRoleName)
+            .collect(Collectors.toSet());
+    }
+
+    private static boolean isForCaseId(long caseRef, RoleAssignment r) {
+        RoleAssignmentAttributes attributes = r.getAttributes();
+        Optional<String> caseId = attributes.getCaseId();
+        return caseId.isPresent() && caseId.get().equals(Long.toString(caseRef));
     }
 }

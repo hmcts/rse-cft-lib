@@ -2,10 +2,13 @@ package uk.gov.hmcts.divorce.client.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
+
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import uk.gov.hmcts.divorce.sow014.lib.RoleAssignment;
 
+@Builder
 @EqualsAndHashCode
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)

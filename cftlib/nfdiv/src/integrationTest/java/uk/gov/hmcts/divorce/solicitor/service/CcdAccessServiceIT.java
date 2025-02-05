@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -95,7 +96,7 @@ public class CcdAccessServiceIT {
 
         assertThrows(
             FeignException.class,
-            () -> ccdAccessService.linkRespondentToApplication(CASEWORKER_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID)
+            () -> ccdAccessService.linkRespondentToApplication(CASEWORKER_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID, any())
         );
 
         verify(caseAssignmentApi, times(3))

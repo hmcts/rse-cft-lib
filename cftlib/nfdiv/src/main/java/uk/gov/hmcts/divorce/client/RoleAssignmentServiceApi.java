@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import uk.gov.hmcts.divorce.client.request.MultipleQueryRequest;
+import uk.gov.hmcts.divorce.client.request.RoleAssignmentRequest;
+import uk.gov.hmcts.divorce.client.request.RoleAssignmentRequestResponse;
 import uk.gov.hmcts.divorce.client.response.RoleAssignmentResource;
 
 @FeignClient(
@@ -48,9 +50,9 @@ public interface RoleAssignmentServiceApi {
             value = "/am/role-assignments",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    void createRoleAssignment(@RequestBody String body,
-                              @RequestHeader(AUTHORIZATION) String userToken,
-                              @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthToken);
+    RoleAssignmentRequestResponse createRoleAssignment(@RequestBody RoleAssignmentRequest body,
+                                                       @RequestHeader(AUTHORIZATION) String userToken,
+                                                       @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthToken);
 
     @PostMapping(
             value = "/am/role-assignments/query",

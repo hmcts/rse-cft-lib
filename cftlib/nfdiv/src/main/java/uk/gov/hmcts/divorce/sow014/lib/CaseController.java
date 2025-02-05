@@ -100,7 +100,9 @@ public class CaseController {
                      from case_data c
                      where reference = ?
                         """, caseRef);
-        result.put("case_data", caseRepository.getCase(caseRef, (ObjectNode) objectMapper.readTree((String) result.get("case_data"))));
+        result.put("case_data", caseRepository.getCase(caseRef,
+            (ObjectNode) objectMapper.readTree((String) result.get("case_data")),
+            roleAssignments));
         return result;
     }
 

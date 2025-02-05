@@ -70,6 +70,6 @@ public class SystemLinkApplicant2Test {
 
         assertThat(response.getData().getCaseInvite().accessCode()).isNull();
         assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YesOrNo.NO);
-        verify(ccdAccessService).linkRespondentToApplication(eq("auth header"), eq(TEST_CASE_ID), eq("Applicant2Id"));
+        verify(ccdAccessService).linkRespondentToApplication(eq("auth header"), eq(TEST_CASE_ID), eq("Applicant2Id"), details);
     }
 }
