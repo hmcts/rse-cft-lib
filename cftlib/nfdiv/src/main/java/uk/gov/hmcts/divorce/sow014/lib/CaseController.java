@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.sow014.lib;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,22 +29,24 @@ public class CaseController {
 
     private final TransactionTemplate transactionTemplate;
 
-    private final ObjectMapper mapper;
+    private final ObjectMapper defaultMapper;
+    private final ObjectMapper filteredMapper;
 
     private final CallbackController runtime;
 
     private final CallbackEnumerator callbackEnumerator;
 
-    private final CaseRepository caseRepository;
+    private final CaseRepository<CaseData> caseRepository;
 
     @Autowired
-    public CaseController(JdbcTemplate db, TransactionTemplate transactionTemplate, CallbackController runtime, CallbackEnumerator callbackEnumerator, CaseRepository caseRepository, ObjectMapper mapper) {
+    public CaseController(JdbcTemplate db, TransactionTemplate transactionTemplate, CallbackController runtime, CallbackEnumerator callbackEnumerator, CaseRepository<CaseData> caseRepository, ObjectMapper mapper) {
         this.db = db;
         this.transactionTemplate = transactionTemplate;
         this.runtime = runtime;
         this.callbackEnumerator = callbackEnumerator;
         this.caseRepository = caseRepository;
-        this.mapper = mapper.copy().setAnnotationIntrospector(new FilterExternalFieldsInspector());
+        this.defaultMapper = mapper;
+        this.filteredMapper = mapper.copy().setAnnotationIntrospector(new FilterExternalFieldsInspector());
     }
 
     @GetMapping(
@@ -73,7 +74,8 @@ public class CaseController {
                      from case_data c
                      where reference = ?
                         """, caseRef);
-        result.put("case_data", caseRepository.getCase(caseRef, (ObjectNode) mapper.readTree((String) result.get("case_data"))));
+        var data = defaultMapper.readValue((String) result.get("case_data"), CaseData.class);
+        result.put("case_data", caseRepository.getCase(caseRef, data));
         return result;
     }
 
@@ -113,21 +115,21 @@ public class CaseController {
             """,
             auditEventId,
             event.getEventDetails().getEventId(),
-            mapper.writeValueAsString(req),
-            mapper.writeValueAsString(headers.toSingleValueMap())
+            defaultMapper.writeValueAsString(req),
+            defaultMapper.writeValueAsString(headers.toSingleValueMap())
         );
     }
 
     @SneakyThrows
     private long saveCaseReturningAuditId(POCCaseEvent event) {
-        var caseData = mapper.readValue(mapper.writeValueAsString(event.getCaseDetails().get("case_data")), CaseData.class);
+        var caseData = defaultMapper.readValue(defaultMapper.writeValueAsString(event.getCaseDetails().get("case_data")), CaseData.class);
 
         var state = event.getEventDetails().getStateId() != null
             ? event.getEventDetails().getStateId()
             : event.getCaseDetails().get("state");
         var caseDetails = event.getCaseDetails();
         int version = (int) Optional.ofNullable(event.getCaseDetails().get("version")).orElse(1);
-        var data = mapper.writeValueAsString(caseData);
+        var data = filteredMapper.writeValueAsString(caseData);
         // Upsert the case - create if it doesn't exist, update if it does.
         var rowsAffected = db.update( """
                 insert into case_data (last_modified, jurisdiction, case_type_id, state, data, reference, security_classification, version)
@@ -175,7 +177,7 @@ public class CaseController {
                 .build();
             var cb = runtime.aboutToSubmit(req);
 
-            event.getCaseDetails().put("case_data", mapper.readValue(mapper.writeValueAsString(cb.getData()), Map.class));
+            event.getCaseDetails().put("case_data", defaultMapper.readValue(defaultMapper.writeValueAsString(cb.getData()), Map.class));
             if (cb.getState() != null) {
                 event.getEventDetails().setStateId(cb.getState().toString());
             }
@@ -225,7 +227,7 @@ public class CaseController {
                         values (?::jsonb,?,?,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
                         returning id
                         """,
-         mapper.writeValueAsString(currentView.get("case_data")),
+         defaultMapper.writeValueAsString(currentView.get("case_data")),
                 event.getEventId(),
                 "user-id",
                 currentView.get("id"),
@@ -247,6 +249,6 @@ public class CaseController {
         if (data == null) {
             return null;
         }
-        return mapper.readValue(mapper.writeValueAsString(data), CaseDetails.class);
+        return defaultMapper.readValue(defaultMapper.writeValueAsString(data), CaseDetails.class);
     }
 }

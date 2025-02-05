@@ -2,15 +2,18 @@ package uk.gov.hmcts.divorce.sow014.nfd;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.cucumber.java.an.Y;
 import io.pebbletemplates.pebble.PebbleEngine;
 import io.pebbletemplates.pebble.template.PebbleTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
+import org.jooq.Case;
 import org.jooq.DSLContext;
 import org.jooq.nfdiv.civil.Civil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -31,7 +34,7 @@ import static org.jooq.nfdiv.public_.Tables.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
-public class NFDCaseRepository implements CaseRepository {
+public class NFDCaseRepository implements CaseRepository<CaseData> {
 
     @Autowired
     private DSLContext db;
@@ -50,7 +53,7 @@ public class NFDCaseRepository implements CaseRepository {
 
     @SneakyThrows
     @Override
-    public ObjectNode getCase(long caseRef, ObjectNode caseData) {
+    public CaseData getCase(long caseRef, CaseData caseData) {
         var isLeadCase = db.fetchOptional(MULTIPLES, MULTIPLES.LEAD_CASE_ID.eq(caseRef));
         if (isLeadCase.isPresent()) {
             addLeadCaseInfo(caseRef, caseData);
@@ -58,12 +61,11 @@ public class NFDCaseRepository implements CaseRepository {
             caseData = addSubCaseInfo(caseRef, caseData);
         }
 
-        var notes = loadNotes(caseRef);
-        caseData.set("notes", mapper.valueToTree(notes));
+        caseData.setNotes(loadNotes(caseRef));
 
-        caseData.put("markdownTabField", renderExampleTab(caseRef, notes));
+        caseData.setMarkdownTabField(renderExampleTab(caseRef, caseData.getNotes()));
 
-        caseData.put("hyphenatedCaseRef", CaseData.formatCaseRef(caseRef));
+        caseData.setHyphenatedCaseRef(CaseData.formatCaseRef(caseRef));
 
         addAdminPanel(caseRef, caseData);
 
@@ -75,7 +77,7 @@ public class NFDCaseRepository implements CaseRepository {
     }
 
     @SneakyThrows
-    private void addSolicitorClaims(long caseRef, ObjectNode caseData) {
+    private void addSolicitorClaims(long caseRef, CaseData caseData) {
         final User caseworkerUser = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
 
         var clients = db.fetch(CIVIL.CLAIMS_BY_CLIENT,
@@ -90,11 +92,11 @@ public class NFDCaseRepository implements CaseRepository {
         context.put("clients", clients);
 
         compiledTemplate.evaluate(writer, context);
-        caseData.put("clientsMd", writer.toString());
+        caseData.setClientsMd(writer.toString());
     }
 
     @SneakyThrows
-    private void addClaims(long caseRef, ObjectNode caseData) {
+    private void addClaims(long caseRef, CaseData caseData) {
         var claims = db.fetch(CIVIL.JUDGE_CLAIMS, CIVIL.JUDGE_CLAIMS.REFERENCE.eq(caseRef));
 
         PebbleTemplate compiledTemplate = pebl.getTemplate("claims");
@@ -104,11 +106,11 @@ public class NFDCaseRepository implements CaseRepository {
         context.put("claims", claims);
 
         compiledTemplate.evaluate(writer, context);
-        caseData.put("claimsMd", writer.toString());
+        caseData.setClaimsMd(writer.toString());
     }
 
     @SneakyThrows
-    private void addPendingApplications(long caseRef, ObjectNode caseData) {
+    private void addPendingApplications(long caseRef, CaseData caseData) {
         var applications = db.select()
             .from(CIVIL.PENDING_APPLICATIONS);
 
@@ -119,11 +121,11 @@ public class NFDCaseRepository implements CaseRepository {
         context.put("pendingApplications", applications);
 
         compiledTemplate.evaluate(writer, context);
-        caseData.put("pendingApplicationsMd", writer.toString());
+        caseData.setPendingApplicationsMd(writer.toString());
 
     }
 
-    private void addAdminPanel(long caseRef, ObjectNode caseData) throws IOException {
+    private void addAdminPanel(long caseRef, CaseData caseData) throws IOException {
         PebbleTemplate compiledTemplate = pebl.getTemplate("admin");
         Writer writer = new StringWriter();
 
@@ -133,10 +135,10 @@ public class NFDCaseRepository implements CaseRepository {
         context.put("caseRef", caseRef);
 
         compiledTemplate.evaluate(writer, context);
-        caseData.put("adminMd", writer.toString());
+        caseData.setAdminMd(writer.toString());
     }
 
-    private void addLeadCaseInfo(long caseRef, ObjectNode caseData) throws IOException {
+    private void addLeadCaseInfo(long caseRef, CaseData caseData) throws IOException {
         // Fetch first 50
         var total = db.fetchCount(SUB_CASES, SUB_CASES.LEAD_CASE_ID.eq(caseRef));
         var subCases = db.selectFrom(SUB_CASES)
@@ -144,7 +146,7 @@ public class NFDCaseRepository implements CaseRepository {
                 .limit(50)
                 .fetch();
         if (subCases.isNotEmpty()) {
-            caseData.put("leadCase", "Yes");
+            caseData.setLeadCase(YesOrNo.YES);
 
             PebbleTemplate compiledTemplate = pebl.getTemplate("subcases");
             Writer writer = new StringWriter();
@@ -154,19 +156,19 @@ public class NFDCaseRepository implements CaseRepository {
             context.put("total", total);
 
             compiledTemplate.evaluate(writer, context);
-            caseData.put("leadCaseMd", writer.toString());
+            caseData.setLeadCaseMd(writer.toString());
         } else {
-            caseData.put("leadCase", "No");
+            caseData.setLeadCase(YesOrNo.NO);
         }
     }
 
-    private ObjectNode addSubCaseInfo(long caseRef, ObjectNode caseData) throws IOException {
+    private CaseData addSubCaseInfo(long caseRef, CaseData caseData) throws IOException {
         var leadCase = db.fetchOptional(SUB_CASES, SUB_CASES.SUB_CASE_ID.eq(caseRef));
 
         if (leadCase.isPresent()) {
             var derivedData = db.fetchOptional(DERIVED_CASES, DERIVED_CASES.SUB_CASE_ID.eq(caseRef));
-            caseData = mapper.readValue(derivedData.get().getData().data(), ObjectNode.class);
-            caseData.put("leadCase", "No");
+            caseData = mapper.readValue(derivedData.get().getData().data(), CaseData.class);
+            caseData.setLeadCase(YesOrNo.NO);
 
             PebbleTemplate compiledTemplate = pebl.getTemplate("leadcase");
             Writer writer = new StringWriter();
@@ -175,7 +177,7 @@ public class NFDCaseRepository implements CaseRepository {
             context.put("leadCase", leadCase.get());
 
             compiledTemplate.evaluate(writer, context);
-            caseData.put("subCaseMd", writer.toString());
+            caseData.setSubCaseMd(writer.toString());
         }
         return caseData;
     }
