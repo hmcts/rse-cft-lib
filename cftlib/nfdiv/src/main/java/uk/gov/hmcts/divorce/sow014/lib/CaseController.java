@@ -3,14 +3,13 @@ package uk.gov.hmcts.divorce.sow014.lib;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import java.util.Base64;
 import java.util.List;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +44,8 @@ public class CaseController {
 
     private final TransactionTemplate transactionTemplate;
 
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper defaultMapper;
+    private final ObjectMapper filteredMapper;
     private final IdamService idamService;
     private final RoleAssignmentService roleAssignmentService;
 
@@ -53,25 +53,28 @@ public class CaseController {
 
     private final CallbackEnumerator callbackEnumerator;
 
-    private final CaseRepository caseRepository;
+    private final CaseRepository<CaseData> caseRepository;
+    private final ObjectMapper getMapper;
 
     @Autowired
     public CaseController(JdbcTemplate db,
                           TransactionTemplate transactionTemplate,
                           CallbackController runtime,
                           CallbackEnumerator callbackEnumerator,
-                          CaseRepository caseRepository,
-                          ObjectMapper getMapper,
+                          CaseRepository<CaseData> caseRepository,
+                          ObjectMapper mapper,
                           IdamService idamService,
-                          RoleAssignmentService roleAssignmentService) {
+                          RoleAssignmentService roleAssignmentService, @Qualifier("getMapper") ObjectMapper getMapper) {
         this.db = db;
         this.transactionTemplate = transactionTemplate;
         this.runtime = runtime;
         this.callbackEnumerator = callbackEnumerator;
         this.caseRepository = caseRepository;
-        this.objectMapper = getMapper.copy().setAnnotationIntrospector(new FilterExternalFieldsInspector());
+        this.defaultMapper = mapper;
+        this.filteredMapper = mapper.copy().setAnnotationIntrospector(new FilterExternalFieldsInspector());
         this.idamService = idamService;
         this.roleAssignmentService = roleAssignmentService;
+        this.getMapper = getMapper;
     }
 
     @GetMapping(
@@ -100,9 +103,8 @@ public class CaseController {
                      from case_data c
                      where reference = ?
                         """, caseRef);
-        result.put("case_data", caseRepository.getCase(caseRef,
-            (ObjectNode) objectMapper.readTree((String) result.get("case_data")),
-            roleAssignments));
+        var data = defaultMapper.readValue((String) result.get("case_data"), CaseData.class);
+        result.put("case_data", caseRepository.getCase(caseRef, data, roleAssignments));
         return result;
     }
 
@@ -138,7 +140,7 @@ public class CaseController {
         String roleAssignments = new String(Base64.getDecoder().decode(roleAssignments2));
         log.info("roleAssignments: {}", roleAssignments);
 
-        RoleAssignments roleAssignments1 = objectMapper.readValue(roleAssignments, RoleAssignments.class);
+        RoleAssignments roleAssignments1 = getMapper.readValue(roleAssignments, RoleAssignments.class);
         return roleAssignments1;
     }
 
@@ -157,22 +159,21 @@ public class CaseController {
             """,
             auditEventId,
             event.getEventDetails().getEventId(),
-            objectMapper.writeValueAsString(req),
-            objectMapper.writeValueAsString(headers.toSingleValueMap())
+            defaultMapper.writeValueAsString(req),
+            defaultMapper.writeValueAsString(headers.toSingleValueMap())
         );
     }
 
     @SneakyThrows
     private long saveCaseReturningAuditId(POCCaseEvent event, String roleAssignments) {
-        var caseData = objectMapper.readValue(objectMapper.writeValueAsString(event.getCaseDetails().get("case_data")), CaseData.class);
+        var caseData = defaultMapper.readValue(defaultMapper.writeValueAsString(event.getCaseDetails().get("case_data")), CaseData.class);
 
         var state = event.getEventDetails().getStateId() != null
             ? event.getEventDetails().getStateId()
             : event.getCaseDetails().get("state");
         var caseDetails = event.getCaseDetails();
         int version = (int) Optional.ofNullable(event.getCaseDetails().get("version")).orElse(1);
-        var data = objectMapper.writeValueAsString(caseData);
-        log.info("Case data: {}", data);
+        var data = filteredMapper.writeValueAsString(caseData);
         // Upsert the case - create if it doesn't exist, update if it does.
         var rowsAffected = db.update( """
                 insert into case_data (last_modified, jurisdiction, case_type_id, state, data, reference, security_classification, version)
@@ -220,7 +221,7 @@ public class CaseController {
                 .build();
             var cb = runtime.aboutToSubmit(req);
 
-            event.getCaseDetails().put("case_data", objectMapper.readValue(objectMapper.writeValueAsString(cb.getData()), Map.class));
+            event.getCaseDetails().put("case_data", defaultMapper.readValue(defaultMapper.writeValueAsString(cb.getData()), Map.class));
             if (cb.getState() != null) {
                 event.getEventDetails().setStateId(cb.getState().toString());
             }
@@ -270,7 +271,7 @@ public class CaseController {
                         values (?::jsonb,?,?,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
                         returning id
                         """,
-         objectMapper.writeValueAsString(currentView.get("case_data")),
+         defaultMapper.writeValueAsString(currentView.get("case_data")),
                 event.getEventId(),
                 "user-id",
                 currentView.get("id"),
@@ -292,6 +293,6 @@ public class CaseController {
         if (data == null) {
             return null;
         }
-        return objectMapper.readValue(objectMapper.writeValueAsString(data), CaseDetails.class);
+        return defaultMapper.readValue(defaultMapper.writeValueAsString(data), CaseDetails.class);
     }
 }

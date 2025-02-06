@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.sow014.lib;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+public interface CaseRepository<CaseType> {
 
-public interface CaseRepository {
+    CaseType getCase(long caseRef, CaseType data, String roleAssignments);
 
-    ObjectNode getCase(long caseRef, ObjectNode data, String roleAssignments);
+
 }

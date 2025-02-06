@@ -5,6 +5,8 @@ server:
     enabled: true
   max-http-request-header-size: 100KB
 
+pebble:
+  cache: false
 management:
   endpoint:
     health:
