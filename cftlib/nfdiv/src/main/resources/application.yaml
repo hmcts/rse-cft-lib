@@ -616,12 +616,3 @@ SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
 role-assignment-service:
   url: http://localhost:4096
   maxResults: 20
-
-logging:
-  level:
-       uk:
-         gov:
-           hmcts:
-              INFO
-
-

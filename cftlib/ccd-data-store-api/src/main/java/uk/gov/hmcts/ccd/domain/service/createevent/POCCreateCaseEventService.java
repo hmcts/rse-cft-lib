@@ -77,7 +77,6 @@ public class POCCreateCaseEventService {
             return pocApiClient.createEvent(pocCaseEvent,
                 ClientContextUtil.encodeToBase64(objectMapperService.convertObjectToString(roleAssignments)));
         } catch (FeignException.Conflict conflict) {
-            log.error("exception occurred while saving audit event", conflict);
             throw new CaseConcurrencyException("""
                     Unfortunately we were unable to save your work to the case as \
                     another action happened at the same time.

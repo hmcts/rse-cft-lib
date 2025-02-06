@@ -69,7 +69,7 @@ public class CaseController {
         this.runtime = runtime;
         this.callbackEnumerator = callbackEnumerator;
         this.caseRepository = caseRepository;
-        this.objectMapper = getMapper.copy().setAnnotationIntrospector(new FilterExternalFieldsInspector());;
+        this.objectMapper = getMapper;
         this.idamService = idamService;
         this.roleAssignmentService = roleAssignmentService;
     }
@@ -164,7 +164,6 @@ public class CaseController {
 
     @SneakyThrows
     private long saveCaseReturningAuditId(POCCaseEvent event, String roleAssignments) {
-        log.info("event data: {}", event.getCaseDetails().get("data"));
         var caseData = objectMapper.readValue(objectMapper.writeValueAsString(event.getCaseDetails().get("case_data")), CaseData.class);
 
         var state = event.getEventDetails().getStateId() != null
