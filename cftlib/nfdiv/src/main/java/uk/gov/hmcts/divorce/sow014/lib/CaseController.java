@@ -69,7 +69,7 @@ public class CaseController {
         this.runtime = runtime;
         this.callbackEnumerator = callbackEnumerator;
         this.caseRepository = caseRepository;
-        this.objectMapper = getMapper;
+        this.objectMapper = getMapper.copy().setAnnotationIntrospector(new FilterExternalFieldsInspector());
         this.idamService = idamService;
         this.roleAssignmentService = roleAssignmentService;
     }
