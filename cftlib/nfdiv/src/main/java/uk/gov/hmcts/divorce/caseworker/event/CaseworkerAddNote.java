@@ -84,15 +84,20 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
         var caseData = details.getData();
         final User caseworkerUser = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
 
-        // Insert the note into the case notes table
-        db.insertInto(CASE_NOTES, CASE_NOTES.REFERENCE, CASE_NOTES.DATE, CASE_NOTES.AUTHOR, CASE_NOTES.NOTE)
-            .values(
-                details.getId(),
-                LocalDate.now(clock),
-                caseworkerUser.getUserDetails().getName(),
-                caseData.getNote())
-            .execute();
+        try {
 
+            // Insert the note into the case notes table
+            db.insertInto(CASE_NOTES, CASE_NOTES.REFERENCE, CASE_NOTES.DATE, CASE_NOTES.AUTHOR, CASE_NOTES.NOTE)
+                .values(
+                    details.getId(),
+                    LocalDate.now(clock),
+                    caseworkerUser.getUserDetails().getName(),
+                    caseData.getNote())
+                .execute();
+        } catch (RuntimeException e) {
+            log.error("Error while adding note", e);
+            throw new RuntimeException(e);
+        }
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
