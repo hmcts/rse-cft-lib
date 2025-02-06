@@ -165,7 +165,7 @@ public class QueryEndpoint {
         caseType = "#caseTypeId", caseId = "T(uk.gov.hmcts.ccd.endpoint.ui.QueryEndpoint).buildCaseIds(#result)")
     public SearchResultView searchNew(@PathVariable("jid") final String jurisdictionId,
                                       @PathVariable("ctid") final String caseTypeId,
-                                      @RequestParam java.util.Map<String, String> params) {
+                                      @RequestParam Map<String, String> params) {
         String validCaseTypeId = validateCaseTypeId(caseTypeId);
         validateDates(Arrays.asList(params.get(CREATED_DATE.getParameterName()),
             params.get(LAST_MODIFIED_DATE.getParameterName()),

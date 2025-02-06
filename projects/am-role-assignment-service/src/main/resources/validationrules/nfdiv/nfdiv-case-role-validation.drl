@@ -1,0 +1,105 @@
+package validationrules.ccd;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Assignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.domain.model.FeatureFlag;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.FeatureFlagEnum;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleConfig;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleConfigPattern;
+
+/*
+ * NFDIV case roles can be created by client request originated from ccd service.
+ */
+
+rule "nfdiv_create_case_roles"
+when
+    $rq: Request(clientId in ("nfdiv_case_api", "aac_manage_case_assignment"))
+    $ra: RoleAssignment(
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.CASE,
+             roleCategory in (RoleCategory.PROFESSIONAL, RoleCategory.CITIZEN, RoleCategory.LEGAL_OPERATIONS  ),
+             attributes["jurisdiction"] != null,
+             attributes["caseType"] != null,
+             attributes["caseId"] != null)
+then
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Stage 1 approved : nfdiv_create_case_roles");
+    update($ra);
+    logMsg("Rule : nfdiv_create_case_roles");
+end;
+
+
+/*
+ * NFDIV case roles can be deleted by client request originated from ccd service.
+ */
+
+rule "nfdiv_delete_case_roles"
+when
+    $rq: Request(clientId in ("nfdiv_case_api", "aac_manage_case_assignment", "ccd_case_disposer"))
+    $ra: RoleAssignment(
+             status == Status.DELETE_REQUESTED,
+             roleType == RoleType.CASE,
+             roleCategory in (RoleCategory.PROFESSIONAL, RoleCategory.CITIZEN),
+             attributes["jurisdiction"] != null,
+             attributes["caseType"] != null,
+             attributes["caseId"] != null)
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : nfdiv_delete_case_roles");
+    update($ra);
+    logMsg("Rule : nfdiv_delete_case_roles");
+end;
+
+
+/*
+ * NFDIV case roles can be created by client request originated from ccd service.
+ */
+
+rule "nfdiv_create_case_roles_creator"
+when
+    $rq: Request(clientId in ("nfdiv_case_api", "aac_manage_case_assignment"))
+    $ra: RoleAssignment(
+             roleName in ("[CREATOR]", "[APPLICANTTWO]"),
+             roleCategory in (RoleCategory.JUDICIAL, RoleCategory.LEGAL_OPERATIONS, RoleCategory.ADMIN),
+             roleType == RoleType.CASE,
+             status == Status.CREATE_REQUESTED,
+             attributes["jurisdiction"] != null,
+             attributes["caseType"] != null,
+             attributes["caseId"] != null)
+then
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Stage 1 approved : nfdiv_create_case_roles_creator");
+    update($ra);
+    logMsg("Rule : nfdiv_create_case_roles_creator");
+end;
+
+
+/*
+ * NFDIV case roles can be deleted by client request originated from ccd service.
+ */
+
+rule "nfdiv_delete_case_roles_creator"
+when
+    $rq: Request(clientId in ("nfdiv_case_api", "aac_manage_case_assignment", "ccd_case_disposer"))
+    $ra: RoleAssignment(
+             roleName == "[CREATOR]",
+             roleCategory in (RoleCategory.JUDICIAL, RoleCategory.LEGAL_OPERATIONS, RoleCategory.ADMIN),
+             status == Status.DELETE_REQUESTED,
+             roleType == RoleType.CASE,
+             attributes["jurisdiction"] != null,
+             attributes["caseType"] != null,
+             attributes["caseId"] != null)
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : nfdiv_delete_case_roles_creator");
+    update($ra);
+    logMsg("Rule : nfdiv_delete_case_roles_creator");
+end;

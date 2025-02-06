@@ -1,0 +1,23 @@
+{
+  "title": "must successfully delete Role Assignment with Assigner Id Header",
+  "_guid_": "S-029",
+  "_extends_": "F-002_Test_Data_Base",
+  "operationName": "Delete Role Assignments by Process",
+  "specs": [
+    "contains a valid Assigner Id header",
+    "contains Process and Reference associated with single Role Assignment"
+  ],
+  "uri": "/am/role-assignments?process={process}&reference={reference}",
+  "request": {
+    "headers": {
+      "assignerId": "123e4567-e89b-42d3-a456-556642446029"
+    },
+    "pathVariables": {
+      "process": "businessProcess1",
+      "reference": "${[scenarioContext][childContexts][CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_204_Response"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "title": "must successfully delete single Query Request",
+  "_guid_": "S-191",
+  "_extends_": "F-010_Test_Data_Base",
+  "specs": [
+    "contains list of single search query",
+    "contains Correlation Id"
+  ],
+
+  "request": {
+    "headers": {
+      "x-correlation-id": "3007fff8-b78e-41b4-8ceb-03034d9c74ab"
+    },
+    "body": {
+      "queryRequests": [
+        {
+          "hasAttributes": ["region"],
+          "roleCategory": ["LEGAL_OPERATIONS"],
+          "attributes": {
+            "primaryLocation": ["S191abc"],
+            "jurisdiction": ["IA"]
+          }
+        }
+      ]
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_200_Response"
+  }
+}

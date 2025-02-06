@@ -1,0 +1,32 @@
+{
+  "_guid_": "ResponseRequestedRoleWithoutSubstantive",
+  "id" : "[[ANYTHING_PRESENT]]",
+  "actorIdType" : "IDAM",
+  "actorId": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}",
+  "roleType": "ORGANISATION",
+  "roleName" : "judge",
+  "classification" : "PUBLIC",
+  "grantType": "STANDARD",
+  "roleCategory":"JUDICIAL",
+  "readOnly" : false,
+  "beginTime" : "[[ANYTHING_PRESENT]]",
+  "endTime" : "[[ANYTHING_PRESENT]]",
+  "process": "businessProcess1",
+  "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}",
+  "status":"LIVE",
+  "created":"[[ANYTHING_PRESENT]]",
+  "log":"[[ANYTHING_PRESENT]]",
+  "attributes" : {
+    "jurisdiction" : "IA",
+    "contractType": "Salaried"
+  },
+  "notes" : [ {
+    "userId" : "003352d0-e699-48bc-b6f5-5810411e60ag",
+    "time" : "2020-01-01T00:00Z",
+    "comment" : "Need Access to case number 1234567890123456 for a month"
+  }, {
+    "userId" : "52aa3810-af1f-11ea-b3de-0242ac130004",
+    "time" : "2020-01-02T00:00Z",
+    "comment" : "Access granted for 6 months"
+  } ]
+}

@@ -1,0 +1,69 @@
+{
+  "_guid_": "S-213_Org_Role_Creation",
+  "_extends_": "F-012_Test_Data_Base",
+  "specs": [
+    "to create org role assignments for actors & requester",
+    "Befta1 - who is the actor for requested role"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser6"
+    }
+  },
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "S_213_Org_Role_For_Multiple_Actors",
+        "process": "challenged-access",
+        "replaceExisting" : true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+          "roleName": "senior-tribunal-caseworker",
+          "roleCategory": "LEGAL_OPERATIONS",
+          "beginTime" : "2022-01-01T00:00:00Z",
+          "attributes":
+          {
+            "primaryLocation": "445777"
+          }
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "replaceExisting": "${[scenarioContext][testData][request][body][roleRequest][replaceExisting]}",
+          "process": "challenged-access"
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "process": "challenged-access",
+            "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD",
+            "roleCategory": "${[scenarioContext][testData][request][body][requestedRoles][0][roleCategory]}",
+            "roleName": "${[scenarioContext][testData][request][body][requestedRoles][0][roleName]}",
+            "attributes":
+            {
+              "primaryLocation": "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][primaryLocation]}",
+              "jurisdiction": "IA",
+              "substantive" : "Y"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "title": "must receive a negative 'Not Modified' response If-None-Match Header having Latest Etag version",
+  "_guid_": "S-058",
+  "_extends_": "F-005_Test_Data_Base",
+  "specs": [
+    "contains If-None-Match header with latest Etag version",
+    "contains an Actor Id having only single Role Assignment"
+  ],
+  "request": {
+    "headers": {
+      "If-None-Match": "${[scenarioContext][childContexts][S-058_GetDataForRoleAssignment][testData][actualResponse][headers][ETag]}"
+    },
+    "pathVariables": {
+      "actorId": "${[scenarioContext][childContexts][CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}"
+    }
+  },
+  "expectedResponse": {
+    "responseCode": 304,
+    "responseMessage": "Not Modified"
+  }
+}

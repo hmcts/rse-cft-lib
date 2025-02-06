@@ -1,0 +1,51 @@
+package validationrules.wa;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Assignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.domain.model.FeatureFlag;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.FeatureFlagEnum;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleConfig;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleConfigPattern;
+
+/*
+ * Test jurisdiction bypass for work allocation.
+ */
+
+rule "approve_wa_test_jurisdiction_create"
+when
+     $f:  FeatureFlag(status && flagName == FeatureFlagEnum.WA_BYPASS_1_0.getValue())
+     $rq: Request(clientId in ("wa_workflow_api", "wa_task_management_api", "wa_task_monitor", "wa_case_event_handler"))
+     $ra: RoleAssignment(
+         status in (Status.CREATE_REQUESTED, Status.CREATE_APPROVED),
+         attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() in ("WA"))
+then
+    $ra.setStatus(Status.APPROVED);
+    $ra.log("Approved : approve_wa_test_jurisdiction_create: " + $ra.getAttributes().get("jurisdiction")
+                                                                                .asText() + "/" + $ra.getRoleName());
+    update($ra);
+    logMsg("Rule : approve_wa_test_jurisdiction_create");
+end;
+
+
+rule "approve_wa_test_jurisdiction_delete"
+when
+     $f:  FeatureFlag(status && flagName == FeatureFlagEnum.WA_BYPASS_1_0.getValue())
+     $rq: Request(clientId in ("wa_workflow_api", "wa_task_management_api", "wa_task_monitor", "wa_case_event_handler"))
+     $ra: RoleAssignment(
+         status == Status.DELETE_REQUESTED,
+         attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() in ("WA"))
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : approve_wa_test_jurisdiction_delete: " + $ra.getAttributes().get("jurisdiction")
+                                                                                .asText() + "/" + $ra.getRoleName());
+    update($ra);
+    logMsg("Rule : approve_wa_test_jurisdiction_delete");
+end;

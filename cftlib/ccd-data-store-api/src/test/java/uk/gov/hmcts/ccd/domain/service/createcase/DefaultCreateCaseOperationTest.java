@@ -29,6 +29,7 @@ import uk.gov.hmcts.ccd.domain.model.std.SupplementaryData;
 import uk.gov.hmcts.ccd.domain.model.std.SupplementaryDataUpdateRequest;
 import uk.gov.hmcts.ccd.domain.model.std.validator.SupplementaryDataUpdateRequestValidator;
 import uk.gov.hmcts.ccd.domain.service.callbacks.EventTokenService;
+import uk.gov.hmcts.ccd.domain.service.casedeletion.TimeToLiveService;
 import uk.gov.hmcts.ccd.domain.service.caselinking.CaseLinkService;
 import uk.gov.hmcts.ccd.domain.service.common.CaseDataService;
 import uk.gov.hmcts.ccd.domain.service.common.CasePostStateService;
@@ -119,6 +120,8 @@ class DefaultCreateCaseOperationTest {
 
     @Mock
     private CaseLinkService caseLinkService;
+    @Mock
+    private TimeToLiveService timeToLiveService;
 
     private DefaultCreateCaseOperation defaultCreateCaseOperation;
 
@@ -158,7 +161,8 @@ class DefaultCreateCaseOperationTest {
                                                                     globalSearchProcessorService,
                                                                     supplementaryDataUpdateOperation,
                                                                     supplementaryDataValidator,
-                                                                    caseLinkService);
+                                                                    caseLinkService,
+                                                                    timeToLiveService);
         data = buildJsonNodeData();
         given(userRepository.getUser()).willReturn(IDAM_USER);
         given(userRepository.getUserId()).willReturn(UID);

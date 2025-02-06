@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %thread %X{correlationId} [%-5level] %class{0} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Befta Test settings -->
+  <logger name="io.restassured" level="ERROR"/>
+  <logger name="org.apache" level="ERROR"/>
+  <logger name="httpclient" level="ERROR"/>
+  <logger name="uk.gov.hmcts" level="DEBUG"/>
+
+  <root level="info">
+    <appender-ref ref="STDOUT"/>
+  </root>
+</configuration>

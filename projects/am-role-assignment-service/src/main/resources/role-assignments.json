@@ -1,0 +1,52 @@
+[
+	{
+		"actorIdType": "IDAM_USER_ID",
+		"actorId": "judge1",
+		"roleType": "ORGANISATIONAL_ROLE",
+		"roleName": "judge",
+		"classification": "PRIVATE",
+		"grantType": "STANDARD",
+		"readOnly": false,
+		"begin": "2020-01-01T00:00Z",
+		"end": "2050-01-01T00:00Z",
+		"attributes":
+			{
+				"jurisdiction": "divorce",
+				"region": "north-east",
+				"location": "gateshead",
+				"contractType": "SALARIED"
+			}
+	},
+	{
+		"actorIdType": "IDAM_USER_ID",
+		"actorId": "judge2",
+		"roleType": "ORGANISATIONAL_ROLE",
+		"roleName": "judge",
+		"classification": "PRIVATE",
+		"grantType": "STANDARD",
+		"readOnly": false,
+		"begin": "2020-01-01T00:00Z",
+		"end": "2050-01-01T00:00Z",
+		"attributes":
+			{
+				"jurisdiction": "probate",
+				"region": "north-east",
+				"contractType": "SALARIED"
+			}
+	},
+	{
+		"actorIdType": "IDAM_USER_ID",
+		"actorId": "admin1",
+		"roleType": "ORGANISATIONAL_ROLE",
+		"roleName": "case-access-admin",
+		"classification": "PUBLIC",
+		"grantType": "STANDARD",
+		"readOnly": false,
+		"begin": "2020-01-01T00:00Z",
+		"end": "2050-01-01T00:00Z",
+		"attributes":
+			{
+				"organisationId": "organisation1"
+			}
+	}
+]

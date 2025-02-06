@@ -1,0 +1,54 @@
+{
+  "_guid_": "S-018_Multiple_Role_Creation",
+  "_extends_": "CreationDataBaseForRoleAssignment",
+
+  "request": {
+    "body": {
+      "roleRequest": {
+        "reference": "${[scenarioContext][customValues][generateUUID]}",
+        "replaceExisting": true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "123e4567-e89b-42d3-a456-000000000011"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "123e4567-e89b-42d3-a456-000000000012"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "123e4567-e89b-42d3-a456-000000000013"
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "123e4567-e89b-42d3-a456-000000000011",
+            "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "123e4567-e89b-42d3-a456-000000000012",
+            "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "123e4567-e89b-42d3-a456-000000000013",
+            "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          }
+        ]
+      }
+    }
+  }
+}

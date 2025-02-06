@@ -1,19 +1,16 @@
 package uk.gov.hmcts.ccd.domain.service.getcase;
 
-import java.util.Optional;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.ccd.ApplicationParams;
-import uk.gov.hmcts.ccd.clients.PocApiClient;
 import uk.gov.hmcts.ccd.data.casedetails.CachedCaseDetailsRepository;
 import uk.gov.hmcts.ccd.data.casedetails.CaseDetailsRepository;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseDetails;
 import uk.gov.hmcts.ccd.domain.service.common.UIDService;
 import uk.gov.hmcts.ccd.endpoint.exceptions.BadRequestException;
 
-@Slf4j
+import java.util.Optional;
+
 @Service
 @Qualifier("default")
 public class DefaultGetCaseOperation implements GetCaseOperation {
@@ -21,9 +18,9 @@ public class DefaultGetCaseOperation implements GetCaseOperation {
     private final UIDService uidService;
 
     @Autowired
-    public DefaultGetCaseOperation(
-            @Qualifier(CachedCaseDetailsRepository.QUALIFIER) final CaseDetailsRepository caseDetailsRepository,
-            final UIDService uidService) {
+    public DefaultGetCaseOperation(@Qualifier(CachedCaseDetailsRepository.QUALIFIER)
+                                       final CaseDetailsRepository caseDetailsRepository,
+                                   final UIDService uidService) {
         this.caseDetailsRepository = caseDetailsRepository;
         this.uidService = uidService;
     }
@@ -44,6 +41,7 @@ public class DefaultGetCaseOperation implements GetCaseOperation {
         if (!uidService.validateUID(caseReference)) {
             throw new BadRequestException("Case reference is not valid");
         }
+
         return Optional.ofNullable(caseDetailsRepository.findByReference(Long.valueOf(caseReference)));
     }
 }

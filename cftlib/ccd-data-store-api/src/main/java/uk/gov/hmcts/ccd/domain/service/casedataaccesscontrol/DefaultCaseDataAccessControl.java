@@ -81,8 +81,7 @@ public class DefaultCaseDataAccessControl implements NoCacheCaseDataAccessContro
                                             CaseDetailsRepository caseDetailsRepository,
                                         UserAuthorisation userAuthorisation,
                                         @Qualifier(CachedCaseUserRepository.QUALIFIER)
-                                            CaseUserRepository caseUserRepository
-                                        ) {
+                                            CaseUserRepository caseUserRepository) {
         this.roleAssignmentService = roleAssignmentService;
         this.securityUtils = securityUtils;
         this.roleAssignmentsFilteringService = roleAssignmentsFilteringService;

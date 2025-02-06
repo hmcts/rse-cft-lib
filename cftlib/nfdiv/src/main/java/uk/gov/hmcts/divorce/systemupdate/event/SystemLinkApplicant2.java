@@ -59,7 +59,8 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
         ccdAccessService.linkRespondentToApplication(
             httpServletRequest.getHeader(AUTHORIZATION),
             details.getId(),
-            data.getCaseInvite().applicant2UserId()
+            data.getCaseInvite().applicant2UserId(),
+            details
         );
 
         data.setCaseInvite(data.getCaseInvite().useAccessCode());

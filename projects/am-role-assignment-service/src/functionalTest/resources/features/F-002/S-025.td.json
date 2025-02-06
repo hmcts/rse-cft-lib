@@ -1,0 +1,19 @@
+{
+  "title": "must successfully delete single Role Assignment by Process",
+  "_guid_": "S-025",
+  "_extends_": "F-002_Test_Data_Base",
+  "operationName": "Delete Role Assignments by Process",
+  "specs": [
+    "contains Process and Reference associated with single Role Assignment"
+  ],
+  "uri": "/am/role-assignments?process={process}&reference={reference}",
+  "request": {
+    "pathVariables": {
+      "process": "businessProcess1",
+      "reference": "${[scenarioContext][childContexts][CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_204_Response"
+  }
+}

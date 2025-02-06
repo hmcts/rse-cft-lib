@@ -36,10 +36,13 @@ public class CftlibExec extends JavaExec {
             environment("IDAM_S2S-AUTH_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
             // Required by CDAM
             environment("S2S_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
+            environment("IDAM_S2S_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
 
             // Idam simulator
             environment("IDAM_API_URL", "${IDAM_SIMULATOR_BASE_URL:http://localhost:5062}");
+            environment("IDAM_USER_URL", "${IDAM_SIMULATOR_BASE_URL:http://localhost:5062}");
 
+            environment("ROLE_ASSIGNMENT_S2S_AUTHORISED_SERVICES", "ccd_gw,am_role_assignment_service,am_org_role_mapping_service,am_role_assignment_refresh_batch,xui_webapp,aac_manage_case_assignment,ccd_data,wa_workflow_api,wa_task_management_api,wa_task_monitor,wa_case_event_handler,iac,hmc_cft_hearing_service,ccd_case_disposer,sscs,fis_hmc_api,fpl_case_service,disposer-idam-user,civil_service,prl_cos_api,nfdiv_case_api");
             environment("CASE_DOCUMENT_AM_URL", "http://localhost:4455");
 
             environment("OIDC_ISSUER", "${IDAM_API_URL}");

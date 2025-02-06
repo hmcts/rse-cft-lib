@@ -1,0 +1,55 @@
+{
+  "title": "must successfully store multiple Authorisations in new DB column Authorisations",
+  "_guid_": "S-092",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "contains multiple Role Assignments with more than two authorisations"
+  ],
+  "request": {
+    "body": {
+      "roleRequest": {
+        "reference": "${[scenarioContext][customValues][generateUUID]}"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "authorisations" : ["CCD","ExUI","SSIC", "RefData"]
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "roleType": "ORGANISATION",
+          "grantType": "STANDARD",
+          "authorisations" : ["IAC","Divorce","DocumentStore","Video Hearings"]
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest"
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "authorisations" : ["CCD","ExUI","SSIC", "RefData"]
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD",
+            "authorisations" : ["IAC","Divorce","DocumentStore","Video Hearings"]
+          }
+        ]
+      }
+    }
+  }
+}

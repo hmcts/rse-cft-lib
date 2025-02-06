@@ -1,19 +1,34 @@
 package uk.gov.hmcts.divorce.sow014.lib;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Base64;
+import java.util.List;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.ccd.sdk.runtime.CallbackController;
+import uk.gov.hmcts.divorce.client.RoleAssignmentService;
+import uk.gov.hmcts.divorce.client.RoleAssignmentServiceApi;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
@@ -31,15 +46,25 @@ public class CaseController {
 
     private final ObjectMapper defaultMapper;
     private final ObjectMapper filteredMapper;
+    private final IdamService idamService;
+    private final RoleAssignmentService roleAssignmentService;
 
     private final CallbackController runtime;
 
     private final CallbackEnumerator callbackEnumerator;
 
     private final CaseRepository<CaseData> caseRepository;
+    private final ObjectMapper getMapper;
 
     @Autowired
-    public CaseController(JdbcTemplate db, TransactionTemplate transactionTemplate, CallbackController runtime, CallbackEnumerator callbackEnumerator, CaseRepository<CaseData> caseRepository, ObjectMapper mapper) {
+    public CaseController(JdbcTemplate db,
+                          TransactionTemplate transactionTemplate,
+                          CallbackController runtime,
+                          CallbackEnumerator callbackEnumerator,
+                          CaseRepository<CaseData> caseRepository,
+                          ObjectMapper mapper,
+                          IdamService idamService,
+                          RoleAssignmentService roleAssignmentService, @Qualifier("getMapper") ObjectMapper getMapper) {
         this.db = db;
         this.transactionTemplate = transactionTemplate;
         this.runtime = runtime;
@@ -47,6 +72,9 @@ public class CaseController {
         this.caseRepository = caseRepository;
         this.defaultMapper = mapper;
         this.filteredMapper = mapper.copy().setAnnotationIntrospector(new FilterExternalFieldsInspector());
+        this.idamService = idamService;
+        this.roleAssignmentService = roleAssignmentService;
+        this.getMapper = getMapper;
     }
 
     @GetMapping(
@@ -54,7 +82,8 @@ public class CaseController {
             produces = "application/json"
     )
     @SneakyThrows
-    public Map<String, Object> getCase(@PathVariable("caseRef") long caseRef) {
+    public Map<String, Object> getCase(@PathVariable("caseRef") long caseRef, @RequestHeader("roleAssignments") String roleAssignments) {
+        log.info("RoleAssignments: {}", decodeHeader(roleAssignments));
         var result = db.queryForMap(
                 """
                     select
@@ -75,7 +104,7 @@ public class CaseController {
                      where reference = ?
                         """, caseRef);
         var data = defaultMapper.readValue((String) result.get("case_data"), CaseData.class);
-        result.put("case_data", caseRepository.getCase(caseRef, data));
+        result.put("case_data", caseRepository.getCase(caseRef, data, roleAssignments));
         return result;
     }
 
@@ -85,19 +114,34 @@ public class CaseController {
         @RequestBody POCCaseEvent event,
         @RequestHeader HttpHeaders headers) {
         log.info("case Details: {}", event);
+        String roleAssignments = headers.get("roleAssignments").get(0);
+        log.info("roleAssignments size: {}", roleAssignments.getBytes().length);
+        log.info("RoleAssignments: {}", decodeHeader(roleAssignments));
+        User user = idamService.retrieveUser(headers.get(RoleAssignmentServiceApi.AUTHORIZATION).get(0));
+        log.info("username: {}", user.getUserDetails().getName());
+        List<RoleAssignment> roles = roleAssignmentService.getRolesByUserId(user.getUserDetails().getUid());
+        log.info("roles size: {}", roles.size());
 
         transactionTemplate.execute( status -> {
                 dispatchAboutToSubmit(event);
-                var id = saveCaseReturningAuditId(event);
+                var id = saveCaseReturningAuditId(event, roleAssignments);
                 if (callbackEnumerator.hasSubmittedCallbackForEvent(event.getEventDetails().getEventId())) {
                     enqueueSubmittedCallback(id, event, headers);
                 }
                 return status;
         });
 
-        var response = getCase((Long) event.getCaseDetails().get("id"));
+        var response = getCase((Long) event.getCaseDetails().get("id"), roleAssignments);
         log.info("case response: {}", response);
         return ResponseEntity.ok(response);
+    }
+
+    private RoleAssignments decodeHeader(String roleAssignments2) throws JsonProcessingException {
+        String roleAssignments = new String(Base64.getDecoder().decode(roleAssignments2));
+        log.info("roleAssignments: {}", roleAssignments);
+
+        RoleAssignments roleAssignments1 = getMapper.readValue(roleAssignments, RoleAssignments.class);
+        return roleAssignments1;
     }
 
     @SneakyThrows
@@ -121,7 +165,7 @@ public class CaseController {
     }
 
     @SneakyThrows
-    private long saveCaseReturningAuditId(POCCaseEvent event) {
+    private long saveCaseReturningAuditId(POCCaseEvent event, String roleAssignments) {
         var caseData = defaultMapper.readValue(defaultMapper.writeValueAsString(event.getCaseDetails().get("case_data")), CaseData.class);
 
         var state = event.getEventDetails().getStateId() != null
@@ -164,7 +208,7 @@ public class CaseController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Case was updated concurrently");
         }
 
-        return saveAuditRecord(event, 1);
+        return saveAuditRecord(event, 1, roleAssignments);
     }
 
     @SneakyThrows
@@ -189,7 +233,7 @@ public class CaseController {
             value = "/cases/{caseRef}/history",
             produces = "application/json"
     )
-    public String loadHistory(@PathVariable("caseRef") long caseRef) {
+    public String loadHistory(@PathVariable("caseRef") long caseRef, @RequestHeader("roleAssignments") String roleAssignments) {
         return db.queryForObject(
                 """
                          select jsonb_agg(to_jsonb(e) - 'case_reference' - 'event_id'
@@ -204,9 +248,9 @@ public class CaseController {
     }
 
     @SneakyThrows
-    private long saveAuditRecord(POCCaseEvent details, int version) {
+    private long saveAuditRecord(POCCaseEvent details, int version, String roleAssignments) {
         var event = details.getEventDetails();
-        var currentView = getCase((Long) details.getCaseDetails().get("id"));
+        var currentView = getCase((Long) details.getCaseDetails().get("id"), roleAssignments);
         var result = db.queryForMap(
                 """
                         insert into case_event (

@@ -1,0 +1,27 @@
+{
+  "title": "must receive a positive response when trying to delete Role Assignments twice",
+  "_guid_": "S-193",
+  "_extends_": "F-010_Test_Data_Base",
+  "specs": [
+    "contains list of single search query"
+  ],
+
+  "request": {
+    "body": {
+      "queryRequests": [
+        {
+          "hasAttributes": ["region"],
+          "roleCategory": ["LEGAL_OPERATIONS"],
+          "attributes": {
+            "primaryLocation": ["S193ABC"],
+            "jurisdiction": ["IA"]
+          }
+        }
+      ]
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_200_Response"
+  }
+}

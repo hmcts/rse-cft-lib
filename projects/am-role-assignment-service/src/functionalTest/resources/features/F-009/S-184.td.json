@@ -1,0 +1,41 @@
+{
+  "title": "must successfully receive multiple Role Assignments with specific page number",
+  "_guid_": "S-184",
+  "_extends_": "F-009_Test_Data_Base",
+  "specs": [
+    "contains multiple Role Assignments with specific page number"
+  ],
+
+  "request": {
+    "headers": {
+      "size": 5,
+      "pageNumber": 1
+    },
+    "body": {
+      "queryRequests":[
+        {
+        "actorId": ["${[scenarioContext][childContexts][S-183_CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}"]
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse" : [
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][body][queryRequests][0][actorId][0]}"
+        },
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][body][queryRequests][0][actorId][0]}"
+        },
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][body][queryRequests][0][actorId][0]}"
+        }
+      ]
+    }
+  }
+}

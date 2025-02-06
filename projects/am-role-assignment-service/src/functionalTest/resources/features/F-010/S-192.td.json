@@ -1,0 +1,28 @@
+{
+  "title": "must successfully delete role assignments without correlation Id",
+  "_guid_": "S-192",
+  "_extends_": "F-010_Test_Data_Base",
+  "specs": [
+    "contains list of single search query",
+    "does not contain Correlation Id"
+  ],
+
+  "request": {
+    "body": {
+      "queryRequests": [
+        {
+          "hasAttributes": ["region"],
+          "roleCategory": ["LEGAL_OPERATIONS"],
+          "attributes": {
+            "primaryLocation": ["S192ABC"],
+            "jurisdiction": ["IA"]
+          }
+        }
+      ]
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_200_Response"
+  }
+}

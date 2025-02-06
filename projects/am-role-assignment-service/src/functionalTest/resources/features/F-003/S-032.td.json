@@ -1,0 +1,20 @@
+{
+  "title": "must successfully delete Role Assignment without X-Corrlation-ID Header",
+  "_guid_": "S-032",
+  "_extends_": "F-003_Test_Data_Base",
+  "specs": [
+    "does not have X-Corrlation-ID header",
+    "contains a Role Assignment Id"
+  ],
+  "request": {
+    "headers": {
+      "X-Correlation-ID": ""
+    },
+    "pathVariables": {
+      "assignmentId": "${[scenarioContext][childContexts][CreationDataForRoleAssignment][testData][actualResponse][body][roleAssignmentResponse][requestedRoles][0][id]}"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_204_Response"
+  }
+}

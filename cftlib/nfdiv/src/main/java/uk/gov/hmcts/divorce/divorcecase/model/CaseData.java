@@ -248,6 +248,24 @@ public class CaseData {
     private String note;
 
     @CCD(
+        label = "Add applicant 2 case note",
+        hint = "Enter note",
+        typeOverride = TextArea,
+        access = {Applicant2Access.class}
+    )
+    @External
+    private String applicantTwoNote;
+
+    @CCD(
+        label = "Add case worker 1 case note",
+        hint = "Enter note",
+        typeOverride = TextArea,
+        access = {CaseworkerAccess.class}
+    )
+    @External
+    private String caseWorkerNote;
+
+    @CCD(
         label = "Bulk list case reference",
         typeOverride = FieldType.CaseLink,
         access = {CaseworkerAccess.class}

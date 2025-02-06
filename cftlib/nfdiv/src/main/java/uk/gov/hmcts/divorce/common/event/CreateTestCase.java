@@ -178,7 +178,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
             ccdAccessService.addRoleToCase(app2Id, caseId, orgId, APPLICANT_1_SOLICITOR);
         } else if (data.getCaseInvite().applicant2UserId() != null) {
-            ccdAccessService.linkRespondentToApplication(auth, caseId, app2Id);
+            ccdAccessService.linkRespondentToApplication(auth, caseId, app2Id, details);
         }
 
         return SubmittedCallbackResponse.builder().build();

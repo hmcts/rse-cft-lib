@@ -72,6 +72,16 @@
         "readOnly": false,
         "attributes": { "caseType": "NFD", "jurisdiction": "DIVORCE" },
         "authorisations": []
+      },
+      {
+        "roleType": "CASE",
+        "roleName": "[APPLICANTTWO]",
+        "grantType": "SPECIFIC",
+        "roleCategory": "LEGAL_OPERATIONS",
+        "classification": "RESTRICTED",
+        "readOnly": false,
+        "attributes": { "caseType": "NFD", "jurisdiction": "DIVORCE" },
+        "authorisations": []
       }
     ],
     "overrideAll": true

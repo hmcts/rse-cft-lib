@@ -1,0 +1,49 @@
+{
+  "title": "must successfully create single Role Assignment with only mandatory fields",
+  "_guid_": "S-001",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "contains a single Role Assignment with only mandatory fields",
+    "contains a single Role Assignment with only mandatory fields",
+    "Befta2 - who is the assigner",
+    "Befta2 - who invokes the API",
+    "Befta1 - who is the actor for requested role"
+  ],
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "${[scenarioContext][testData][users][befta1][id]}"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "roleType": "ORGANISATION",
+          "grantType": "STANDARD"
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest"
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD"
+          }
+        ]
+      }
+    }
+  }
+}

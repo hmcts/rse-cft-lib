@@ -1,0 +1,27 @@
+{
+  "_guid_": "S-017_Clear_Multiple_Role_Creation",
+  "_extends_": "CreationDataBaseForRoleAssignment",
+
+  "request": {
+    "body": {
+      "roleRequest": {
+        "reference": "ReferenceS-017",
+        "replaceExisting": true
+      },
+      "requestedRoles": [
+      ]
+    }
+  },
+  "expectedResponse": {
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+        ]
+      }
+    }
+  }
+}

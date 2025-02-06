@@ -1,0 +1,176 @@
+#!groovy
+properties(
+  [
+    [
+      $class       : 'GithubProjectProperty',
+      projectUrlStr: 'https://github.com/hmcts/am-role-assignment-service'
+    ],
+    pipelineTriggers([[$class: 'GitHubPushTrigger']])
+  ]
+)
+
+@Library("Infrastructure")
+import uk.gov.hmcts.contino.AppPipelineDsl
+
+def type = "java"
+def product = "am"
+def component = "role-assignment-service"
+
+static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
+  [$class     : 'AzureKeyVaultSecret',
+   secretType : 'Secret',
+   name       : secretName,
+   version    : '',
+   envVariable: envVar
+  ]
+}
+
+def vaultOverrides = [
+    'preview' : 'aat',
+    'spreview': 'saat'
+]
+
+//These secrets will be available in the functional tests in the virtual machine where pipeline executes.
+def secrets = [
+  's2s-${env}': [
+    secret('microservicekey-am-role-assignment-service', 'AM_ROLE_ASSIGNMENT_SERVICE_SECRET'),
+    secret('microservicekey-am-role-assignment-service', 'BEFTA_S2S_CLIENT_SECRET'),
+    secret('microservicekey-am-org-role-mapping-service', 'AM_ORG_S2S_SECRET')
+  ],
+  'am-${env}': [
+      secret('role-assignment-service-IDAM-CLIENT-SECRET', 'ROLE_ASSIGNMENT_IDAM_CLIENT_SECRET'),
+      secret('role-assignment-service-LD-SDK-KEY', 'LD_SDK_KEY'),
+      secret('test-am-user1-befta-pwd', 'TEST_AM_USER1_BEFTA_PWD'),
+      secret('test-am-user2-befta-pwd', 'TEST_AM_USER2_BEFTA_PWD'),
+      secret('test-am-user3-befta-pwd', 'TEST_AM_USER3_BEFTA_PWD'),
+      secret('role-assignment-service-IDAM-CLIENT-SECRET', 'OAUTH2_CLIENT_SECRET')
+  ],
+  'ccd-${env}': [
+      secret('ccd-data-s2s-secret', 'CCD_DATA_S2S_SECRET')
+  ],
+  'rpx-${env}': [
+    secret('xui-webapp', 'XUI_WEBAPP_S2S_SECRET')
+  ]
+]
+
+// Configure branches to sync with master branch
+def branchesToSync = ['demo', 'perftest', 'ithc']
+
+// Vars needed for functional and smoke tests to run against AKS
+env.IDAM_URL = "https://idam-api.aat.platform.hmcts.net"
+env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
+env.IDAM_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+env.DEFINITION_STORE_HOST = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+env.CCD_DATA_STORE_URL = "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
+env.BEFTA_S2S_CLIENT_ID = "am_role_assignment_service"
+env.OAUTH2_CLIENT_ID = "am_role_assignment"
+env.OAUTH2_REDIRECT_URI = "http://am-role-assignment-service-aat.service.core-compute-aat.internal/oauth2redirect"
+env.OAUTH2_ACCESS_TOKEN_TYPE = "OIDC"
+env.BEFTA_RESPONSE_HEADER_CHECK_POLICY = "JUST_WARN"
+env.S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+env.OAUTH2_SCOPE_VARIABLES = "openid%20profile%20roles%20authorities"
+env.IDAM_CLIENT_ID="am_role_assignment"
+env.OPENID_SCOPE_VARIABLES = "openid+profile+roles+authorities"
+env.MICROSERVICE_NAME = "am_role_assignment_service"
+env.EXTERNAL_FLAG_QUERY_PATH = "am/role-assignments/fetchFlagStatus?flagName="
+// Vars for Kubernetes PACT
+env.PACT_BROKER_FULL_URL = 'https://pact-broker.platform.hmcts.net'
+env.PACT_BROKER_URL = "pact-broker.platform.hmcts.net"
+env.PACT_BROKER_PORT = "443"
+env.PACT_BROKER_SCHEME = "https"
+
+// Var to turn FTAs that rely on the RAS-CCD case validation on/off, i.e. when CCD is not available.
+env.AZURE_CASE_VALIDATION_FTA_ENABLED = "true"
+
+// Vars for Azure Container Registries DTSAM-370
+env.TESTCONTAINERS_HOST_OVERRIDE="localhost"
+env.TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX="hmctspublic.azurecr.io/imported/"
+
+withPipeline(type, product, component) {
+  onMaster {
+    enableSlackNotifications('#am-master-builds')
+  }
+  if (env.BRANCH_NAME.startsWith("PR")) {
+      env.LAUNCH_DARKLY_ENV = "pr"
+  }
+  else if(env.BRANCH_NAME == 'master') {
+      env.LAUNCH_DARKLY_ENV = "aat"
+  }
+  else {
+      env.LAUNCH_DARKLY_ENV = env.BRANCH_NAME
+  }
+
+  onPR {
+    enableSlackNotifications('#am-master-builds')
+  }
+  overrideVaultEnvironments(vaultOverrides)
+  loadVaultSecrets(secrets)
+  enableAksStagingDeployment()
+  disableLegacyDeploymentOnAAT()
+  disableLegacyDeployment()
+  enableDbMigration('am')
+
+  // Sync environment specific branches with master branch
+  syncBranchesWithMaster(branchesToSync)
+
+  before('functionalTest:aat') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/tests/integration/**/*'
+  }
+
+  before('functionalTest:preview') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/tests/integration/**/*'
+  }
+
+  afterAlways('functionalTest:preview') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/cucumber/**/*'
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "target/cucumber/functional-html-reports",
+      reportFiles          : "overview-features.html,overview-failures.html,",
+      reportTitles         : "Features,Failures",
+      reportName           : "Functional Test Report"
+    ]
+  }
+
+  afterAlways('functionalTest:aat') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/cucumber/**/*'
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "target/cucumber/functional-html-reports",
+      reportFiles          : "overview-features.html,overview-failures.html,",
+      reportTitles         : "Features,Failures",
+      reportName           : "Functional Test Report"
+    ]
+  }
+
+  afterAlways('smoketest:preview') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/site/serenity/**'
+  }
+
+  afterAlways('smoketest:aat') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/site/serenity/**'
+  }
+
+  afterAlways('pact-provider-verification') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/tests/**/*'
+  }
+
+  onMaster(){
+      enablePactAs([
+              AppPipelineDsl.PactRoles.PROVIDER
+      ])
+  }
+    onPR(){
+        enablePactAs([
+                AppPipelineDsl.PactRoles.PROVIDER
+        ])
+    }
+}

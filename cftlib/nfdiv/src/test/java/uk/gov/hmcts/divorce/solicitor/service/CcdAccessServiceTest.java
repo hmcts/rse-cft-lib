@@ -212,7 +212,8 @@ public class CcdAccessServiceTest {
             )
         ).thenReturn(any());
 
-        assertThatCode(() -> ccdAccessService.linkRespondentToApplication(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
+        assertThatCode(() -> ccdAccessService
+            .linkRespondentToApplication(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID, any()))
             .doesNotThrowAnyException();
 
         verify(idamService).retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN);

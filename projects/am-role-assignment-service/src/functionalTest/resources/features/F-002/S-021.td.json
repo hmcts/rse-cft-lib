@@ -1,0 +1,18 @@
+{
+  "title": "must successfully delete single Role Assignment by Actor Id",
+  "_guid_": "S-021",
+  "_extends_": "F-002_Test_Data_Base",
+  "operationName": "Delete Role Assignments by Actor Id",
+  "specs": [
+    "contains an Actor Id having only single Role Assignment"
+  ],
+  "uri": "/am/role-assignments?actorId={actorId}",
+  "request": {
+    "pathVariables": {
+      "actorId": "123e4567-e89b-42d3-a456-556642446021"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_204_Response"
+  }
+}

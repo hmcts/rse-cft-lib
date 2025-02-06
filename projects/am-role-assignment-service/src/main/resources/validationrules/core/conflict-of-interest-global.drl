@@ -1,0 +1,80 @@
+package validationrules.core;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Assignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Classification;
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.CaseAllocatorApproval;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.util.ValidationUtil;
+
+
+
+/*
+ * The case allocator global rules will provide initial approval of exclusions.
+ * The rules below implement the global requirement for case allocators to be able to create
+ * and delete exclusions, and for users to be able to create conflicts of interest for themselves.
+ */
+
+rule "case_allocator_create_conflict_of_interest"
+when
+    // The case allocator rule has already succeeded for this role assignment,
+    // which is creating a conflict of interest exclusion role.
+    $ca: CaseAllocatorApproval(
+        roleAssignment.status == Status.CREATE_REQUESTED,
+        roleAssignment.roleName == "conflict-of-interest")
+then
+    // Set approved status
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : case_allocator_create_conflict_of_interest");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : case_allocator_create_conflict_of_interest");
+end;
+
+rule "case_allocator_delete_conflict_of_interest"
+when
+    $ca: CaseAllocatorApproval(
+        roleAssignment.status == Status.DELETE_REQUESTED,
+        roleAssignment.roleName == "conflict-of-interest")
+then
+    $ca.getRoleAssignment().setStatus(Status.DELETE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : case_allocator_delete_conflict_of_interest");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : case_allocator_delete_conflict_of_interest");
+end;
+
+/*
+ * A user can create a conflict of interest case role for themselves.
+ */
+
+rule "self_create_conflict_of_interest"
+when
+    // Only allow requests where the assigner is also the authenticated user
+    $rq: Request(assignerId == authenticatedUserId)
+    // When the request is to create a role assignment:
+    //   - for the requesting user
+    //   - a case role
+    //   - role name conflict-of-interest
+    //   - with a case ID
+    $ra: RoleAssignment(
+             status == Status.CREATE_REQUESTED,
+             actorId == $rq.authenticatedUserId,
+             roleType == RoleType.CASE,
+             roleName == "conflict-of-interest",
+             attributes["caseId"] != null && $caseId : attributes["caseId"].asText())
+    // And there is a case with that ID
+    $c:  Case(id == $caseId)
+then
+    $ra.setAttribute("jurisdiction", $c.getJurisdiction());
+    $ra.setAttribute("caseType", $c.getCaseTypeId());
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Stage 1 approved : self_create_conflict_of_interest");
+    update($ra);
+    logMsg("Rule : self_create_conflict_of_interest");
+end;

@@ -1,0 +1,59 @@
+{
+  "title": "must receive a Reject response when creation of any Role Assignment not successful",
+  "_guid_": "S-004",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "contains multiple Role Assignments where one of the role has invalid data"
+  ],
+  "request": {
+    "body": {
+      "roleRequest": {
+        "reference": "${[scenarioContext][customValues][generateUUID]}"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "roleType": "ORGANISATION",
+          "grantType": "STANDARD"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "roleType": "ORGANISATION",
+          "grantType": "SPECIFIC"
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "responseCode": 422,
+    "responseMessage": "Unprocessable Entity",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "status": "REJECTED"
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "status": "REJECTED",
+            "roleType": "${[scenarioContext][testData][request][body][requestedRoles][0][roleType]}",
+            "grantType": "${[scenarioContext][testData][request][body][requestedRoles][0][grantType]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRoleWithoutSubstantive",
+            "roleType": "${[scenarioContext][testData][request][body][requestedRoles][1][roleType]}",
+            "grantType": "${[scenarioContext][testData][request][body][requestedRoles][1][grantType]}",
+            "status": "REJECTED"
+          }
+        ]
+      }
+    }
+  }
+}

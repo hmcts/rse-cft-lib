@@ -1,9 +1,12 @@
 package uk.gov.hmcts.divorce.cftlib;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,6 +14,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -39,6 +43,7 @@ import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Slf4j
 public class TestWithCCD extends CftlibTest {
 
     @Autowired
@@ -225,6 +230,27 @@ public class TestWithCCD extends CftlibTest {
             .timeout(Duration.ofSeconds(10))
             .ignoreExceptions()
             .until(this::caseAppearsInSearch);
+    }
+
+    @Order(7)
+    @SneakyThrows
+    @Test
+    void getCaseDataForDifferentUserPermissions() {
+        var get =
+            buildRequest("applicant2@gmail.com",
+                "http://localhost:4452/cases/" + caseRef, HttpGet::new);
+        get.addHeader("experimental", "true");
+        get.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.case.v2+json;charset=UTF-8");
+
+        var response = HttpClientBuilder.create().build().execute(get);
+        var result = mapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+        var data = (Map) result.get("data");
+        log.info("response: {}", data);
+        var caseData = mapper.readValue(mapper.writeValueAsString(data), CaseData.class);
+        assertThat(caseData.getApplicantTwoNote(), is("applicantTwoNote"));
+        assertThat(caseData.getCaseWorkerNote(), emptyOrNullString());
     }
 
     @SneakyThrows

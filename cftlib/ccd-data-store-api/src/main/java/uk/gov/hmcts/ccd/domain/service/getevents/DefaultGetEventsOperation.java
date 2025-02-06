@@ -3,13 +3,10 @@ package uk.gov.hmcts.ccd.domain.service.getevents;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.ApplicationParams;
-import uk.gov.hmcts.ccd.clients.PocApiClient;
 import uk.gov.hmcts.ccd.data.casedetails.CaseAuditEventRepository;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseDetails;
 import uk.gov.hmcts.ccd.domain.model.std.AuditEvent;
@@ -19,7 +16,6 @@ import uk.gov.hmcts.ccd.domain.service.getcase.GetCaseOperation;
 import uk.gov.hmcts.ccd.endpoint.exceptions.BadRequestException;
 import uk.gov.hmcts.ccd.endpoint.exceptions.ResourceNotFoundException;
 
-@Slf4j
 @Service
 @Qualifier("default")
 public class DefaultGetEventsOperation implements GetEventsOperation {
@@ -28,7 +24,6 @@ public class DefaultGetEventsOperation implements GetEventsOperation {
     private final GetCaseOperation getCaseOperation;
     private final UIDService uidService;
     private final ApplicationParams applicationParams;
-    private final PocApiClient pocApiClient;
     private static final String RESOURCE_NOT_FOUND //
         = "No case found ( jurisdiction = '%s', case type id = '%s', case reference = '%s' )";
     private static final String CASE_RESOURCE_NOT_FOUND //
@@ -40,19 +35,16 @@ public class DefaultGetEventsOperation implements GetEventsOperation {
             CaseAuditEventRepository auditEventRepository,
             @Qualifier(CreatorGetCaseOperation.QUALIFIER) final GetCaseOperation getCaseOperation,
             UIDService uidService,
-            final ApplicationParams applicationParams,
-            final PocApiClient pocApiClient) {
+            final ApplicationParams applicationParams) {
         this.auditEventRepository = auditEventRepository;
         this.getCaseOperation = getCaseOperation;
         this.uidService = uidService;
         this.applicationParams = applicationParams;
-        this.pocApiClient = pocApiClient;
     }
 
     @Override
     public List<AuditEvent> getEvents(CaseDetails caseDetails) {
-        List<AuditEvent> events = auditEventRepository.findByCase(caseDetails);
-        return events;
+        return auditEventRepository.findByCase(caseDetails);
     }
 
     @Override
@@ -79,12 +71,10 @@ public class DefaultGetEventsOperation implements GetEventsOperation {
 
     @Override
     public Optional<AuditEvent> getEvent(CaseDetails caseDetails, String caseTypeId, Long eventId) {
-        if (this.applicationParams.getPocCaseTypes().contains(caseDetails.getCaseTypeId())) {
-            List<AuditEvent> events = auditEventRepository.findByCase(caseDetails);
-            return events.stream().filter(e -> e.getId().equals(eventId)).findFirst();
-        } else {
-            return auditEventRepository.findByEventId(eventId).map(Optional::of)
-                    .orElseThrow(() -> new ResourceNotFoundException(CASE_EVENT_NOT_FOUND));
+        if (applicationParams.isPocFeatureEnabled()) {
+            return getEvents(caseDetails).stream().filter(event -> event.getId().equals(eventId)).findFirst();
         }
+        return auditEventRepository.findByEventId(eventId).map(Optional::of)
+                .orElseThrow(() -> new ResourceNotFoundException(CASE_EVENT_NOT_FOUND));
     }
 }

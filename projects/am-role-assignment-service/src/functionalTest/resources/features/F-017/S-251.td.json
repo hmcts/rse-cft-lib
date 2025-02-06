@@ -1,0 +1,101 @@
+{
+  "title": "must successfully create single Role Assignment with only mandatory fields",
+  "_guid_": "S-251",
+  "_extends_": "F-017_Test_Data_Base",
+  "specs": [
+    "has roleType Organisation, roleCategory Professional, roleName Role1 and attributes doesn't have caseAccessGroupId",
+    "contains a single Role Assignment with only mandatory fields",
+    "Befta1 - who invokes the API"
+  ],
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "process": "professional-organisational-role-mapping",
+        "reference": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "replaceExisting": true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "roleType": "ORGANISATION",
+          "grantType": "STANDARD",
+          "classification": "RESTRICTED",
+          "attributes": {
+            "primaryLocation": "UK",
+            "jurisdiction": "PRIVATELAW",
+            "caseType": "12345"
+          },
+          "roleName": "Role1",
+          "roleCategory": "PROFESSIONAL",
+          "actorIdType": "IDAM",
+          "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+          "authorisations": [
+            "Test123"
+          ]
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "responseCode" : "422",
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "id" : "[[ANYTHING_PRESENT]]",
+          "authenticatedUserId" : "[[ANYTHING_PRESENT]]",
+          "correlationId" : "[[ANYTHING_PRESENT]]",
+          "assignerId" : "[[ANYTHING_PRESENT]]",
+          "requestType" : "CREATE",
+          "process" : "professional-organisational-role-mapping",
+          "reference" : "[[ANYTHING_PRESENT]]",
+          "replaceExisting" : true,
+          "status" : "REJECTED",
+          "created" : "[[ANYTHING_PRESENT]]",
+          "log" : "[[ANYTHING_PRESENT]]",
+          "byPassOrgDroolRule" : true
+        },
+        "requestedRoles": [
+          {
+            "id" : "[[ANYTHING_PRESENT]]",
+            "actorIdType" : "IDAM",
+            "actorId" : "[[ANYTHING_PRESENT]]",
+            "roleType" : "ORGANISATION",
+            "roleName" : "Role1",
+            "classification" : "RESTRICTED",
+            "grantType" : "STANDARD",
+            "roleCategory" : "PROFESSIONAL",
+            "readOnly" : false,
+            "beginTime" : "[[ANYTHING_PRESENT]]",
+            "endTime" : "[[ANYTHING_PRESENT]]",
+            "process" : "professional-organisational-role-mapping",
+            "reference" : "[[ANYTHING_PRESENT]]",
+            "status" : "REJECTED",
+            "created" : "[[ANYTHING_PRESENT]]",
+            "log" : "[[ANYTHING_PRESENT]]",
+            "attributes" : {
+              "jurisdiction" : "PRIVATELAW",
+              "contractType" : "Salaried",
+              "primaryLocation" : "UK",
+              "caseType" : "12345"
+            },
+            "notes" : [ {
+              "userId" : "003352d0-e699-48bc-b6f5-5810411e60ag",
+              "time" : "[[ANYTHING_PRESENT]]",
+              "comment" : "Need Access to case number 1234567890123456 for a month"
+            }, {
+              "userId" : "52aa3810-af1f-11ea-b3de-0242ac130004",
+              "time" : "[[ANYTHING_PRESENT]]",
+              "comment" : "Access granted for 6 months"
+            } ],
+            "authorisations" : [ "Test123" ]
+          } ]
+      }
+    }
+  }
+}

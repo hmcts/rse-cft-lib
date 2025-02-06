@@ -1,0 +1,126 @@
+package validationrules.privatelaw;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Assignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Classification
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.domain.model.FeatureFlag;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.FeatureFlagEnum;
+import uk.gov.hmcts.reform.roleassignment.util.ValidationUtil;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import uk.gov.hmcts.reform.roleassignment.domain.model.CaseAllocatorApproval;
+
+/*
+ * PRIVATELAW "hearing-judge" case validation rule.
+ */
+
+rule "privatelaw_hearing_judge_create_case_roles"
+when
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "PRIVATELAW",
+                 roleAssignment.attributes["caseType"].asText() == "PRLAPPS",
+                 roleAssignment.roleName in ("hearing-judge"))
+         ExistingRoleAssignment(
+                 actorId == $ca.getRoleAssignment().actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName in ("judge"),
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "PRIVATELAW")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : privatelaw_hearing_judge_create_case_roles");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : privatelaw_hearing_judge_create_case_roles");
+end;
+
+/*
+ * PRIVATELAW "allocated-magistrate" case validation rule.
+ */
+
+rule "privatelaw_allocated_magistrate_create_case_roles"
+when
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "PRIVATELAW",
+                 roleAssignment.attributes["caseType"].asText() == "PRLAPPS",
+                 roleAssignment.roleName in ("allocated-magistrate"))
+         ExistingRoleAssignment(
+                 actorId == $ca.getRoleAssignment().actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName in ("magistrate"),
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "PRIVATELAW")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : privatelaw_allocated_magistrate_create_case_roles");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : privatelaw_allocated_magistrate_create_case_roles");
+end;
+
+/*
+ * PRIVATELAW "gatekeeping-judge" case validation rule.
+ */
+
+rule "privatelaw_gatekeeping_judge_create_case_roles"
+when
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "PRIVATELAW",
+                 roleAssignment.attributes["caseType"].asText() == "PRLAPPS",
+                 roleAssignment.roleName in ("gatekeeping-judge"))
+         ExistingRoleAssignment(
+                 actorId == $ca.getRoleAssignment().actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName in ("judge"),
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "PRIVATELAW")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : privatelaw_gatekeeping_judge_create_case_roles");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : privatelaw_gatekeeping_judge_create_case_roles");
+end;
+
+/*
+ * PRIVATELAW "allocated-judge" case validation rule.
+ */
+
+rule "privatelaw_allocated_judge_create_case_roles"
+when
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "PRIVATELAW",
+                 roleAssignment.attributes["caseType"].asText() == "PRLAPPS",
+                 roleAssignment.roleName in ("allocated-judge"))
+         ExistingRoleAssignment(
+                 actorId == $ca.getRoleAssignment().actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName in ("judge"),
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "PRIVATELAW")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : privatelaw_allocated_judge_create_case_roles");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : privatelaw_allocated_judge_create_case_roles");
+end;
+
+/*
+ * The case roles can be deleted if CaseAllocatorApproval entity is available for requested role assignment.
+ */
+rule "privatelaw_staff_case_allocator_approved_delete_case_role"
+when
+    $ca: CaseAllocatorApproval(
+                roleAssignment.status == Status.DELETE_REQUESTED,
+                roleAssignment.attributes["jurisdiction"].asText() == "PRIVATELAW")
+then
+    $ca.getRoleAssignment().setStatus(Status.DELETE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : privatelaw_staff_case_allocator_approved_delete_case_role");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : privatelaw_staff_case_allocator_approved_delete_case_role");
+end;
