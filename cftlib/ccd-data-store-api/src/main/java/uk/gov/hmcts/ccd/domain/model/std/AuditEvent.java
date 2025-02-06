@@ -1,18 +1,11 @@
 package uk.gov.hmcts.ccd.domain.model.std;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import uk.gov.hmcts.ccd.data.casedetails.SecurityClassification;
 import uk.gov.hmcts.ccd.domain.model.callbacks.SignificantItem;
 
@@ -20,12 +13,9 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @SuppressWarnings("checkstyle:SummaryJavadoc") // Javadoc predates checkstyle implementation in module
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
-@SuperBuilder(toBuilder = true)
-@EqualsAndHashCode(callSuper = true)
 public class AuditEvent extends Event {
     @JsonProperty("event_instance_id")
     private Long id;

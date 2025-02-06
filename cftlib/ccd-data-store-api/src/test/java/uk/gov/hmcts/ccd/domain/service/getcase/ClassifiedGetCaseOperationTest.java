@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import uk.gov.hmcts.ccd.ApplicationParams;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseDetails;
 
 import java.util.Optional;
@@ -35,6 +36,8 @@ class ClassifiedGetCaseOperationTest {
     private ClassifiedGetCaseOperation classifiedGetCaseOperation;
     private Optional<CaseDetails> caseDetails;
     private Optional<CaseDetails> classifiedDetails;
+    @Mock
+    private ApplicationParams applicationParams;
 
     @BeforeEach
     void setUp() {
@@ -47,7 +50,8 @@ class ClassifiedGetCaseOperationTest {
         classifiedDetails = Optional.of(new CaseDetails());
         doReturn(classifiedDetails).when(classificationService).applyClassification(caseDetails.get());
 
-        classifiedGetCaseOperation = new ClassifiedGetCaseOperation(getCaseOperation, classificationService);
+        classifiedGetCaseOperation
+            = new ClassifiedGetCaseOperation(getCaseOperation, classificationService, applicationParams);
     }
 
     @Nested

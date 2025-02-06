@@ -1,0 +1,11 @@
+{
+  "_guid_": "F-003_Test_Data_Base",
+  "_extends_": "F-003-Base-Root",
+  "productName": "Role Assignment Service",
+  "operationName": "Delete Role Assignment by Assignment Id",
+  "method": "DELETE",
+  "uri": "/am/role-assignments/{assignmentId}",
+  "specs": [
+    "an active IDAM profile with full permissions"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "title": "must successfully receive Role Assignments without X-Correlation-ID Header",
+  "_guid_": "S-085",
+  "_extends_": "F-006_Test_Data_Base",
+  "specs": [
+    "does not have X-Correlation-ID header"
+  ],
+
+  "request": {
+    "headers": {
+      "size": 2
+    },
+    "body": {
+      "actorId": ["${[scenarioContext][childContexts][S-083_CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}"]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse" : [
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][body][actorId][0]}"
+        },
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][body][actorId][0]}"
+        }
+      ]
+    }
+  }
+}

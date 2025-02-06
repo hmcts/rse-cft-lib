@@ -1,9 +1,11 @@
 package uk.gov.hmcts.divorce.common.config.jackson;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
@@ -37,7 +39,10 @@ public class JacksonConfiguration {
         datetime.addSerializer(LocalDateSerializer.INSTANCE);
         mapper.registerModule(datetime);
 
-        mapper.registerModule(new ParameterNamesModule());
+        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        mapper.registerModules(new Jdk8Module(), new JavaTimeModule(), new ParameterNamesModule());
 
         return mapper;
     }

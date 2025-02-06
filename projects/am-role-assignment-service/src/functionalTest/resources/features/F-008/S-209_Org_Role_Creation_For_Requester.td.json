@@ -1,0 +1,65 @@
+{
+  "_guid_": "S-209_Org_Role_Creation_For_Requester",
+  "_extends_": "F-008_Test_Data_Base",
+  "specs": [
+    "to create case-allocator org role for the requester"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser6"
+    }
+  },
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "S_209_Org_Role_For_Requester"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+          "roleName": "case-allocator",
+          "roleCategory": "LEGAL_OPERATIONS",
+          "beginTime" : "2020-09-01T00:00:00Z",
+          "attributes":
+          {
+            "jurisdiction": "IA",
+            "primaryLocation": "209"
+          }
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD",
+            "roleCategory": "LEGAL_OPERATIONS",
+            "roleName": "case-allocator",
+            "attributes":
+            {
+              "jurisdiction": "IA",
+              "primaryLocation": "209",
+              "substantive": "N"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

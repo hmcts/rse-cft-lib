@@ -1,0 +1,9 @@
+{
+  "_guid_": "F-005_DeleteDataForMultipleRoleAssignments",
+  "_extends_": "DeleteDataForRoleAssignments",
+  "request": {
+    "pathVariables": {
+      "reference": "${[scenarioContext][parentContext][testData][request][pathVariables][actorId]}"
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "title": "must successfully create allocated-admin-caseworker ET_EnglandWales_Multiple case role",
+  "_guid_": "S-270",
+  "_extends_": "F-018_Test_Data_Base",
+  "specs": [
+    "Befta3 - who is the actor for requested role",
+    "contains allocated-admin-caseworker case role assignment"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser4"
+    }
+  },
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "1717424980916609/allocated-admin-caseworker"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][befta3][id]}",
+          "roleName": "allocated-admin-caseworker",
+          "roleCategory": "ADMIN",
+          "roleType": "CASE",
+          "grantType": "SPECIFIC",
+          "classification": "RESTRICTED",
+          "attributes":
+          {
+            "caseId" : "1717424980916609",
+            "jurisdiction": "EMPLOYMENT"
+          }
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${[scenarioContext][testData][users][befta3][id]}",
+            "process" : "[[ANYTHING_PRESENT]]",
+            "roleName": "${[scenarioContext][testData][request][body][requestedRoles][0][roleName]}",
+            "roleCategory": "${[scenarioContext][testData][request][body][requestedRoles][0][roleCategory]}",
+            "roleType": "${[scenarioContext][testData][request][body][requestedRoles][0][roleType]}",
+            "grantType": "${[scenarioContext][testData][request][body][requestedRoles][0][grantType]}",
+            "classification": "${[scenarioContext][testData][request][body][requestedRoles][0][classification]}",
+            "attributes":
+            {
+              "caseId" : "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][caseId]}",
+              "jurisdiction" : "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][jurisdiction]}",
+              "caseType" : "ET_EnglandWales_Multiple"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

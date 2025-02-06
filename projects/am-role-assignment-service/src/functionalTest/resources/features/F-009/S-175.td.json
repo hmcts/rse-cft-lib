@@ -1,0 +1,54 @@
+{
+  "title": "must successfully receive Role Assignments with null attributes",
+  "_guid_": "S-175",
+  "_extends_": "F-009_Test_Data_Base",
+  "specs": [
+    "contains list of single search query with null attribute"
+  ],
+
+  "request": {
+    "body": {
+      "queryRequests": [
+        {
+          "attributes": {
+            "primaryLocation": [null]
+          },
+          "actorId": ["${[scenarioContext][childContexts][S-175_CreationDataForRoleAssignment][testData][request][body][requestedRoles][0][actorId]}"
+          ]
+        }
+      ]
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse" : [
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "[[ANYTHING_PRESENT]]",
+          "roleCategory" : "JUDICIAL",
+          "roleName" : "[[ANYTHING_PRESENT]]",
+          "readOnly" : false,
+          "attributes" : {
+            "contractType" : "Salaried",
+            "jurisdiction" : "IA",
+            "substantive" : "Y"
+          }
+        },
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "[[ANYTHING_PRESENT]]",
+          "roleCategory" : "JUDICIAL",
+          "roleName" : "[[ANYTHING_PRESENT]]",
+          "readOnly" : false,
+          "attributes" : {
+            "contractType" : "Salaried",
+            "jurisdiction" : "IA",
+            "substantive" : "Y"
+          }
+        }
+      ]
+    }
+  }
+}

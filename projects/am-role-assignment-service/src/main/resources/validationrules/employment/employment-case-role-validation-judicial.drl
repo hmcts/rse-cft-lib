@@ -1,0 +1,121 @@
+package validationrules.employment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Assignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Classification
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.domain.model.FeatureFlag;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.FeatureFlagEnum;
+import uk.gov.hmcts.reform.roleassignment.util.ValidationUtil;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import uk.gov.hmcts.reform.roleassignment.domain.model.CaseAllocatorApproval;
+
+
+
+/*
+ * EMPLOYMENT "lead-judge" case validation rule.
+ */
+rule "employment_lead_judge_create_case_roles"
+when
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "EMPLOYMENT",
+                 roleAssignment.roleName in ("lead-judge"))
+         ExistingRoleAssignment(
+                 actorId == $ca.getRoleAssignment().actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName in ("leadership-judge", "judge"),
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "EMPLOYMENT")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : employment_lead_judge_create_case_roles");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : employment_lead_judge_create_case_roles");
+end;
+
+/*
+ * EMPLOYMENT "hearing-judge" case validation rule.
+ */
+rule "employment_hearing_judge_create_case_roles"
+when
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "EMPLOYMENT",
+                 roleAssignment.roleName in ("hearing-judge"))
+         ExistingRoleAssignment(
+                 actorId == $ca.getRoleAssignment().actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName in ("leadership-judge", "judge", "fee-paid-judge"),
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "EMPLOYMENT")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : employment_hearing_judge_create_case_roles");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : employment_hearing_judge_create_case_roles");
+end;
+
+/*
+ * EMPLOYMENT "tribunal-member-1" case validation rule.
+ */
+rule "employment_tribunal_member_1_create_case_roles"
+when
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "EMPLOYMENT",
+                 roleAssignment.roleName in ("tribunal-member-1"))
+         ExistingRoleAssignment(
+                 actorId == $ca.getRoleAssignment().actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName in ("tribunal-member"),
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "EMPLOYMENT")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : employment_tribunal_member_1_create_case_roles");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : employment_tribunal_member_1_create_case_roles");
+end;
+
+/*
+ * EMPLOYMENT "tribunal-member-2" case validation rule.
+ */
+rule "employment_tribunal_member_2_create_case_roles"
+when
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "EMPLOYMENT",
+                 roleAssignment.roleName in ("tribunal-member-2"))
+         ExistingRoleAssignment(
+                 actorId == $ca.getRoleAssignment().actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName in ("tribunal-member"),
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "EMPLOYMENT")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : employment_tribunal_member_2_create_case_roles");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : employment_tribunal_member_2_create_case_roles");
+end;
+
+
+/*
+ * The case roles can be deleted if CaseAllocatorApproval entity is available for requested role assignment.
+ */
+rule "employment_case_allocator_approved_delete_case_role"
+when
+    $ca: CaseAllocatorApproval(
+                roleAssignment.status == Status.DELETE_REQUESTED,
+                roleAssignment.attributes["jurisdiction"].asText() == "EMPLOYMENT")
+then
+    $ca.getRoleAssignment().setStatus(Status.DELETE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : employment_case_allocator_approved_delete_case_role");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : employment_case_allocator_approved_delete_case_role");
+end;

@@ -5,26 +5,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.client.RoleAssignmentService;
+import uk.gov.hmcts.divorce.client.request.RoleAssignmentRequestResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
-import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
-import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisation;
-import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
-import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
-import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResponse;
+import uk.gov.hmcts.reform.ccd.client.model.*;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
 
 @Service
 @Slf4j
@@ -38,6 +36,9 @@ public class CcdAccessService {
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
+    private RoleAssignmentService roleAssignmentService;
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
     public void addApplicant1SolicitorRole(String solicitorIdamToken, Long caseId, String orgId) {
@@ -87,15 +88,22 @@ public class CcdAccessService {
     }
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
-    public void linkRespondentToApplication(String caseworkerUserToken, Long caseId, String applicant2UserId) {
+    public void linkRespondentToApplication(String caseworkerUserToken, Long caseId, String applicant2UserId,
+                                            CaseDetails<CaseData, State> caseDetails) {
         User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
 
-        caseAssignmentApi.addCaseUserRoles(
-            caseworkerUser.getAuthToken(),
-            authTokenGenerator.generate(),
-            getCaseAssignmentRequest(caseId, applicant2UserId, null, APPLICANT_2)
-        );
+        String generate = authTokenGenerator.generate();
+        log.info("Service Auth: {}", generate);
+//        caseAssignmentApi.addCaseUserRoles(
+//            caseworkerUser.getAuthToken(),
+//            generate,
+//            getCaseAssignmentRequest(caseId, applicant2UserId, null, APPLICANT_2)
+//        );
 
+        RoleAssignmentRequestResponse assignmentRequestResponse
+            = roleAssignmentService.createRoleAssignment(caseDetails, caseworkerUser, applicant2UserId);
+
+        log.info("Successfully linked applicant 2 to case Id {} ", caseId);
         log.info("Successfully linked applicant 2 to case Id {} ", caseId);
     }
 
@@ -139,11 +147,11 @@ public class CcdAccessService {
         User user = idamService.retrieveUser(userToken);
         List<String> userRoles =
             caseAssignmentApi.getUserRoles(
-                userToken,
-                authTokenGenerator.generate(),
-                List.of(String.valueOf(caseId)),
-                List.of(user.getUserDetails().getUid())
-            )
+                    userToken,
+                    authTokenGenerator.generate(),
+                    List.of(String.valueOf(caseId)),
+                    List.of(user.getUserDetails().getUid())
+                )
                 .getCaseAssignmentUserRoles()
                 .stream()
                 .map(CaseAssignmentUserRole::getCaseRole)
@@ -157,11 +165,11 @@ public class CcdAccessService {
         User user = idamService.retrieveUser(userToken);
         List<String> userRoles =
             caseAssignmentApi.getUserRoles(
-                userToken,
-                authTokenGenerator.generate(),
-                List.of(String.valueOf(caseId)),
-                List.of(user.getUserDetails().getUid())
-            )
+                    userToken,
+                    authTokenGenerator.generate(),
+                    List.of(String.valueOf(caseId)),
+                    List.of(user.getUserDetails().getUid())
+                )
                 .getCaseAssignmentUserRoles()
                 .stream()
                 .map(CaseAssignmentUserRole::getCaseRole)

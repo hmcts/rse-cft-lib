@@ -1,0 +1,35 @@
+{
+  "title": "must successfully delete list of multiple queries",
+  "_guid_": "S-190",
+  "_extends_": "F-010_Test_Data_Base",
+  "specs": [
+    "contains list of multiple search queries",
+    "consider the OR operation between search queries",
+    "contains Correlation Id"
+  ],
+
+  "request": {
+    "headers": {
+      "x-correlation-id": "3007fff8-b78e-41b4-8ceb-03034d9c74dc"
+    },
+    "body": {
+      "queryRequests": [
+        {
+          "attributes": {
+            "primaryLocation": ["S190abc"]
+          }
+        },
+        {
+          "attributes": {
+            "primaryLocation": ["S190abc"],
+            "jurisdiction": ["IA"]
+          }
+        }
+      ]
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_200_Response"
+  }
+}

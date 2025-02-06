@@ -59,7 +59,7 @@ class DefaultGetEventsOperationTest {
         doReturn(EVENTS).when(auditEventRepository).findByCase(caseDetails);
 
         listEventsOperation = new DefaultGetEventsOperation(auditEventRepository,
-                getCaseOperation, uidService, applicationParams, pocApiClient);
+                getCaseOperation, uidService, applicationParams);
         event = new AuditEvent();
     }
 

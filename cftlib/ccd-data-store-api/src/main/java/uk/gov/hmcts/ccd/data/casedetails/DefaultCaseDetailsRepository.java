@@ -150,7 +150,8 @@ public class DefaultCaseDetailsRepository implements CaseDetailsRepository {
     public CaseDetails findByReference(final Long caseReference) {
         return applicationParams.isPocFeatureEnabled()
                 ? pocCaseDetailsRepository.findByReference(caseReference)
-                : findByReference(null, caseReference).orElseThrow(() -> new ResourceNotFoundException("No case found"));
+                : findByReference(null,
+                caseReference).orElseThrow(() -> new ResourceNotFoundException("No case found"));
     }
 
     /**
@@ -237,6 +238,7 @@ public class DefaultCaseDetailsRepository implements CaseDetailsRepository {
         if (applicationParams.isPocFeatureEnabled()) {
             return pocCaseDetailsRepository.findByReferenceWithNoAccessControl(reference);
         }
+
         CaseDetailsQueryBuilder<CaseDetailsEntity> qb = queryBuilderFactory.selectUnsecured(em);
         qb.whereReference(String.valueOf(reference));
         return qb.getSingleResult().map(this.caseDetailsMapper::entityToModel);

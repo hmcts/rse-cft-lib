@@ -1,0 +1,46 @@
+[
+  {
+    "name": "[APPLICANTTWO]",
+    "label": "Applicant 2",
+    "description": "Applicant 2",
+    "category": "PROFESSIONAL",
+    "type": "CASE",
+    "substantive": true,
+    "patterns": [
+      {
+        "roleType": {
+          "mandatory": true,
+          "values": [
+            "CASE"
+          ]
+        },
+        "grantType": {
+          "mandatory": true,
+          "values": [
+            "SPECIFIC"
+          ]
+        },
+        "classification": {
+          "mandatory": true,
+          "values": [
+            "RESTRICTED"
+          ]
+        },
+        "attributes": {
+          "jurisdiction": {
+            "mandatory": true,
+            "values": [
+              "DIVORCE"
+            ]
+          },
+          "caseType": {
+            "mandatory": true
+          },
+          "caseId": {
+            "mandatory": true
+          }
+        }
+      }
+    ]
+  }
+]

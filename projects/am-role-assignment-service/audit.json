@@ -1,0 +1,14 @@
+{
+  "100001_Unexpected Content-Type was returned_http://am-role-assignment-service-aat.service.core-compute-aat.internal/v2/api-docs_GET": "ignore",
+  "10038_Content Security Policy (CSP) Header Not Set_http://am-role-assignment-service-aat.service.core-compute-aat.internal/v2/api-docs_GET": "ignore",
+  "100000_A Server Error response code was returned by the server_http://am-role-assignment-service-aat.service.core-compute-aat.internal/v2/api-docs_GET": "ignore",
+  "10036_Server Leaks Version Information via \"Server\" HTTP Response Header Field_http://am-role-assignment-service-aat.service.core-compute-aat.internal/v2/api-docs_GET":  "ignore",
+  "100000_A Client Error response code was returned by the server_http://am-role-assignment-service-aat.service.core-compute-aat.internal/v2/api-docs_GET": "ignore",
+  "10010_Cookie No HttpOnly Flag_http://am-role-assignment-service-aat.service.core-compute-aat.internal/v2/api-docs_GET": "ignore",
+  "90033_Loosely Scoped Cookie_http://am-role-assignment-service-aat.service.core-compute-aat.internal/v2/api-docs_GET": "ignore",
+  "10054_Cookie Without SameSite Attribute_http://am-role-assignment-service-aat.service.core-compute-aat.internal/v2/api-docs_GET": "ignore",
+  "10096_Timestamp Disclosure - Unix_http://am-role-assignment-service-aat.service.core-compute-aat.internal/v2/api-docs_GET": "ignore",
+  "10054_Cookie without SameSite Attribute_http://am-role-assignment-service-aat.service.core-compute-aat.internal/v2/api-docs_GET": "ignore",
+  "10049_Non-Storable Content_http://am-role-assignment-service-aat.service.core-compute-aat.internal/v2/api-docs_GET": "ignore",
+  "10112_Session Management Response Identified_http://am-role-assignment-service-aat.service.core-compute-aat.internal/v2/api-docs_GET": "ignore"
+}

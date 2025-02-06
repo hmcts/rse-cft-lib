@@ -7,14 +7,20 @@ import uk.gov.hmcts.ccd.clients.PocApiClient;
 import uk.gov.hmcts.ccd.domain.model.aggregated.IdamUser;
 import uk.gov.hmcts.ccd.domain.model.aggregated.POCCaseEvent;
 import uk.gov.hmcts.ccd.domain.model.aggregated.POCEventDetails;
+import uk.gov.hmcts.ccd.domain.model.casedataaccesscontrol.RoleAssignments;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseDetails;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseEventDefinition;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseStateDefinition;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseTypeDefinition;
 import uk.gov.hmcts.ccd.domain.model.std.Event;
+import uk.gov.hmcts.ccd.domain.service.casedataaccesscontrol.RoleAssignmentService;
 import uk.gov.hmcts.ccd.domain.service.common.CaseTypeService;
+import uk.gov.hmcts.ccd.domain.service.common.DefaultObjectMapperService;
 import uk.gov.hmcts.ccd.domain.service.stdapi.AboutToSubmitCallbackResponse;
 import uk.gov.hmcts.ccd.endpoint.exceptions.CaseConcurrencyException;
+import uk.gov.hmcts.ccd.util.ClientContextUtil;
+
+import java.util.Base64;
 
 @Slf4j
 @Service
@@ -22,10 +28,17 @@ public class POCSubmitCaseTransaction {
 
     private final CaseTypeService caseTypeService;
     private final PocApiClient pocApiClient;
+    private final RoleAssignmentService roleAssignmentService;
+    private final DefaultObjectMapperService objectMapperService;
 
-    public POCSubmitCaseTransaction(final CaseTypeService caseTypeService, final PocApiClient pocApiClient) {
+    public POCSubmitCaseTransaction(final CaseTypeService caseTypeService,
+                                    final PocApiClient pocApiClient,
+                                    final RoleAssignmentService roleAssignmentService,
+                                    final DefaultObjectMapperService objectMapperService) {
         this.caseTypeService = caseTypeService;
         this.pocApiClient = pocApiClient;
+        this.roleAssignmentService = roleAssignmentService;
+        this.objectMapperService = objectMapperService;
     }
 
     public CaseDetails saveAuditEventForCaseDetails(AboutToSubmitCallbackResponse response,
@@ -53,12 +66,14 @@ public class POCSubmitCaseTransaction {
                     .proxiedByFirstName(onBehalfOfUser.getSurname());
         }
 
-        POCCaseEvent pocCaseEvent = POCCaseEvent.builder()
-                .caseDetails(newCaseDetails).eventDetails(eventDetails.build()).build();
-
 
         try {
-            CaseDetails caseDetails = pocApiClient.createEvent(pocCaseEvent);
+            RoleAssignments roleAssignments = roleAssignmentService.getRoleAssignments(idamUser.getId());
+
+            POCCaseEvent pocCaseEvent = POCCaseEvent.builder()
+                    .caseDetails(newCaseDetails).eventDetails(eventDetails.build()).build();
+            CaseDetails caseDetails = pocApiClient.createEvent(pocCaseEvent,
+                    ClientContextUtil.encodeToBase64(objectMapperService.convertObjectToString(roleAssignments)));
             log.info("pocCaseDetails: {}", caseDetails);
             log.info("pocCaseDetails id: {}", caseDetails.getId());
             log.info("pocCaseDetails reference before: {}", caseDetails.getReference());

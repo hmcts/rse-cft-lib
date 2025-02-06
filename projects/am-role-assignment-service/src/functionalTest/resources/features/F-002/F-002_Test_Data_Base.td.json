@@ -1,0 +1,9 @@
+{
+  "_guid_": "F-002_Test_Data_Base",
+  "_extends_": "F-002-Base-Root",
+  "productName": "Role Assignment Service",
+  "specs": [
+    "an active IDAM profile with full permissions"
+  ],
+  "method": "DELETE"
+}

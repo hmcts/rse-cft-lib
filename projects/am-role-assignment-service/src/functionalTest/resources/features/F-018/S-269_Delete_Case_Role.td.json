@@ -1,0 +1,42 @@
+{
+  "title": "must successfully delete allocated-tribunal-caseworker case role",
+  "_guid_": "S-269_Delete_Case_Role",
+  "_extends_": "F-018_Test_Data_Base",
+  "specs": [
+    "to delete case role assignment for the same actor"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser4"
+    }
+  },
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "${[scenarioContext][parentContext][testData][request][body][roleRequest][reference]}"
+      },
+      "requestedRoles": [
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+
+        ]
+      }
+    }
+  }
+}

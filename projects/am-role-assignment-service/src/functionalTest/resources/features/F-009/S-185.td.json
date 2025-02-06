@@ -1,0 +1,54 @@
+{
+  "title": "must successfully receive Role Assignments with page size including role label",
+  "_guid_": "S-185",
+  "_extends_": "F-009_Test_Data_Base",
+  "specs": [
+    "contains multiple Role Assignments with a page size",
+    "has includeLabels request param set to true"
+  ],
+
+  "request": {
+    "headers": {
+      "size": 3,
+      "sort": "roleName"
+    },
+    "queryParams": {
+      "includeLabels": "true"
+    },
+    "body": {
+      "queryRequests":[
+        {
+          "actorId": ["${[scenarioContext][childContexts][S-185_CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}"]
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse" : [
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][body][queryRequests][0][actorId][0]}",
+          "roleName": "case-allocator",
+          "roleLabel": "Case Allocator",
+          "attributes" : {
+            "substantive": "N"
+          }
+        },
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][body][queryRequests][0][actorId][0]}",
+          "roleName": "judge",
+          "roleLabel": "Judge"
+        },
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][body][queryRequests][0][actorId][0]}",
+          "roleName": "senior-judge",
+          "roleLabel": "Senior Judge"
+        }
+      ]
+    }
+  }
+}

@@ -202,9 +202,6 @@ public class ApplicationParams {
     @Value("#{'${ccd.multiparty.case-types}'.split(',')}")
     private List<String> multipartyCaseTypes;
 
-    @Value("#{'${ccd.poc.case-types}'.split(',')}")
-    private List<String> pocCaseTypes;
-
     @Value("${ccd.case-document-am-api.attachDocumentEnabled:true}")
     private boolean attachDocumentEnabled;
 
@@ -237,6 +234,9 @@ public class ApplicationParams {
 
     @Value("#{'${ccd.callback.passthru-header-contexts}'.split(',')}")
     private List<String> callbackPassthruHeaderContexts;
+
+    @Value("#{'${ccd.poc.case-types}'.split(',')}")
+    private List<String> pocCaseTypes;
 
     @Value("${poc.feature.enabled}")
     private boolean isPocFeatureEnabled;
@@ -608,10 +608,6 @@ public class ApplicationParams {
         return multipartyCaseTypes;
     }
 
-    public List<String> getPocCaseTypes() {
-        return pocCaseTypes;
-    }
-
     public List<String>  getRequestScopeCachedCaseTypes() {
         return requestScopeCachedCaseTypes;
     }
@@ -646,5 +642,13 @@ public class ApplicationParams {
 
     public void setPocFeatureEnabled(boolean pocFeatureEnabled) {
         isPocFeatureEnabled = pocFeatureEnabled;
+    }
+
+    public List<String> getPocCaseTypes() {
+        return pocCaseTypes;
+    }
+
+    public void setPocCaseTypes(List<String> pocCaseTypes) {
+        this.pocCaseTypes = pocCaseTypes;
     }
 }

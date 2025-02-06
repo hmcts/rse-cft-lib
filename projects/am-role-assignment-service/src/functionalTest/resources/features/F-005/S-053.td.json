@@ -1,0 +1,19 @@
+{
+  "title": "should return a blank response for a non-existing ActorId",
+  "_guid_": "S-053",
+  "_extends_": "F-005_Test_Data_Base",
+  "specs": [
+    "contains a non-existing Actor Id"
+  ],
+  "request": {
+    "pathVariables": {
+      "actorId": "123e4567-e89b-42d3-a456-556642446053"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse": []
+    }
+  }
+}

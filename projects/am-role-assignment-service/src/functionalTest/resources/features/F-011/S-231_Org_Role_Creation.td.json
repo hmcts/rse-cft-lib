@@ -1,0 +1,88 @@
+{
+  "_guid_": "S-231_Org_Role_Creation",
+  "_extends_": "F-011_Test_Data_Base",
+  "specs": [
+    "to create org role assignments for actors & requester",
+    "Befta1 - who is the actor for requested role"
+  ],
+
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "S_231_Org_Role_For_Multiple_Actors",
+        "process": "specific-access"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][befta4][id]}",
+          "roleName": "case-allocator",
+          "roleCategory": "JUDICIAL",
+          "beginTime" : "2022-01-01T00:00:00Z",
+          "attributes":
+          {
+            "jurisdiction": "CIVIL"
+          }
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][befta3][id]}",
+          "roleName": "leadership-judge",
+          "roleCategory": "JUDICIAL",
+          "beginTime" : "2022-01-01T00:00:00Z",
+          "attributes":
+          {
+            "jurisdiction": "IA"
+          }
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "replaceExisting": true,
+          "process": "specific-access"
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "process": "specific-access",
+            "actorId": "[[ANYTHING_PRESENT]]",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD",
+            "roleCategory": "JUDICIAL",
+            "roleName": "[[ANYTHING_PRESENT]]",
+            "attributes":
+            {
+              "jurisdiction": "[[ANYTHING_PRESENT]]",
+              "substantive" : "N"
+            }
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "process": "specific-access",
+            "actorId": "${[scenarioContext][testData][users][befta3][id]}",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD",
+            "roleCategory": "JUDICIAL",
+            "roleName": "[[ANYTHING_PRESENT]]",
+            "attributes":
+            {
+              "jurisdiction": "[[ANYTHING_PRESENT]]",
+              "substantive" : "Y"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

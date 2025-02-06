@@ -1,0 +1,89 @@
+package validationrules.civil;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Classification
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+
+/*
+ * CIVIL system user validation rules.
+ */
+
+rule "civil_cbus_system_user_role_create"
+when
+    $rq: Request(
+             clientId == "civil_service",
+             process == "civil-system-user",
+             reference == "civil-cbus-system-user",
+             replaceExisting == true)
+    $ra: RoleAssignment(
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             classification == Classification.PUBLIC,
+             roleName in ("cbus-system-user"),
+             roleCategory == RoleCategory.SYSTEM,
+             grantType == GrantType.STANDARD,
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "CIVIL")
+then
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Create approved : civil_cbus_system_user_role_create");
+    update($ra);
+    logMsg("Rule : civil_cbus_system_user_role_create");
+end;
+
+rule "civil_cbus_system_user_role_delete"
+when
+    $rq: Request(clientId == "civil_service")
+    $ra: RoleAssignment(
+             status == Status.DELETE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             roleCategory in (RoleCategory.SYSTEM),
+             roleName in ("cbus-system-user"),
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "CIVIL")
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : civil_cbus_system_user_role_delete");
+    update($ra);
+    logMsg("Rule :: civil_cbus_system_user_role_delete");
+end;
+
+rule "civil_system_user_hearings_roles_create"
+when
+    $rq: Request(
+             clientId == "civil_service",
+             process == "civil-system-user",
+             reference == "civil-hearings-system-user",
+             replaceExisting == true)
+    $ra: RoleAssignment(
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             classification == Classification.PUBLIC,
+             roleName in ("hearing-manager","hearing-viewer"),
+             roleCategory == RoleCategory.SYSTEM,
+             grantType == GrantType.STANDARD,
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "CIVIL")
+then
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Create approved : civil_system_user_hearings_roles_create");
+    update($ra);
+    logMsg("Rule : civil_system_user_hearings_roles_create");
+end;
+
+rule "civil_system_user_hearings_roles_delete"
+when
+    $rq: Request(clientId == "civil_service")
+    $ra: RoleAssignment(
+             status == Status.DELETE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             roleCategory in (RoleCategory.SYSTEM),
+             roleName in ("hearing-manager","hearing-viewer"),
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "CIVIL")
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : civil_system_user_hearings_roles_delete");
+    update($ra);
+    logMsg("Rule :: civil_system_user_hearings_roles_delete");
+end;

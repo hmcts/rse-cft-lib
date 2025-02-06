@@ -7,10 +7,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.ApplicationParams;
 import uk.gov.hmcts.ccd.clients.PocApiClient;
+import uk.gov.hmcts.ccd.data.SecurityUtils;
 import uk.gov.hmcts.ccd.data.casedetails.search.MetaData;
 import uk.gov.hmcts.ccd.data.casedetails.search.PaginatedSearchMetadata;
+import uk.gov.hmcts.ccd.domain.model.casedataaccesscontrol.RoleAssignments;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseDetails;
 import uk.gov.hmcts.ccd.domain.model.migration.MigrationParameters;
+import uk.gov.hmcts.ccd.domain.service.casedataaccesscontrol.RoleAssignmentService;
+import uk.gov.hmcts.ccd.domain.service.common.DefaultObjectMapperService;
+import uk.gov.hmcts.ccd.util.ClientContextUtil;
 
 @Service
 @Slf4j
@@ -18,11 +23,20 @@ public class POCCaseDetailsRepository implements CaseDetailsRepository {
 
     private final ApplicationParams applicationParams;
     private final PocApiClient pocApiClient;
+    private final SecurityUtils securityUtils;
+    private final RoleAssignmentService roleAssignmentService;
+    private final DefaultObjectMapperService objectMapperService;
 
     public POCCaseDetailsRepository(final ApplicationParams applicationParams,
-                                    final PocApiClient pocApiClient) {
+                                    final PocApiClient pocApiClient,
+                                    final SecurityUtils securityUtils,
+                                    final RoleAssignmentService roleAssignmentService,
+                                    final DefaultObjectMapperService objectMapperService) {
         this.applicationParams = applicationParams;
         this.pocApiClient = pocApiClient;
+        this.securityUtils = securityUtils;
+        this.roleAssignmentService = roleAssignmentService;
+        this.objectMapperService = objectMapperService;
     }
 
     @Override
@@ -65,8 +79,15 @@ public class POCCaseDetailsRepository implements CaseDetailsRepository {
         return Optional.ofNullable(getCaseDetails(reference));
     }
 
+    @Override
+    public CaseDetails findByReference(Long caseReference) {
+        return getCaseDetails(caseReference.toString());
+    }
+
     private CaseDetails getCaseDetails(String reference) {
-        CaseDetails caseDetails = pocApiClient.getCase(reference);
+        RoleAssignments roleAssignments = roleAssignmentService.getRoleAssignments(securityUtils.getUserId());
+        CaseDetails caseDetails = pocApiClient.getCase(reference,
+            ClientContextUtil.encodeToBase64(objectMapperService.convertObjectToString(roleAssignments)));
         log.info("case Id {}", caseDetails.getId());
         log.info("case reference {}", caseDetails.getReference());
         if (Optional.ofNullable(caseDetails).isPresent()) {
@@ -78,10 +99,6 @@ public class POCCaseDetailsRepository implements CaseDetailsRepository {
         return caseDetails;
     }
 
-    @Override
-    public CaseDetails findByReference(Long caseReference) {
-        return getCaseDetails(caseReference.toString());
-    }
 
     @Override
     public CaseDetails findUniqueCase(String jurisdictionId, String caseTypeId, String caseReference) {

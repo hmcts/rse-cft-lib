@@ -1,0 +1,11 @@
+{
+  "_guid_": "F-010_Test_Data_Base",
+  "_extends_": "F-010-Base-Root",
+  "productName": "Role Assignment Service",
+  "operationName": "Post Role Assignments Delete Query Request",
+  "specs": [
+    "an active IDAM profile with full permissions"
+  ],
+  "method": "POST",
+  "uri": "/am/role-assignments/query/delete"
+}
