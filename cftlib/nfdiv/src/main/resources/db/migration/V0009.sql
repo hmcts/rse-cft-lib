@@ -10,7 +10,7 @@ create table civil.parties(
 
 
 create table civil.claims(
-                           reference bigint references case_data(reference) not null,
+                           reference bigint references ccd.case_data(reference) not null,
                            claim_id serial primary key,
                            description text not null,
                            amount_pence bigint not null check (amount_pence > 0)
@@ -47,27 +47,27 @@ select party_id, claim_id, forename, description, reason from civil.applications
                                                                 join civil.claims using (claim_id);
 
 
-create view civil.judge_claims as 
-select 
-  claim_id, reference, description, amount_pence, 
+create view civil.judge_claims as
+select
+  claim_id, reference, description, amount_pence,
   jsonb_agg(forename) filter (where role = 'claimant') claimants,
-  jsonb_agg(forename) filter (where role = 'defendant') defendants 
-from 
-  civil.claims 
-  join civil.claim_members using (claim_id) 
-  join civil.parties using (party_id) 
+  jsonb_agg(forename) filter (where role = 'defendant') defendants
+from
+  civil.claims
+  join civil.claim_members using (claim_id)
+  join civil.parties using (party_id)
 group by 1, 2, 3, 4;
 
 create view civil.claims_by_client as
-select 
+select
   solicitor_id,
   forename,
-  role, 
-  reference, 
-  description, 
+  role,
+  reference,
+  description,
   amount_pence
-from 
-  civil.parties 
-  join civil.claim_members using (party_id) 
+from
+  civil.parties
+  join civil.claim_members using (party_id)
   join civil.claims using (claim_id);
 

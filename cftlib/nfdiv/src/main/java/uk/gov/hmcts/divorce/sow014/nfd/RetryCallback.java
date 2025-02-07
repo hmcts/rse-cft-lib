@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.sow014.nfd;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -17,14 +16,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.sow014.lib.DynamicRadioListElement;
 import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import static org.jooq.impl.DSL.upper;
 import static org.jooq.nfdiv.ccd.Tables.FAILED_JOBS;
-import static org.jooq.nfdiv.ccd.Tables.SUBMITTED_CALLBACK_QUEUE;
-import static org.jooq.nfdiv.public_.Tables.MULTIPLES;
-import static org.jooq.nfdiv.public_.Tables.SUB_CASES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;

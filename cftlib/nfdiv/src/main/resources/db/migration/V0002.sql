@@ -1,5 +1,5 @@
 create table case_notes(
-   reference bigint references case_data(reference) ,
+   reference bigint references ccd.case_data(reference) ,
    id bigserial,
    date date not null,
    note varchar(10000),
@@ -15,7 +15,7 @@ select
   note->'value'->>'note',
   note->'value'->>'author'
 from
-  case_data,
+  ccd.case_data,
   jsonb_array_elements(data->'notes') note;
 
 

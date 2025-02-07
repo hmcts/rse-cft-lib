@@ -95,12 +95,12 @@ public class CaseController {
                           state,
                           data::text as case_data,
                           '{}'::jsonb as data_classification,
-                          security_classification,
+                          security_classification::text,
                           version,
                           to_json(last_state_modified_date)#>>'{}' as last_state_modified_date,
                           to_json(coalesce(c.last_modified, c.created_date))#>>'{}' as last_modified,
                           supplementary_data::text
-                     from case_data c
+                     from ccd.case_data c
                      where reference = ?
                         """, caseRef);
         var data = defaultMapper.readValue((String) result.get("case_data"), CaseData.class);
@@ -176,8 +176,8 @@ public class CaseController {
         var data = filteredMapper.writeValueAsString(caseData);
         // Upsert the case - create if it doesn't exist, update if it does.
         var rowsAffected = db.update( """
-                insert into case_data (last_modified, jurisdiction, case_type_id, state, data, reference, security_classification, version)
-                values (now(), ?, ?, ?, (?::jsonb), ?, ?::securityclassification, ?)
+                insert into ccd.case_data (last_modified, jurisdiction, case_type_id, state, data, reference, security_classification, version)
+                values (now(), ?, ?, ?, (?::jsonb), ?, ?::ccd.securityclassification, ?)
                 on conflict (reference)
                 do update set
                     state = excluded.state,
@@ -241,7 +241,7 @@ public class CaseController {
                          || jsonb_build_object('event_instance_id', id)
                          || jsonb_build_object('id', event_id)
                           order by id desc)
-                         from case_event e
+                         from ccd.case_event e
                          where case_reference = ?
                         """,
                 new Object[]{caseRef}, String.class);
@@ -253,7 +253,7 @@ public class CaseController {
         var currentView = getCase((Long) details.getCaseDetails().get("id"), roleAssignments);
         var result = db.queryForMap(
                 """
-                        insert into case_event (
+                        insert into ccd.case_event (
                           data,
                           event_id,
                           user_id,
@@ -268,7 +268,7 @@ public class CaseController {
                           summary,
                           description,
                           security_classification)
-                        values (?::jsonb,?,?,?,?,?,?,?,?,?,?,?,?,?::securityclassification)
+                        values (?::jsonb,?,?,?,?,?,?,?,?,?,?,?,?,?::ccd.securityclassification)
                         returning id
                         """,
          defaultMapper.writeValueAsString(currentView.get("case_data")),

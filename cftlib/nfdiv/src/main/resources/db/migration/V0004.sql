@@ -8,7 +8,7 @@ create table multiples (
 create table multiple_members(
     multiple_id bigint references multiples(multiple_id) on delete cascade,
     -- A case can only be in a single multiple
-    sub_case_id bigint unique references case_data(reference) on delete cascade,
+    sub_case_id bigint unique references ccd.case_data(reference) on delete cascade,
     primary key (multiple_id, sub_case_id)
 );
 
@@ -31,7 +31,7 @@ create view sub_cases as (
   from
     multiples m
     join multiple_members s using (multiple_id)
-    join case_data cd on cd.reference = s.sub_case_id
+    join ccd.case_data cd on cd.reference = s.sub_case_id
   order by cd.last_modified desc
 );
 
