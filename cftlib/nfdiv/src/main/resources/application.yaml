@@ -34,6 +34,8 @@ spring:
     allow-bean-definition-overriding: true
   lifecycle:
     timeout-per-shutdown-phase: 2m
+  flyway:
+    enabled: true
 
 springdoc:
   packagesToScan: uk.gov.hmcts.divorce,uk.gov.hmcts.ccd.sdk.runtime
@@ -343,6 +345,7 @@ s2s:
 aac:
   api:
     url: ${AAC_MANAGE_CASE_ASSIGNMENT_BASEURL:http://aac-manage-case-assignment-aat.service.core-compute-aat.internal}
+
 
 core_case_data:
   api:

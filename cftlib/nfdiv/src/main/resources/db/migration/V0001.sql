@@ -1,45 +1,35 @@
-CREATE TYPE public.securityclassification AS ENUM (
-    'PUBLIC',
-    'PRIVATE',
-    'RESTRICTED'
+create table case_notes(
+   reference bigint references ccd.case_data(reference) ,
+   id bigserial,
+   date date not null,
+   note varchar(10000),
+   author varchar(200) not null,
+   primary key(reference, id)
 );
 
-CREATE TABLE public.case_data (
-                                reference bigint primary key,
-                                version integer not null DEFAULT 1,
-                                created_date timestamp without time zone DEFAULT now() NOT NULL,
-                                security_classification public.securityclassification NOT NULL,
-                                last_state_modified_date timestamp without time zone,
-                                resolved_ttl date,
-                                last_modified timestamp without time zone,
-                                jurisdiction character varying(255) NOT NULL,
-                                case_type_id character varying(255) NOT NULL,
-                                state character varying(255) NOT NULL,
-                                data jsonb NOT NULL,
-                                supplementary_data jsonb
-);
+insert into case_notes(reference, id, date, note, author)
+select
+  reference,
+  (note->>'id')::bigint,
+  (note->'value'->>'date')::date,
+  note->'value'->>'note',
+  note->'value'->>'author'
+from
+  ccd.case_data,
+  jsonb_array_elements(data->'notes') note;
 
 
-CREATE TABLE public.case_event (
-                                 id bigserial primary key,
-                                 created_date timestamp without time zone DEFAULT now() NOT NULL,
-                                 security_classification public.securityclassification NOT NULL,
-                                 case_reference bigint NOT NULL references case_data(reference),
-                                 case_type_version integer NOT NULL,
-                                 event_id character varying(70) NOT NULL,
-                                 summary character varying(1024),
-                                 description character varying(65536),
-                                 user_id character varying(64) NOT NULL,
-                                 case_type_id character varying(255) NOT NULL,
-                                 state_id character varying(255) NOT NULL,
-                                 data jsonb NOT NULL,
-                                 user_first_name character varying(255) DEFAULT NULL::character varying NOT NULL,
-                                 user_last_name character varying(255) DEFAULT NULL::character varying NOT NULL,
-                                 event_name character varying(30) DEFAULT NULL::character varying NOT NULL,
-                                 state_name character varying(255) DEFAULT ''::character varying NOT NULL,
-                                 proxied_by character varying(64),
-                                 proxied_by_first_name character varying(255),
-                                 proxied_by_last_name character varying(255)
-);
-
-
+create view notes_by_case as
+select
+reference,
+jsonb_agg(
+  json_build_object(
+    'value', jsonb_build_object(
+      'date', date,
+      'note', note,
+      'author', author
+    )
+  -- Ensure most recent case notes are first
+  ) order by id desc
+) notes from case_notes
+group by reference;

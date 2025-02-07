@@ -1,38 +1,73 @@
-create table es_queue (
-  reference bigint references case_data(reference) primary key,
-  id bigint references case_event(id)
+drop schema if exists civil cascade;
+create schema civil;
+
+
+create table civil.parties(
+                            party_id serial primary key,
+                            forename text not null,
+                            solicitor_id text
 );
 
-create function public.add_to_es_queue() returns trigger
-  language plpgsql
-    as $$
-begin
-  insert into es_queue (reference, id)
-  values (new.case_reference, new.id)
-  on conflict (reference)
-                do update set id = excluded.id
-  where es_queue.id < excluded.id;
-return new;
-end $$;
 
-create trigger after_case_event_insert
-  after insert on case_event
-  for each row
-  execute function add_to_es_queue();
+create table civil.claims(
+                           reference bigint references ccd.case_data(reference) not null,
+                           claim_id serial primary key,
+                           description text not null,
+                           amount_pence bigint not null check (amount_pence > 0)
+);
 
-create or replace function update_last_state_modified_date()
-returns trigger as $$
-begin
-    -- check if the state field has changed
-    if new.state is distinct from old.state then
-        -- update the last_state_modified_date to the current timestamp
-        new.last_state_modified_date := now();
-end if;
-return new;
-end;
-$$ language plpgsql;
+create type civil.claim_role as enum(
+  'claimant',
+  'defendant'
+);
 
-create trigger trigger_update_last_state_modified_date
-  before insert or update on case_data
-  for each row
-  execute function update_last_state_modified_date();
+create table civil.claim_members(
+                                  claim_id integer references civil.claims(claim_id),
+                                  party_id integer references civil.parties(party_id),
+                                  role civil.claim_role ,
+                                  primary key(claim_id, party_id)
+);
+
+create table civil.applications(
+                                 party_id integer references civil.parties(party_id),
+                                 claim_id integer references civil.claims(claim_id),
+                                 reason text not null
+);
+
+
+create table civil.interested_parties(
+                                       party_id integer references civil.parties(party_id),
+                                       claim_id integer references civil.claims(claim_id),
+                                       primary key(party_id, claim_id)
+);
+
+create view civil.pending_applications as
+select party_id, claim_id, forename, description, reason from civil.applications
+                                                                join civil.parties using (party_id)
+                                                                join civil.claims using (claim_id);
+
+
+create view civil.judge_claims as
+select
+  claim_id, reference, description, amount_pence,
+  jsonb_agg(forename) filter (where role = 'claimant') claimants,
+  jsonb_agg(forename) filter (where role = 'defendant') defendants
+from
+  civil.claims
+  join civil.claim_members using (claim_id)
+  join civil.parties using (party_id)
+group by 1, 2, 3, 4;
+
+create view civil.claims_by_client as
+select
+  solicitor_id,
+  forename,
+  role,
+  reference,
+  description,
+  amount_pence
+from
+  civil.parties
+  join civil.claim_members using (party_id)
+  join civil.claims using (claim_id);
+

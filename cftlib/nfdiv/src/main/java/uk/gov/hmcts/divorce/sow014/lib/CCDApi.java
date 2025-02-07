@@ -1,21 +1,13 @@
 package uk.gov.hmcts.divorce.sow014.lib;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.jooq.DSLContext;
 import org.jooq.JSONB;
 import org.jooq.impl.DSL;
-import org.jooq.nfdiv.public_.tables.records.CaseEventRecord;
+import org.jooq.nfdiv.ccd.tables.records.CaseEventRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.idam.User;
 
-import java.util.UUID;
-import java.util.function.Consumer;
-
-import static org.jooq.nfdiv.public_.Tables.CASE_EVENT;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.jooq.nfdiv.ccd.Tables.CASE_EVENT;
 
 @Service
 public class CCDApi {
