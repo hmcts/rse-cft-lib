@@ -45,11 +45,6 @@ public class CallbackDispatcher implements CCDEventListener {
   }
 
   @Override
-  public void submitted(CallbackRequest request) {
-
-  }
-
-  @Override
   public boolean hasSubmittedCallbackForEvent(String event) {
         return submittedCallbacks.contains(event);
     }
