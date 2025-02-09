@@ -157,9 +157,6 @@ public class CftLibPlugin implements Plugin<Project> {
         });
         manifest.classpath = lib.getRuntimeClasspath();
         // Task performing main class name resolution changed in spring boot 3
-        // TODO: Modify the github actions to test the Cftlib on spring boot 2 & 3.
-        // Spring boot 3 needs Java 17 which currently aac-assign-access does not support,
-        // so revisit this once it does and the whole cftlib build can move to java 17.
         for (String name : List.of("resolveMainClassName", "bootRunMainClassName")) {
             var t = project.getTasks().findByName(name);
             if (null != t) {
