@@ -111,13 +111,4 @@ def configurePublishing(p) {
 
 allprojects {
     configurePublishing(it)
-    afterEvaluate { project ->
-        java {
-            toolchain {
-                // Cftlib currently runs on Java 17 so we build all services using Java 17
-                // TODO: move Cftlib to Java 21 when one or more bundled services require it.
-                languageVersion = JavaLanguageVersion.of(17)
-            }
-        }
-    }
 }
