@@ -541,5 +541,5 @@ jooq {
 }
 
 jooqCodegen {
-  inputs.files project.file('nfdiv/src/main/resources/db/migration')
+  inputs.files project.files('src/main/resources/db/migration')
 }
