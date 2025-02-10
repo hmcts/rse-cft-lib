@@ -26,6 +26,20 @@ def configurePublishing(p) {
             }
         }
 
+        // Temporary workaround until RAS upgrade to java 21
+        // This dependency needs bumping
+        // https://github.com/mvel/mvel/commit/2eba49dee022e5fd786941be52dde89c6d3631f9
+        if (project.name == 'am-role-assignment-service') {
+            dependencies {
+                implementation('org.mvel:mvel2') {
+                    version {
+                        strictly '2.5.0.Final'
+                    }
+                }
+            }
+        }
+
+
         // Disable gradle module metadata resolution and rely on maven pom
         tasks.withType(GenerateModuleMetadata) {
             enabled = false
