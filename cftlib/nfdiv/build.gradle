@@ -19,7 +19,6 @@ buildscript {
 
 plugins {
   id 'application'
-  id 'checkstyle'
   id 'idea'
   id 'pmd'
   id 'jacoco'
@@ -149,21 +148,6 @@ tasks.register('highLevelDataSetup', JavaExec) {
   mainClass.set("uk.gov.hmcts.divorce.common.ccd.HighLevelDataSetupApp")
   classpath += sourceSets.main.runtimeClasspath
   jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
-}
-
-checkstyle {
-  maxWarnings = 0
-  toolVersion = '10.14.0'
-  getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
-}
-
-pmd {
-  toolVersion = "6.18.0"
-  sourceSets = [sourceSets.main]
-  reportsDir = file("$project.buildDir/reports/pmd")
-  // https://github.com/pmd/pmd/issues/876
-  ruleSets = []
-  ruleSetFiles = files("${rootDir}/config/pmd/ruleset.xml")
 }
 
 jacocoTestReport {

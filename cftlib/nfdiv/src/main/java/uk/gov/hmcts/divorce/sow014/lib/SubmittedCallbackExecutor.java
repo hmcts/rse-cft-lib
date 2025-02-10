@@ -126,9 +126,9 @@ public class SubmittedCallbackExecutor implements DisposableBean {
 
         RestTemplate template = new RestTemplate();
         var requestEntity = new HttpEntity<>(r, httpHeaders);
-        template.exchange(new URI("http://localhost:4013/callbacks/submitted?eventId=" + callback.getEventId()),
-            HttpMethod.POST, requestEntity, CallbackResponse.class);
-
+        var result = template.exchange(new URI("http://localhost:4013/callbacks/submitted?eventId=" + callback.getEventId()),
+            HttpMethod.POST, requestEntity, String.class);
+        System.out.println(result);
 
     }
 

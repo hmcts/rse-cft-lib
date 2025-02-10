@@ -1,22 +1,27 @@
-package uk.gov.hmcts.divorce.sow014.lib;
+package uk.gov.hmcts.divorce.sow014.nfd;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Configuration;
+import uk.gov.hmcts.ccd.sdk.CCDEventListener;
 import uk.gov.hmcts.ccd.sdk.ResolvedCCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.runtime.CallbackController;
+import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
+import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Service
-public class CallbackEnumerator {
-    private final List<ResolvedCCDConfig<?, ?, ?>> configs;
+@Configuration
+public class CallbackDispatcher implements CCDEventListener {
+    private final CallbackController runtime;
     private Set<String> submittedCallbacks;
     private Set<String> aboutToSubmitCallbacks;
 
     @Autowired
-    public CallbackEnumerator(List<ResolvedCCDConfig<?, ?, ?>> configs) {
-        this.configs = configs;
+    public CallbackDispatcher(CallbackController runtime, List<ResolvedCCDConfig<?, ?, ?>> configs) {
+        this.runtime = runtime;
         var cfg = configs.stream().filter(x -> x.getCaseType().equals("NFD")).findFirst();
         submittedCallbacks = new HashSet<>();
         aboutToSubmitCallbacks = new HashSet<>();
@@ -33,8 +38,14 @@ public class CallbackEnumerator {
     public boolean hasAboutToSubmitCallbackForEvent(String event) {
         return aboutToSubmitCallbacks.contains(event);
     }
-    public boolean hasSubmittedCallbackForEvent(String event) {
+
+  @Override
+  public AboutToStartOrSubmitResponse aboutToSubmit(CallbackRequest request) {
+    return runtime.aboutToSubmit(request);
+  }
+
+  @Override
+  public boolean hasSubmittedCallbackForEvent(String event) {
         return submittedCallbacks.contains(event);
     }
-
 }

@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import uk.gov.hmcts.ccd.sdk.External;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
@@ -24,8 +25,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.*;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
-import uk.gov.hmcts.divorce.sow014.lib.External;
-import uk.gov.hmcts.divorce.sow014.lib.FilterExternalFieldsInspector;
 import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
 
 import java.time.Clock;
