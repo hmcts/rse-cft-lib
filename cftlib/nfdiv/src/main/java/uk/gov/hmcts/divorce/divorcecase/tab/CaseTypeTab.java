@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.Tab;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.model.sow014.Party;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -36,12 +37,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.LAReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
 import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.notShowForState;
 import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState;
 
@@ -104,6 +100,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildPaymentTab(configBuilder);
         buildDocumentsTab(configBuilder);
         buildNotesTab(configBuilder);
+        buildPartiesTab(configBuilder);
         buildMarriageCertificateTab(configBuilder);
         buildCivilPartnershipCertificateTab(configBuilder);
         buildServiceApplicationTab(configBuilder);
@@ -312,6 +309,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("notes", "Notes")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .field(CaseData::getNotes);
+    }
+
+    private void buildPartiesTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("parties", "Parties")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER, SOLICITOR)
+            .field(CaseData::getParties);
     }
 
     private void buildGeneralReferralTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

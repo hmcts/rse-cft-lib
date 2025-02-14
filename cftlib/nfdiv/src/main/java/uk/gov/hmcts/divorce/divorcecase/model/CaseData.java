@@ -13,15 +13,10 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.External;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.CaseLink;
-import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
-import uk.gov.hmcts.ccd.sdk.type.FieldType;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.ccd.sdk.type.*;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.access.*;
+import uk.gov.hmcts.divorce.divorcecase.model.sow014.Party;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
@@ -372,6 +367,31 @@ public class CaseData {
         access = {SystemUpdateAndSuperUserAccess.class}
     )
     private List<ListValue<GeneralLetterDetails>> generalLetters;
+
+    @CCD(
+        label = "Parties",
+        typeOverride = Collection,
+        typeParameterOverride = "Party",
+        access = {SolicitorAccess.class, CaseworkerAccess.class}
+    )
+    @External
+    private List<ListValue<Party>> parties;
+
+    @CCD(
+        typeOverride = DynamicRadioList,
+        label = "Select a party to update party details",
+        access = {SolicitorAccess.class}
+    )
+    @External
+    private MyRadioList partyNames;
+
+    @CCD(
+        label = "Add a party details",
+        hint = "Enter a party's details",
+        access = {SolicitorAccess.class}
+    )
+    @External
+    private Party party;
 
     @CCD(
         label = "Sent notifications",

@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
+import org.jooq.nfdiv.civil.tables.Parties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.CaseRepository;
@@ -15,6 +16,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.sow014.Party;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.sow014.lib.RoleAssignment;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static org.jooq.nfdiv.ccd.Tables.FAILED_JOBS;
 import static org.jooq.nfdiv.civil.Civil.CIVIL;
+import static org.jooq.nfdiv.civil.tables.Parties.PARTIES;
 import static org.jooq.nfdiv.public_.Tables.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -65,6 +68,7 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
         }
 
         caseData.setNotes(loadNotes(caseRef));
+        caseData.setParties(loadParties(caseRef));
 
         var assignments = decodeHeader(roleAssignments, caseRef);
         log.info("RoleAssignments: {}", assignments);
@@ -85,9 +89,19 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
 
         addPendingApplications(caseRef, caseData);
         addClaims(caseRef, caseData);
-        addSolicitorClaims(caseRef, caseData);
+//        addSolicitorClaims(caseRef, caseData);
 
         return caseData;
+    }
+
+    private List<ListValue<Party>> loadParties(long caseRef) {
+        return db.select()
+            .from(PARTIES)
+            .where(PARTIES.REFERENCE.eq(caseRef))
+            .orderBy(PARTIES.PARTY_ID.desc())
+            .fetchInto(Party.class)
+            .stream().map(n -> new ListValue<>(null, n))
+            .toList();
     }
 
     @SneakyThrows
@@ -96,7 +110,7 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
 
         var clients = db.fetch(CIVIL.CLAIMS_BY_CLIENT,
             CIVIL.CLAIMS_BY_CLIENT.REFERENCE.eq(caseRef),
-            CIVIL.CLAIMS_BY_CLIENT.SOLICITOR_ID.eq(caseworkerUser.getUserDetails().getUid())
+            CIVIL.CLAIMS_BY_CLIENT.SOLICITOR_ID.eq(Long.valueOf(caseworkerUser.getUserDetails().getUid()))
             );
 
         PebbleTemplate compiledTemplate = pebl.getTemplate("yourClients");
