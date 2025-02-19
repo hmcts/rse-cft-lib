@@ -25,6 +25,7 @@ public class PartyRepository {
     public Party fetchById(int id) {
         return db.selectFrom(PARTIES)
             .where(PARTIES.PARTY_ID.eq(id))
+            .forUpdate()
             .fetchOneInto(Party.class);
     }
 
@@ -40,24 +41,12 @@ public class PartyRepository {
     }
 
     public void updatePartyThroughCRUD(Party party) {
-        Settings settings = new Settings().withExecuteWithOptimisticLocking(true);
-        DSLContext optimistic = db.configuration().derive(settings).dsl();
-
-        optimistic.select().from(PARTIES)
-            .where(PARTIES.PARTY_ID.eq(Integer.valueOf(party.getPartyId())))
-            .forUpdate().fetchOne();
-
-        optimistic.update(PARTIES)
-            .set(PARTIES.FORENAME, party.getForename())
-            .set(PARTIES.SURNAME, party.getSurname())
-            .where(PARTIES.PARTY_ID.eq(Integer.valueOf(party.getPartyId())))
-            .execute();
-//        var partiesRecord = optimistic.fetchOne(PARTIES, PARTIES.PARTY_ID.eq(Integer.valueOf(party.getPartyId())));
-//        if (partiesRecord != null) {
-//            partiesRecord.set(PARTIES.FORENAME, party.getForename());
-//            partiesRecord.set(PARTIES.SURNAME, party.getSurname());
-//            partiesRecord.store();
-//        }
+        var partiesRecord = db.fetchOne(PARTIES, PARTIES.PARTY_ID.eq(Integer.valueOf(party.getPartyId())));
+        if (partiesRecord != null) {
+            partiesRecord.set(PARTIES.FORENAME, party.getForename());
+            partiesRecord.set(PARTIES.SURNAME, party.getSurname());
+            partiesRecord.store();
+        }
     }
 
     public void createPartyThroughCRUD(Party party, Long reference, Long solicitorId) {
