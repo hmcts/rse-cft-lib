@@ -17,6 +17,11 @@ public class Party {
     private String partyId;
 
     @CCD(
+        showCondition = "version=\"NEVER_SHOW\""
+    )
+    private String version;
+
+    @CCD(
         label = "First name"
     )
     private String forename;

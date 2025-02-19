@@ -16,8 +16,11 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -49,6 +52,9 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private IdamService idamService;
 
     @Autowired
     private DSLContext db;
@@ -179,11 +185,18 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
         } else if (data.getCaseInvite().applicant2UserId() != null) {
             ccdAccessService.linkRespondentToApplication(auth, caseId, app2Id, details);
 
-            db.insertInto(SOLICITORS, SOLICITORS.REFERENCE, SOLICITORS.ORGANISATION_ID, SOLICITORS.ROLE)
+            User user = idamService.retrieveUser(auth);
+            UserInfo userDetails = user.getUserDetails();
+            db.insertInto(SOLICITORS, SOLICITORS.REFERENCE, SOLICITORS.ORGANISATION_ID, SOLICITORS.ROLE,
+                    SOLICITORS.FORENAME, SOLICITORS.SURNAME, SOLICITORS.VERSION)
                 .values(
                     details.getId(),
                     "10",
-                    APPLICANT_2.getRole())
+                    APPLICANT_2.getRole(),
+                    userDetails.getGivenName(),
+                    userDetails.getFamilyName(),
+                    Long.valueOf(1)
+                    )
                 .execute();
         }
 

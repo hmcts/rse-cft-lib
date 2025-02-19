@@ -2,48 +2,35 @@ package uk.gov.hmcts.divorce.solicitor.event;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.jooq.DSLContext;
+import org.jooq.exception.DataChangedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.DynamicList;
-import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.divorce.common.AddSystemUpdateRole;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Party;
-import uk.gov.hmcts.divorce.divorcecase.model.sow014.Solicitor;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
+import uk.gov.hmcts.divorce.sow014.civil.PartyRepository;
 import uk.gov.hmcts.divorce.sow014.lib.DynamicRadioListElement;
 import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
-import static org.jooq.nfdiv.civil.Tables.PARTIES;
-import static org.jooq.nfdiv.civil.Tables.SOLICITORS;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.*;
 
 @Slf4j
 @Component
@@ -52,14 +39,18 @@ public class SolicitorUpdateParties implements CCDConfig<CaseData, State, UserRo
     public static final String SOLICITOR_PARTY_UPDATE = "solicitor-update-parties";
     private static final String NEVER_SHOW = "Forename=\"never\"";
 
-    @Autowired
     private CcdAccessService ccdAccessService;
 
-    @Autowired
     private HttpServletRequest httpServletRequest;
+    private final PartyRepository partyRepository;
 
     @Autowired
-    private DSLContext db;
+    public SolicitorUpdateParties(CcdAccessService ccdAccessService, HttpServletRequest httpServletRequest,
+                                  PartyRepository partyRepository) {
+        this.ccdAccessService = ccdAccessService;
+        this.httpServletRequest = httpServletRequest;
+        this.partyRepository = partyRepository;
+    }
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -85,8 +76,8 @@ public class SolicitorUpdateParties implements CCDConfig<CaseData, State, UserRo
         pageBuilder.page("updatePartyDetails")
             .pageLabel("Update solicitor party details")
             .complex(CaseData::getParty)
-                .mandatoryWithLabel(Party::getForename, "Forename")
-                .mandatoryWithLabel(Party::getSurname, "Lastname")
+            .mandatoryWithLabel(Party::getForename, "Forename")
+            .mandatoryWithLabel(Party::getSurname, "Lastname")
             .done();
     }
 
@@ -131,17 +122,7 @@ public class SolicitorUpdateParties implements CCDConfig<CaseData, State, UserRo
 
         DynamicRadioListElement value = data.getPartyNames().getValue();
         String code = value.getCode();
-
-//        Optional<Party> party
-//            = db.select()
-//            .from(PARTIES)
-//            .where(PARTIES.FORENAME.eq(names[0]))
-//            .and(PARTIES.SURNAME.eq(names[1]))
-//            .and(PARTIES.REFERENCE.eq(details.getId()))
-//            .fetchInto(Party.class)
-//            .stream().findFirst();
-        String[] strings = value.getLabel().split(" - ");
-        data.setParty(Party.builder().partyId(code).forename(strings[0]).surname(strings[1]).build());
+        data.setParty(partyRepository.fetchById(Integer.parseInt(code)));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
@@ -155,11 +136,14 @@ public class SolicitorUpdateParties implements CCDConfig<CaseData, State, UserRo
         CaseData data = details.getData();
         Party party = data.getParty();
 
-        db.update(PARTIES)
-            .set(PARTIES.FORENAME, party.getForename())
-            .set(PARTIES.SURNAME, party.getSurname())
-            .where(PARTIES.PARTY_ID.eq(Integer.valueOf(party.getPartyId())))
-            .execute();
+        partyRepository.updatePartyThroughCRUD(party);
+//        Party existingParty = partyRepository.fetchById(Integer.parseInt(party.getPartyId()));
+//
+//        if (existingParty != null && existingParty.getVersion().equals(party.getVersion())) {
+//            partyRepository.updateParty(party);
+//        } else {
+//            throw new ResponseStatusException(HttpStatus.CONFLICT, "Party record has been changed or doesn't exist any longer.");
+//        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

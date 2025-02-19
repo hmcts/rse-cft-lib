@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Party;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Solicitor;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.divorce.sow014.civil.PartyRepository;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.Optional;
@@ -41,6 +42,9 @@ public class SolicitorAddParty implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private DSLContext db;
+
+    @Autowired
+    private PartyRepository partyRepository;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -80,13 +84,17 @@ public class SolicitorAddParty implements CCDConfig<CaseData, State, UserRole> {
             .fetchInto(Solicitor.class)
             .stream().findFirst();
 
-        db.insertInto(PARTIES, PARTIES.REFERENCE, PARTIES.SOLICITOR_ID, PARTIES.FORENAME, PARTIES.SURNAME)
-            .values(
-                details.getId(),
-                solicitors.get().getSolicitorId(),
-                party.getForename(),
-                party.getSurname())
-            .execute();
+//        db.insertInto(PARTIES, PARTIES.REFERENCE, PARTIES.SOLICITOR_ID, PARTIES.FORENAME, PARTIES.SURNAME)
+//            .values(
+//                details.getId(),
+//                Long.valueOf(solicitors.get().getSolicitorId()),
+//                party.getForename(),
+//                party.getSurname())
+//            .execute();
+
+        partyRepository.createPartyThroughCRUD(party, details.getId(), Long.valueOf(solicitors.get().getSolicitorId()));
+
+
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
