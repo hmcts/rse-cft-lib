@@ -20,9 +20,8 @@ import java.util.Set;
 
 // Simple indexer replicating logstash functionality
 // but saving up to ~1GB of RAM.
-@Component
 @ConditionalOnMissingClass("uk.gov.hmcts.ccd.sdk.DecentralisedESIndexer")
-@ConditionalOnProperty(prefix = "dtsse", name = "decentralised", havingValue = "false", matchIfMissing = true)
+@Component
 public class ESIndexer {
 
     @SneakyThrows
@@ -31,50 +30,48 @@ public class ESIndexer {
         var t = new Thread(this::index);
         t.setDaemon(true);
         t.setUncaughtExceptionHandler(ControlPlane.failFast);
-        t.setName("****NFD ElasticSearch indexer");
+        t.setName("****Cftlib ElasticSearch indexer");
         t.start();
     }
 
     @SneakyThrows
     private void index() {
         ControlPlane.waitForBoot();
-        ControlPlane.waitForES();
 
         RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
                 new HttpHost("localhost", 9200)));
 
-        try (Connection c = ControlPlane.getApi().getConnection(Database.nfd)) {
-            c.setAutoCommit(false);
+        try (Connection c = ControlPlane.getApi().getConnection(Database.Datastore)) {
             while (true) {
-                Thread.sleep(250);
+                Thread.sleep(1000);
 
                 // Replicates the behaviour of the previous logstash configuration.
                 // https://github.com/hmcts/rse-cft-lib/blob/94aa0edeb0e1a4337a411ed8e6e20f170ed30bae/cftlib/lib/runtime/compose/logstash/logstash_conf.in#L3
                 var results = c.prepareStatement("""
-                        with updated as (
-                          delete from ccd.es_queue es where id in (select id from ccd.es_queue limit 2000)
-                          returning id
-                        )
-                          select reference as id, case_type_id, index_id, row_to_json(row)::jsonb as row
-                          from (
-                            select
+                          with updated as (
+                            update case_data
+                            set marked_by_logstash = true
+                            where not marked_by_logstash
+                            returning *
+                          )
+                          select id, case_type_id, index_id, row_to_json(row)::jsonb as row
+                          from (select
                               now() as "@timestamp",
                               version::text as "@version",
-                              cd.case_type_id,
-                              cd.created_date,
-                              ce.data,
+                              case_type_id,
+                              created_date,
+                              data,
+                              data_classification,
+                              id,
                               jurisdiction,
-                              cd.reference,
-                              ce.created_date as last_modified,
+                              reference,
+                              last_modified,
                               last_state_modified_date,
                               supplementary_data,
-                              lower(cd.case_type_id) || '_cases' as index_id,
-                              cd.state,
-                              cd.security_classification
-                           from updated
-                            join ccd.case_event ce using(id)
-                            join ccd.case_data cd on cd.reference = ce.case_reference
-                        ) row
+                              lower(case_type_id) || '_cases' as index_id,
+                              state,
+                              security_classification
+                          from updated) row
                         """).executeQuery();
 
                 BulkRequest request = new BulkRequest();
@@ -95,6 +92,9 @@ public class ESIndexer {
                         filter(data, "SearchCriteria", "caseManagementLocation", "CaseAccessCategory",
                                 "caseNameHmctsInternal", "caseManagementCategory");
                         filter((Map<String, Object>) map.get("supplementary_data"), "HMCTSServiceId");
+                        filter((Map<String, Object>) map.get("data_classification"), "SearchCriteria",
+                                "CaseAccessCategory", "caseManagementLocation", "caseNameHmctsInternal",
+                                "caseManagementCategory");
                         map.remove("last_state_modified_date");
                         map.remove("last_modified");
                         map.remove("created_date");
@@ -112,7 +112,6 @@ public class ESIndexer {
                                 + r.buildFailureMessage());
                     }
                 }
-                c.commit();
             }
         }
     }
@@ -124,4 +123,3 @@ public class ESIndexer {
         }
     }
 }
-
