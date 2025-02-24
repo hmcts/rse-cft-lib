@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.jooq.DSLContext;
+import org.jooq.nfdiv.civil.tables.records.SolicitorsRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
@@ -18,12 +19,14 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.*;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.solicitor.event.SolicitorOrgDetails;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static java.lang.System.getenv;
@@ -81,18 +84,18 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             .page("Create test case", this::midEvent)
             .mandatory(CaseData::getApplicationType)
             .complex(CaseData::getApplicant1)
-                .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is applicant 1 represented")
-                .done()
+            .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is applicant 1 represented")
+            .done()
             .complex(CaseData::getApplicant2)
-                .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is applicant 2 represented")
-                .done()
+            .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is applicant 2 represented")
+            .done()
             .complex(CaseData::getCaseInvite)
-                .label("userIdLabel", "<pre>Use ./bin/get-user-id-by-email.sh [email] to get an ID"
-                    + ".\n\nTEST_SOLICITOR@mailinator.com is 93b108b7-4b26-41bf-ae8f-6e356efb11b3 in AAT.\n</pre>")
-                .mandatoryWithLabel(CaseInvite::applicant2UserId, "Applicant 2 user ID")
-                .done()
+            .label("userIdLabel", "<pre>Use ./bin/get-user-id-by-email.sh [email] to get an ID"
+                + ".\n\nTEST_SOLICITOR@mailinator.com is 93b108b7-4b26-41bf-ae8f-6e356efb11b3 in AAT.\n</pre>")
+            .mandatoryWithLabel(CaseInvite::applicant2UserId, "Applicant 2 user ID")
+            .done()
             .complex(CaseData::getApplication)
-                .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "Case state")
+            .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "Case state")
             .done();
     }
 
@@ -183,23 +186,33 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
             ccdAccessService.addRoleToCase(app2Id, caseId, orgId, APPLICANT_1_SOLICITOR);
         } else if (data.getCaseInvite().applicant2UserId() != null) {
-            ccdAccessService.linkRespondentToApplication(auth, caseId, app2Id, details);
 
-            User user = idamService.retrieveUser(auth);
-            UserInfo userDetails = user.getUserDetails();
-            db.insertInto(SOLICITORS, SOLICITORS.REFERENCE, SOLICITORS.ORGANISATION_ID, SOLICITORS.ROLE,
-                    SOLICITORS.FORENAME, SOLICITORS.SURNAME, SOLICITORS.VERSION)
-                .values(
-                    details.getId(),
-                    "10",
-                    APPLICANT_2.getRole(),
-                    userDetails.getGivenName(),
-                    userDetails.getFamilyName(),
-                    Long.valueOf(1)
-                    )
-                .execute();
+            Arrays.stream(SolicitorOrgDetails.values()).toList().forEach(org -> {
+
+                if (org != SolicitorOrgDetails.CREATOR) {
+                    ccdAccessService.linkRespondentToApplication(auth, caseId, org.getId(), details, org.getRole());
+                }
+                User user = idamService.retrieveUser(auth);
+                UserInfo userDetails = user.getUserDetails();
+
+                createSolicitor(details, org.getOrganisationId(), org.getRole(), userDetails, org.getId());
+            });
+
         }
 
         return SubmittedCallbackResponse.builder().build();
+    }
+
+    private void createSolicitor(CaseDetails<CaseData, State> details,
+                                 String organisationId, String role,
+                                 UserInfo userDetails, String solicitorUserId) {
+        SolicitorsRecord solicitorsRecord = db.newRecord(SOLICITORS);
+        solicitorsRecord.setReference(details.getId());
+        solicitorsRecord.setOrganisationId(organisationId);
+        solicitorsRecord.setRole(role);
+        solicitorsRecord.setUserId(solicitorUserId);
+        solicitorsRecord.setForename(userDetails.getGivenName());
+        solicitorsRecord.setSurname(userDetails.getFamilyName());
+        solicitorsRecord.store();
     }
 }

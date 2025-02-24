@@ -101,6 +101,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildDocumentsTab(configBuilder);
         buildNotesTab(configBuilder);
         buildPartiesTab(configBuilder);
+        buildSolicitorsTab(configBuilder);
         buildMarriageCertificateTab(configBuilder);
         buildCivilPartnershipCertificateTab(configBuilder);
         buildServiceApplicationTab(configBuilder);
@@ -118,6 +119,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
         // Commented out as requested by service team. This can't be available for super users. Maybe we need a "Developer" role?
         //buildLetterPackTab(configBuilder);
+    }
+
+    private void buildSolicitorsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("solicitors", "Solicitors")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER, SOLICITOR)
+            .field(CaseData::getSolicitors);
     }
 
     private void buildWarningsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

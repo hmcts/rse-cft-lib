@@ -4,6 +4,7 @@ create schema civil;
 create table civil.solicitors(
                             solicitor_id serial primary key,
                             organisation_id text not null,
+                            user_id text not null,
                             reference bigint references ccd.case_data(reference) not null,
                             role text,
                             forename text not null,
@@ -15,6 +16,8 @@ create table civil.parties(
                             forename text not null,
                             surname text not null,
                             version bigint not null,
+                            locked_at timestamp,
+                            locked_by text,
                             solicitor_id bigint references civil.solicitors(solicitor_id),
                             reference bigint references ccd.case_data(reference) not null
 );

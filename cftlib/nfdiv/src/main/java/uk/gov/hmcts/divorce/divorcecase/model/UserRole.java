@@ -24,7 +24,17 @@ public enum UserRole implements HasRole {
 
     CITIZEN("citizen", "CRU"),
     CREATOR("[CREATOR]", "CRU"),
-    APPLICANT_2("[APPLICANTTWO]", "CRU");
+    APPLICANT_2("[APPLICANTTWO]", "CRU"),
+    SOLICITOR_A("[SOLICITORA]", "CRU"),
+    SOLICITOR_B("[SOLICITORB]", "CRU"),
+    SOLICITOR_C("[SOLICITORC]", "CRU"),
+    SOLICITOR_D("[SOLICITORD]", "CRU"),
+    SOLICITOR_E("[SOLICITORE]", "CRU"),
+    SOLICITOR_F("[SOLICITORF]", "CRU"),
+    SOLICITOR_G("[SOLICITORG]", "CRU"),
+    SOLICITOR_H("[SOLICITORH]", "CRU"),
+    SOLICITOR_I("[SOLICITORI]", "CRU"),
+    SOLICITOR_J("[SOLICITORJ]", "CRU");
 
     @JsonValue
     private final String role;

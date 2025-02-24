@@ -6,9 +6,22 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 @Data
 public class Solicitor {
 
+    @CCD(
+        showCondition = "solicitorId=\"NEVER_SHOW\""
+    )
     private String solicitorId;
-    private Long organisationId;
+    @CCD(
+        label = "Organisation Id"
+    )
+    private String organisationId;
+    @CCD(
+        showCondition = "reference=\"NEVER_SHOW\""
+    )
     private String reference;
+
+    @CCD(
+        label = "Role"
+    )
     private String role;
     @CCD(
         showCondition = "version=\"NEVER_SHOW\""

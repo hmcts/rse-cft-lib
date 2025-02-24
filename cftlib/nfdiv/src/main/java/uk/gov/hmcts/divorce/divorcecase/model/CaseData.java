@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.*;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.access.*;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Party;
+import uk.gov.hmcts.divorce.divorcecase.model.sow014.Solicitor;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
@@ -376,6 +377,15 @@ public class CaseData {
     )
     @External
     private List<ListValue<Party>> parties;
+
+    @CCD(
+        label = "Solicitors",
+        typeOverride = Collection,
+        typeParameterOverride = "Solicitor",
+        access = {SolicitorAccess.class, CaseworkerAccess.class}
+    )
+    @External
+    private List<ListValue<Solicitor>> solicitors;
 
     @CCD(
         typeOverride = DynamicRadioList,

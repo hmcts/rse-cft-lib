@@ -15,8 +15,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Party;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Solicitor;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.divorce.sow014.civil.PartyRepository;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.Optional;
@@ -44,7 +45,7 @@ public class SolicitorAddParty implements CCDConfig<CaseData, State, UserRole> {
     private DSLContext db;
 
     @Autowired
-    private PartyRepository partyRepository;
+    private IdamService idamService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -75,26 +76,26 @@ public class SolicitorAddParty implements CCDConfig<CaseData, State, UserRole> {
 
         CaseData data = details.getData();
         Party party = data.getParty();
+        var auth = httpServletRequest.getHeader(AUTHORIZATION);
+        User solicitorUser = idamService.retrieveUser(auth);
 
+        String userId = solicitorUser.getUserDetails().getUid();
+        SolicitorOrgDetails solicitorOrgDetails = SolicitorOrgDetails.from(userId).get();
         Optional<Solicitor> solicitors
             = db.select()
             .from(SOLICITORS)
-            .where(SOLICITORS.ORGANISATION_ID.eq("10"))
+            .where(SOLICITORS.ORGANISATION_ID.eq(solicitorOrgDetails.getOrganisationId()))
+            .and(SOLICITORS.USER_ID.eq(userId))
             .and(SOLICITORS.REFERENCE.eq(details.getId()))
             .fetchInto(Solicitor.class)
             .stream().findFirst();
 
-//        db.insertInto(PARTIES, PARTIES.REFERENCE, PARTIES.SOLICITOR_ID, PARTIES.FORENAME, PARTIES.SURNAME)
-//            .values(
-//                details.getId(),
-//                Long.valueOf(solicitors.get().getSolicitorId()),
-//                party.getForename(),
-//                party.getSurname())
-//            .execute();
-
-        partyRepository.createPartyThroughCRUD(party, details.getId(), Long.valueOf(solicitors.get().getSolicitorId()));
-
-
+        var partiesRecord = db.newRecord(PARTIES);
+        partiesRecord.setForename(party.getForename());
+        partiesRecord.setSurname(party.getSurname());
+        partiesRecord.setReference(details.getId());
+        partiesRecord.setSolicitorId(Long.valueOf(solicitors.get().getSolicitorId()));
+        partiesRecord.store();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
