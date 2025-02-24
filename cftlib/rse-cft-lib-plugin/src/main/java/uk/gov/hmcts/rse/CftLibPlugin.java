@@ -23,7 +23,6 @@ import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.jvm.tasks.Jar;
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension;
-import org.gradle.testing.jacoco.tasks.JacocoReport;
 
 public class CftLibPlugin implements Plugin<Project> {
 

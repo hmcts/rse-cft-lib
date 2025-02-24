@@ -45,13 +45,6 @@ import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LibConsumerApplicationTests extends CftlibTest {
 
-    public static String generateDummyS2SToken(String serviceName) {
-        return JWT.create()
-                .withSubject(serviceName)
-                .withIssuedAt(new Date())
-                .sign(Algorithm.HMAC256("secret"));
-    }
-
     public static String buildJwt() {
         return JWT.create()
             .withSubject("banderous")
