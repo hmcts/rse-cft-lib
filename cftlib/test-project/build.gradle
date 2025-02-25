@@ -3,6 +3,7 @@ import uk.gov.hmcts.rse.ManifestTask
 
 
 plugins {
+    id 'jacoco'
     id 'org.springframework.boot' version "${testSpringBootVersion}"
     id 'io.spring.dependency-management' version '1.1.0'
     id 'java'

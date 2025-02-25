@@ -21,6 +21,8 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.jvm.tasks.Jar;
+import org.gradle.testing.jacoco.plugins.JacocoPlugin;
+import org.gradle.testing.jacoco.plugins.JacocoPluginExtension;
 
 public class CftLibPlugin implements Plugin<Project> {
 
@@ -45,9 +47,19 @@ public class CftLibPlugin implements Plugin<Project> {
         registerDependencyRepositories(project);
         createManifestTasks(project);
         createBootWithCCDTask(project);
-        createTestTask(project);
+        configureJacoco(project, createTestTask(project));
         surfaceSourcesToIDE(project);
         createCftlibJarTask(project);
+    }
+
+    /**
+     * Apply Jacoco to the task if jacoco plugin is applied to the project.
+     */
+    private void configureJacoco(Project p, CftlibExec task) {
+        if (p.getPlugins().hasPlugin(JacocoPlugin.class)) {
+            var e = p.getExtensions().getByType(JacocoPluginExtension.class);
+            e.applyTo(task);
+        }
     }
 
     static Directory cftlibBuildDir(Project project) {
@@ -173,7 +185,7 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.args(file);
     }
 
-    private void createTestTask(Project project) {
+    private CftlibExec createTestTask(Project project) {
         SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
         var lib = s.getByName("cftlibTest");
 
@@ -181,11 +193,13 @@ public class CftLibPlugin implements Plugin<Project> {
         var file = cftlibBuildDir(project).file("libTest").getAsFile();
         var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(),
                 "org.junit.platform.console.ConsoleLauncher", file, "--select-package=uk.gov.hmcts");
+
         exec.dependsOn(app);
         exec.dependsOn("cftlibClasses");
         exec.dependsOn("cftlibTestClasses");
         exec.args(file);
         exec.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
+        return exec;
     }
 
     private void createManifestTasks(Project project) {
@@ -264,6 +278,8 @@ public class CftLibPlugin implements Plugin<Project> {
     private CftlibExec createRunTask(Project project, String name) {
         CftlibExec j = project.getTasks().create(name, CftlibExec.class);
         j.getMainClass().set("uk.gov.hmcts.rse.ccd.lib.LibRunner");
+        // TODO: Wire inputs and outputs
+        j.getOutputs().upToDateWhen(x -> false);
 
 
         j.doFirst(x -> {
