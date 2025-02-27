@@ -56,11 +56,11 @@ public class CftlibExec extends JavaExec {
         }
     }
 
-    // Java 17 is now required since cft projects are using java 17 features.
+    // Java 21 is now required since cft projects are using java 21 features.
     private void setJavaToolChain() {
         var launcher = getProject().getExtensions().getByType(JavaToolchainService.class)
             .launcherFor(x -> {
-                x.getLanguageVersion().set(JavaLanguageVersion.of("17"));
+                x.getLanguageVersion().set(JavaLanguageVersion.of("21"));
             });
         this.getJavaLauncher().set(launcher);
     }
