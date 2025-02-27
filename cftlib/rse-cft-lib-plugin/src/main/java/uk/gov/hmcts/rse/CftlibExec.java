@@ -107,6 +107,7 @@ public class CftlibExec extends JavaExec {
         // We use a URLClassLoader for running spring applications so we must set this for spring's devtools to activate
         systemProperty("spring.devtools.restart.enabled", true);
         environment("APPINSIGHTS_INSTRUMENTATIONKEY", "key");
+        environment("CORE_CASE_DATA_API_URL", "http://localhost:4452");
         environment("RSE_LIB_LOG_FOLDER", getProject().getLayout()
                 .getBuildDirectory().dir("cftlib/logs").get().getAsFile().getCanonicalPath());
     }
