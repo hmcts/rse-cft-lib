@@ -3,8 +3,6 @@ create schema civil;
 
 create table civil.solicitors(
                             solicitor_id serial primary key,
-                            organisation_id text not null,
-                            user_id text not null,
                             reference bigint references ccd.case_data(reference) not null,
                             role text,
                             forename text not null,
@@ -84,21 +82,3 @@ from
   civil.parties
   join civil.claim_members using (party_id)
   join civil.claims using (claim_id);
-
-
--- CREATE OR REPLACE FUNCTION update_version() RETURNS TRIGGER AS $$
--- BEGIN
---     NEW.VERSION := OLD.VERSION + 1;
--- RETURN NEW;
--- END;
--- $$ LANGUAGE plpgsql;
---
--- CREATE TRIGGER update_parties_version
---   BEFORE UPDATE ON civil.parties
---   FOR EACH ROW
---   EXECUTE FUNCTION update_version();
---
--- CREATE TRIGGER update_solicitors_version
---   BEFORE UPDATE ON civil.solicitors
---   FOR EACH ROW
---   EXECUTE FUNCTION update_version();

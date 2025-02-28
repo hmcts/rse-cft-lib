@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Party;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Solicitor;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.divorce.sow014.lib.CaseUserRolesGetter;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.Optional;
+import java.util.Set;
 
 import static org.jooq.nfdiv.civil.Tables.PARTIES;
 import static org.jooq.nfdiv.civil.Tables.SOLICITORS;
@@ -45,7 +48,13 @@ public class SolicitorAddParty implements CCDConfig<CaseData, State, UserRole> {
     private DSLContext db;
 
     @Autowired
+    private ObjectMapper getMapper;
+
+    @Autowired
     private IdamService idamService;
+
+    @Autowired
+    private CaseUserRolesGetter caseUserRolesGetter;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -70,22 +79,19 @@ public class SolicitorAddParty implements CCDConfig<CaseData, State, UserRole> {
         ;
     }
 
+    @SneakyThrows
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         log.info("Solicitor add party about to submit callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
         Party party = data.getParty();
-        var auth = httpServletRequest.getHeader(AUTHORIZATION);
-        User solicitorUser = idamService.retrieveUser(auth);
 
-        String userId = solicitorUser.getUserDetails().getUid();
-        SolicitorOrgDetails solicitorOrgDetails = SolicitorOrgDetails.from(userId).get();
+        Set<String> userRoles = caseUserRolesGetter.getUserRoles();
         Optional<Solicitor> solicitors
             = db.select()
             .from(SOLICITORS)
-            .where(SOLICITORS.ORGANISATION_ID.eq(solicitorOrgDetails.getOrganisationId()))
-            .and(SOLICITORS.USER_ID.eq(userId))
+            .where(SOLICITORS.ROLE.in(userRoles))
             .and(SOLICITORS.REFERENCE.eq(details.getId()))
             .fetchInto(Solicitor.class)
             .stream().findFirst();

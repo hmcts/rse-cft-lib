@@ -1,11 +1,9 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
-import jakarta.servlet.http.HttpServletRequest;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
-import org.jooq.Result;
 import org.jooq.exception.DataChangedException;
-import org.jooq.nfdiv.civil.tables.records.PartiesRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -19,11 +17,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Party;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.idam.User;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.sow014.lib.DynamicRadioListElement;
 import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
+import uk.gov.hmcts.divorce.sow014.lib.CaseUserRolesGetter;
 
 import java.util.List;
 import java.util.Set;
@@ -32,12 +28,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import static org.jooq.nfdiv.civil.Tables.PARTIES;
 import static org.jooq.nfdiv.civil.Tables.SOLICITORS;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
@@ -48,19 +39,13 @@ public class SolicitorUpdateParties implements CCDConfig<CaseData, State, UserRo
     public static final String SOLICITOR_PARTY_UPDATE = "solicitor-update-parties";
     private static final String NEVER_SHOW = "Forename=\"never\"";
 
-    private CcdAccessService ccdAccessService;
-
-    private HttpServletRequest httpServletRequest;
-    private final IdamService idamService;
     private final DSLContext db;
+    private final CaseUserRolesGetter caseUserRolesGetter;
 
     @Autowired
-    public SolicitorUpdateParties(CcdAccessService ccdAccessService, HttpServletRequest httpServletRequest,
-                                  IdamService idamService, DSLContext db) {
-        this.ccdAccessService = ccdAccessService;
-        this.httpServletRequest = httpServletRequest;
-        this.idamService = idamService;
+    public SolicitorUpdateParties(DSLContext db, CaseUserRolesGetter caseUserRolesGetter) {
         this.db = db;
+        this.caseUserRolesGetter = caseUserRolesGetter;
     }
 
     @Override
@@ -92,51 +77,68 @@ public class SolicitorUpdateParties implements CCDConfig<CaseData, State, UserRo
             .done();
     }
 
+    @SneakyThrows
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
 
         log.info("{} about to start callback invoked for Case Id: {}", SOLICITOR_PARTY_UPDATE, details.getId());
 
-        var auth = httpServletRequest.getHeader(AUTHORIZATION);
-        User solicitorUser = idamService.retrieveUser(auth);
-        String userId = solicitorUser.getUserDetails().getUid();
-        SolicitorOrgDetails solicitorOrgDetails = SolicitorOrgDetails.from(userId).get();
         final CaseData caseData = details.getData();
 
-        Set<Long> SolicitorIds = db.fetch(SOLICITORS,
-                SOLICITORS.ORGANISATION_ID.eq(solicitorOrgDetails.getOrganisationId()),
-                SOLICITORS.REFERENCE.eq(details.getId()))
-            .stream().map(s -> Long.valueOf(s.getSolicitorId())).collect(Collectors.toSet());
+        var parties = getParties(details);
 
-        if (!SolicitorIds.isEmpty()) {
-            List<Party> parties = db.select().from(PARTIES)
-                .where(PARTIES.REFERENCE.eq(details.getId()))
-                .and(PARTIES.SOLICITOR_ID.in(SolicitorIds))
-                .fetchInto(Party.class);
-            ;
+        if (parties != null) {
 
-            List<DynamicRadioListElement> partyNames = parties.stream()
+
+            if (!parties.stream()
                 .map(party -> DynamicRadioListElement
                     .builder()
                     .label(party.getForename() + " - " + party.getSurname())
                     .code(party.getPartyId()).build())
-                .collect(toList());
-
-            if (!partyNames.isEmpty()) {
+                .collect(toList()).isEmpty()) {
 
                 MyRadioList partyNamesList = MyRadioList
                     .builder()
-                    .value(partyNames.get(0))
-                    .listItems(partyNames)
+                    .value(parties.stream()
+                        .map(party -> DynamicRadioListElement
+                            .builder()
+                            .label(party.getForename() + " - " + party.getSurname())
+                            .code(party.getPartyId()).build())
+                        .collect(toList()).get(0))
+                    .listItems(parties.stream()
+                        .map(party1 -> DynamicRadioListElement
+                            .builder()
+                            .label(party1.getForename() + " - " + party1.getSurname())
+                            .code(party1.getPartyId()).build())
+                        .collect(toList()))
                     .build();
 
                 caseData.setPartyNames(partyNamesList);
             }
         }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .errors(null)
             .warnings(null)
             .build();
+    }
+
+    private List<Party> getParties(CaseDetails<CaseData, State> details) {
+        Set<String> userRoles = caseUserRolesGetter.getUserRoles(details.getId().toString(), caseUserRolesGetter.getUserId());
+        Set<Long> SolicitorIds = db.fetch(SOLICITORS,
+                SOLICITORS.ROLE.in(userRoles),
+                SOLICITORS.REFERENCE.eq(details.getId()))
+            .stream().map(s -> Long.valueOf(s.getSolicitorId())).collect(Collectors.toSet());
+
+        if (!SolicitorIds.isEmpty()) {
+            return db.select().from(PARTIES)
+                .where(PARTIES.REFERENCE.eq(details.getId()))
+                .and(PARTIES.SOLICITOR_ID.in(SolicitorIds))
+                .fetchInto(Party.class);
+        }
+        return caseUserRolesGetter.isAdminCaseworker()
+            ? db.select().from(PARTIES).where(PARTIES.REFERENCE.eq(details.getId())).fetchInto(Party.class)
+            : null;
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(

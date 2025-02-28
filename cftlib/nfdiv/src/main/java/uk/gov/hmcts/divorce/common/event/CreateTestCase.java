@@ -19,7 +19,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.*;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
-import uk.gov.hmcts.divorce.solicitor.event.SolicitorOrgDetails;
+import uk.gov.hmcts.divorce.solicitor.event.SolicitorRoles;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
@@ -31,7 +31,6 @@ import java.util.UUID;
 
 import static java.lang.System.getenv;
 import static java.util.Collections.singletonList;
-import static org.jooq.nfdiv.civil.Tables.PARTIES;
 import static org.jooq.nfdiv.civil.Tables.SOLICITORS;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
@@ -187,15 +186,15 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             ccdAccessService.addRoleToCase(app2Id, caseId, orgId, APPLICANT_1_SOLICITOR);
         } else if (data.getCaseInvite().applicant2UserId() != null) {
 
-            Arrays.stream(SolicitorOrgDetails.values()).toList().forEach(org -> {
+            Arrays.stream(SolicitorRoles.values()).toList().forEach(org -> {
 
-                if (org != SolicitorOrgDetails.CREATOR) {
+                if (org != SolicitorRoles.CREATOR) {
                     ccdAccessService.linkRespondentToApplication(auth, caseId, org.getId(), details, org.getRole());
                 }
                 User user = idamService.retrieveUser(auth);
                 UserInfo userDetails = user.getUserDetails();
 
-                createSolicitor(details, org.getOrganisationId(), org.getRole(), userDetails, org.getId());
+                createSolicitor(details, org.getRole(), userDetails);
             });
 
         }
@@ -204,13 +203,10 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private void createSolicitor(CaseDetails<CaseData, State> details,
-                                 String organisationId, String role,
-                                 UserInfo userDetails, String solicitorUserId) {
+                                 String role, UserInfo userDetails) {
         SolicitorsRecord solicitorsRecord = db.newRecord(SOLICITORS);
         solicitorsRecord.setReference(details.getId());
-        solicitorsRecord.setOrganisationId(organisationId);
         solicitorsRecord.setRole(role);
-        solicitorsRecord.setUserId(solicitorUserId);
         solicitorsRecord.setForename(userDetails.getGivenName());
         solicitorsRecord.setSurname(userDetails.getFamilyName());
         solicitorsRecord.store();

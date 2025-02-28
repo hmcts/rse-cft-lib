@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.domain.model.definition.CaseDetails;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseEventDefinition;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseStateDefinition;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseTypeDefinition;
+import uk.gov.hmcts.ccd.domain.model.std.CaseAssignedUserRole;
 import uk.gov.hmcts.ccd.domain.model.std.Event;
 import uk.gov.hmcts.ccd.domain.service.casedataaccesscontrol.RoleAssignmentService;
 import uk.gov.hmcts.ccd.domain.service.common.CaseTypeService;
@@ -21,6 +22,7 @@ import uk.gov.hmcts.ccd.endpoint.exceptions.CaseConcurrencyException;
 import uk.gov.hmcts.ccd.util.ClientContextUtil;
 
 import java.util.Base64;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -68,7 +70,9 @@ public class POCSubmitCaseTransaction {
 
 
         try {
-            RoleAssignments roleAssignments = roleAssignmentService.getRoleAssignments(idamUser.getId());
+            List<CaseAssignedUserRole> roleAssignments = roleAssignmentService
+                .findRoleAssignmentsByCasesAndUsers(List.of(newCaseDetails.getReference().toString()),
+                    List.of(idamUser.getId()));
 
             POCCaseEvent pocCaseEvent = POCCaseEvent.builder()
                     .caseDetails(newCaseDetails).eventDetails(eventDetails.build()).build();
@@ -88,6 +92,9 @@ public class POCSubmitCaseTransaction {
                     another action happened at the same time.
                     Please review the case and try again.""");
 
+        } catch (Exception e) {
+            log.error("unable to save case", e);
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 }
