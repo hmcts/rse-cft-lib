@@ -23,7 +23,6 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.sow014.lib.RoleAssignment;
 import uk.gov.hmcts.divorce.sow014.lib.RoleAssignmentAttributes;
-import uk.gov.hmcts.divorce.sow014.lib.RoleAssignments;
 
 import java.io.IOException;
 import java.io.StringWriter;
