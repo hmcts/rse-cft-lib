@@ -1,7 +1,9 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.Getter;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+@Getter
 public enum SolicitorRoles {
 
     CREATOR("ecb8fff1-e033-3846-b15e-c01ff10cb4bb", UserRole.CREATOR.getRole()),
@@ -25,11 +27,4 @@ public enum SolicitorRoles {
         this.role = role;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public String getRole() {
-        return role;
-    }
 }
