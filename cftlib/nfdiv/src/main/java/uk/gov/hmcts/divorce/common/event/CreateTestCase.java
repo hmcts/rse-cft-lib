@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.common.event;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -16,10 +17,15 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
-import uk.gov.hmcts.divorce.solicitor.event.SolicitorRoles;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
@@ -34,7 +40,13 @@ import static java.util.Collections.singletonList;
 import static org.jooq.nfdiv.civil.Tables.SOLICITORS;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
@@ -45,6 +57,32 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
     private static final String SOLE_APPLICATION = "classpath:data/sole.json";
     private static final String JOINT_APPLICATION = "classpath:data/joint.json";
     public static volatile boolean submittedCallbackTriggered = false;
+
+    @Getter
+    enum SolicitorRoles {
+
+        CREATOR("ecb8fff1-e033-3846-b15e-c01ff10cb4bb", UserRole.CREATOR.getRole()),
+        APPLICANT2("6e508b49-1fa8-3d3c-8b53-ec466637315b", UserRole.APPLICANT_2.getRole()),
+        SOLICITORA("b980e249-d65c-3f9e-b3a9-409077b8e3bb", UserRole.SOLICITOR_A.getRole()),
+        SOLICITORB("38079360-70af-39c6-87eb-007c7a17ad42", UserRole.SOLICITOR_B.getRole()),
+        SOLICITORC("d6fb5531-677a-3b89-8d6d-53a687d38bfd", UserRole.SOLICITOR_C.getRole()),
+        SOLICITORD("55495ad4-cfab-33d2-bdcc-e5f951071545", UserRole.SOLICITOR_D.getRole()),
+        SOLICITORE("d4cf0594-f628-3309-85bf-69fe22cf6199", UserRole.SOLICITOR_E.getRole()),
+        SOLICITORF("c7593885-1206-3780-b656-a1d2f0b3817a", UserRole.SOLICITOR_F.getRole()),
+        SOLICITORG("33153390-cdb9-3c66-8562-c2242a67800d", UserRole.SOLICITOR_G.getRole()),
+        SOLICITORH("6c23b66f-5282-3ed8-a2c4-58ae418581e8", UserRole.SOLICITOR_H.getRole()),
+        SOLICITORI("cb3c3109-5d92-374e-b551-3cb72d6dad9d", UserRole.SOLICITOR_I.getRole()),
+        SOLICITORJ("38a2499c-0c65-3fb0-9342-e47091c766f6", UserRole.SOLICITOR_J.getRole());
+
+        private final String id;
+        private final String role;
+
+        SolicitorRoles(String id, String role) {
+            this.id = id;
+            this.role = role;
+        }
+
+    }
 
     @Autowired
     private CcdAccessService ccdAccessService;
