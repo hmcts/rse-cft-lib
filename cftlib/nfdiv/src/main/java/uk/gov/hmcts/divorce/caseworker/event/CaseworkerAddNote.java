@@ -73,7 +73,7 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
         var caseData = details.getData();
         final User caseworkerUser = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
 
-        var caseNote = CASE_NOTES.newRecord();
+        var caseNote = db.newRecord(CASE_NOTES);
         caseNote.setReference(details.getId());
         caseNote.setAuthor(caseworkerUser.getUserDetails().getName());
         caseNote.setNote(caseData.getNote());

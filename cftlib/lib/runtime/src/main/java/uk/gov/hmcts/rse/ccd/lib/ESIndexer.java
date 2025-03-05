@@ -31,7 +31,7 @@ public class ESIndexer {
         t.setDaemon(true);
         t.setUncaughtExceptionHandler(ControlPlane.failFast);
         t.setName("****Cftlib ElasticSearch indexer");
-        t.start();
+//        t.start();
     }
 
     @SneakyThrows
