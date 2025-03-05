@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.sow014.nfd;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.pebbletemplates.pebble.PebbleEngine;
 import io.pebbletemplates.pebble.template.PebbleTemplate;
@@ -10,16 +11,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.CaseAssignedUserRole;
 import uk.gov.hmcts.ccd.sdk.CaseRepository;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.sow014.Party;
+import uk.gov.hmcts.divorce.divorcecase.model.sow014.Solicitor;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.sow014.lib.RoleAssignment;
 import uk.gov.hmcts.divorce.sow014.lib.RoleAssignmentAttributes;
-import uk.gov.hmcts.divorce.sow014.lib.RoleAssignments;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -30,6 +33,8 @@ import java.util.stream.Collectors;
 
 import static org.jooq.nfdiv.ccd.Tables.FAILED_JOBS;
 import static org.jooq.nfdiv.civil.Civil.CIVIL;
+import static org.jooq.nfdiv.civil.Tables.SOLICITORS;
+import static org.jooq.nfdiv.civil.tables.Parties.PARTIES;
 import static org.jooq.nfdiv.public_.Tables.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -65,8 +70,10 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
         }
 
         caseData.setNotes(loadNotes(caseRef));
+        caseData.setParties(loadParties(caseRef));
+        caseData.setSolicitors(loadSolicitors(caseRef));
 
-        var assignments = decodeHeader(roleAssignments, caseRef);
+        var assignments = decodeHeader(roleAssignments);
         log.info("RoleAssignments: {}", assignments);
 
         if (assignments.contains(APPLICANT_2.getRole())) {
@@ -85,9 +92,29 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
 
         addPendingApplications(caseRef, caseData);
         addClaims(caseRef, caseData);
-        addSolicitorClaims(caseRef, caseData);
+//        addSolicitorClaims(caseRef, caseData);
 
         return caseData;
+    }
+
+    private List<ListValue<Solicitor>> loadSolicitors(long caseRef) {
+        return db.select()
+            .from(SOLICITORS)
+            .where(SOLICITORS.REFERENCE.eq(caseRef))
+            .orderBy(SOLICITORS.SOLICITOR_ID.desc())
+            .fetchInto(Solicitor.class)
+            .stream().map(n -> new ListValue<>(null, n))
+            .toList();
+    }
+
+    private List<ListValue<Party>> loadParties(long caseRef) {
+        return db.select()
+            .from(PARTIES)
+            .where(PARTIES.REFERENCE.eq(caseRef))
+            .orderBy(PARTIES.PARTY_ID.desc())
+            .fetchInto(Party.class)
+            .stream().map(n -> new ListValue<>(null, n))
+            .toList();
     }
 
     @SneakyThrows
@@ -96,8 +123,8 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
 
         var clients = db.fetch(CIVIL.CLAIMS_BY_CLIENT,
             CIVIL.CLAIMS_BY_CLIENT.REFERENCE.eq(caseRef),
-            CIVIL.CLAIMS_BY_CLIENT.SOLICITOR_ID.eq(caseworkerUser.getUserDetails().getUid())
-            );
+            CIVIL.CLAIMS_BY_CLIENT.SOLICITOR_ID.eq(Long.valueOf(caseworkerUser.getUserDetails().getUid()))
+        );
 
         PebbleTemplate compiledTemplate = pebl.getTemplate("yourClients");
         Writer writer = new StringWriter();
@@ -156,9 +183,9 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
         // Fetch first 50
         var total = db.fetchCount(SUB_CASES, SUB_CASES.LEAD_CASE_ID.eq(caseRef));
         var subCases = db.selectFrom(SUB_CASES)
-                .where(SUB_CASES.LEAD_CASE_ID.eq(caseRef))
-                .limit(50)
-                .fetch();
+            .where(SUB_CASES.LEAD_CASE_ID.eq(caseRef))
+            .limit(50)
+            .fetch();
         if (subCases.isNotEmpty()) {
             caseData.setLeadCase(YesOrNo.YES);
 
@@ -199,12 +226,12 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
 
     private List<ListValue<CaseNote>> loadNotes(long caseRef) {
         return db.select()
-           .from(CASE_NOTES)
-           .where(CASE_NOTES.REFERENCE.eq(caseRef))
-           .orderBy(CASE_NOTES.ID.desc())
-           .fetchInto(CaseNote.class)
-           .stream().map(n -> new ListValue<>(null, n))
-           .toList();
+            .from(CASE_NOTES)
+            .where(CASE_NOTES.REFERENCE.eq(caseRef))
+            .orderBy(CASE_NOTES.ID.desc())
+            .fetchInto(CaseNote.class)
+            .stream().map(n -> new ListValue<>(null, n))
+            .toList();
     }
 
     @SneakyThrows
@@ -223,16 +250,13 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
         return writer.toString();
     }
 
-    private Set<String> decodeHeader(String roleAssignmentsInput, long caseRef) throws JsonProcessingException {
+    private Set<String> decodeHeader(String roleAssignmentsInput) throws JsonProcessingException {
         String roleAssignments = new String(Base64.getDecoder().decode(roleAssignmentsInput));
         log.info("roleAssignments: {}", roleAssignments);
 
-        RoleAssignments roleAssignments1 = getMapper.readValue(roleAssignments, RoleAssignments.class);
-
-        return roleAssignments1.getRoleAssignments().stream()
-            .filter(r -> isForCaseId(caseRef, r))
-            .map(RoleAssignment::getRoleName)
-            .collect(Collectors.toSet());
+        return getMapper.readValue(roleAssignments, new TypeReference<List<CaseAssignedUserRole>>() {
+            })
+            .stream().map(CaseAssignedUserRole::getCaseRole).collect(Collectors.toSet());
     }
 
     private static boolean isForCaseId(long caseRef, RoleAssignment r) {

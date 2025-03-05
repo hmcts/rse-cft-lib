@@ -89,7 +89,7 @@ public class CcdAccessService {
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
     public void linkRespondentToApplication(String caseworkerUserToken, Long caseId, String applicant2UserId,
-                                            CaseDetails<CaseData, State> caseDetails) {
+                                            CaseDetails<CaseData, State> caseDetails, String role) {
         User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
 
         String generate = authTokenGenerator.generate();
@@ -101,7 +101,7 @@ public class CcdAccessService {
 //        );
 
         RoleAssignmentRequestResponse assignmentRequestResponse
-            = roleAssignmentService.createRoleAssignment(caseDetails, caseworkerUser, applicant2UserId);
+            = roleAssignmentService.createRoleAssignment(caseDetails, caseworkerUser, applicant2UserId, role);
 
         log.info("Successfully linked applicant 2 to case Id {} ", caseId);
         log.info("Successfully linked applicant 2 to case Id {} ", caseId);
