@@ -123,7 +123,7 @@ public class RoleAssignmentService {
     }
 
     public RoleAssignmentRequestResponse createRoleAssignment(CaseDetails<CaseData, State> caseDetails, User caseworkerUser,
-                                                              String applicant2UserId) {
+                                                              String applicant2UserId, String role) {
         UserInfo userDetails = caseworkerUser.getUserDetails();
         var roleCategory = roleAssignmentCategoryService.getRoleCategory(userDetails.getRoles());
 
@@ -139,7 +139,7 @@ public class RoleAssignmentService {
             .actorIdType(ActorIdType.IDAM.name())
             .actorId(applicant2UserId)
             .roleType(RoleType.CASE.name())
-            .roleName(APPLICANT_2.getRole())
+            .roleName(role)
             .classification(Classification.RESTRICTED.name())
             .grantType(GrantType.SPECIFIC.name())
             .roleCategory(roleCategory.name())

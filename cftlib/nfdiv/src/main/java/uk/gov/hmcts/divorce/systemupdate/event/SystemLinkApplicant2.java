@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -60,7 +61,8 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
             httpServletRequest.getHeader(AUTHORIZATION),
             details.getId(),
             data.getCaseInvite().applicant2UserId(),
-            details
+            details,
+            APPLICANT_2.getRole()
         );
 
         data.setCaseInvite(data.getCaseInvite().useAccessCode());

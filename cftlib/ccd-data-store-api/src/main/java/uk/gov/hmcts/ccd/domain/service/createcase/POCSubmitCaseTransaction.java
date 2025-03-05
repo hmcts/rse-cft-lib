@@ -7,11 +7,11 @@ import uk.gov.hmcts.ccd.clients.PocApiClient;
 import uk.gov.hmcts.ccd.domain.model.aggregated.IdamUser;
 import uk.gov.hmcts.ccd.domain.model.aggregated.POCCaseEvent;
 import uk.gov.hmcts.ccd.domain.model.aggregated.POCEventDetails;
-import uk.gov.hmcts.ccd.domain.model.casedataaccesscontrol.RoleAssignments;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseDetails;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseEventDefinition;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseStateDefinition;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseTypeDefinition;
+import uk.gov.hmcts.ccd.domain.model.std.CaseAssignedUserRole;
 import uk.gov.hmcts.ccd.domain.model.std.Event;
 import uk.gov.hmcts.ccd.domain.service.casedataaccesscontrol.RoleAssignmentService;
 import uk.gov.hmcts.ccd.domain.service.common.CaseTypeService;
@@ -20,7 +20,7 @@ import uk.gov.hmcts.ccd.domain.service.stdapi.AboutToSubmitCallbackResponse;
 import uk.gov.hmcts.ccd.endpoint.exceptions.CaseConcurrencyException;
 import uk.gov.hmcts.ccd.util.ClientContextUtil;
 
-import java.util.Base64;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -50,30 +50,32 @@ public class POCSubmitCaseTransaction {
                                                     IdamUser onBehalfOfUser) {
 
         CaseStateDefinition caseStateDefinition =
-                caseTypeService.findState(caseTypeDefinition, newCaseDetails.getState());
+            caseTypeService.findState(caseTypeDefinition, newCaseDetails.getState());
 
         POCEventDetails.POCEventDetailsBuilder eventDetails = POCEventDetails.builder()
-                .eventId(event.getEventId())
-                .eventName(caseEventDefinition.getName())
-                .summary(event.getSummary())
-                .description(event.getDescription())
-                .stateName(caseStateDefinition.getName());
+            .eventId(event.getEventId())
+            .eventName(caseEventDefinition.getName())
+            .summary(event.getSummary())
+            .description(event.getDescription())
+            .stateName(caseStateDefinition.getName());
 
         if (onBehalfOfUser != null) {
 
             eventDetails.proxiedBy(onBehalfOfUser.getId())
-                    .proxiedByFirstName(onBehalfOfUser.getForename())
-                    .proxiedByFirstName(onBehalfOfUser.getSurname());
+                .proxiedByFirstName(onBehalfOfUser.getForename())
+                .proxiedByFirstName(onBehalfOfUser.getSurname());
         }
 
 
         try {
-            RoleAssignments roleAssignments = roleAssignmentService.getRoleAssignments(idamUser.getId());
+            List<CaseAssignedUserRole> roleAssignments = roleAssignmentService
+                .findRoleAssignmentsByCasesAndUsers(List.of(newCaseDetails.getReference().toString()),
+                    List.of(idamUser.getId()));
 
             POCCaseEvent pocCaseEvent = POCCaseEvent.builder()
-                    .caseDetails(newCaseDetails).eventDetails(eventDetails.build()).build();
+                .caseDetails(newCaseDetails).eventDetails(eventDetails.build()).build();
             CaseDetails caseDetails = pocApiClient.createEvent(pocCaseEvent,
-                    ClientContextUtil.encodeToBase64(objectMapperService.convertObjectToString(roleAssignments)));
+                ClientContextUtil.encodeToBase64(objectMapperService.convertObjectToString(roleAssignments)));
             log.info("pocCaseDetails: {}", caseDetails);
             log.info("pocCaseDetails id: {}", caseDetails.getId());
             log.info("pocCaseDetails reference before: {}", caseDetails.getReference());
@@ -84,9 +86,9 @@ public class POCSubmitCaseTransaction {
             return caseDetails;
         } catch (FeignException.Conflict conflict) {
             throw new CaseConcurrencyException("""
-                    Unfortunately we were unable to save your work to the case as \
-                    another action happened at the same time.
-                    Please review the case and try again.""");
+                Unfortunately we were unable to save your work to the case as \
+                another action happened at the same time.
+                Please review the case and try again.""");
 
         }
     }

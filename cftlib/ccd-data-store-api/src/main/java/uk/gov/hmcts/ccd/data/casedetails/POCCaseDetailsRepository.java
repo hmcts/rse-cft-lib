@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.data.casedetails.search.PaginatedSearchMetadata;
 import uk.gov.hmcts.ccd.domain.model.casedataaccesscontrol.RoleAssignments;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseDetails;
 import uk.gov.hmcts.ccd.domain.model.migration.MigrationParameters;
+import uk.gov.hmcts.ccd.domain.model.std.CaseAssignedUserRole;
 import uk.gov.hmcts.ccd.domain.service.casedataaccesscontrol.RoleAssignmentService;
 import uk.gov.hmcts.ccd.domain.service.common.DefaultObjectMapperService;
 import uk.gov.hmcts.ccd.util.ClientContextUtil;
@@ -85,7 +86,8 @@ public class POCCaseDetailsRepository implements CaseDetailsRepository {
     }
 
     private CaseDetails getCaseDetails(String reference) {
-        RoleAssignments roleAssignments = roleAssignmentService.getRoleAssignments(securityUtils.getUserId());
+        List<CaseAssignedUserRole> roleAssignments = roleAssignmentService
+            .findRoleAssignmentsByCasesAndUsers(List.of(reference), List.of(securityUtils.getUserId()));
         CaseDetails caseDetails = pocApiClient.getCase(reference,
             ClientContextUtil.encodeToBase64(objectMapperService.convertObjectToString(roleAssignments)));
         log.info("case Id {}", caseDetails.getId());

@@ -2,9 +2,12 @@ package uk.gov.hmcts.divorce.common.event;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.jooq.DSLContext;
+import org.jooq.nfdiv.civil.tables.records.SolicitorsRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
@@ -14,16 +17,27 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static java.lang.System.getenv;
 import static java.util.Collections.singletonList;
+import static org.jooq.nfdiv.civil.Tables.SOLICITORS;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -44,6 +58,32 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
     private static final String JOINT_APPLICATION = "classpath:data/joint.json";
     public static volatile boolean submittedCallbackTriggered = false;
 
+    @Getter
+    enum SolicitorRoles {
+
+        CREATOR("ecb8fff1-e033-3846-b15e-c01ff10cb4bb", UserRole.CREATOR.getRole()),
+        APPLICANT2("6e508b49-1fa8-3d3c-8b53-ec466637315b", UserRole.APPLICANT_2.getRole()),
+        SOLICITORA("b980e249-d65c-3f9e-b3a9-409077b8e3bb", UserRole.SOLICITOR_A.getRole()),
+        SOLICITORB("38079360-70af-39c6-87eb-007c7a17ad42", UserRole.SOLICITOR_B.getRole()),
+        SOLICITORC("d6fb5531-677a-3b89-8d6d-53a687d38bfd", UserRole.SOLICITOR_C.getRole()),
+        SOLICITORD("55495ad4-cfab-33d2-bdcc-e5f951071545", UserRole.SOLICITOR_D.getRole()),
+        SOLICITORE("d4cf0594-f628-3309-85bf-69fe22cf6199", UserRole.SOLICITOR_E.getRole()),
+        SOLICITORF("c7593885-1206-3780-b656-a1d2f0b3817a", UserRole.SOLICITOR_F.getRole()),
+        SOLICITORG("33153390-cdb9-3c66-8562-c2242a67800d", UserRole.SOLICITOR_G.getRole()),
+        SOLICITORH("6c23b66f-5282-3ed8-a2c4-58ae418581e8", UserRole.SOLICITOR_H.getRole()),
+        SOLICITORI("cb3c3109-5d92-374e-b551-3cb72d6dad9d", UserRole.SOLICITOR_I.getRole()),
+        SOLICITORJ("38a2499c-0c65-3fb0-9342-e47091c766f6", UserRole.SOLICITOR_J.getRole());
+
+        private final String id;
+        private final String role;
+
+        SolicitorRoles(String id, String role) {
+            this.id = id;
+            this.role = role;
+        }
+
+    }
+
     @Autowired
     private CcdAccessService ccdAccessService;
 
@@ -52,6 +92,12 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private DSLContext db;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -75,18 +121,18 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             .page("Create test case", this::midEvent)
             .mandatory(CaseData::getApplicationType)
             .complex(CaseData::getApplicant1)
-                .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is applicant 1 represented")
-                .done()
+            .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is applicant 1 represented")
+            .done()
             .complex(CaseData::getApplicant2)
-                .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is applicant 2 represented")
-                .done()
+            .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is applicant 2 represented")
+            .done()
             .complex(CaseData::getCaseInvite)
-                .label("userIdLabel", "<pre>Use ./bin/get-user-id-by-email.sh [email] to get an ID"
-                    + ".\n\nTEST_SOLICITOR@mailinator.com is 93b108b7-4b26-41bf-ae8f-6e356efb11b3 in AAT.\n</pre>")
-                .mandatoryWithLabel(CaseInvite::applicant2UserId, "Applicant 2 user ID")
-                .done()
+            .label("userIdLabel", "<pre>Use ./bin/get-user-id-by-email.sh [email] to get an ID"
+                + ".\n\nTEST_SOLICITOR@mailinator.com is 93b108b7-4b26-41bf-ae8f-6e356efb11b3 in AAT.\n</pre>")
+            .mandatoryWithLabel(CaseInvite::applicant2UserId, "Applicant 2 user ID")
+            .done()
             .complex(CaseData::getApplication)
-                .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "Case state")
+            .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "Case state")
             .done();
     }
 
@@ -140,7 +186,6 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
         fixture.setCaseInvite(details.getData().getCaseInvite());
         fixture.setHyphenatedCaseRef(fixture.formatCaseRef(details.getId()));
 
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(fixture)
             .state(details.getData().getApplication().getStateToTransitionApplicationTo())
@@ -178,9 +223,30 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
             ccdAccessService.addRoleToCase(app2Id, caseId, orgId, APPLICANT_1_SOLICITOR);
         } else if (data.getCaseInvite().applicant2UserId() != null) {
-            ccdAccessService.linkRespondentToApplication(auth, caseId, app2Id, details);
+
+            Arrays.stream(SolicitorRoles.values()).toList().forEach(org -> {
+
+                if (org != SolicitorRoles.CREATOR) {
+                    ccdAccessService.linkRespondentToApplication(auth, caseId, org.getId(), details, org.getRole());
+                }
+                User user = idamService.retrieveUser(auth);
+                UserInfo userDetails = user.getUserDetails();
+
+                createSolicitor(details, org.getRole(), userDetails);
+            });
+
         }
 
         return SubmittedCallbackResponse.builder().build();
+    }
+
+    private void createSolicitor(CaseDetails<CaseData, State> details,
+                                 String role, UserInfo userDetails) {
+        SolicitorsRecord solicitorsRecord = db.newRecord(SOLICITORS);
+        solicitorsRecord.setReference(details.getId());
+        solicitorsRecord.setRole(role);
+        solicitorsRecord.setForename(userDetails.getGivenName());
+        solicitorsRecord.setSurname(userDetails.getFamilyName());
+        solicitorsRecord.store();
     }
 }

@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.domain.model.definition.CaseDetails;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseEventDefinition;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseStateDefinition;
 import uk.gov.hmcts.ccd.domain.model.definition.CaseTypeDefinition;
+import uk.gov.hmcts.ccd.domain.model.std.CaseAssignedUserRole;
 import uk.gov.hmcts.ccd.domain.model.std.Event;
 import uk.gov.hmcts.ccd.domain.service.casedataaccesscontrol.RoleAssignmentService;
 import uk.gov.hmcts.ccd.domain.service.common.CaseTypeService;
@@ -20,6 +21,8 @@ import uk.gov.hmcts.ccd.domain.service.common.DefaultObjectMapperService;
 import uk.gov.hmcts.ccd.domain.service.message.MessageService;
 import uk.gov.hmcts.ccd.endpoint.exceptions.CaseConcurrencyException;
 import uk.gov.hmcts.ccd.util.ClientContextUtil;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -66,9 +69,9 @@ public class POCCreateCaseEventService {
         //TODO Significant item is not yet set
         //auditEvent.setSignificantItem(aboutToSubmitCallbackResponse.getSignificantItem());
 
-
         try {
-            RoleAssignments roleAssignments = roleAssignmentService.getRoleAssignments(securityUtils.getUserId());
+            List<CaseAssignedUserRole> roleAssignments = roleAssignmentService
+                .findRoleAssignmentsByCasesAndUsers(List.of(caseDetails.getId()), List.of(securityUtils.getUserId()));
             POCCaseEvent pocCaseEvent = POCCaseEvent.builder()
                     .caseDetailsBefore(caseDetailsBefore)
                     .caseDetails(caseDetails)
