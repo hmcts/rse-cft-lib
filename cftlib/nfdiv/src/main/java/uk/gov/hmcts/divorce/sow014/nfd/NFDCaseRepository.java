@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
+import org.jooq.nfdiv.civil.tables.records.PaymentRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.CaseAssignedUserRole;
@@ -17,6 +18,8 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Payment;
+import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Party;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Solicitor;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -35,6 +38,7 @@ import static org.jooq.nfdiv.ccd.Tables.FAILED_JOBS;
 import static org.jooq.nfdiv.civil.Civil.CIVIL;
 import static org.jooq.nfdiv.civil.Tables.SOLICITORS;
 import static org.jooq.nfdiv.civil.tables.Parties.PARTIES;
+import static org.jooq.nfdiv.civil.tables.Payment.PAYMENT;
 import static org.jooq.nfdiv.public_.Tables.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -73,6 +77,8 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
         caseData.setParties(loadParties(caseRef));
         caseData.setSolicitors(loadSolicitors(caseRef));
 
+        caseData.getApplication().setApplicationPayments(getApplicationPayments(caseRef));
+
         var assignments = decodeHeader(roleAssignments);
         log.info("RoleAssignments: {}", assignments);
 
@@ -95,6 +101,24 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
 //        addSolicitorClaims(caseRef, caseData);
 
         return caseData;
+    }
+
+    private List<ListValue<Payment>> getApplicationPayments(long caseRef) {
+        return db.fetch(PAYMENT, PAYMENT.CASE_REFERENCE.eq(caseRef)).stream().map(created ->
+                ListValue.<uk.gov.hmcts.divorce.divorcecase.model.Payment>builder()
+                    .id(created.getId())
+                    .value(uk.gov.hmcts.divorce.divorcecase.model.Payment.builder()
+                        .reference(created.getReference())
+                        .created(created.getCreated())
+                        .amount(created.getAmount().intValue())
+                        .serviceRequestReference(created.getServiceRequestReference())
+                        .transactionId(created.getTransactionId())
+                        .channel(created.getChannel())
+                        .status(PaymentStatus.fromLabel(created.getStatus()))
+                        .feeCode(created.getFeeCode())
+                        .build())
+                    .build())
+            .toList();
     }
 
     private List<ListValue<Solicitor>> loadSolicitors(long caseRef) {

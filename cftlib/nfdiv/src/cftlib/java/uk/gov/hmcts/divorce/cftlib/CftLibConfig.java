@@ -1,12 +1,8 @@
 package uk.gov.hmcts.divorce.cftlib;
 
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.CCDDefinitionGenerator;
 import uk.gov.hmcts.rse.ccd.lib.ControlPlane;
@@ -16,11 +12,9 @@ import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class CftLibConfig implements CFTLibConfigurer {

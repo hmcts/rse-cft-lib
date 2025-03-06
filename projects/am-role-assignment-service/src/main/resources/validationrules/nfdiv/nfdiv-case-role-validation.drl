@@ -67,7 +67,7 @@ rule "nfdiv_create_case_roles_creator"
 when
     $rq: Request(clientId in ("nfdiv_case_api", "aac_manage_case_assignment"))
     $ra: RoleAssignment(
-             roleName in ("[CREATOR]", "[APPLICANTTWO]", "[SOLICITORA]", "[SOLICITORB]", "[SOLICITORC]", "[SOLICITORD]", "[SOLICITORE]", "[SOLICITORF]", "[SOLICITORG]", "[SOLICITORH]", "[SOLICITORI]", "[SOLICITORJ]"),
+             roleName in ("[CREATOR]", "[APPLICANTTWO]", "[SOLICITORA]", "[SOLICITORB]", "[SOLICITORC]", "[SOLICITORD]", "[SOLICITORE]", "[SOLICITORF]", "[SOLICITORG]", "[SOLICITORH]", "[SOLICITORI]", "[SOLICITORJ]", "[APPTWOSOLICITOR]"),
              roleCategory in (RoleCategory.JUDICIAL, RoleCategory.LEGAL_OPERATIONS, RoleCategory.ADMIN),
              roleType == RoleType.CASE,
              status == Status.CREATE_REQUESTED,

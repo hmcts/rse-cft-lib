@@ -2,23 +2,23 @@ package uk.gov.hmcts.divorce.solicitor.event;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.jooq.DSLContext;
+import org.jooq.nfdiv.civil.tables.Payment;
+import org.jooq.nfdiv.civil.tables.records.PaymentRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.GeneralApplicationSelectApplicationType;
 import uk.gov.hmcts.divorce.common.event.page.GeneralApplicationUploadDocument;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.model.*;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
@@ -27,15 +27,20 @@ import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentSummar
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectFee;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
+import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.jooq.nfdiv.civil.tables.Payment.PAYMENT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
@@ -74,6 +79,9 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
+    private DSLContext db;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -148,7 +156,17 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             final OrderSummary generalApplicationFeeOrderSummary = generalApplication.getGeneralApplicationFee().getOrderSummary();
 
             if (response.getHttpStatus() == CREATED) {
-                data.updateCaseDataWithPaymentDetails(generalApplicationFeeOrderSummary, data, response.getPaymentReference());
+                PaymentRecord paymentRecord = db.newRecord(Payment.PAYMENT);
+                paymentRecord.setAmount(new BigDecimal(generalApplicationFeeOrderSummary.getPaymentTotal()));
+                paymentRecord.setChannel("online");
+                paymentRecord.setFeeCode(generalApplicationFeeOrderSummary.getFees().get(0).getValue().getCode());
+                paymentRecord.setReference(response.getPaymentReference());
+                paymentRecord.setStatus(SUCCESS.getLabel());
+                paymentRecord.setId(UUID.randomUUID().toString());
+                paymentRecord.setCaseReference(details.getId());
+                paymentRecord.store();
+                data.getApplication().setApplicationPayments(getApplicationPayments(details.getId()));
+//                data.updateCaseDataWithPaymentDetails(generalApplicationFeeOrderSummary, data, response.getPaymentReference());
             } else {
                 return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .data(details.getData())
@@ -165,6 +183,24 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             .build();
     }
 
+    private List<ListValue<uk.gov.hmcts.divorce.divorcecase.model.Payment>> getApplicationPayments(long caseRef) {
+        return db.fetch(PAYMENT, PAYMENT.CASE_REFERENCE.eq(caseRef)).stream().map(created ->
+                ListValue.<uk.gov.hmcts.divorce.divorcecase.model.Payment>builder()
+                    .id(created.getId())
+                    .value(uk.gov.hmcts.divorce.divorcecase.model.Payment.builder()
+                        .reference(created.getReference())
+                        .created(created.getCreated())
+                        .amount(created.getAmount().intValue())
+                        .serviceRequestReference(created.getServiceRequestReference())
+                        .transactionId(created.getTransactionId())
+                        .channel(created.getChannel())
+                        .status(PaymentStatus.fromLabel(created.getStatus()))
+                        .feeCode(created.getFeeCode())
+                        .build())
+                    .build())
+            .toList();
+    }
+
     private Solicitor getInvokingSolicitor(final CaseData caseData, final String userAuth) {
 
         if (!caseData.getApplicant2().isRepresented()) {
@@ -177,17 +213,17 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
 
         String applicant1SolicitorSelectedOrgId =
             Objects.requireNonNull(caseData
-                .getApplicant1()
-                .getSolicitor()
-                .getOrganisationPolicy())
+                    .getApplicant1()
+                    .getSolicitor()
+                    .getOrganisationPolicy())
                 .getOrganisation()
                 .getOrganisationId();
 
         String applicant2SolicitorSelectedOrgId =
             Objects.requireNonNull(caseData
-                .getApplicant2()
-                .getSolicitor()
-                .getOrganisationPolicy())
+                    .getApplicant2()
+                    .getSolicitor()
+                    .getOrganisationPolicy())
                 .getOrganisation()
                 .getOrganisationId();
 

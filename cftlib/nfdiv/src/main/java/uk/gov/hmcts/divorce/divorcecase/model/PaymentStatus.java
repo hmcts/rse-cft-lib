@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
+import java.util.Arrays;
+
 @Getter
 @AllArgsConstructor
 public enum PaymentStatus implements HasLabel {
@@ -28,4 +30,8 @@ public enum PaymentStatus implements HasLabel {
     ERROR("Error");
 
     private final String label;
+
+    public static PaymentStatus fromLabel(String label) {
+        return Arrays.stream(values()).filter(v -> v.getLabel().equals(label)).findFirst().orElse(null);
+    }
 }

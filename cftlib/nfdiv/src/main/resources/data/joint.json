@@ -78,20 +78,6 @@
     "Fees": null,
     "PaymentTotal": "55000"
   },
-  "applicationPayments": [
-    {
-      "id": null,
-      "value": {
-        "created": null,
-        "feeCode": "FEE0001",
-        "amount": 55000,
-        "status": "success",
-        "channel": "online",
-        "reference": "paymentRef",
-        "transactionId": "ge7po9h5bhbtbd466424src9tk"
-      }
-    }
-  ],
   "documentUploadComplete": "Yes",
   "labelContentApplicant2": "applicant 2",
   "labelContentTheApplicant2": "applicant 2",
