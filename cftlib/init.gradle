@@ -25,6 +25,15 @@ def configurePublishing(p) {
                 dependsOn(tasks.named('generateJsonSchema2Pojo'))
             }
         }
+        if (project.name == 'am-role-assignment-service') {
+            dependencies {
+                implementation('org.mvel:mvel2') {
+                    version {
+                        strictly '2.5.0.Final'
+                    }
+                }
+            }
+        }
 
         // Disable gradle module metadata resolution and rely on maven pom
         tasks.withType(GenerateModuleMetadata) {
@@ -100,9 +109,7 @@ allprojects {
     afterEvaluate { project ->
         java {
             toolchain {
-                // Cftlib currently runs on Java 17 so we build all services using Java 17
-                // TODO: move Cftlib to Java 21 when one or more bundled services require it.
-                languageVersion = JavaLanguageVersion.of(17)
+                languageVersion = JavaLanguageVersion.of(21)
             }
         }
     }

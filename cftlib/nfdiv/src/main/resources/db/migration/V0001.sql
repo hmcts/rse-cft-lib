@@ -1,17 +1,17 @@
 create table case_notes(
    reference bigint references ccd.case_data(reference) ,
    id bigserial,
-   date date not null,
+   timestamp timestamp not null default now(),
    note varchar(10000),
    author varchar(200) not null,
    primary key(reference, id)
 );
 
-insert into case_notes(reference, id, date, note, author)
+insert into case_notes(reference, id, timestamp, note, author)
 select
   reference,
   (note->>'id')::bigint,
-  (note->'value'->>'date')::date,
+  (note->'value'->>'date')::timestamp,
   note->'value'->>'note',
   note->'value'->>'author'
 from
@@ -25,7 +25,7 @@ reference,
 jsonb_agg(
   json_build_object(
     'value', jsonb_build_object(
-      'date', date,
+      'timestamp', timestamp,
       'note', note,
       'author', author
     )
