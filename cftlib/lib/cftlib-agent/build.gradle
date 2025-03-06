@@ -76,3 +76,9 @@ configurations.each {
     it.resolutionStrategy.useGlobalDependencySubstitutionRules = false
 }
 
+java {
+    withJavadocJar()
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}

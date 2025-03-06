@@ -1,0 +1,30 @@
+{
+  "data": {
+    "applicationType": "soleApplication",
+    "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "notApplicable",
+    "applicant1FirstName": "John",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2Gender": "female",
+    "generalOrderDate": "2021-01-01",
+    "changeOfRepresentatives": [],
+    "generalOrderDivorceParties": [
+      "respondent"
+    ],
+    "generalOrderRecitals": "test recitals",
+    "generalOrderJudgeOrLegalAdvisorType": "districtJudge",
+    "generalOrderJudgeOrLegalAdvisorName": "some name",
+    "generalOrderDetails": "some details",
+    "generalOrderDraft": {
+      "document_url": "${json-unit.any-string}",
+      "document_filename": "${json-unit.any-string}",
+      "document_binary_url": "${json-unit.any-string}"
+    },
+    "dataVersion": "${json-unit.any-number}",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "warnings": []
+  }
+}

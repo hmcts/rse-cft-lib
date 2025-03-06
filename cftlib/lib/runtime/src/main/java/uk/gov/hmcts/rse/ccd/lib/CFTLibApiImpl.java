@@ -38,14 +38,14 @@ public class CFTLibApiImpl implements CFTLib {
 
     private String lastImportHash;
 
-    public static String generateDummyS2SToken(String serviceName) {
+    public String generateDummyS2SToken(String serviceName) {
         return JWT.create()
             .withSubject(serviceName)
             .withIssuedAt(new Date())
             .sign(Algorithm.HMAC256("secret"));
     }
 
-    public static String buildJwt() {
+    public String buildJwt() {
         return JWT.create()
             .withSubject("banderous")
             .withNotBefore(new Date())

@@ -2,13 +2,14 @@
 version: '3.5'
 services:
   shared-database-pg12:
-    image: postgres:12.4
+    image: postgres:15.8
     environment:
       DB_USERNAME:
       DB_PASSWORD:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - ${RSE_LIB_DB_PORT:-6432}:5432
+    command: ["postgres", "-c", "log_statement=all"]
   ccd-elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.11.1
     environment:
@@ -106,7 +107,7 @@ services:
       MANAGE_CASE_LINK:
       MANAGE_ORG_LINK:
       SESSION_SECRET:
-      CASE_TYPES: "${XUI_MANAGE_ORGANISATIONS_CASETYPES:-NFD,Caveat,GrantOfRepresentation}"
+      CASE_TYPES: "${XUI_MANAGE_ORGANISATIONS_CASETYPES:-NFD,PCS,Caveat,GrantOfRepresentation}"
       FEATURE_APP_INSIGHTS_ENABLED: "false"
       FEATURE_PROXY_ENABLED: "false"
       FEATURE_SECURE_COOKIE_ENABLED: "false"

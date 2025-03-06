@@ -1,0 +1,15 @@
+# 🗂️ Case **{{caseRef}}**
+
+---
+
+## ⏳ JVM Uptime: **{{age}} seconds**
+
+---
+
+## 📝 Case Notes
+
+| 📅 Date | ✍️ Author | 🗒️ Note |
+|---------|----------|---------|
+{% for note in notes %}
+| **{{ note.value.timestamp | date("yyyy-MM-dd HH:mm:ss") }}** | **{{ note.value.author }}** | _{{ note.value.note }}_ |
+{% endfor %}

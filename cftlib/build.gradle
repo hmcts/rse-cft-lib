@@ -1,13 +1,13 @@
 apply plugin: 'idea'
 apply plugin: 'base'
 
-task publish
+tasks.register('publish')
 
 // Create Gradle tasks that build and publish the CFT submodule projects to maven local.
 // We invoke each subproject's build separately using its own Gradle wrapper since each
 // project may require a different Gradle version.
 project.file('../projects').listFiles().each { dir ->
-    def t = task "publish${dir.name}"(type: Exec) {
+        def t = tasks.register("publish${dir.name}", Exec) {
         // Enable Gradle's up-to-date checks so we only rebuild the git submodules if they change.
         // Up to date checks require inputs and outputs to be defined, so we use the submodule's git tag as input
         // and the maven local folder of the project as output.

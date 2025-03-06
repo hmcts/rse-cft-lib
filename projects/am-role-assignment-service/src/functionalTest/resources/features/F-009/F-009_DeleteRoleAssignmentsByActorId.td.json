@@ -1,0 +1,9 @@
+{
+  "_guid_": "F-009_DeleteRoleAssignmentsByActorId",
+  "_extends_": "DeleteDataForRoleAssignments",
+  "request": {
+    "pathVariables": {
+      "reference": "${[scenarioContext][parentContext][testData][request][queryParams][actorId][0]}"
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "title": "must retain existing records when creation of any Role Assignment is not successful where ReplaceExisting is True",
+  "_guid_": "S-020",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "contains ReplaceExisting is true and have process and Reference values",
+    "contains multiple Role Assignments just created and couple of new role assignments",
+    "has invalid data for one of the new role assignment"
+  ],
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "process": "businessProcess1",
+        "reference": "${[scenarioContext][childContexts][S-020_Multiple_Role_Creation][testData][request][body][roleRequest][reference]}",
+        "replaceExisting": true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][customValues][generateUUID]}"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][customValues][generateUUID]}",
+          "grantType": "SPECIFIC"
+        }
+      ]
+    }
+  },
+
+  "expectedResponse": {
+    "responseCode": 422,
+    "responseMessage": "Unprocessable Entity",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "status": "REJECTED",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "status": "REJECTED",
+            "roleType": "${[scenarioContext][testData][request][body][requestedRoles][0][roleType]}",
+            "grantType": "${[scenarioContext][testData][request][body][requestedRoles][0][grantType]}",
+            "actorId": "${}${[scenarioContext][testData][request][body][requestedRoles][0][actorId]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRoleWithoutSubstantive",
+            "roleType": "${[scenarioContext][testData][request][body][requestedRoles][1][roleType]}",
+            "grantType": "${[scenarioContext][testData][request][body][requestedRoles][1][grantType]}",
+            "actorId": "${}${[scenarioContext][testData][request][body][requestedRoles][1][actorId]}",
+            "status": "REJECTED"
+          }
+        ]
+      }
+    }
+  }
+}

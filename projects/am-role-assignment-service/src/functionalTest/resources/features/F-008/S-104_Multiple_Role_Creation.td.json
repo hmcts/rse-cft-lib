@@ -1,0 +1,82 @@
+{
+
+  "_guid_": "S-104_Multiple_Role_Creation",
+  "_extends_": "F-008_Test_Data_Base",
+  "specs": [
+    "to create some org role assignments for an actor",
+    "Befta1 - who is the actor for requested role"
+  ],
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "${[scenarioContext][testData][users][befta1][id]}"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "roleName": "tribunal-caseworker",
+          "roleCategory": "LEGAL_OPERATIONS",
+          "attributes":
+          {
+            "jurisdiction": "IA",
+            "primaryLocation": "abc"
+
+          }
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "roleName": "senior-tribunal-caseworker",
+          "roleCategory": "LEGAL_OPERATIONS",
+          "attributes":
+          {
+            "jurisdiction": "IA",
+            "primaryLocation": "abc"
+
+          }
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "roleCategory": "LEGAL_OPERATIONS",
+            "roleName": "tribunal-caseworker",
+            "attributes":
+            {
+              "jurisdiction": "IA",
+              "primaryLocation": "abc",
+              "substantive": "Y"
+            }
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "roleCategory": "LEGAL_OPERATIONS",
+            "roleName": "senior-tribunal-caseworker",
+            "attributes":
+            {
+              "jurisdiction": "IA",
+              "primaryLocation": "abc"
+
+            }
+          }
+        ]
+      }
+    }
+  }
+}

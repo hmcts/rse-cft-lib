@@ -1,0 +1,22 @@
+{
+  "title": "must successfully delete Role Assignment without X-Corrlation-ID Header",
+  "_guid_": "S-023",
+  "_extends_": "F-002_Test_Data_Base",
+  "operationName": "Delete Role Assignments by Actor Id",
+  "specs": [
+    "contains an Actor Id having only single Role Assignment",
+    "does not have X-Correlation-ID header"
+  ],
+  "uri": "/am/role-assignments?actorId={actorId}",
+  "request": {
+    "headers": {
+      "X-Correlation-ID": ""
+    },
+    "pathVariables": {
+      "actorId": "123e4567-e89b-42d3-a456-556642446023"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_204_Response"
+  }
+}

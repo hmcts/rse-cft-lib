@@ -1,0 +1,65 @@
+package validationrules.stcic;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Assignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Classification
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.domain.model.FeatureFlag;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.FeatureFlagEnum;
+import uk.gov.hmcts.reform.roleassignment.util.ValidationUtil;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import uk.gov.hmcts.reform.roleassignment.domain.model.CaseAllocatorApproval;
+
+/*
+ * 1: ST_CIC "allocated-legal-officer" case validation rule.
+ */
+
+rule "st_cic_allocated_legal_officer_create_case_roles"
+when
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "ST_CIC",
+                 roleAssignment.attributes["caseType"].asText() == "CriminalInjuriesCompensation",
+                 roleAssignment.roleName == "allocated-legal-officer")
+         ExistingRoleAssignment(
+                 actorId == $ca.getRoleAssignment().actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName in ("tribunal-caseworker", "senior-tribunal-caseworker"),
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "ST_CIC")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : st_cic_allocated_legal_officer_create_case_roles");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : st_cic_allocated_legal_officer_create_case_roles");
+end;
+
+/*
+ * 2: ST_CIC "allocated-administrator" case validation rule.
+ */
+
+rule "st_cic_allocated_administrator_create_case_roles"
+when
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "ST_CIC",
+                 roleAssignment.attributes["caseType"].asText() == "CriminalInjuriesCompensation",
+                 roleAssignment.roleName == "allocated-administrator")
+         ExistingRoleAssignment(
+                 actorId == $ca.getRoleAssignment().actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName in ("hearing-centre-admin", "hearing-centre-team-leader"),
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "ST_CIC")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : st_cic_allocated_administrator_create_case_roles");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : st_cic_allocated_administrator_create_case_roles");
+end;

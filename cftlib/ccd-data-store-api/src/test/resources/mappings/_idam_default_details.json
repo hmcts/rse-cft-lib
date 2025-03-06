@@ -1,0 +1,45 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "/o/.well-known/openid-configuration"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "issuer": "http://localhost:{{request.requestLine.port}}/o",
+          "jwks_uri": "http://localhost:{{request.requestLine.port}}/o/jwks"
+        },
+        "transformers": ["response-template"]
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/o/userinfo"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "sub": "Cloud.Strife@test.com",
+          "uid": "123",
+          "roles": [
+            "caseworker",
+            "caseworker-test",
+            "caseworker-probate-public", "caseworker-probate", "caseworker-divorce", "caseworker-sscs"
+          ],
+          "name": "Cloud Strife",
+          "given_name": "Cloud",
+          "family_name": "Strife"
+        }
+      }
+    }
+  ]
+}

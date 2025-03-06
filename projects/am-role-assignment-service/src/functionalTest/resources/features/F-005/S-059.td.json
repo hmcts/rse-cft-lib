@@ -1,0 +1,24 @@
+{
+  "title": "must successfully receive single Role Assignment by Actor Id",
+  "_guid_": "S-059",
+  "_extends_": "F-005_Test_Data_Base",
+  "specs": [
+    "contains an Actor Id having only single Role Assignment"
+  ],
+  "request": {
+    "pathVariables": {
+      "actorId": "${[scenarioContext][childContexts][S-059_CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse": [
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${[scenarioContext][testData][request][pathVariables][actorId]}"
+        }
+      ]
+    }
+  }
+}

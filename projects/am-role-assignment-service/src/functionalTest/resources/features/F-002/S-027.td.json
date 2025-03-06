@@ -1,0 +1,19 @@
+{
+  "title": "must receive positive response when delete Role Assignment with a non-existing Process",
+  "_guid_": "S-027",
+  "_extends_": "F-002_Test_Data_Base",
+  "operationName": "Delete Role Assignments by Process",
+  "specs": [
+    "contains a non-existing Process"
+  ],
+  "uri": "/am/role-assignments?process={process}&reference={reference}",
+  "request": {
+    "pathVariables": {
+      "process": "businessProcess1NotExisting",
+      "reference": "123e4567-e89b-42d3-a456-556642446027"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_204_Response"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "title": "must successfully remove single Role Assignment when ReplaceExisting is True along with empty role assignment list",
+  "_guid_": "S-015",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "contains an empty Role Assignments list",
+    "contains ReplaceExisting is true and have process and Reference values"
+  ],
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "0073c167-18c8-45a1-9391-26e179433cc8",
+        "reference": "${[scenarioContext][childContexts][CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}",
+        "replaceExisting": true
+      },
+      "requestedRoles": [
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+        ]
+      }
+    }
+  }
+}

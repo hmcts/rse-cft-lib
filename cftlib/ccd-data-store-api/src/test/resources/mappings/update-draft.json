@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/drafts/4444333322221111"
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+    }
+  }
+}

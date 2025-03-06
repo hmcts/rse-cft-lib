@@ -1,0 +1,43 @@
+{
+  "title": "must successfully create Org Role Assignment without begin time and end time",
+  "_guid_": "S-101",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "contains no begin and end time for ORGANISATION role assignment"
+  ],
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "${[scenarioContext][customValues][generateUUID]}"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "S-101_Role_Request_without_time",
+          "actorId": "${[scenarioContext][customValues][generateUUID]}"
+        }
+      ]
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest"
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "S-101_Response_without_time",
+            "actorId": "${}${[scenarioContext][testData][request][body][requestedRoles][0][actorId]}"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "title": "must successfully create challenged-access-judiciary role",
+  "_guid_": "S-216",
+  "_extends_": "F-013_Test_Data_Base",
+  "specs": [
+    "Befta1 - who is the actor for requested role",
+    "contains challenged-access-judiciary case requested role assignment"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser2"
+    }
+  },
+  "request": {
+    "headers": {
+      "ServiceAuthorization": "${[scenarioContext][customValues][generateS2STokenForXui]}"
+    },
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "1713962286720401/challenged-access-judiciary/${[scenarioContext][testData][users][invokingUser][id]}",
+        "process" : "challenged-access",
+        "replaceExisting" : true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "roleType" : "CASE",
+          "grantType" : "CHALLENGED",
+          "classification" : "PUBLIC",
+          "attributes": {
+            "jurisdiction": "CIVIL",
+            "caseId": "1713962286720401",
+            "region": "7"
+          },
+          "roleName": "challenged-access-judiciary",
+          "roleCategory": "JUDICIAL",
+          "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+          "beginTime": "${[scenarioContext][customValues][today]}T00:00:00Z",
+          "endTime": "${[scenarioContext][customValues][tomorrow]}T00:00:00Z",
+          "readOnly": true,
+          "notes" : [{
+            "userId": "${[scenarioContext][testData][users][invokingUser][id]}",
+            "time": "2022-01-01T00:00Z",
+            "comment": "Need Access to case number 1713962286720401 for a month"
+          }]
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "process" : "${[scenarioContext][testData][request][body][roleRequest][process]}",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "process" : "challenged-access",
+            "actorId": "${[scenarioContext][testData][request][body][requestedRoles][0][actorId]}",
+            "roleName": "${[scenarioContext][testData][request][body][requestedRoles][0][roleName]}",
+            "roleCategory": "${[scenarioContext][testData][request][body][requestedRoles][0][roleCategory]}",
+            "roleType": "${[scenarioContext][testData][request][body][requestedRoles][0][roleType]}",
+            "grantType": "${[scenarioContext][testData][request][body][requestedRoles][0][grantType]}",
+            "classification" : "${[scenarioContext][testData][request][body][requestedRoles][0][classification]}",
+            "readOnly": "${[scenarioContext][testData][request][body][requestedRoles][0][readOnly]}",
+            "attributes": {
+              "caseId" : "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][caseId]}",
+              "contractType" : "Salaried",
+              "jurisdiction" : "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][jurisdiction]}",
+              "caseType" : "CIVIL",
+              "substantive" : "N",
+              "region": "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][region]}"
+            },
+            "notes" : [{
+              "userId": "[[ANYTHING_PRESENT]]",
+              "time": "[[ANYTHING_PRESENT]]",
+              "comment": "[[ANYTHING_PRESENT]]"
+            }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

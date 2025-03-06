@@ -1,0 +1,68 @@
+{
+  "title": "must successfully receive Role Assignments with has_attributes",
+  "_guid_": "S-173",
+  "_extends_": "F-009_Test_Data_Base",
+  "specs": [
+    "Befta1 - who is the actor for requested role",
+    "contains list of single search query with has_attributes"
+  ],
+
+  "request": {
+    "body": {
+      "queryRequests": [
+        {
+          "hasAttributes": ["jurisdiction"],
+          "roleCategory": ["LEGAL_OPERATIONS"],
+          "attributes": {
+            "primaryLocation": ["abc"],
+            "jurisdiction": ["IA"]
+          }
+        }
+      ]
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse" : [
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "[[ANYTHING_PRESENT]]",
+          "roleCategory" : "LEGAL_OPERATIONS",
+          "roleName" : "[[ANYTHING_PRESENT]]",
+          "attributes" : {
+            "contractType" : "Salaried",
+            "primaryLocation" : "abc",
+            "jurisdiction" : "IA",
+            "substantive": "N"
+          }
+        },
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "[[ANYTHING_PRESENT]]",
+          "roleCategory" : "LEGAL_OPERATIONS",
+          "roleName" : "[[ANYTHING_PRESENT]]",
+          "attributes" : {
+            "contractType" : "Salaried",
+            "primaryLocation" : "abc",
+            "jurisdiction" : "IA",
+            "substantive": "Y"
+          }
+        },
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "[[ANYTHING_PRESENT]]",
+          "roleCategory" : "LEGAL_OPERATIONS",
+          "roleName" : "[[ANYTHING_PRESENT]]",
+          "attributes" : {
+            "contractType" : "Salaried",
+            "primaryLocation" : "abc",
+            "jurisdiction" : "IA",
+            "substantive": "Y"
+          }
+        }
+      ]
+    }
+  }
+}

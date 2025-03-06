@@ -22,4 +22,6 @@ jobs:
         java-version: 17
         cache: 'gradle'
     - name: Build
-      run: (cd cftlib;./gradlew -PtestSpringBootVersion=${{inputs.test_spring_boot_version}} check -i)
+      run: (cd cftlib;./gradlew publish -i)
+    - name: Test
+      run: (cd cftlib;./gradlew nfdiv:cftlibTest -i)

@@ -1,0 +1,25 @@
+{
+  "title": "must successfully receive response for Role Assignments without If-None-Match Header",
+  "_guid_": "S-056",
+  "_extends_": "F-005_Test_Data_Base",
+  "specs": [
+    "does not contain If-None-Match header",
+    "contains an Actor Id having only single Role Assignment"
+  ],
+  "request": {
+    "pathVariables": {
+      "actorId": "${[scenarioContext][childContexts][CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse": [
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][pathVariables][actorId]}"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "_guid_": "F-005_Test_Data_Base",
+  "_extends_": "F-005-Base-Root",
+  "productName": "Role Assignment Service",
+  "operationName": "Get Role Assignments by Actor Id",
+  "specs": [
+    "an active IDAM profile with full permissions"
+  ],
+  "method": "GET",
+  "uri": "/am/role-assignments/actors/{actorId}"
+}

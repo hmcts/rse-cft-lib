@@ -1,0 +1,60 @@
+{
+  "title": "must successfully receive a positive response when creating mix and match role assignments ReplaceExisting set to True",
+  "_guid_": "S-017",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "contains ReplaceExisting is true and have process and Reference values",
+    "contains multiple Role Assignments just created and couple of new role assignments"
+  ],
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "21334a2b-79ce-44eb-9168-2d49a744be9c",
+        "process": "businessProcess1",
+        "reference": "${[scenarioContext][childContexts][S-017_Multiple_Role_Creation][testData][request][body][roleRequest][reference]}",
+        "replaceExisting": true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][customValues][generateUUID]}"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][customValues][generateUUID]}",
+          "roleType": "ORGANISATION",
+          "grantType": "STANDARD"
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "replaceExisting" : true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${}${[scenarioContext][testData][request][body][requestedRoles][0][actorId]}",
+            "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${}${[scenarioContext][testData][request][body][requestedRoles][1][actorId]}",
+            "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD"
+          }
+        ]
+      }
+    }
+  }
+}

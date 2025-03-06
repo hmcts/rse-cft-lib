@@ -1,0 +1,31 @@
+{
+  "jwt": "Bearer fake-jwt",
+  "templateId": "<templateId>",
+  "formPayload": {
+    "divorceOrDissolution": "divorce",
+    "ccdCaseReference": "1616591401473378",
+    "issueDate": "20-04-2021",
+    "applicant1FirstName": "Sam",
+    "applicant1MiddleName": "John",
+    "applicant1LastName": "Smith",
+    "applicant2FirstName": "Katie",
+    "applicant2MiddleName": "Idris",
+    "applicant2LastName": "William",
+    "financialOrderOrDissolution": "for a final conditional order of divorce from",
+    "divorceOrDissolutionCost": "divorce costs",
+    "marriageOrRelationship": "marriage",
+    "marriageOrCivilPartnership": "marriage",
+    "applicant1FullName": "Sam John Smith",
+    "applicant2FullName": "Katie Idris William",
+    "marriageDate": "20-04-2009",
+    "courtCaseDetails": "some court case details",
+    "divorceOrEndCivilPartnership": "of the divorce",
+    "hasFinancialOrders": true,
+    "hasFinancialOrdersForChild": true,
+    "financialOrderChild": ", and for the children of the applicant and the respondent",
+    "applicant2PostalAddress": "London"
+  },
+  "outputType": "PDF",
+  "renditionOutputLocation": "http://dm-store-aat.service.core-compute-aat.internal/documents/<docUuid>",
+  "outputFilename": "ff5a31b4-f48a-4e69-8d7a-2ff691d697b0"
+}

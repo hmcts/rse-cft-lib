@@ -1,0 +1,61 @@
+package validationrules.sscs.common;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Assignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.CaseAllocatorApproval;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.domain.model.FeatureFlag;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.FeatureFlagEnum;
+import uk.gov.hmcts.reform.roleassignment.util.ValidationUtil;
+
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+
+
+/*
+ * SSCS "case-allocator" case validation rule.
+ */
+
+rule "sscs_case_allocator_create_case_roles"
+when
+    $f:  FeatureFlag(status && flagName == FeatureFlagEnum.SSCS_WA_1_0.getValue())
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "SSCS",
+                 roleAssignment.attributes["caseType"].asText() == "Benefit",
+                 roleAssignment.roleName == "case-allocator")
+         ExistingRoleAssignment(
+                 actorId == $ca.roleAssignment.actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName == "case-allocator",
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "SSCS")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : sscs_case_allocator_create_case_roles");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : sscs_case_allocator_create_case_roles");
+end;
+
+
+/*
+ * The case roles can be deleted if CaseAllocatorApproval entity is available for requested role assignment.
+ */
+rule "sscs_case_allocator_approved_delete_case_role"
+when
+    $f:  FeatureFlag(status && flagName == FeatureFlagEnum.SSCS_WA_1_0.getValue())
+    $ca: CaseAllocatorApproval(
+                roleAssignment.status == Status.DELETE_REQUESTED,
+                roleAssignment.attributes["jurisdiction"].asText() == "SSCS")
+then
+    $ca.getRoleAssignment().setStatus(Status.DELETE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : sscs_case_allocator_approved_delete_case_role");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : sscs_case_allocator_approved_delete_case_role");
+end;

@@ -1,0 +1,89 @@
+{
+  "title": "must successfully create Org dummy roles with dummy jurisdiction with ReplaceExisting set to True",
+  "_guid_": "S-123_CreateDataForRoleAssignment",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "contains a single Role Assignment",
+    "originates from the CCD system",
+    "Befta2 - who is the assigner",
+    "Befta2 - who invokes the API",
+    "Befta1 - who is the actor for requested role",
+    "to create a role assignment for an actor"
+  ],
+  "request": {
+    "headers": {
+      "Authorization": "[[DEFAULT_AUTO_VALUE]]",
+      "ServiceAuthorization": "${[scenarioContext][customValues][generateS2STokenForCcd]}",
+      "X-Correlation-ID": "003352d0-e699-48bc-b6f5-5810411e60af",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "${[scenarioContext][testData][users][befta1][id]}",
+        "replaceExisting": true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][customValues][generateUUID]}",
+          "roleType": "ORGANISATION",
+          "roleName": "[DUMMYCREATOR]",
+          "roleCategory": "LEGAL_OPERATIONS",
+          "classification": "PUBLIC",
+          "grantType": "SPECIFIC",
+          "readOnly": false,
+          "attributes": {
+            "caseId": "1714647999147997",
+            "jurisdiction": "AUTOTEST1",
+            "caseType": "Asylum"
+          },
+          "authorisations": [
+            "test125"
+          ]
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+          "requestType": "CREATE",
+          "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "replaceExisting": "${[scenarioContext][testData][request][body][roleRequest][replaceExisting]}",
+          "status": "APPROVED",
+          "log" : "Request has been approved"
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRoleWithoutSubstantive",
+            "roleType": "${[scenarioContext][testData][request][body][requestedRoles][0][roleType]}",
+            "roleName": "${[scenarioContext][testData][request][body][requestedRoles][0][roleName]}",
+            "classification": "${[scenarioContext][testData][request][body][requestedRoles][0][classification]}",
+            "grantType": "${[scenarioContext][testData][request][body][requestedRoles][0][grantType]}",
+            "roleCategory": "${[scenarioContext][testData][request][body][requestedRoles][0][roleCategory]}",
+            "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+            "status": "LIVE",
+            "actorId": "${}${[scenarioContext][testData][request][body][requestedRoles][0][actorId]}",
+            "attributes": {
+              "jurisdiction": "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][jurisdiction]}",
+              "caseId": "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][caseId]}",
+              "caseType": "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][caseType]}"
+            },
+            "authorisations": [
+              "test125"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

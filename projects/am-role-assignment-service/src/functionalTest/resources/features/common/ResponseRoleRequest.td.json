@@ -1,0 +1,16 @@
+{
+  "_guid_": "ResponseRoleRequest",
+
+    "id": "[[ANYTHING_PRESENT]]",
+    "correlationId": "${[scenarioContext][testData][request][headers][X-Correlation-ID]}",
+    "authenticatedUserId": "[[ANYTHING_PRESENT]]",
+    "assignerId": "${[scenarioContext][testData][request][body][roleRequest][assignerId]}",
+    "requestType": "CREATE",
+    "status": "APPROVED",
+    "process": "${[scenarioContext][testData][request][body][roleRequest][process]}",
+    "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}",
+    "replaceExisting": false,
+    "byPassOrgDroolRule" : "[[ANYTHING_PRESENT]]",
+    "created": "[[ANYTHING_PRESENT]]",
+    "log": "[[ANYTHING_PRESENT]]"
+}

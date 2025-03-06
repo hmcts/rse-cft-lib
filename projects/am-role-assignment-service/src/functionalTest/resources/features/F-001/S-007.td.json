@@ -1,0 +1,29 @@
+{
+  "title": "must receive an error response when ReplaceExisting is True without Process and Reference",
+  "_guid_": "S-007",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "contains a single Role Assignment",
+    "contains ReplaceExisting is true and either process or Reference value is missed"
+  ],
+  "request": {
+    "body": {
+      "roleRequest": {
+        "process": null,
+        "reference": null,
+        "replaceExisting": true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole"
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "BadRequestResponse",
+    "body" : {
+      "errorDescription" : "Mandatory Parameters are missing"
+    }
+  }
+}

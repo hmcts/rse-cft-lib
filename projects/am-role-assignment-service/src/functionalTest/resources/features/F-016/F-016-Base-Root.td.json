@@ -1,0 +1,34 @@
+{
+  "_guid_": "F-016-Base-Root",
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser2"
+    },
+    "befta3": {
+      "_extends_": "AmBeftaUser3"
+    }
+  },
+  "request": {
+    "headers": {
+      "Authorization": "[[DEFAULT_AUTO_VALUE]]",
+      "ServiceAuthorization": "[[DEFAULT_AUTO_VALUE]]",
+      "X-Correlation-ID": "003352d0-e699-48bc-b6f5-5810411e60af",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleRequest": {
+        "assignerId": "3168da13-00b3-41e3-81fa-cbc71ac28a0f",
+        "process" : "businessProcess1",
+        "reference": "1607103938250138/787f8cea-955e-4458-b8ac-e8680827b32b",
+        "replaceExisting": true
+      }
+    }
+  },
+  "expectedResponse": {
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    }
+  }
+}
+

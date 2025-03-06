@@ -1,0 +1,87 @@
+{
+  "title": "must successfully create single Role Assignment for CCD Case roles with byPassOrgDroolRule true",
+  "_guid_": "S-122",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "contains a single Role Assignment",
+    "originates from the CCD system",
+    "has database flag for CCD system enabled",
+    "Befta2 - who is the assigner",
+    "Befta2 - who invokes the API",
+    "Befta1 - who is the actor for requested role"
+  ],
+  "request": {
+    "headers": {
+      "Authorization": "[[DEFAULT_AUTO_VALUE]]",
+      "ServiceAuthorization": "${[scenarioContext][customValues][generateS2STokenForCcd]}",
+      "X-Correlation-ID": "003352d0-e699-48bc-b6f5-5810411e60af",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "${[scenarioContext][testData][users][befta1][id]}",
+        "byPassOrgDroolRule": true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "roleType": "CASE",
+          "roleName": "[CREATOR]",
+          "roleCategory": "PROFESSIONAL",
+          "classification": "RESTRICTED",
+          "grantType": "SPECIFIC",
+          "readOnly": false,
+          "attributes": {
+            "caseId": "1714647999147997",
+            "jurisdiction": "IA",
+            "caseType": "Asylum"
+          },
+          "authorisations": [
+            "test125"
+          ]
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+          "requestType": "CREATE",
+          "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "status": "APPROVED"
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "roleType": "CASE",
+            "roleName": "${[scenarioContext][testData][request][body][requestedRoles][0][roleName]}",
+            "classification": "RESTRICTED",
+            "grantType": "SPECIFIC",
+            "roleCategory": "${[scenarioContext][testData][request][body][requestedRoles][0][roleCategory]}",
+            "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+            "status": "LIVE",
+            "attributes": {
+              "jurisdiction": "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][jurisdiction]}",
+              "caseId": "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][caseId]}",
+              "caseType": "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][caseType]}",
+              "substantive" : "N"
+            },
+            "authorisations": [
+              "test125"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

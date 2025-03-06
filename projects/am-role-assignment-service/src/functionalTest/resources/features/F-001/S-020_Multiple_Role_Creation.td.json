@@ -1,0 +1,45 @@
+{
+  "_guid_": "S-020_Multiple_Role_Creation",
+  "_extends_": "CreationDataBaseForRoleAssignment",
+
+  "request": {
+    "body": {
+      "roleRequest": {
+        "reference": "${[scenarioContext][customValues][generateUUID]}",
+        "replaceExisting": true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][customValues][generateUUID]}"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][customValues][generateUUID]}"
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${}${[scenarioContext][testData][request][body][requestedRoles][0][actorId]}",
+            "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${}${[scenarioContext][testData][request][body][requestedRoles][1][actorId]}",
+            "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          }
+        ]
+      }
+    }
+  }
+}

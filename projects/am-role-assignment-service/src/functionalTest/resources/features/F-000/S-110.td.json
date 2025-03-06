@@ -1,0 +1,29 @@
+{
+  "_guid_": "S-110",
+  "title": "must access Role Assignment API",
+  "_extends_": "F-000_Test_Data_Base",
+  "specs": [
+    "an active caseworker profile",
+    "is to be made on behalf of Role Assignment API"
+  ],
+  "request": {
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "expectedResponse": {
+    "responseCode": 200,
+    "responseMessage": "OK",
+    "headers": {
+      "Content-Language": "[[ANYTHING_PRESENT]]",
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "[[ANYTHING_PRESENT]]",
+      "Date": "[[ANYTHING_PRESENT]]",
+      "Etag": "[[ANYTHING_PRESENT]]",
+      "Request-Context": "[[ANYTHING_PRESENT]]"
+    },
+    "body": {
+      "status": "UP"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "_guid_": "ResponseRoleAssignment",
+  "id": "[[ANYTHING_PRESENT]]",
+  "actorIdType": "IDAM",
+  "actorId": "123e4567-e89b-42d3-a456-556642445052",
+  "roleType": "ORGANISATION",
+  "roleName": "judge",
+  "classification": "PUBLIC",
+  "grantType": "STANDARD",
+  "roleCategory": "JUDICIAL",
+  "readOnly": false,
+  "beginTime": "[[ANYTHING_PRESENT]]",
+  "endTime": "[[ANYTHING_PRESENT]]",
+  "created": "[[ANYTHING_PRESENT]]",
+  "attributes": {
+    "contractType": "Salaried",
+    "jurisdiction": "IA",
+    "substantive": "Y"
+  }
+}

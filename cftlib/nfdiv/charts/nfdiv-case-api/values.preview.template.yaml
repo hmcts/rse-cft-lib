@@ -1,0 +1,50 @@
+# Don't modify this file, it is only needed for the pipeline to set the image and ingressHost
+java:
+  image: ${IMAGE_NAME}
+  ingressHost: ${SERVICE_FQDN}
+  environment:
+    CHANGE_ID: ${CHANGE_ID}
+    CITIZEN_UPDATE_CASE_STATE_ENABLED: true
+  keyVaults:
+    nfdiv:
+      secrets:
+        - name: AppInsightsInstrumentationKey-Preview
+          alias: APP_INSIGHTS_KEY
+        - name: uk-gov-notify-api-key
+          alias: UK_GOV_NOTIFY_API_KEY
+        - name: s2s-case-api-secret
+          alias: S2S_SECRET
+        - name: idam-secret
+          alias: IDAM_CLIENT_SECRET
+        - name: idam-systemupdate-username
+          alias: IDAM_SYSTEM_UPDATE_USERNAME
+        - name: idam-systemupdate-password
+          alias: IDAM_SYSTEM_UPDATE_PASSWORD
+
+nfdiv-frontend:
+  enabled: true
+  nodejs:
+    registerAdditionalDns:
+      enabled: false
+    imagePullPolicy: Always
+    releaseNameOverride: ${SERVICE_NAME}-frontend
+    image: hmctspublic.azurecr.io/nfdiv/frontend:latest #pr-xxxx
+    ingressHost: frontend-${SERVICE_FQDN}
+    environment:
+      CASE_TYPE: NFD-${CHANGE_ID}
+      SKIP_DIV_CASE_CHECK: true
+
+idam-pr:
+  enabled: true
+  releaseNameOverride: ${SERVICE_NAME}-idam-pr
+  redirect_uris:
+    divorce:
+      - https://frontend-${SERVICE_FQDN}/oauth2/callback
+      - https://frontend-${SERVICE_FQDN}/oauth2/callback-applicant2
+
+ccd-def-cleanup:
+  enabled: true
+  change_id: ${CHANGE_ID}
+  case_type_ids:
+    - NFD
+    - NO_FAULT_DIVORCE_BulkAction

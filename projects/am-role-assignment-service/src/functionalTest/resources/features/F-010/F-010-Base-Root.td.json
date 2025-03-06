@@ -1,0 +1,21 @@
+{
+  "_guid_": "F-010-Base-Root",
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser2"
+    }
+  },
+  "request": {
+    "headers": {
+      "Authorization": "[[DEFAULT_AUTO_VALUE]]",
+      "ServiceAuthorization": "[[DEFAULT_AUTO_VALUE]]",
+      "Content-Type": "application/json"
+    }
+  },
+  "expectedResponse": {
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    }
+  }
+}

@@ -1,0 +1,112 @@
+[
+  {
+    "name": "ftpa-judge",
+    "label": "FTPA Judge",
+    "description": "FTPA Judge role for judicial users",
+    "category": "JUDICIAL",
+    "substantive": true,
+    "type": "CASE",
+    "patterns": [
+      {
+        "roleType": {
+          "mandatory": true,
+          "values": ["CASE"]
+        },
+        "grantType": {
+          "mandatory": true,
+          "values": ["SPECIFIC"]
+        },
+        "classification": {
+          "mandatory": true
+        },
+        "attributes": {
+          "jurisdiction": {
+            "mandatory": true,
+            "values": ["IA"]
+          },
+          "caseType": {
+            "mandatory": true,
+            "values": ["Asylum"]
+          },
+          "caseId": {
+            "mandatory": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "hearing-panel-judge",
+    "label": "Hearing Panel Judge",
+    "description": "Hearing Panel Judge role for judicial users",
+    "category": "JUDICIAL",
+    "substantive": true,
+    "type": "CASE",
+    "patterns": [
+      {
+        "roleType": {
+          "mandatory": true,
+          "values": ["CASE"]
+        },
+        "grantType": {
+          "mandatory": true,
+          "values": ["SPECIFIC"]
+        },
+        "classification": {
+          "mandatory": true
+        },
+        "attributes": {
+          "jurisdiction": {
+            "mandatory": true,
+            "values": ["IA"]
+          },
+          "caseType": {
+            "mandatory": true,
+            "values": ["Asylum"]
+          },
+          "caseId": {
+            "mandatory": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "case-manager",
+    "label": "Case Manager",
+    "description": "Case Manager role for staff users",
+    "category": "LEGAL_OPERATIONS",
+    "substantive": true,
+    "type": "CASE",
+    "patterns": [
+      {
+        "roleType": {
+          "mandatory": true,
+          "values": ["CASE"]
+        },
+        "grantType": {
+          "mandatory": true,
+          "values": ["SPECIFIC"]
+        },
+        "classification": {
+          "mandatory": true
+        },
+        "attributes": {
+          "jurisdiction": {
+            "mandatory": true,
+            "values": ["IA"]
+          },
+          "caseType": {
+            "mandatory": true,
+            "values": ["Asylum"]
+
+          },
+          "caseId": {
+            "mandatory": true
+          }
+        }
+
+      }
+    ]
+  }
+]

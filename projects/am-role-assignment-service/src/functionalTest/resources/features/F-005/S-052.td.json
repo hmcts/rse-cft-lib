@@ -1,0 +1,28 @@
+{
+  "title": "must successfully receive multiple Role Assignments by Actor Id",
+  "_guid_": "S-052",
+  "_extends_": "F-005_Test_Data_Base",
+  "specs": [
+    "contains an Actor Id having multiple Role Assignments"
+  ],
+  "request": {
+    "pathVariables": {
+      "actorId": "${[scenarioContext][childContexts][S-052_CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse": [
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][pathVariables][actorId]}"
+        },
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][pathVariables][actorId]}"
+        }
+      ]
+    }
+  }
+}

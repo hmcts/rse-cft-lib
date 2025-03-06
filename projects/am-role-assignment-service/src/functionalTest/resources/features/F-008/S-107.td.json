@@ -1,0 +1,102 @@
+{
+  "title": "must successfully create & replace multiple Role Assignments for staff case role",
+  "_guid_": "S-107",
+  "_extends_": "F-008_Test_Data_Base",
+  "specs": [
+    "contains ReplaceExisting is true and reference set to caseId",
+    "Befta1 - who is the actor for requested role",
+    "contains multiple Role Assignments just created and couple of new role assignments"
+
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser6"
+    }
+  },
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "1714647999147997/tribunal-caseworker",
+        "replaceExisting": true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][befta1][id]}",
+          "roleName": "tribunal-caseworker",
+          "roleCategory": "LEGAL_OPERATIONS",
+          "roleType": "CASE",
+          "grantType": "SPECIFIC",
+          "attributes":
+          {
+            "caseId" : "1714647999147997",
+            "primaryLocation": "dcb"
+          }
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+          "roleName": "tribunal-caseworker",
+          "roleCategory": "LEGAL_OPERATIONS",
+          "roleType": "CASE",
+          "grantType": "SPECIFIC",
+          "attributes":
+          {
+            "caseId" : "1714647999147997"
+          }
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "reference": "1714647999147997/tribunal-caseworker",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${[scenarioContext][testData][users][befta1][id]}",
+            "roleName": "tribunal-caseworker",
+            "roleCategory": "LEGAL_OPERATIONS",
+            "roleType": "CASE",
+            "grantType": "SPECIFIC",
+            "attributes":
+            {
+              "caseId" : "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][caseId]}",
+              "primaryLocation": "dcb",
+              "jurisdiction" : "IA",
+              "caseType" : "Asylum",
+              "substantive": "N"
+            }
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "id": "${[scenarioContext][childContexts][S-107_Multiple_Case_Role_Creation][testData][expectedResponse][body][roleAssignmentResponse][requestedRoles][1][id]}",
+            "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+            "roleName": "tribunal-caseworker",
+            "roleCategory": "LEGAL_OPERATIONS",
+            "roleType": "CASE",
+            "grantType": "SPECIFIC",
+            "attributes":
+            {
+              "caseId" : "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][caseId]}",
+              "jurisdiction" : "IA",
+              "caseType" : "Asylum",
+              "substantive": "N"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

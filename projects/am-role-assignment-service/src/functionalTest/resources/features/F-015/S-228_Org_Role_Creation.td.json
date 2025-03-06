@@ -1,0 +1,99 @@
+{
+  "_guid_": "S-228_Org_Role_Creation",
+  "_extends_": "F-015_Test_Data_Base",
+  "specs": [
+    "Befta3 - who is the actor for requested role",
+    "to create org role assignments for actors & requester"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser4"
+    }
+  },
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "S-228_Org_Role_Creation",
+        "process": "businessProcess1"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+          "roleName": "case-allocator",
+          "roleCategory": "CTSC",
+          "beginTime" : "2023-09-01T00:00:00Z",
+          "attributes":
+          {
+            "jurisdiction": "PRIVATELAW",
+            "primaryLocation": "123456"
+          }
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][befta3][id]}",
+          "roleName": "ctsc",
+          "roleCategory": "CTSC",
+          "beginTime" : "2023-09-01T00:00:00Z",
+          "attributes":
+          {
+            "jurisdiction": "PRIVATELAW",
+            "primaryLocation": "123456"
+          }
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "__ordering__": "UNORDERED",
+            "__elementId__": "roleName"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "process": "[[ANYTHING_PRESENT]]",
+            "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+            "roleType": "${[scenarioContext][testData][request][body][requestedRoles][0][roleType]}",
+            "grantType": "${[scenarioContext][testData][request][body][requestedRoles][0][grantType]}",
+            "roleCategory": "${[scenarioContext][testData][request][body][requestedRoles][0][roleCategory]}",
+            "roleName": "case-allocator",
+            "attributes":
+            {
+              "jurisdiction": "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][jurisdiction]}",
+              "primaryLocation": "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][primaryLocation]}",
+              "substantive": "N"
+            }
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${[scenarioContext][testData][users][befta3][id]}",
+            "process": "[[ANYTHING_PRESENT]]",
+            "roleType": "${[scenarioContext][testData][request][body][requestedRoles][1][roleType]}",
+            "grantType": "${[scenarioContext][testData][request][body][requestedRoles][1][grantType]}",
+            "roleCategory": "${[scenarioContext][testData][request][body][requestedRoles][1][roleCategory]}",
+            "roleName": "ctsc",
+            "attributes":
+            {
+              "jurisdiction": "${[scenarioContext][testData][request][body][requestedRoles][1][attributes][jurisdiction]}",
+              "primaryLocation": "${[scenarioContext][testData][request][body][requestedRoles][1][attributes][primaryLocation]}",
+              "substantive": "Y"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

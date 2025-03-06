@@ -1,0 +1,24 @@
+{
+  "title": "must successfully delete multiple Role Assignments by Process",
+  "_guid_": "S-026",
+  "_extends_": "F-002_Test_Data_Base",
+  "operationName": "Delete Role Assignments by Process",
+  "specs": [
+    "contains Process and Reference associated with multiple Role Assignments"
+  ],
+  "uri": "/am/role-assignments?process={process}&reference={reference}",
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser6"
+    }
+  },
+  "request": {
+    "pathVariables": {
+      "process": "businessProcess1",
+      "reference": "${[scenarioContext][childContexts][S-026_CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_204_Response"
+  }
+}

@@ -1,0 +1,79 @@
+package validationrules.iac.common;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Assignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Classification
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.util.ValidationUtil;
+import uk.gov.hmcts.reform.roleassignment.domain.model.FeatureFlag;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.FeatureFlagEnum;
+import java.time.ZonedDateTime;
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit;
+
+/*
+ * All services: "specific-access-<roleCategory?>" case creation and leadership-judge as a assigner
+ */
+
+rule "iac_create_specific_access_case_role"
+when
+    $f : FeatureFlag(status && flagName == FeatureFlagEnum.IAC_SPECIFIC_1_0.getValue())
+    $rq: Request(
+             // The assigner must be the current user.
+             assignerId == authenticatedUserId,
+             process == "specific-access",
+             reference != null)
+    $ra: RoleAssignment(
+             // Users cannot approve their own requests.
+             actorId != $rq.assignerId,
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.CASE,
+             // For IAC, all roles can be approved by the same set of approver roles.
+             roleName in ("specific-access-admin", "specific-access-judiciary", "specific-access-legal-ops", "specific-access-ctsc"),
+             roleCategory in (RoleCategory.ADMIN, RoleCategory.JUDICIAL, RoleCategory.LEGAL_OPERATIONS, RoleCategory.CTSC),
+             grantType == GrantType.SPECIFIC,
+             notes != null && notes.size > 0 && notes.toString().length() > 5, /* Make sure there is at least one note with content in it */
+             attributes["caseId"] != null && $caseId : attributes["caseId"].asText(),
+             // Only applies to IAC
+             attributes["jurisdiction"] == null || attributes["jurisdiction"].asText() == "IA")
+    $c:  Case(
+             id == $caseId,
+             jurisdiction == "IA")
+    $e: ExistingRoleAssignment(
+             // The assigner must have an organisational role ...
+             actorId == $rq.assignerId,
+             roleType == RoleType.ORGANISATION,
+             // ... which is any of the IAC roles that can approve specific access requests ...
+             roleName == "leadership-judge",
+             // ... with the usual constraints ...
+             grantType == GrantType.STANDARD,
+             classification.isAtLeast($c.securityClassification),
+             endTime == null || endTime.isAfter(ZonedDateTime.now()),
+             beginTime == null || !beginTime.isAfter(ZonedDateTime.now()),
+             // ... within the service.
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "IA",
+             // All the following should be null currently for IAC.
+             // The rules are left in place to support any changes service may make to how they use roles in the future.
+             attributes["caseType"] == null || attributes["caseType"].asText() == $c.caseTypeId,
+             attributes["region"] == null || attributes["region"].asText() == $c.getRegion(),
+             attributes["baseLocation"] == null || attributes["baseLocation"].asText() == $c.getBaseLocation(),
+             attributes["managedRoleCategory"] == null || ValidationUtil.csvContains($ra.roleCategory.toString(), attributes["managedRoleCategory"].asText()),
+             attributes["managedRole"] == null || ValidationUtil.csvContains($ra.roleName, attributes["managedRole"].asText()))
+then
+    // We copy the authorisations to allow the case config to require an authorisation
+    // for (particularly judicial) role mappings
+    $ra.setAuthorisations($e.getAuthorisations());
+    $ra.setAttribute("jurisdiction", "IA");
+    $ra.setAttribute("caseType", $c.getCaseTypeId());
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Stage 1 approved : iac_create_specific_access_case_role");
+    update($ra);
+    logMsg("Rule : iac_create_specific_access_case_role");
+end;

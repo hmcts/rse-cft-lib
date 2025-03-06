@@ -1,0 +1,38 @@
+{
+  "title": "must successfully remove multiple Role Assignments for staff org roles",
+  "_guid_": "S-105",
+  "_extends_": "F-008_Test_Data_Base",
+  "specs": [
+    "contains ReplaceExisting is true and have same process and Reference values",
+    "Befta1 - who is the actor for requested role",
+    "contains empty requested roles list"
+  ],
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "${[scenarioContext][testData][users][befta1][id]}",
+        "replaceExisting": true
+      },
+      "requestedRoles": [
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "title": "must receive positive response when trying to delete a Role Assignment twice",
+  "_guid_": "S-035",
+  "_extends_": "F-002_Test_Data_Base",
+  "operationName": "Delete Role Assignments by Process",
+  "specs": [
+    "contains the same Process and Reference created above",
+    "Befta2 - who is the assigner",
+    "Befta2 - who invokes the API",
+    "Befta1 - who is the actor for requested role",
+    "contains Process and Reference associated with single Role Assignment"
+  ],
+  "uri": "/am/role-assignments?process={process}&reference={reference}",
+  "request": {
+    "headers": {
+      "Authorization": "[[DEFAULT_AUTO_VALUE]]",
+      "ServiceAuthorization": "${[scenarioContext][customValues][generateS2STokenForCcd]}",
+      "assignerId": ""
+    },
+    "pathVariables": {
+      "process": "businessProcess1",
+      "reference": "${[scenarioContext][childContexts][CreationDataForRoleAssignmentByServiceId][testData][request][body][roleRequest][reference]}"
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_204_Response"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "_guid_": "S-183_CreationDataForRoleAssignment",
+  "_extends_": "CreationDataForRoleAssignment",
+  "request": {
+    "body": {
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+        }
+
+      ]
+    }
+  },
+  "expectedResponse": {
+    "body": {
+      "roleAssignmentResponse": {
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}",
+            "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}",
+            "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}",
+            "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}",
+            "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}",
+            "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}",
+            "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}",
+            "reference": "${}${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          }
+        ]
+      }
+    }
+  }
+}

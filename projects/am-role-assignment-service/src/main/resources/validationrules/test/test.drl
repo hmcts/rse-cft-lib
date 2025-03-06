@@ -1,0 +1,76 @@
+package validationrules.test;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.CaseAllocatorApproval;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleConfig;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleConfigPattern;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.domain.model.FeatureFlag;
+
+rule "request"
+salience 1000
+when
+	$r: Request()
+then
+	logMsg("We have request " + $r);
+end;
+
+rule "role_assignment"
+salience 1000
+when
+	$ra: RoleAssignment()
+then
+	logMsg("We have role assignment " + $ra.getStatus() + " : " + $ra);
+end;
+
+rule "existing_role_assignment"
+salience 1000
+when
+	$ra: ExistingRoleAssignment()
+then
+	logMsg("We have existing role assignment " + $ra);
+end;
+
+rule "show_case"
+salience 1000
+when
+	$c: Case()
+then
+	logMsg("We have case " + $c.getId() + " : " + $c);
+end;
+
+rule "config"
+salience 1000
+when
+	$c: RoleConfig()
+then
+	logMsg("We have role config");
+end;
+
+
+rule "config_pattern"
+salience 1000
+when
+	$p: RoleConfigPattern()
+then
+	logMsg("We have a pattern for " + $p.getRoleName() + " : " + $p);
+end;
+
+rule "flag_config"
+salience 1000
+when
+	$f:  FeatureFlag()
+then
+	logMsg("We have a feature flag for " + $f.getFlagName() + " : " + $f);
+end;
+
+rule "case_allocator_approval"
+salience 1000
+when
+	$ca:  CaseAllocatorApproval()
+then
+	logMsg("We have a CaseAllocatorApproval  for " + $ca.getRoleAssignment());
+end;
+

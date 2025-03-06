@@ -1,0 +1,40 @@
+package validationrules.dev;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+
+
+
+
+rule "development_superuser_create"
+when
+    $rq: Request(
+             process == "DEVELOPMENT_SUPERUSER")
+    $ra: RoleAssignment(
+             status == Status.CREATE_REQUESTED)
+then
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Stage 1 approved : staff_organisational_role_mapping_service_create");
+    update($ra);
+    logMsg("Rule :development_superuser");
+end;
+
+
+
+
+rule "development_superuser_delete"
+when
+    $rq: Request(
+             process == "DEVELOPMENT_SUPERUSER")
+    $ra: RoleAssignment(
+             status == Status.DELETE_REQUESTED)
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Stage 1 approved : staff_organisational_role_mapping_service_create");
+    update($ra);
+    logMsg("Rule :development_superuser");
+end;

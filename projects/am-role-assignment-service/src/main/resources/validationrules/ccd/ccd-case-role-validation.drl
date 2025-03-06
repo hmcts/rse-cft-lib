@@ -1,0 +1,166 @@
+package validationrules.ccd;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Assignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.domain.model.FeatureFlag;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.FeatureFlagEnum;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleConfig;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleConfigPattern;
+
+/*
+ * CCD case roles can be created by client request originated from ccd service.
+ */
+
+rule "ccd_create_case_roles"
+when
+    $rq: Request(clientId in ("ccd_data", "aac_manage_case_assignment"))
+    $ra: RoleAssignment(
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.CASE,
+             roleCategory in (RoleCategory.PROFESSIONAL, RoleCategory.CITIZEN, RoleCategory.LEGAL_OPERATIONS  ),
+             attributes["jurisdiction"] != null,
+             attributes["caseType"] != null,
+             attributes["caseId"] != null)
+then
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Stage 1 approved : ccd_create_case_roles");
+    update($ra);
+    logMsg("Rule : ccd_create_case_roles");
+end;
+
+
+/*
+ * CCD case roles can be created by client request originated from idam disposer service.
+ */
+
+rule "ccd_disposer_create_case_roles"
+when
+    $f:  FeatureFlag(status && flagName == FeatureFlagEnum.DISPOSER_1_0.getValue())
+    $rq: Request(clientId in ("disposer-idam-user"))
+    $ra: RoleAssignment(
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.CASE,
+             roleCategory in (RoleCategory.CITIZEN),
+             attributes["jurisdiction"] != null,
+             attributes["caseType"] != null,
+             attributes["caseId"] != null)
+then
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Stage 1 approved : ccd_disposer_create_case_roles");
+    update($ra);
+    logMsg("Rule : ccd_disposer_create_case_roles");
+end;
+
+
+/*
+ * CCD case roles can be deleted by client request originated from ccd service.
+ */
+
+rule "ccd_delete_case_roles"
+when
+    $rq: Request(clientId in ("ccd_data", "aac_manage_case_assignment", "ccd_case_disposer"))
+    $ra: RoleAssignment(
+             status == Status.DELETE_REQUESTED,
+             roleType == RoleType.CASE,
+             roleCategory in (RoleCategory.PROFESSIONAL, RoleCategory.CITIZEN),
+             attributes["jurisdiction"] != null,
+             attributes["caseType"] != null,
+             attributes["caseId"] != null)
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : ccd_delete_case_roles");
+    update($ra);
+    logMsg("Rule : ccd_delete_case_roles");
+end;
+
+
+/*
+ * CCD case roles can be created by client request originated from ccd service.
+ */
+
+rule "ccd_create_case_roles_creator"
+when
+    $rq: Request(clientId in ("ccd_data", "aac_manage_case_assignment"))
+    $ra: RoleAssignment(
+             roleName in ("[CREATOR]", "[APPLICANTTWO]"),
+             roleCategory in (RoleCategory.JUDICIAL, RoleCategory.LEGAL_OPERATIONS, RoleCategory.ADMIN),
+             roleType == RoleType.CASE,
+             status == Status.CREATE_REQUESTED,
+             attributes["jurisdiction"] != null,
+             attributes["caseType"] != null,
+             attributes["caseId"] != null)
+then
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Stage 1 approved : ccd_create_case_roles_creator");
+    update($ra);
+    logMsg("Rule : ccd_create_case_roles_creator");
+end;
+
+
+/*
+ * CCD case roles can be deleted by client request originated from ccd service.
+ */
+
+rule "ccd_delete_case_roles_creator"
+when
+    $rq: Request(clientId in ("ccd_data", "aac_manage_case_assignment", "ccd_case_disposer"))
+    $ra: RoleAssignment(
+             roleName == "[CREATOR]",
+             roleCategory in (RoleCategory.JUDICIAL, RoleCategory.LEGAL_OPERATIONS, RoleCategory.ADMIN),
+             status == Status.DELETE_REQUESTED,
+             roleType == RoleType.CASE,
+             attributes["jurisdiction"] != null,
+             attributes["caseType"] != null,
+             attributes["caseId"] != null)
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : ccd_delete_case_roles_creator");
+    update($ra);
+    logMsg("Rule : ccd_delete_case_roles_creator");
+end;
+
+
+rule "approve_any_dummy_jurisdiction_create"
+when
+     // The drool bypass flag for ccd must be enabled.
+     $f:  FeatureFlag(status && flagName == FeatureFlagEnum.CCD_BYPASS_1_0.getValue())
+     // The request must come from the data store or AAC microservices.
+     $rq: Request(clientId in ("ccd_data", "aac_manage_case_assignment"))
+     // It can be to create a role assignment, but only for one of a fixed list of dummy jurisdictions.
+     $ra: RoleAssignment(
+         status in (Status.CREATE_REQUESTED, Status.CREATE_APPROVED),
+         attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() in ("J1","J2","J3","BEFTA_MASTER",
+                    "BEFTA_JURISDICTION_1","BEFTA_JURISDICTION_2","BEFTA_JURISDICTION_3","AUTOTEST1","AUTOTEST2"))
+then
+    // Bypass the configuration check rule by setting the 'finally approved' status.
+    $ra.setStatus(Status.APPROVED);
+    $ra.log("Approved : approve_any_dummy_jurisdiction_create: " + $ra.getAttributes().get("jurisdiction")
+                                                                                .asText() + "/" + $ra.getRoleName());
+    update($ra);
+    logMsg("Rule : approve_any_dummy_jurisdiction_create");
+end;
+
+
+rule "approve_any_dummy_jurisdiction_delete"
+when
+     $f:  FeatureFlag(status && flagName == FeatureFlagEnum.CCD_BYPASS_1_0.getValue())
+     $rq: Request(clientId in ("ccd_data", "aac_manage_case_assignment", "ccd_case_disposer"))
+     $ra: RoleAssignment(
+         status == Status.DELETE_REQUESTED,
+         attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() in ("J1","J2","J3","BEFTA_MASTER",
+                    "BEFTA_JURISDICTION_1","BEFTA_JURISDICTION_2","BEFTA_JURISDICTION_3","AUTOTEST1","AUTOTEST2"))
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : approve_any_dummy_jurisdiction_delete: " + $ra.getAttributes().get("jurisdiction")
+                                                                                .asText() + "/" + $ra.getRoleName());
+    update($ra);
+    logMsg("Rule : approve_any_dummy_jurisdiction_delete");
+end;

@@ -31,7 +31,8 @@ public class LibAgent {
     }
 
     // Block any use of ElasticSearch until ready for use.
-    @Before("execution(* uk.gov.hmcts.ccd.definition.store.elastic.client.*.*(..))")
+//    @Before("execution(* uk.gov.hmcts.ccd.definition.store.elastic.client.*.*(..))")
+//    SOW014 - https://github.com/jOOQ/jOOQ/issues/5902
     public void waitForES() {
         ControlPlane.waitForES();
     }

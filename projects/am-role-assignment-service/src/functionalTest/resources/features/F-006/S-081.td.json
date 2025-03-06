@@ -1,0 +1,25 @@
+{
+  "title": "must successfully receive multiple Role Assignments with one query param",
+  "_guid_": "S-081",
+  "_extends_": "F-006_Test_Data_Base",
+  "specs": [
+    "contains one search query param"
+  ],
+
+  "request": {
+    "body": {
+      "actorId": ["${[scenarioContext][childContexts][CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}"]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse" : [
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][body][actorId][0]}"
+        }
+      ]
+    }
+  }
+}

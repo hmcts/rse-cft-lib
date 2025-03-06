@@ -1,0 +1,36 @@
+package validationrules.core
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType;
+import java.lang.Throwable
+import uk.gov.hmcts.reform.roleassignment.controller.advice.exception.BadRequestException;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+
+global uk.gov.hmcts.reform.roleassignment.domain.service.common.RetrieveDataService DATA_SERVICE;
+
+/*
+ * When we have a role assignment with a case ID, then we need to make the case
+ * data available.  This may only be for access to the case type (unfortunately,
+ * there is not a light version of the case retrieval API available to return
+ * only the basic case metadata).
+ *
+ * The "not CASE(...)" clause ensures that case data is only loaded once for any
+ * given case ID - effectively this acts as a cache within the scope of a single
+ * evaluation of rules.
+ */
+rule "load_case_data_for_role_assignments_with_case_ids"
+when
+    $ra: RoleAssignment(
+             attributes["caseId"] != null && $caseId : attributes["caseId"].asText())
+     not Case(id == $caseId)
+     not Request(clientId in ("ccd_data", "aac_manage_case_assignment", "ccd_case_disposer", "disposer-idam-user"))
+then
+  try {
+  	insert(DATA_SERVICE.getCaseById($caseId));
+  }
+  catch(Throwable ex) {
+  logMsg("Error from the ccd data-store feign client");
+  throw new BadRequestException(ex.getMessage());
+  }
+	logMsg("Rule :load_case_data_for_role_assignments_with_case_ids");
+end;

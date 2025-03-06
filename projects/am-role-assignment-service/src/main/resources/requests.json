@@ -1,0 +1,135 @@
+[
+	{
+		"request":
+			{
+				"id": "request1",
+				"correlationId": "request1",
+				"clientId": "client1",
+				"authenticatedUserId": "system1",
+				"requestorId": "judge1",
+				"action": "CREATE",
+				"process": "businessProcess1",
+				"reference": "abc-3434242",
+				"replaceExisting": false
+			},
+		"assignmentsRequested":
+			[
+				{
+					"actorIdType": "IDAM_USER_ID",
+					"actorId": "3434343",
+					"roleType": "ORGANISATIONAL_ROLE",
+					"roleName": "judge",
+					"classification": "PUBLIC",
+					"grantType": "STANDARD",
+					"readOnly": false,
+					"begin": "2020-01-01T00:00Z",
+					"end": "2050-01-01T00:00Z",
+					"attributes":
+						{
+							"jurisdiction": "divorce",
+							"region": "north-east",
+							"contractType": "SALARIED"
+						}
+				},
+				{
+					"actorIdType": "IDAM_USER_ID",
+					"actorId": "judge4",
+					"roleType": "ORGANISATIONAL_ROLE",
+					"roleName": "judge",
+					"classification": "PUBLIC",
+					"grantType": "STANDARD",
+					"readOnly": false,
+					"begin": "2020-01-01T00:00Z",
+					"end": "2050-01-01T00:00Z",
+					"attributes":
+						{
+							"jurisdiction": "probate",
+							"region": "north-east",
+							"contractType": "SALARIED"
+						}
+				},
+				{
+					"actorIdType": "IDAM_USER_ID",
+					"actorId": "judge4",
+					"roleType": "CASE_ROLE",
+					"roleName": "judge",
+					"classification": "PUBLIC",
+					"grantType": "SPECIFIC",
+					"readOnly": true,
+					"begin": "2020-01-01T00:00Z",
+					"end": "2050-01-01T00:00Z",
+					"attributes":
+						{
+							"caseId": "case1"
+						}
+				}
+			]
+	},
+	{
+		"request":
+			{
+				"id": "request2",
+				"correlationId": "request1",
+				"clientId": "client1",
+				"authenticatedUserId": "system1",
+				"requestorId": "judge1",
+				"action": "CREATE",
+				"process": "businessProcess1",
+				"reference": "abc-3434242",
+				"replaceExisting": false
+			},
+		"assignmentsRequested":
+			[
+				{
+					"actorIdType": "IDAM_USER_ID",
+					"actorId": "judge3",
+					"roleType": "ORGANISATIONAL_ROLE",
+					"roleName": "judge",
+					"classification": "PUBLIC",
+					"grantType": "STANDARD",
+					"readOnly": false,
+					"begin": "2020-01-01T00:00Z",
+					"end": "2050-01-01T00:00Z",
+					"attributes":
+						{
+							"jurisdiction": "divorce",
+							"region": "north-east",
+							"contractType": "SALARIED"
+						}
+				}
+			]
+	},
+	{
+		"request":
+			{
+				"id": "request3",
+				"correlationId": "request1",
+				"clientId": "client1",
+				"authenticatedUserId": "admin1",
+				"requestorId": "admin1",
+				"action": "CREATE",
+				"process": "professionalAccess",
+				"reference": "abc-3434242",
+				"replaceExisting": false
+			},
+		"assignmentsRequested":
+			[
+				{
+					"actorIdType": "IDAM_USER_ID",
+					"actorId": "solicitor1",
+					"roleType": "CASE_ROLE",
+					"roleName": "solicitor",
+					"classification": "PUBLIC",
+					"grantType": "SPECIFIC",
+					"readOnly": false,
+					"begin": "2020-01-01T00:00Z",
+					"end": "2050-01-01T00:00Z",
+					"attributes":
+						{
+							"caseId": "case6",
+							"organisationId": "organisation1"
+						}
+				}
+			]
+	}
+]

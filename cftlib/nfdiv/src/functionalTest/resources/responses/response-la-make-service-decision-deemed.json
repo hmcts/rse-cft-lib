@@ -1,0 +1,47 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "notApplicable",
+    "applicationType": "jointApplication",
+    "applicant1Email":"simulate-delivered@notifications.service.gov.uk",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "changeOfRepresentatives": [],
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "alternativeServiceOutcomes": [
+      {
+        "id": "1",
+        "value": {
+          "receivedServiceApplicationDate": "2021-06-18",
+          "alternativeServiceType": "deemed",
+          "receivedServiceAddedDate": "${json-unit.any-string}",
+          "serviceApplicationOutcomeLabel": "${json-unit.any-string}",
+          "serviceApplicationGranted": "Yes",
+          "serviceApplicationDecisionDate": "${json-unit.any-string}",
+          "deemedServiceDate": "2021-06-20"
+        }
+      }
+    ],
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "deemedAsServedGranted.pdf",
+          "documentType": "deemedAsServiceGranted",
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "deemedAsServedGranted.pdf",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
+      }
+    ],
+    "dataVersion": "${json-unit.any-number}",
+    "issueDate": "${json-unit.any-string}",
+    "warnings": [],
+    "dueDate": "${json-unit.any-string}"
+  },
+  "state": "Holding"
+}

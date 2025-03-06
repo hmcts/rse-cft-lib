@@ -1,0 +1,72 @@
+{
+  "title": "must successfully create hearing-judge case role",
+  "_guid_": "S-224",
+  "_extends_": "F-015_Test_Data_Base",
+  "specs": [
+    "contains ReplaceExisting is false and reference set to caseId",
+    "Befta3 - who is the actor for requested role",
+    "contains hearing-judge case role assignment"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser4"
+    }
+  },
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "1714647879160292/hearing-judge"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][befta3][id]}",
+          "roleName": "hearing-judge",
+          "roleCategory": "JUDICIAL",
+          "roleType": "CASE",
+          "grantType": "SPECIFIC",
+          "attributes":
+          {
+            "caseId" : "1714647879160292",
+            "jurisdiction": "PRIVATELAW",
+            "caseType": "PRLAPPS"
+          }
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${[scenarioContext][testData][users][befta3][id]}",
+            "process" : "specific-access",
+            "roleName": "hearing-judge",
+            "roleCategory": "JUDICIAL",
+            "roleType": "CASE",
+            "grantType": "SPECIFIC",
+            "attributes":
+            {
+              "caseId" : "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][caseId]}",
+              "jurisdiction" : "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][jurisdiction]}",
+              "caseType" : "PRLAPPS"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

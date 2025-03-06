@@ -1,0 +1,112 @@
+package uk.gov.hmcts.divorce.systemupdate.schedule;
+
+import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAosOverdue.SYSTEM_PROGRESS_TO_AOS_OVERDUE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
+
+@Component
+@Slf4j
+/**
+ * Any cases which are in AwaitingAos or AosDrafted state and whose due date >= current date will be moved to AosOverdue by this task.
+ */
+public class SystemProgressCasesToAosOverdueTask implements Runnable {
+
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
+
+    @Autowired
+    private CcdSearchService ccdSearchService;
+
+    @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
+
+    private static final String DUE_DATE = "dueDate";
+
+    @Override
+    public void run() {
+        log.info("Aos overdue scheduled task started");
+
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final String serviceAuth = authTokenGenerator.generate();
+
+        try {
+            final BoolQueryBuilder query =
+                boolQuery()
+                    .must(
+                        boolQuery()
+                            .should(matchQuery(STATE, AwaitingAos))
+                            .should(matchQuery(STATE, AosDrafted))
+                            .minimumShouldMatch(1)
+                    )
+                    .filter(rangeQuery(CcdSearchService.DUE_DATE).lt(LocalDate.now()));
+
+            final List<CaseDetails> casesInAwaitingAosState =
+                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingAos, AosDrafted);
+
+            for (final CaseDetails caseDetails : casesInAwaitingAosState) {
+                try {
+                    Map<String, Object> caseDataMap = caseDetails.getData();
+                    String dueDate = (String) caseDataMap.getOrDefault(DUE_DATE, null);
+                    log.info("dueDate is {} from caseDataMap for case id {}", dueDate, caseDetails.getId());
+
+                    if (dueDate == null) {
+                        log.error("Ignoring case id {} with created on {} and modified on {}, as due date is null",
+                            caseDetails.getId(),
+                            caseDetails.getCreatedDate(),
+                            caseDetails.getLastModified()
+                        );
+                    } else {
+                        LocalDate aosDueDate = LocalDate.parse(dueDate);
+
+                        if (aosDueDate.isBefore(LocalDate.now())) {
+                            log.info("Due date {} for Case id {} is before current date hence moving state to AosOverdue",
+                                aosDueDate,
+                                caseDetails.getId()
+                            );
+                            ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, serviceAuth);
+                        }
+                    }
+                } catch (final CcdManagementException e) {
+                    log.error("Submit event failed for Case Id: {}, State: {}, continuing to next case",
+                        caseDetails.getId(),
+                        caseDetails.getState());
+                } catch (final IllegalArgumentException e) {
+                    log.error("Deserialization failed for Case Id: {}, continuing to next case", caseDetails.getId());
+                }
+            }
+
+            log.info("Aos overdue scheduled task complete.");
+        } catch (final CcdSearchCaseException e) {
+            log.error("Aos overdue schedule task stopped after search error", e);
+        } catch (final CcdConflictException e) {
+            log.info("Aos overdue schedule task stopping "
+                + "due to conflict with another running awaiting aos task"
+            );
+        }
+    }
+}

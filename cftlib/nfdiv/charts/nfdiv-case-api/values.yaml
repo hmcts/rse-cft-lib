@@ -1,0 +1,59 @@
+
+nfdiv-frontend:
+  enabled: false
+
+idam-pr:
+  enabled: false
+
+ccd-def-cleanup:
+  enabled: false
+
+java:
+  applicationPort: 4013
+  image: 'hmctspublic.azurecr.io/nfdiv/case-api:latest'
+  ingressHost: nfdiv-case-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+  aadIdentityName: nfdiv
+  terminationGracePeriodSeconds: 120
+  autoscaling:
+    enabled: true
+    maxReplicas: 6
+    minReplicas: 3
+    targetCPUUtilizationPercentage: 80 # Default is 80% target CPU utilization
+  keyVaults:
+    nfdiv:
+      secrets:
+        - name: uk-gov-notify-api-key
+          alias: UK_GOV_NOTIFY_API_KEY
+        - name: s2s-case-api-secret
+          alias: S2S_SECRET
+        - name: idam-secret
+          alias: IDAM_CLIENT_SECRET
+        - name: idam-systemupdate-username
+          alias: IDAM_SYSTEM_UPDATE_USERNAME
+        - name: idam-systemupdate-password
+          alias: IDAM_SYSTEM_UPDATE_PASSWORD
+        - name: app-insights-connection-string
+          alias: app-insights-connection-string
+  environment:
+    NOTIFY_TEMPLATE_SIGN_IN_DIVORCE_URL: https://nfdiv-apply-for-divorce.{{ .Values.global.environment }}.platform.hmcts.net/
+    NOTIFY_TEMPLATE_SIGN_IN_DISSOLUTION_URL: https://nfdiv-end-civil-partnership.{{ .Values.global.environment }}.platform.hmcts.net/
+    NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DIVORCE_URL: https://nfdiv-apply-for-divorce.{{ .Values.global.environment }}.platform.hmcts.net/applicant2
+    NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DISSOLUTION_URL: https://nfdiv-end-civil-partnership.{{ .Values.global.environment }}.platform.hmcts.net/applicant2
+    NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL: https://nfdiv-apply-for-divorce.{{ .Values.global.environment }}.platform.hmcts.net/respondent
+    NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL: https://nfdiv-end-civil-partnership.{{ .Values.global.environment }}.platform.hmcts.net/respondent
+    S2S_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+    FEE_API_URL: http://fees-register-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+    IDAM_API_REDIRECT_URL: https://div-pfe-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/authenticated
+    IDAM_API_BASEURL: "https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net"
+    CASE_DATA_STORE_BASEURL: "http://ccd-data-store-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
+    AAC_MANAGE_CASE_ASSIGNMENT_BASEURL: "http://aac-manage-case-assignment-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
+    DOC_ASSEMBLY_URL: http://dg-docassembly-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+    CASE_DOCUMENT_AM_URL: http://ccd-case-document-am-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+    PRD_API_BASEURL : "http://rd-professional-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
+    SEND_LETTER_SERVICE_BASEURL: "http://rpe-send-letter-service-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
+    PAYMENT_API_BASEURL: "http://payment-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
+    CITIZEN_UPDATE_CASE_STATE_ENABLED: false
+    ADMIN_UNLINK_APPLICANT_2_ENABLED: false
+    SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
+    SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+    NOTIFY_TEMPLATE_SIGN_IN_PROFESSIONAL_USERS_URL: https://manage-case.{{ .Values.global.environment }}.platform.hmcts.net/cases/case-details/

@@ -1,0 +1,8 @@
+# Pending applications by interested parties
+
+| Applicant | Claim | Reason |
+| ---- | ------ | ---- |
+{% for application in pendingApplications %}
+  |{{ application.forename }} | {{ application. description }} | {{ application.reason }} |
+{% endfor %}
+

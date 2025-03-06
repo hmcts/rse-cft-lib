@@ -1,0 +1,11 @@
+{
+  "_guid_": "F-016_Test_Data_Base",
+  "_extends_": "F-016-Base-Root",
+  "productName": "Role Assignments Service",
+  "operationName": "Create Role Assignments",
+  "specs": [
+    "an active IDAM profile with full permissions"
+  ],
+  "method": "POST",
+  "uri": "am/role-assignments"
+}

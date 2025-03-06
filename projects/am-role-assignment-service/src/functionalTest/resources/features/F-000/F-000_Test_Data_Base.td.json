@@ -1,0 +1,9 @@
+{
+  "_guid_": "F-000_Test_Data_Base",
+
+  "productName": "Role Assignment API",
+  "operationName": "Access Role Assignment API",
+
+  "method": "GET",
+  "uri": "/health/liveness"
+}

@@ -46,7 +46,8 @@ public class CftLibPlugin implements Plugin<Project> {
         createManifestTasks(project);
         createBootWithCCDTask(project);
         createTestTask(project);
-        surfaceSourcesToIDE(project);
+        // TODO: Fix for latest intellij
+        //surfaceSourcesToIDE(project);
         createCftlibJarTask(project);
     }
 
@@ -77,6 +78,7 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private Configuration detachedConfiguration(Project project, Dependency... deps) {
         var result = project.getConfigurations().detachedConfiguration(deps);
+
         // We don't want Gradle to swap in dependency substitutions in composite builds.
         result.getResolutionStrategy().getUseGlobalDependencySubstitutionRules().set(false);
         return result;
@@ -153,7 +155,9 @@ public class CftLibPlugin implements Plugin<Project> {
             }
 
             var args = "--rse.lib.service_name=" + project.getName();
-            writeManifests(project, lib.getRuntimeClasspath(), clazz, file, args);
+            // Prepend the runtimeclasspath with the project's resources folder to allow live editing of resources
+            var files = project.files("src/main/resources").plus(lib.getRuntimeClasspath());
+            writeManifests(project, files, clazz, file, args);
         });
         manifest.classpath = lib.getRuntimeClasspath();
         // Task performing main class name resolution changed in spring boot 3
@@ -218,8 +222,24 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private ManifestTask createCFTManifestTask(Project project, String depName, String mainClass, File file,
                                                String... args) {
-        Configuration classpath = detachedConfiguration(project,
-                libDependencies(project, depName, "cftlib-agent"));
+        FileCollection classpath;
+        if (depName.equals("ccd-data-store-api")) {
+            // SOW014 - get the classpath via a project dependency
+            var datastore = project.getRootProject().project(":ccd-data-store-api");
+
+            var existing = datastore.getConfigurations().findByName("cftlibWithAgent");
+            if (existing == null) {
+                var agent = datastore.getConfigurations().create("cftlibWithAgent");
+                agent.getDependencies().add(project.getDependencies().create(datastore));
+                agent.getDependencies().addAll(List.of(libDependencies(project, "cftlib-agent")));
+                classpath = agent;
+            } else {
+                classpath = existing;
+            }
+        } else {
+            classpath = detachedConfiguration(project,
+                    libDependencies(project, depName, "cftlib-agent"));
+        }
         return createManifestTask(project, "writeManifest" + depName, classpath, mainClass, file, args);
     }
 
@@ -230,6 +250,7 @@ public class CftLibPlugin implements Plugin<Project> {
         result.doFirst(x -> {
             writeManifests(project, configuration, mainClass, file, args);
         });
+        result.getOutputs().file(file);
         return result;
     }
 
@@ -282,8 +303,17 @@ public class CftLibPlugin implements Plugin<Project> {
 
     Dependency[] libDependencies(Project project, String... libDeps) {
         return Arrays.stream(libDeps)
-                .map(d -> project.getDependencies()
-                        .create("com.github.hmcts.rse-cft-lib:" + d + ":" + getLibVersion(project)))
+                .map(d -> {
+                    // If the project exists in our build use a project dependency
+                    var proj = project.getRootProject().getAllprojects().stream().filter(x -> x.getName().equals(d)).findFirst();
+                    if (proj.isPresent()) {
+                        return project.getDependencies().create(proj.get());
+                    }
+
+                    // Otherwise bring it in from maven local
+                    return project.getDependencies()
+                            .create("com.github.hmcts.rse-cft-lib:" + d + ":" + getLibVersion(project));
+                })
                 .toArray(Dependency[]::new);
     }
 }

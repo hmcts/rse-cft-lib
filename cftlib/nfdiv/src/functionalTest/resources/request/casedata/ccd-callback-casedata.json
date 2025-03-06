@@ -1,0 +1,11 @@
+{
+  "divorceOrDissolution": "divorce",
+  "supplementaryCaseType": "notApplicable",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "divorceWho": "wife",
+  "marriageFormationType": "oppositeSexCouple",
+  "solPaymentHowToPay": "feePayByAccount",
+  "marriageDate": "2009-04-20"
+}

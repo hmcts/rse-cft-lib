@@ -1,0 +1,69 @@
+{
+  "title": "must successfully receive Read Only Role Assignments",
+  "_guid_": "S-174",
+  "_extends_": "F-009_Test_Data_Base",
+  "specs": [
+    "contains list of single search query with readonly false"
+  ],
+
+  "request": {
+    "body": {
+      "queryRequests": [
+        {
+          "readOnly": false,
+          "roleCategory": ["LEGAL_OPERATIONS"],
+          "attributes": {
+            "primaryLocation": ["abc"],
+            "jurisdiction": ["IA"]
+          }
+        }
+      ]
+    }
+  },
+
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse" : [
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "[[ANYTHING_PRESENT]]",
+          "roleCategory" : "LEGAL_OPERATIONS",
+          "roleName" : "[[ANYTHING_PRESENT]]",
+          "readOnly" : false,
+          "attributes" : {
+            "contractType" : "Salaried",
+            "primaryLocation" : "abc",
+            "jurisdiction" : "IA",
+            "substantive": "N"
+          }
+        },
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "[[ANYTHING_PRESENT]]",
+          "roleCategory" : "LEGAL_OPERATIONS",
+          "roleName" : "[[ANYTHING_PRESENT]]",
+          "attributes" : {
+            "contractType" : "Salaried",
+            "primaryLocation" : "abc",
+            "jurisdiction" : "IA",
+            "substantive": "Y"
+          }
+        },
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "[[ANYTHING_PRESENT]]",
+          "roleCategory" : "LEGAL_OPERATIONS",
+          "roleName" : "[[ANYTHING_PRESENT]]",
+          "readOnly" : false,
+          "attributes" : {
+            "contractType" : "Salaried",
+            "primaryLocation" : "abc",
+            "jurisdiction" : "IA",
+            "substantive": "Y"
+          }
+        }
+      ]
+    }
+  }
+}

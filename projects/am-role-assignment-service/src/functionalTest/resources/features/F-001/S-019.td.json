@@ -1,0 +1,65 @@
+{
+  "title": "must successfully receive a positive response when one of existing role assignment replaced with new",
+  "_guid_": "S-019",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "contains ReplaceExisting is true and have process and Reference values",
+    "contains multiple Role Assignments just created and couple of new role assignments"
+  ],
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "21334a2b-79ce-44eb-9168-2d49a744be9c",
+        "process": "businessProcess1",
+        "reference": "${[scenarioContext][childContexts][S-017_Multiple_Role_Creation][testData][request][body][roleRequest][reference]}",
+        "replaceExisting": true
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][childContexts][S-017_Multiple_Role_Creation][testData][request][body][requestedRoles][0][actorId]}"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][childContexts][S-017_Multiple_Role_Creation][testData][request][body][requestedRoles][1][actorId]}"
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][customValues][generateUUID]}"
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "replaceExisting" : true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "[[ANYTHING_PRESENT]]",
+            "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "[[ANYTHING_PRESENT]]",
+            "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "[[ANYTHING_PRESENT]]",
+            "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}"
+          }
+        ]
+      }
+    }
+  }
+}

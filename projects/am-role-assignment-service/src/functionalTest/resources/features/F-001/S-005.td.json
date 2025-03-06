@@ -1,0 +1,55 @@
+{
+  "title": "must receive a Reject response when rule validation failed",
+  "_guid_": "S-005",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "contains a single Role Assignment",
+    "contains data which is not as per rule validations"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser6"
+    }
+  },
+  "request": {
+    "body": {
+      "roleRequest": {
+        "reference": "${[scenarioContext][customValues][generateUUID]}"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "attributes": {
+            "jurisdiction": "divorce"
+          }
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "responseCode": 422,
+    "responseMessage": "Unprocessable Entity",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "status": "REJECTED"
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRoleWithoutSubstantive",
+            "attributes": {
+              "jurisdiction": "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][jurisdiction]}"
+            },
+            "status": "REJECTED"
+          }
+        ]
+      }
+    }
+  }
+}

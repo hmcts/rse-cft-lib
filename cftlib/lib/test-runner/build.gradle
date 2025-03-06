@@ -8,4 +8,5 @@ dependencies {
 
     implementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
     implementation 'org.junit.platform:junit-platform-console-standalone:1.8.2'
+    implementation 'com.auth0:java-jwt:3.18.3'
 }

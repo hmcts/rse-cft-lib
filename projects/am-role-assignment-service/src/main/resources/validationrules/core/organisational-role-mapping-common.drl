@@ -1,0 +1,128 @@
+package validationrules.core;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Classification
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+
+/*
+ * Generic rule for validation of roles created by the staff organisational
+ * role mapping service.  The mapping service can create any organisational
+ * staff roles, and is trusted to get the role attributes right, but note
+ * that validation against standard role patterns will still be applied in
+ * a later stage of validation.
+ */
+rule "staff_organisational_role_mapping_service_create"
+when
+    $rq: Request(byPassOrgDroolRule || clientId == "am_org_role_mapping_service")
+
+    $ra: RoleAssignment(
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             roleCategory in (RoleCategory.LEGAL_OPERATIONS, RoleCategory.JUDICIAL,
+                              RoleCategory.ADMIN, RoleCategory.OTHER_GOV_DEPT, RoleCategory.CTSC) )
+then
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Create approved : staff_organisational_role_mapping_service_create");
+    update($ra);
+    logMsg("Rule : staff_organisational_role_mapping_service_create");
+end;
+
+/*
+ * Generic rule for validation of roles deleted by the staff organisational
+ * role mapping service.  The mapping service can delete any organisational
+ * staff roles.
+ */
+rule "staff_organisational_role_mapping_service_delete"
+when
+    $rq: Request(byPassOrgDroolRule || clientId == "am_org_role_mapping_service")
+    $ra: RoleAssignment(
+             status == Status.DELETE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             roleCategory in (RoleCategory.LEGAL_OPERATIONS, RoleCategory.JUDICIAL,
+                              RoleCategory.ADMIN, RoleCategory.OTHER_GOV_DEPT, RoleCategory.CTSC) )
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : staff_organisational_role_mapping_service_delete");
+
+    update($ra);
+    logMsg("Rule :: staff_organisational_role_mapping_service_delete");
+end;
+
+rule "sscs_system_user_hearings_roles_create"
+when
+    $rq: Request(
+             clientId == "sscs",
+             process == "sscs-system-users",
+             reference == "sscs-hearings-system-user",
+             replaceExisting == true)
+    $ra: RoleAssignment(
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             classification == Classification.PUBLIC,
+             roleName in ("hearing-manager","hearing-viewer"),
+             roleCategory == RoleCategory.SYSTEM,
+             grantType == GrantType.STANDARD,
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "SSCS")
+then
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Create approved : sscs_system_user_hearings_roles_create");
+    update($ra);
+    logMsg("Rule : sscs_system_user_hearings_roles_create");
+end;
+
+rule "sscs_system_user_hearings_roles_delete"
+when
+    $rq: Request(clientId == "sscs")
+    $ra: RoleAssignment(
+             status == Status.DELETE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             roleCategory in (RoleCategory.SYSTEM),
+             roleName in ("hearing-manager","hearing-viewer"),
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "SSCS")
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : sscs_system_user_hearings_roles_delete");
+    update($ra);
+    logMsg("Rule :: sscs_system_user_hearings_roles_delete");
+end;
+
+rule "public_law_system_user_case_allocator_role_create"
+when
+    $rq: Request(
+             clientId == "fpl_case_service",
+             process == "public-law-system-users",
+             reference == "public-law-case-allocator-system-user",
+             replaceExisting == "true")
+    $ra: RoleAssignment(
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             roleName in ("case-allocator"),
+             roleCategory == RoleCategory.SYSTEM,
+             grantType == GrantType.STANDARD,
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "PUBLICLAW")
+then
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Create approved : public_law_system_user_case_allocator_role_create");
+    update($ra);
+    logMsg("Rule : public_law_system_user_case_allocator_role_create");
+end;
+
+
+rule "public_law_system_user_case_allocator_role_delete"
+when
+    $rq: Request(clientId == "fpl_case_service")
+    $ra: RoleAssignment(
+             status == Status.DELETE_REQUESTED,
+             roleType == RoleType.ORGANISATION,
+             roleCategory in (RoleCategory.SYSTEM),
+             roleName in ("case-allocator"),
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "PUBLICLAW")
+then
+    $ra.setStatus(Status.DELETE_APPROVED);
+    $ra.log("Delete approved : public_law_system_user_case_allocator_role_delete");
+    update($ra);
+end;

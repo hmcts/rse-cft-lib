@@ -1,0 +1,72 @@
+{
+  "title": "must successfully create tribunal-member-2 ET_EnglandWales case role",
+  "_guid_": "S-267",
+  "_extends_": "F-018_Test_Data_Base",
+  "specs": [
+    "Befta3 - who is the actor for requested role",
+    "contains tribunal-member-2 case role assignment"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser4"
+    }
+  },
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "1713257409906486/tribunal-member-2"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][befta3][id]}",
+          "roleName": "tribunal-member-2",
+          "roleCategory": "JUDICIAL",
+          "roleType": "CASE",
+          "grantType": "SPECIFIC",
+          "classification": "RESTRICTED",
+          "attributes":
+          {
+            "caseId" : "1713257409906486",
+            "jurisdiction": "EMPLOYMENT"
+          }
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "reference": "${[scenarioContext][testData][request][body][roleRequest][reference]}",
+          "replaceExisting": true
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${[scenarioContext][testData][users][befta3][id]}",
+            "process" : "[[ANYTHING_PRESENT]]",
+            "roleName": "${[scenarioContext][testData][request][body][requestedRoles][0][roleName]}",
+            "roleCategory": "${[scenarioContext][testData][request][body][requestedRoles][0][roleCategory]}",
+            "roleType": "${[scenarioContext][testData][request][body][requestedRoles][0][roleType]}",
+            "grantType": "${[scenarioContext][testData][request][body][requestedRoles][0][grantType]}",
+            "classification": "${[scenarioContext][testData][request][body][requestedRoles][0][classification]}",
+            "attributes":
+            {
+              "caseId" : "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][caseId]}",
+              "jurisdiction" : "${[scenarioContext][testData][request][body][requestedRoles][0][attributes][jurisdiction]}",
+              "caseType" : "ET_EnglandWales"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

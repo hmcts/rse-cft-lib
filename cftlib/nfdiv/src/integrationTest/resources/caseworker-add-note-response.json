@@ -1,0 +1,22 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1ContactDetailsType": "public",
+    "applicant1Gender": "female",
+    "notes": [
+      {
+        "id": "1",
+        "value": {
+          "author": "forename Surname",
+          "date": "2021-06-18",
+          "note": "This is a test note"
+        }
+      }
+    ]
+  }
+}

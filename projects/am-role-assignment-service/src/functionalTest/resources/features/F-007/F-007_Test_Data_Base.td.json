@@ -1,0 +1,11 @@
+{
+  "_guid_": "F-007_Test_Data_Base",
+  "_extends_": "F-007-Base-Root",
+  "productName": "Role Assignment Service",
+  "operationName": "Get Static List of Roles Configuration",
+  "specs": [
+    "an active IDAM profile with full permissions"
+  ],
+  "method": "GET",
+  "uri": "am/role-assignments/roles"
+}

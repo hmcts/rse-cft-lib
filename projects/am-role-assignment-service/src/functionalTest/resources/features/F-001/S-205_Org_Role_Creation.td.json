@@ -1,0 +1,88 @@
+{
+  "_guid_": "S-205_Org_Role_Creation",
+  "_extends_": "F-001_Test_Data_Base",
+  "specs": [
+    "to create org role assignments for actors & requester",
+    "Befta1 - who is the actor for requested role"
+  ],
+  "users": {
+    "invokingUser": {
+      "_extends_": "AmBeftaUser6"
+    }
+  },
+  "request": {
+    "body": {
+      "roleRequest": {
+        "assignerId": "${[scenarioContext][testData][users][invokingUser][id]}",
+        "reference": "S_205_Org_Role_For_Multiple_Actors"
+      },
+      "requestedRoles": [
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+          "roleName": "case-allocator",
+          "roleCategory": "JUDICIAL",
+          "beginTime" : "2020-09-01T00:00:00Z",
+          "attributes":
+          {
+            "jurisdiction": "IA"
+          }
+        },
+        {
+          "_extends_": "RequestedRole",
+          "actorId": "${[scenarioContext][testData][users][befta1][id]}",
+          "roleName": "fee-paid-judge",
+          "roleCategory": "JUDICIAL",
+          "beginTime" : "2020-09-01T00:00:00Z",
+          "attributes":
+          {
+            "jurisdiction": "IA"
+          }
+        }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_201_Response",
+    "headers": {
+      "Content-Length": "[[ANYTHING_PRESENT]]",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "roleAssignmentResponse": {
+        "roleRequest": {
+          "_extends_": "ResponseRoleRequest",
+          "replaceExisting": false
+        },
+        "requestedRoles": [
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${[scenarioContext][testData][users][invokingUser][id]}",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD",
+            "roleCategory": "JUDICIAL",
+            "roleName": "case-allocator",
+            "attributes":
+            {
+              "jurisdiction": "IA",
+              "substantive" : "N"
+            }
+          },
+          {
+            "_extends_": "ResponseRequestedRole",
+            "actorId": "${[scenarioContext][testData][users][befta1][id]}",
+            "roleType": "ORGANISATION",
+            "grantType": "STANDARD",
+            "roleCategory": "JUDICIAL",
+            "roleName": "fee-paid-judge",
+            "attributes":
+            {
+              "jurisdiction": "IA",
+              "substantive" : "N"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

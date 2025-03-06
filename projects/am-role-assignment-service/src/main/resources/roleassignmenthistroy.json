@@ -1,0 +1,16 @@
+{
+  "actorIdType": "IDAM",
+  "actorId": "00000000-0000-0000-0000-000000000000",
+  "roleType": "CASE",
+  "roleName": "judge",
+  "classification": "PUBLIC",
+  "grantType": "STANDARD",
+  "readOnly": false,
+  "status": "CREATED",
+  "beginTime": "2020-01-01T00:00Z",
+  "endTime": "2050-01-01T00:00Z",
+  "attributes":
+  {
+    "jurisdiction": "divorce"
+  }
+}

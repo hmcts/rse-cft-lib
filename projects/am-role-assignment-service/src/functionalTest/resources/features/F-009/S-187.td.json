@@ -1,0 +1,42 @@
+{
+  "title": "must successfully receive Role Assignments with optional headers",
+  "_guid_": "S-187",
+  "_extends_": "F-009_Test_Data_Base",
+  "specs": [
+    "has size header",
+    "has sort header",
+    "has direction header"
+  ],
+
+  "request": {
+    "headers": {
+      "size": 3,
+      "pageNumber": 0,
+      "sort": "grantType",
+      "direction": "DESC"
+    },
+    "body": {
+      "queryRequests": [
+          {
+            "actorId": ["${[scenarioContext][childContexts][S-187_CreationDataForRoleAssignment][testData][request][body][roleRequest][reference]}"]
+          }
+      ]
+    }
+  },
+  "expectedResponse": {
+    "_extends_": "Common_200_Response",
+    "body": {
+      "roleAssignmentResponse" : [
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][body][queryRequests][0][actorId][0]}"
+        },
+
+        {
+          "_extends_": "ResponseRoleAssignment",
+          "actorId": "${}${[scenarioContext][testData][request][body][queryRequests][0][actorId][0]}"
+        }
+      ]
+    }
+  }
+}

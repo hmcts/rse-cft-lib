@@ -1,0 +1,100 @@
+package validationrules.iac;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Assignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.CaseAllocatorApproval;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.domain.model.FeatureFlag;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.FeatureFlagEnum;
+import uk.gov.hmcts.reform.roleassignment.util.ValidationUtil;
+
+import java.time.ZonedDateTime;
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit;
+
+/*
+ * Service rules for creating and deleting role assignments need only trigger based on
+ * CaseAllocatorApproved objects, and need only add the service-specific constraints
+ * (expected to be constraints on the existing role assignments required for the assignee, not the assigner).
+ */
+
+/*
+ * The "case-manager" case role can be created if CaseAllocatorApproval entity is available along with
+ * existing assignment of assignee having "tribunal-caseworker" org role.
+ */
+rule "ia_case_allocator_approved_create_case_manager_role_v11"
+when
+    $f : FeatureFlag(status && flagName == FeatureFlagEnum.IAC_1_1.getValue())
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "IA",
+                 roleAssignment.attributes["caseType"].asText() == "Asylum",
+                 roleAssignment.roleName == "case-manager" )
+         ExistingRoleAssignment(
+                 actorId == $ca.getRoleAssignment().actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName in ("tribunal-caseworker", "senior-tribunal-caseworker"),
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "IA")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : ia_case_allocator_approved_create_case_manager_role_v11");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : ia_case_allocator_approved_create_case_manager_role_v11");
+end;
+
+/*
+ * The "tribunal-caseworker" case role can be created if CaseAllocatorApproval entity is available along with
+ * existing assignment of assignee having "tribunal-caseworker"/"senior-tribunal-caseworker" org role.
+ */
+rule "ia_case_allocator_approved_create_tribunal_caseworker_role_v11"
+when
+    $f : FeatureFlag(status && flagName == FeatureFlagEnum.IAC_1_1.getValue())
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "IA",
+                 roleAssignment.attributes["caseType"].asText() == "Asylum",
+                 roleAssignment.roleName == "tribunal-caseworker")
+         ExistingRoleAssignment(
+                 actorId == $ca.getRoleAssignment().actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName in ("tribunal-caseworker","senior-tribunal-caseworker"),
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "IA")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : ia_case_allocator_approved_create_tribunal_caseworker_role_v11");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : ia_case_allocator_approved_create_tribunal_caseworker_role_v11");
+end;
+
+
+/*
+ * The "case-allocator" case role can be created if CaseAllocatorApproval entity is available along with
+ * existing assignment of assignee having case "case-allocator" org role.
+ */
+
+rule "ia_case_allocator_approved_create_case_allocator_role_v11"
+when
+    $f : FeatureFlag(status && flagName == FeatureFlagEnum.IAC_1_1.getValue())
+    $ca: CaseAllocatorApproval(
+                 roleAssignment.status == Status.CREATE_REQUESTED,
+                 roleAssignment.attributes["jurisdiction"].asText() == "IA",
+                 roleAssignment.attributes["caseType"].asText() == "Asylum",
+                 roleAssignment.roleName == "case-allocator")
+         ExistingRoleAssignment(
+                 actorId == $ca.roleAssignment.actorId,
+                 roleType == RoleType.ORGANISATION,
+                 roleName == "case-allocator",
+                 attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == "IA")
+then
+    $ca.getRoleAssignment().setStatus(Status.CREATE_APPROVED);
+    $ca.getRoleAssignment().log("Stage 1 approved : ia_case_allocator_approved_create_case_allocator_role_v11");
+    update($ca.getRoleAssignment());
+    logMsg("Rule : ia_case_allocator_approved_create_case_allocator_role_v11");
+end;

@@ -1,0 +1,155 @@
+package validationrules.core;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Assignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.RoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Request;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Classification
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.Status;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RequestType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.GrantType;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleCategory;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.RoleType
+import uk.gov.hmcts.reform.roleassignment.domain.model.ExistingRoleAssignment;
+import uk.gov.hmcts.reform.roleassignment.domain.model.CaseAllocatorApproval;
+import uk.gov.hmcts.reform.roleassignment.domain.model.Case;
+import function uk.gov.hmcts.reform.roleassignment.domain.service.common.ValidationModelService.logMsg;
+import uk.gov.hmcts.reform.roleassignment.domain.model.FeatureFlag;
+import uk.gov.hmcts.reform.roleassignment.domain.model.enums.FeatureFlagEnum;
+import java.time.ZonedDateTime;
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit;
+
+/*
+ * The below rules are required for Challenged Access, It will be toggled on with new IAC_CHALLENGED_1_0 DB flag.
+ */
+
+/*
+ * All Services: "challenged-access" case roles self creation user
+ */
+rule "challenged_access_create_case_role"
+when
+    $f : FeatureFlag(status && flagName == FeatureFlagEnum.IAC_CHALLENGED_1_0.getValue())
+    $rq: Request(
+             // The assigner must be the current user.
+             assignerId == authenticatedUserId,
+             process == "challenged-access",
+             reference != null)
+    $ra: RoleAssignment(
+             actorId == $rq.authenticatedUserId,
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.CASE,
+             roleName in ("challenged-access-admin", "challenged-access-judiciary", "challenged-access-legal-ops","challenged-access-ctsc"),
+             roleCategory in (RoleCategory.ADMIN, RoleCategory.JUDICIAL, RoleCategory.LEGAL_OPERATIONS,RoleCategory.CTSC),
+             grantType == GrantType.CHALLENGED,
+             endTime != null && !endTime.isAfter(ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS).plusDays(1))
+             && !endTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC)), /* request cannot have past end time */
+             notes != null && notes.size > 0 && notes.toString().length() > 5, /* Make sure there is at least one note with content in it */
+             attributes["caseId"] != null && $caseId : attributes["caseId"].asText())
+    $c:  Case(
+             id == $caseId)
+    Request(reference == $caseId + "/" + $ra.roleName + "/" + $ra.actorId)
+    $e: ExistingRoleAssignment(
+             actorId == $ra.actorId,
+             roleType == RoleType.ORGANISATION,
+             roleCategory == $ra.roleCategory,
+             grantType == GrantType.STANDARD,
+             classification.isAtLeast($c.securityClassification),
+             endTime == null || endTime.isAfter(ZonedDateTime.now()),
+             beginTime == null || !beginTime.isAfter(ZonedDateTime.now()),
+             attributes["substantive"] != null && attributes["substantive"].asText() == "Y",
+             attributes["jurisdiction"] != null && attributes["jurisdiction"].asText() == $c.jurisdiction,
+             attributes["caseType"] == null || attributes["caseType"].asText() == $c.caseTypeId,
+             attributes["region"] == null || attributes["region"].asText() != $c.region,
+             attributes["baseLocation"] == null || attributes["baseLocation"].asText() != $c.baseLocation)
+then
+    // The classification of $e has already been checked, so access to the case is OK.
+    // We set $ra.classification to match the case - if the case is further restricted,
+    // then the user will need to request challenged access again, if they still can.
+    $ra.setClassification($c.getSecurityClassification());
+    // We copy the authorisations to allow the case config to require an authorisation
+    // for (particularly judicial) role mappings
+    $ra.setAuthorisations($e.getAuthorisations());
+    $ra.setAttribute("caseType", $c.getCaseTypeId());
+    $ra.setAttribute("jurisdiction", $c.getJurisdiction());
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Stage 1 approved : challenged_access_create_case_role");
+    update($ra);
+    logMsg("Rule : challenged_access_create_case_role");
+end;
+
+/*
+ * SSCS Services: "challenged-access" case roles self creation user
+ */
+rule "challenged_access_create_case_role_sscs_fee_paid_judge"
+when
+    $f : FeatureFlag(status && flagName == FeatureFlagEnum.SSCS_CHALLENGED_1_0.getValue())
+    $rq: Request(
+             // The assigner must be the current user.
+             assignerId == authenticatedUserId,
+             process == "challenged-access",
+             reference != null)
+    $ra: RoleAssignment(
+             actorId == $rq.authenticatedUserId,
+             status == Status.CREATE_REQUESTED,
+             roleType == RoleType.CASE,
+             roleName in ("challenged-access-judiciary"),
+             roleCategory in (RoleCategory.JUDICIAL),
+             grantType == GrantType.CHALLENGED,
+             endTime != null && !endTime.isAfter(ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS).plusDays(1))
+             && !endTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC)), /* request cannot have past end time */
+             notes != null && notes.size > 0 && notes.toString().length() > 5, /* Make sure there is at least one note with content in it */
+             attributes["caseId"] != null && $caseId : attributes["caseId"].asText())
+    $c:  Case(
+             id == $caseId)
+    Request(reference == $caseId + "/" + $ra.roleName + "/" + $ra.actorId)
+    $e: ExistingRoleAssignment(
+             actorId == $ra.actorId,
+             roleType == RoleType.ORGANISATION,
+             roleCategory == $ra.roleCategory,
+             roleName in ("fee-paid-judge"),
+             grantType == GrantType.STANDARD,
+             classification.isAtLeast($c.securityClassification),
+             endTime == null || endTime.isAfter(ZonedDateTime.now()),
+             beginTime == null || !beginTime.isAfter(ZonedDateTime.now()),
+             attributes["jurisdiction"] != null
+             && attributes["jurisdiction"].asText() == $c.jurisdiction
+             && attributes["jurisdiction"].asText() == "SSCS",
+             attributes["caseType"] == null || attributes["caseType"].asText() == $c.caseTypeId,
+             attributes["region"] == null || attributes["region"].asText() != $c.region,
+             attributes["baseLocation"] == null || attributes["baseLocation"].asText() != $c.baseLocation)
+then
+    // The classification of $e has already been checked, so access to the case is OK.
+    // We set $ra.classification to match the case - if the case is further restricted,
+    // then the user will need to request challenged access again, if they still can.
+    $ra.setClassification($c.getSecurityClassification());
+    // We copy the authorisations to allow the case config to require an authorisation
+    // for (particularly judicial) role mappings
+    $ra.setAuthorisations($e.getAuthorisations());
+    $ra.setAttribute("caseType", $c.getCaseTypeId());
+    $ra.setAttribute("jurisdiction", $c.getJurisdiction());
+    $ra.setStatus(Status.CREATE_APPROVED);
+    $ra.log("Stage 1 approved : challenged_access_create_case_role_sscs_fee_paid_judge");
+    update($ra);
+    logMsg("Rule : challenged_access_create_case_role_sscs_fee_paid_judge");
+end;
+
+
+
+ /*
+  * The case roles can be deleted if self requested with CHALLENGED roles
+  */
+ rule "challenged_delete_case_role"
+ when
+     $f : FeatureFlag(status && flagName == FeatureFlagEnum.IAC_CHALLENGED_1_0.getValue())
+     $rq: Request(
+              assignerId == authenticatedUserId)
+     $ra: RoleAssignment(
+              actorId == $rq.assignerId,
+              status == Status.DELETE_REQUESTED,
+              roleType == RoleType.CASE,
+              grantType == GrantType.CHALLENGED)
+ then
+     $ra.setStatus(Status.DELETE_APPROVED);
+     $ra.log("Delete approved : challenged_delete_case_role");
+     update($ra);
+     logMsg("Rule : challenged_delete_case_role");
+ end;

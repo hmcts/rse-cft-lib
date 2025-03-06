@@ -1,0 +1,45 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicant1Gender": "female",
+  "applicant2Gender": "male",
+  "marriageDate": "2020-04-28",
+  "applicant1FirstName": "Billy",
+  "applicant1MiddleName": "B",
+  "applicant1LastName": "Bob",
+  "applicant1ContactDetailsType": "private",
+  "applicant1Email": "test@mailinator.com",
+  "applicant2FirstName": "test_first_name",
+  "applicant2LastName": "test_last_name",
+  "marriageApplicant1Name": "test_first_name test_last_name",
+  "applicant1WantsToHavePapersServedAnotherWay": "NO",
+  "applicant1FinancialOrder": "NO",
+  "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+  "solSignStatementOfTruth": "YES",
+  "jurisdictionApplicant1Residence": "YES",
+  "jurisdictionApplicant2Residence": "YES",
+  "jurisdictionConnections": ["A"],
+  "applicationFeeOrderSummary": {
+    "PaymentTotal": "55000",
+    "PaymentReference": null,
+    "Fees": [
+      {
+        "id": null,
+        "value": {
+          "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+          "FeeVersion": "5",
+          "FeeCode": "FEE0002",
+          "FeeAmount": "55000"
+        }
+      }
+    ]
+  },
+  "applicationPayments": [
+    {
+      "id": "1",
+      "value": {
+        "status": "cancelled",
+        "amount": 55000
+      }
+    }
+  ]
+}

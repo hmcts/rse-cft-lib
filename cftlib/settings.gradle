@@ -2,11 +2,16 @@ pluginManagement {
     repositories {
         mavenCentral()
         gradlePluginPortal()
+        mavenLocal()
     }
 }
 
 includeBuild 'rse-cft-lib-plugin'
-include 'test-project'
+includeBuild 'dtsse-ccd-config-generator'
+include 'ccd-data-store-api'
+include 'nfdiv'
+include 'pcs-api'
+include 'nfdiv:flyway'
 
 new File(rootDir, "lib").listFiles().each {
   if (it.isDirectory()) {

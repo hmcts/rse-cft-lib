@@ -1,0 +1,69 @@
+version: '3'
+
+services:
+  am-role-assignment-service:
+    build:
+      context: .
+    image: hmcts/am-role-assignment-service
+    container_name: am-role-assignment-service
+    environment:
+       ROLE_ASSIGNMENT_DB_HOST: am-role-assignment-database
+       ROLE_ASSIGNMENT_DB_NAME: role_assignment
+       ROLE_ASSIGNMENT_DB_PORT: 5432
+       ROLE_ASSIGNMENT_DB_USERNAME: am
+       ROLE_ASSIGNMENT_DB_PASSWORD: am
+       ROLE_ASSIGNMENT_DB_OPTIONS:
+       AM_ROLE_ASSIGNMENT_SERVICE_SECRET:
+       LD_SDK_KEY:
+       ROLE_ASSIGNMENT_IDAM_KEY:
+       ROLE_ASSIGNMENT_TOKEN_SECRET:
+       ROLE_ASSIGNMENT_S2S_AUTHORISED_SERVICES: ccd_gw,am_role_assignment_service,am_org_role_mapping_service,wa_task_management_api,xui_webapp,aac_manage_case_assignment,ccd_data
+       IDAM_USER_URL: http://idam-api:5000
+       IDAM_S2S_URL: http://service-auth-provider-api:8080
+       OPEN_ID_API_BASE_URI: http://idam-api:5000/o
+       OIDC_ISSUER_URL: http://idam-api:8080/openam/oauth2/hmcts
+       ROLE_ASSIGNMENT_IDAM_CLIENT_ID: am_docker
+       ROLE_ASSIGNMENT_IDAM_CLIENT_SECRET: am_docker_secret
+       ROLE_ASSIGNMENT_IDAM_ADMIN_USERID: ras.admin@hmcts.net
+       ROLE_ASSIGNMENT_IDAM_ADMIN_PASSWORD: Pa55word11
+       ROLE_ASSIGNMENT_IDAM_ADMIN_SCOPE: search-user
+       CCD_DATA_STORE_URL: http://localhost:4452
+       app-insights-connection-string:
+       REFORM_SERVICE_NAME: am-role-assignment-service
+       REFORM_TEAM: am
+       REFORM_ENVIRONMENT: local
+       JAVA_TOOL_OPTIONS: -XX:InitialRAMPercentage=30.0 -XX:MaxRAMPercentage=65.0 -XX:MinRAMPercentage=30.0 -XX:+UseConcMarkSweepGC -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+    ports:
+      - $SERVER_PORT:$SERVER_PORT
+      - 5005:5005
+    networks:
+      - am-network
+    depends_on:
+      - am-role-assignment-database
+    links:
+      - am-role-assignment-database
+
+  am-role-assignment-database:
+    build:
+      context: docker/database
+    healthcheck:
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    environment:
+      - ROLE_ASSIGNMENT_DB_USERNAME=am
+      - ROLE_ASSIGNMENT_DB_PASSWORD=am
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - 5451:5432
+    networks:
+      - am-network
+    volumes:
+      - am-role-assignment-database-data:/var/lib/postgresql/am-role-assignment/data
+volumes:
+  am-role-assignment-database-data:
+
+networks:
+  am-network:
+    external: true
+
