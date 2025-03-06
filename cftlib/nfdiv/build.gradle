@@ -68,7 +68,7 @@ sourceSets {
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 
@@ -540,5 +540,5 @@ jooq {
 }
 
 jooqCodegen {
-  inputs.files project.file('nfdiv/src/main/resources/db/migration')
+  inputs.files project.files('src/main/resources/db/migration')
 }
