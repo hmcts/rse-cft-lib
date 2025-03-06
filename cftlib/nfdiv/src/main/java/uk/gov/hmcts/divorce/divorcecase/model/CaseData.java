@@ -572,7 +572,7 @@ public class CaseData {
 
         var application = caseData.getApplication();
 
-        if (isEmpty(application.getApplicationPayments())) {
+            if (isEmpty(application.getApplicationPayments())) {
             List<ListValue<Payment>> payments = new ArrayList<>();
             payments.add(new ListValue<>(UUID.randomUUID().toString(), payment));
             application.setApplicationPayments(payments);
