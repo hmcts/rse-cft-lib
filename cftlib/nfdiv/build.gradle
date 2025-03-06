@@ -437,7 +437,6 @@ bootWithCCD {
 //      def value = it.substring(index + 1)
 //      environment key, value
 //    }
-    environment 'DTSSE_DECENTRALISED', 'true'
     environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
     environment 'LOGGING_LEVEL_UK_GOV_HMCTS_DIVORCE', 'info'
     environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
