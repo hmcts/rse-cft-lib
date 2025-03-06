@@ -77,7 +77,8 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
         SOLICITORG("33153390-cdb9-3c66-8562-c2242a67800d", UserRole.SOLICITOR_G.getRole()),
         SOLICITORH("6c23b66f-5282-3ed8-a2c4-58ae418581e8", UserRole.SOLICITOR_H.getRole()),
         SOLICITORI("cb3c3109-5d92-374e-b551-3cb72d6dad9d", UserRole.SOLICITOR_I.getRole()),
-        SOLICITORJ("38a2499c-0c65-3fb0-9342-e47091c766f6", UserRole.SOLICITOR_J.getRole());
+        SOLICITORJ("38a2499c-0c65-3fb0-9342-e47091c766f6", UserRole.SOLICITOR_J.getRole()),
+        APPLICANT_2_SOLICITOR("b81df946-87c4-3eb8-95e0-2da70727aec8", UserRole.APPLICANT_2_SOLICITOR.getRole());
 
         private final String id;
         private final String role;
@@ -197,7 +198,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             .build();
     }
 
-    private String createPayment(CaseDetails<CaseData, State> details) {
+    private void createPayment(CaseDetails<CaseData, State> details) {
         PaymentRecord paymentRecord = db.newRecord(Payment.PAYMENT);
         paymentRecord.setAmount(new BigDecimal(550));
         paymentRecord.setChannel("online");
@@ -210,7 +211,6 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
         paymentRecord.setTransactionId("ge7po9h5bhbtbd466424src9tk");
         paymentRecord.setCreated(LocalDateTime.now());
         paymentRecord.store();
-        return paymentId;
     }
 
 
