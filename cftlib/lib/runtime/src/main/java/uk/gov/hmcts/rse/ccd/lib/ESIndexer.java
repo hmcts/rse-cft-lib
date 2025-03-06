@@ -20,8 +20,8 @@ import java.util.Set;
 
 // Simple indexer replicating logstash functionality
 // but saving up to ~1GB of RAM.
-@ConditionalOnMissingClass("uk.gov.hmcts.ccd.sdk.DecentralisedESIndexer")
 @Component
+@ConditionalOnProperty(value = "ccd.sdk.decentralised", havingValue = "false", matchIfMissing = true)
 public class ESIndexer {
 
     @SneakyThrows
@@ -31,7 +31,7 @@ public class ESIndexer {
         t.setDaemon(true);
         t.setUncaughtExceptionHandler(ControlPlane.failFast);
         t.setName("****Cftlib ElasticSearch indexer");
-//        t.start();
+        t.start();
     }
 
     @SneakyThrows
@@ -43,7 +43,7 @@ public class ESIndexer {
 
         try (Connection c = ControlPlane.getApi().getConnection(Database.Datastore)) {
             while (true) {
-                Thread.sleep(1000);
+                Thread.sleep(250);
 
                 // Replicates the behaviour of the previous logstash configuration.
                 // https://github.com/hmcts/rse-cft-lib/blob/94aa0edeb0e1a4337a411ed8e6e20f170ed30bae/cftlib/lib/runtime/compose/logstash/logstash_conf.in#L3
