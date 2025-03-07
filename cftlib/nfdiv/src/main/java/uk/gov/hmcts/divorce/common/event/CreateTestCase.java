@@ -78,7 +78,8 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
         SOLICITORH("6c23b66f-5282-3ed8-a2c4-58ae418581e8", UserRole.SOLICITOR_H.getRole()),
         SOLICITORI("cb3c3109-5d92-374e-b551-3cb72d6dad9d", UserRole.SOLICITOR_I.getRole()),
         SOLICITORJ("38a2499c-0c65-3fb0-9342-e47091c766f6", UserRole.SOLICITOR_J.getRole()),
-        APPLICANT_2_SOLICITOR("b81df946-87c4-3eb8-95e0-2da70727aec8", UserRole.APPLICANT_2_SOLICITOR.getRole());
+        APPLICANT_2_SOLICITOR("b81df946-87c4-3eb8-95e0-2da70727aec8", UserRole.APPLICANT_2_SOLICITOR.getRole()),
+        APPLICANT_1_SOLICITOR("74779774-2fc4-32c9-a842-f8d0aa6e770a",UserRole.APPLICANT_1_SOLICITOR.getRole());
 
         private final String id;
         private final String role;
@@ -87,7 +88,6 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             this.id = id;
             this.role = role;
         }
-
     }
 
     @Autowired
@@ -246,19 +246,24 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
             ccdAccessService.addRoleToCase(app2Id, caseId, orgId, APPLICANT_1_SOLICITOR);
         } else if (data.getCaseInvite().applicant2UserId() != null) {
-
-            Arrays.stream(SolicitorRoles.values()).toList().forEach(org -> {
-
-                if (org != SolicitorRoles.CREATOR) {
-                    ccdAccessService.linkRespondentToApplication(auth, caseId, org.getId(), details, org.getRole());
-                }
-                User user = idamService.retrieveUser(auth);
-                UserInfo userDetails = user.getUserDetails();
-
-                createSolicitor(details, org.getRole(), userDetails);
-            });
-
+            ccdAccessService.linkRespondentToApplication(auth, caseId, app2Id, details, UserRole.APPLICANT_2.getRole());
         }
+
+        Arrays.stream(SolicitorRoles.values()).toList().forEach(org -> {
+
+            if (org != SolicitorRoles.CREATOR
+                || org != SolicitorRoles.APPLICANT2
+                || org != SolicitorRoles.APPLICANT_1_SOLICITOR
+                || org != SolicitorRoles.APPLICANT_2_SOLICITOR
+            ) {
+                ccdAccessService.linkRespondentToApplication(auth, caseId, org.getId(), details, org.getRole());
+            }
+            log.info("Adding user role to org {}", org.role);
+            User user = idamService.retrieveUser(auth);
+            UserInfo userDetails = user.getUserDetails();
+
+            createSolicitor(details, org.getRole(), userDetails);
+        });
 
         return SubmittedCallbackResponse.builder().build();
     }

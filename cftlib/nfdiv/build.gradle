@@ -428,15 +428,15 @@ ccd {
 bootWithCCD {
   group = 'ccd tasks'
   dependsOn(loadEnvSecrets)
-  authMode = AuthMode.Local
+  authMode = AuthMode.AAT
 
   doFirst() {
-//    project.file('./.aat-env').readLines().each() {
-//      def index = it.indexOf("=")
-//      def key = it.substring(0, index)
-//      def value = it.substring(index + 1)
-//      environment key, value
-//    }
+    project.file('./.aat-env').readLines().each() {
+      def index = it.indexOf("=")
+      def key = it.substring(0, index)
+      def value = it.substring(index + 1)
+      environment key, value
+    }
     environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
     environment 'LOGGING_LEVEL_UK_GOV_HMCTS_DIVORCE', 'info'
     environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'

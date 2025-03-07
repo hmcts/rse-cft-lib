@@ -33,6 +33,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectFee;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
@@ -187,6 +188,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
                 paymentRecord.setStatus(SUCCESS.getLabel());
                 paymentRecord.setId(UUID.randomUUID().toString());
                 paymentRecord.setCaseReference(details.getId());
+                paymentRecord.setCreated(LocalDateTime.now());
                 paymentRecord.store();
                 data.getApplication().setApplicationPayments(getApplicationPayments(details.getId()));
 //                data.updateCaseDataWithPaymentDetails(generalApplicationFeeOrderSummary, data, response.getPaymentReference());
