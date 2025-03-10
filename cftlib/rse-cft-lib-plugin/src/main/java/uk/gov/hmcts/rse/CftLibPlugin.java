@@ -21,6 +21,7 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.jvm.tasks.Jar;
+import uk.gov.hmcts.ccd.sdk.CcdSdkPlugin;
 
 public class CftLibPlugin implements Plugin<Project> {
 
@@ -38,6 +39,7 @@ public class CftLibPlugin implements Plugin<Project> {
 
     public void apply(Project project) {
         project.getPlugins().apply("java");
+        project.getPlugins().apply(CcdSdkPlugin.class);
 
         createSourceSets(project);
         createConfigurations(project);
