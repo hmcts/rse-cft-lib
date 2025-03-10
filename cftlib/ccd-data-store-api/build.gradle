@@ -1046,19 +1046,15 @@ publishing {
 
                 def dependenciesNode = asNode().appendNode('dependencies')
 
-                // Only the root project contains the dependency set.
-                // For multimodule subprojects (eg. definition store) we do not publish dependencies.
-                if (project == rootProject) {
-                    configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each {
-                        def dependencyNode = dependenciesNode.appendNode('dependency')
-                        dependencyNode.appendNode('groupId', it.moduleVersion.id.group)
-                        dependencyNode.appendNode('artifactId', it.moduleVersion.id.name)
-                        dependencyNode.appendNode('version', it.moduleVersion.id.version)
+                configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each {
+                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', it.moduleVersion.id.group)
+                    dependencyNode.appendNode('artifactId', it.moduleVersion.id.name)
+                    dependencyNode.appendNode('version', it.moduleVersion.id.version)
 
-                        def exclusion = dependencyNode.appendNode('exclusions').appendNode('exclusion')
-                        exclusion.appendNode('groupId', '*')
-                        exclusion.appendNode('artifactId', '*')
-                    }
+                    def exclusion = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                    exclusion.appendNode('groupId', '*')
+                    exclusion.appendNode('artifactId', '*')
                 }
             }
         }
