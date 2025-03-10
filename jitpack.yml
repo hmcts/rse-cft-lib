@@ -1,7 +1,4 @@
-git:
-  updateSubmodules: false
 before_install:
-  - git submodule update --init --recursive
   - sdk install java 21.0.6-ms
   - sdk install java 17.0.5-ms
   - sdk use java 17.0.5-ms
