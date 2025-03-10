@@ -223,7 +223,7 @@ public class CftLibPlugin implements Plugin<Project> {
     private ManifestTask createCFTManifestTask(Project project, String depName, String mainClass, File file,
                                                String... args) {
         FileCollection classpath;
-        if (depName.equals("ccd-data-store-api")) {
+        if (depName.equals("ccd-data-store-api") && project.findProject(":ccd-data-store-api") != null) {
             // SOW014 - get the classpath via a project dependency
             var datastore = project.getRootProject().project(":ccd-data-store-api");
 
