@@ -53,3 +53,9 @@ gradlePlugin {
 compileJava {
     options.compilerArgs += ["-Werror"]
 }
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
