@@ -13,9 +13,6 @@
 [submodule "projects/dg-docassembly-api"]
 	path = projects/dg-docassembly-api
 	url = https://github.com/hmcts/dg-docassembly-api.git
-[submodule "cftlib/dtsse-ccd-config-generator"]
-	path = cftlib/dtsse-ccd-config-generator
-	url = git@github.com:hmcts/dtsse-ccd-config-generator.git
 [submodule "cftlib/pcs-api"]
 	path = cftlib/pcs-api
 	url = git@github.com:hmcts/pcs-api.git
