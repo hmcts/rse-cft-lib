@@ -25,16 +25,17 @@ public class DecentralisedESIndexer implements DisposableBean {
 
   private final DataSource dataSource;
   private volatile boolean terminated;
+  private final Thread t;
 
   @SneakyThrows
     @Autowired
     public DecentralisedESIndexer(DataSource dataSource) {
       this.dataSource = dataSource;
-        var t = new Thread(this::index);
-        t.setDaemon(true);
-        t.setUncaughtExceptionHandler(this::failFast);
-        t.setName("****Decentralised ElasticSearch indexer");
-        t.start();
+      this.t = new Thread(this::index);
+      t.setDaemon(true);
+      t.setUncaughtExceptionHandler(this::failFast);
+      t.setName("****Decentralised ElasticSearch indexer");
+      t.start();
     }
 
   private void failFast(Thread thread, Throwable exception) {
@@ -130,8 +131,10 @@ public class DecentralisedESIndexer implements DisposableBean {
     }
 
   @Override
-  public void destroy() {
+  public void destroy() throws InterruptedException {
     this.terminated = true;
+    // Wait for indexing to stop before allowing shutdown to continue.
+    this.t.join();
   }
 }
 
