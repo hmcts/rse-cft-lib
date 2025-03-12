@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.ResolvedCCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -36,7 +38,7 @@ class CaseEventGenerator<T, S, R extends HasRole> implements ConfigGenerator<T, 
       Path output = Paths.get(folder.getPath(), event.getId() + ".json");
 
       JsonUtils.mergeInto(output, serialise(config.getCaseType(), event, config.getAllStates(),
-          config.getCallbackHost()),
+          config.getCallbackHost(), config.decentralised),
           new AddMissing(), "ID");
     }
   }
@@ -49,7 +51,7 @@ class CaseEventGenerator<T, S, R extends HasRole> implements ConfigGenerator<T, 
   }
 
   private List<Map<String, Object>> serialise(String caseTypeId, Event<T, R, S> event,
-                                              Set<S> allStates, String callbackHost) {
+                                              Set<S> allStates, String callbackHost, boolean decentralised) {
     int t = 1;
     List result = Lists.newArrayList();
     Map<String, Object> data = JsonUtils.getField(event.getId());
@@ -105,7 +107,7 @@ class CaseEventGenerator<T, S, R extends HasRole> implements ConfigGenerator<T, 
       }
     }
 
-    if (event.getAboutToSubmitCallback() != null) {
+    if (event.getAboutToSubmitCallback() != null && !decentralised) {
       String url = callbackHost + "/callbacks/about-to-submit?eventId=" + event.getId();
       data.put("CallBackURLAboutToSubmitEvent", url);
       if (event.getRetries().containsKey(Webhook.AboutToSubmit)) {
@@ -114,7 +116,7 @@ class CaseEventGenerator<T, S, R extends HasRole> implements ConfigGenerator<T, 
       }
     }
 
-    if (event.getSubmittedCallback() != null) {
+    if (event.getSubmittedCallback() != null && !decentralised) {
       String url = callbackHost + "/callbacks/submitted?eventId=" + event.getId();
       data.put("CallBackURLSubmittedEvent", url);
       if (event.getRetries().containsKey(Webhook.Submitted)) {
