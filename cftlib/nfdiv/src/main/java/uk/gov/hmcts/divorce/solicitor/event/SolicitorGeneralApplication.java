@@ -279,6 +279,5 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             .endButtonLabel("Submit Application")
             .grant(CREATE_READ_UPDATE_DELETE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
-
     }
 }

@@ -21,6 +21,7 @@ project.file('../projects').listFiles().each { dir ->
 }
 
 publish.dependsOn gradle.includedBuild('rse-cft-lib-plugin').task(':publishToMavenLocal')
+publish.dependsOn gradle.includedBuild('dtsse-ccd-config-generator').task(':ccd-gradle-plugin:publishToMavenLocal')
 
 tasks.check.dependsOn gradle.includedBuild('rse-cft-lib-plugin').task(':check')
 

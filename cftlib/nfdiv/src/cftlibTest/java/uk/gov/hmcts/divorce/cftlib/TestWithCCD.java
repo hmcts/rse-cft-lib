@@ -149,6 +149,10 @@ public class TestWithCCD extends CftlibTest {
         var eventData = ((Map)auditEvents.get(0)).get("data");
         var caseData = mapper.readValue(mapper.writeValueAsString(eventData), CaseData.class);
         assertThat(caseData.getNotes().size(), equalTo(2));
+        var firstEvent = (Map) auditEvents.getLast();
+        // First event should be in the 'Holding' state
+        assertThat(firstEvent.get("state_id"), equalTo("AwaitingPayment"));
+        assertThat(firstEvent.get("state_name"), equalTo("Draft"));
     }
 
     @Order(4)
