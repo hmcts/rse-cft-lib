@@ -79,7 +79,8 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
         SOLICITORI("cb3c3109-5d92-374e-b551-3cb72d6dad9d", UserRole.SOLICITOR_I.getRole()),
         SOLICITORJ("38a2499c-0c65-3fb0-9342-e47091c766f6", UserRole.SOLICITOR_J.getRole()),
         APPLICANT_2_SOLICITOR("b81df946-87c4-3eb8-95e0-2da70727aec8", UserRole.APPLICANT_2_SOLICITOR.getRole()),
-        APPLICANT_1_SOLICITOR("74779774-2fc4-32c9-a842-f8d0aa6e770a",UserRole.APPLICANT_1_SOLICITOR.getRole());
+        APPLICANT_1_SOLICITOR("74779774-2fc4-32c9-a842-f8d0aa6e770a",UserRole.APPLICANT_1_SOLICITOR.getRole()),
+        CITIZEN("20fa35c5-167f-3d6f-b8ab-5c487d16f29d", UserRole.CITIZEN.getRole());
 
         private final String id;
         private final String role;

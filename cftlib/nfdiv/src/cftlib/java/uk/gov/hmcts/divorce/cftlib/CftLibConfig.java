@@ -46,6 +46,7 @@ public class CftLibConfig implements CFTLibConfigurer {
         users.put("solicitori@gmail.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-solicitor"));
         users.put("solicitorj@gmail.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-solicitor"));
         users.put("divorce_as_caseworker_admin@mailinator.com", List.of("caseworker-divorce", "caseworker-divorce-superuser"));
+        users.put("divorce_citizen@mailinator.com", List.of("citizen"));
 
         for (var entry : users.entrySet()) {
             lib.createIdamUser(entry.getKey(), entry.getValue().toArray(new String[0]));

@@ -70,7 +70,7 @@ public class TestWithCCD extends CftlibTest {
                 "applicant2SolicitorRepresented", "No",
                 // applicant2@gmail.com  =  6e508b49-1fa8-3d3c-8b53-ec466637315b
                 "applicant2UserId", "6e508b49-1fa8-3d3c-8b53-ec466637315b",
-                "stateToTransitionApplicationTo", "Holding"
+                "stateToTransitionApplicationTo", "AwaitingPayment"
             ),
             "event", Map.of(
                 "id", "create-test-application",
@@ -93,11 +93,11 @@ public class TestWithCCD extends CftlibTest {
         var r = new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class);
         caseRef = Long.parseLong((String) r.get("id"));
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
-        assertThat(r.get("state"), equalTo("Holding"));
+        assertThat(r.get("state"), equalTo("AwaitingPayment"));
 
         // Check we can load the case
         var c = ccdApi.getCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"), getServiceAuth(), String.valueOf(caseRef));
-        assertThat(c.getState(), equalTo("Holding"));
+        assertThat(c.getState(), equalTo("AwaitingPayment"));
         assertThat(CreateTestCase.submittedCallbackTriggered, equalTo(true));
         assertThat(c.getLastModified(), greaterThan(LocalDateTime.now().minusMinutes(5)));
         var caseData = mapper.readValue(mapper.writeValueAsString(c.getData()), CaseData.class);
@@ -251,6 +251,40 @@ public class TestWithCCD extends CftlibTest {
         var caseData = mapper.readValue(mapper.writeValueAsString(data), CaseData.class);
         assertThat(caseData.getApplicantTwoNote(), is("applicantTwoNote"));
         assertThat(caseData.getCaseWorkerNote(), emptyOrNullString());
+    }
+
+    @Order(8)
+    @SneakyThrows
+    @Test
+    void testPaymentStatusCheck(){
+        var paymentCitizenEvent = ccdApi.startEvent(
+            getAuthorisation("divorce_citizen@mailinator.com"),
+            getServiceAuth(), String.valueOf(caseRef), "citizen-payment-made").getToken();
+
+        var body = Map.of(
+            "data", Map.of(
+                "dueDate", "2020-01-01"
+            ),
+            "event", Map.of(
+                "id", "citizen-payment-made",
+                "summary", "summary",
+                "description", "description"
+            ),
+            "event_token", paymentCitizenEvent,
+            "ignore_warning", false
+        );
+
+        // Concurrent change to json blob should be rejected
+        var e =
+            buildRequest("divorce_citizen@mailinator.com",
+                "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
+        e.addHeader("experimental", "true");
+        e.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
+
+        e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        var response = HttpClientBuilder.create().build().execute(e);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
     }
 
     @SneakyThrows
