@@ -29,8 +29,15 @@ public class CftLibConfig implements CFTLibConfigurer {
     @Lazy
     CCDDefinitionGenerator configWriter;
 
+    @Autowired
+    @Lazy
+    DataGenerator generator;
+
     @Override
     public void configure(CFTLib lib) throws Exception {
+        // Immediately generate a dummy case before the definition imports.
+        // The ES indexer should index this once the definition imports.
+        generator.generate();
         HashMap<String, List<String>> users = new HashMap<>();
         users.put("DivCaseWorkerUser@AAT.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta"));
         users.put("TEST_CASE_WORKER_USER@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta"));

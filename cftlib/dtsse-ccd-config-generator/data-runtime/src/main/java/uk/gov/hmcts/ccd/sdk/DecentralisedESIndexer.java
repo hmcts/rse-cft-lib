@@ -2,7 +2,9 @@ package uk.gov.hmcts.ccd.sdk;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
+import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
@@ -22,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
+@Slf4j
 public class DecentralisedESIndexer implements DisposableBean {
 
   private final JdbcTemplate jdbcTemplate;
@@ -125,8 +128,14 @@ public class DecentralisedESIndexer implements DisposableBean {
         if (request.numberOfActions() > 0) {
           var r = client.bulk(request, RequestOptions.DEFAULT);
           if (r.hasFailures()) {
-            throw new RuntimeException("**** Cftlib elasticsearch indexing error(s): "
-              + r.buildFailureMessage());
+            // TODO: Track the failed cases in our database, monitoring, retries etc.
+            status.setRollbackOnly();
+            log.error("**** Cftlib elasticsearch indexing error(s): ");
+            r.buildFailureMessage();
+            for (BulkItemResponse item : r.getItems()) {
+             log.error(item.getFailureMessage());
+            }
+            return false;
           }
         }
         return true;  // Transaction success
