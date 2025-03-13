@@ -18,6 +18,10 @@ public interface ConfigBuilder<T, S, R extends HasRole> {
   EventTypeBuilderImpl<T, R, S> handleSupplementaryEvent();
 
   void caseType(String caseType, String name, String description);
+
+  /**
+   * Drops all AboutToSubmit/Submitted callback URLs from the generated CCD definition.
+   */
   void decentralisedCaseType(String caseType, String name, String description);
 
   void jurisdiction(String id, String name, String description);
