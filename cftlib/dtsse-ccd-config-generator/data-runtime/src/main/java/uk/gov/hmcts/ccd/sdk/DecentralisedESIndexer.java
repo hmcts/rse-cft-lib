@@ -28,12 +28,16 @@ public class DecentralisedESIndexer implements DisposableBean {
   private final TransactionTemplate transactionTemplate;
   private volatile boolean terminated;
   private final Thread t;
+  private final RestHighLevelClient client;
 
   @SneakyThrows
   @Autowired
   public DecentralisedESIndexer(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
     this.jdbcTemplate = jdbcTemplate;
     this.transactionTemplate = transactionTemplate;
+    this.client = new RestHighLevelClient(RestClient.builder(
+      new HttpHost("localhost", 9200)));
+
     this.t = new Thread(this::index);
     t.setDaemon(true);
     t.setUncaughtExceptionHandler(this::failFast);
@@ -50,13 +54,17 @@ public class DecentralisedESIndexer implements DisposableBean {
 
   @SneakyThrows
   private void index() {
-    RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
-      new HttpHost("localhost", 9200)));
     while (!terminated) {
-      transactionTemplate.execute(status -> {
-        // Replicates the behaviour of the previous logstash configuration.
-        // https://github.com/hmcts/rse-cft-lib/blob/94aa0edeb0e1a4337a411ed8e6e20f170ed30bae/cftlib/lib/runtime/compose/logstash/logstash_conf.in#L3
-        var results = jdbcTemplate.queryForList("""
+      pollForNewCases();
+      Thread.sleep(250);
+    }
+  }
+
+  private void pollForNewCases() {
+    transactionTemplate.execute(status -> {
+      // Replicates the behaviour of the previous logstash configuration.
+      // https://github.com/hmcts/rse-cft-lib/blob/94aa0edeb0e1a4337a411ed8e6e20f170ed30bae/cftlib/lib/runtime/compose/logstash/logstash_conf.in#L3
+      var results = jdbcTemplate.queryForList("""
                         with updated as (
                           delete from ccd.es_queue es where id in (select id from ccd.es_queue limit 2000)
                           returning id
@@ -83,52 +91,49 @@ public class DecentralisedESIndexer implements DisposableBean {
                         ) row
                         """);
 
-        try {
-          BulkRequest request = new BulkRequest();
-          ObjectMapper mapper = new ObjectMapper();
+      try {
+        BulkRequest request = new BulkRequest();
+        ObjectMapper mapper = new ObjectMapper();
 
-          for (Map<String, Object> row : results) {
-            var rowJson = row.get("row").toString();
-            request.add(new IndexRequest(row.get("index_id").toString())
+        for (Map<String, Object> row : results) {
+          var rowJson = row.get("row").toString();
+          request.add(new IndexRequest(row.get("index_id").toString())
+            .id(row.get("id").toString())
+            .source(rowJson, XContentType.JSON));
+
+          // Replicate CCD's globalsearch logstash setup.
+          // Where cases define a 'SearchCriteria' field we index certain fields into CCD's central
+          // 'global search' index.
+          // https://github.com/hmcts/cnp-flux-config/blob/master/apps/ccd/ccd-logstash/ccd-logstash.yaml#L99-L175
+          Map<String, Object> map = mapper.readValue(rowJson, Map.class);
+          var data = (Map<String, Object>) map.get("data");
+          if (data.containsKey("SearchCriteria")) {
+            filter(data, "SearchCriteria", "caseManagementLocation", "CaseAccessCategory",
+              "caseNameHmctsInternal", "caseManagementCategory");
+            filter((Map<String, Object>) map.get("supplementary_data"), "HMCTSServiceId");
+            map.remove("last_state_modified_date");
+            map.remove("last_modified");
+            map.remove("created_date");
+            map.put("index_id", "global_search");
+
+            request.add(new IndexRequest("global_search")
               .id(row.get("id").toString())
-              .source(rowJson, XContentType.JSON));
-
-            // Replicate CCD's globalsearch logstash setup.
-            // Where cases define a 'SearchCriteria' field we index certain fields into CCD's central
-            // 'global search' index.
-            // https://github.com/hmcts/cnp-flux-config/blob/master/apps/ccd/ccd-logstash/ccd-logstash.yaml#L99-L175
-            Map<String, Object> map = mapper.readValue(rowJson, Map.class);
-            var data = (Map<String, Object>) map.get("data");
-            if (data.containsKey("SearchCriteria")) {
-              filter(data, "SearchCriteria", "caseManagementLocation", "CaseAccessCategory",
-                "caseNameHmctsInternal", "caseManagementCategory");
-              filter((Map<String, Object>) map.get("supplementary_data"), "HMCTSServiceId");
-              map.remove("last_state_modified_date");
-              map.remove("last_modified");
-              map.remove("created_date");
-              map.put("index_id", "global_search");
-
-              request.add(new IndexRequest("global_search")
-                .id(row.get("id").toString())
-                .source(mapper.writeValueAsString(map), XContentType.JSON));
-            }
+              .source(mapper.writeValueAsString(map), XContentType.JSON));
           }
-
-          if (request.numberOfActions() > 0) {
-            var r = client.bulk(request, RequestOptions.DEFAULT);
-            if (r.hasFailures()) {
-              throw new RuntimeException("**** Cftlib elasticsearch indexing error(s): "
-                + r.buildFailureMessage());
-            }
-          }
-          return true;  // Transaction success
-        } catch (Exception e) {
-          throw new RuntimeException(e);
         }
-      });
 
-      Thread.sleep(250);
-    }
+        if (request.numberOfActions() > 0) {
+          var r = client.bulk(request, RequestOptions.DEFAULT);
+          if (r.hasFailures()) {
+            throw new RuntimeException("**** Cftlib elasticsearch indexing error(s): "
+              + r.buildFailureMessage());
+          }
+        }
+        return true;  // Transaction success
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 
   public void filter(Map<String, Object> map, String... forKeys) {
