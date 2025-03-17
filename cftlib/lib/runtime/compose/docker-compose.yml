@@ -132,5 +132,6 @@ services:
       SIMULATOR_OPENID_BASE-URL: "${IDAM_SIMULATOR_BASE_URL:-http://localhost:5062}"
       SIMULATOR_OPENID_BASE-URL-OUTSIDE-NETWORK: "${IDAM_SIMULATOR_BASE_URL_OUTSIDE_NETWORK:-http://localhost:5062}"
       SERVER_PORT: 5062
+      JAVA_TOOL_OPTIONS:
 volumes:
   postgres_17_data_volume:
