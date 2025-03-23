@@ -27,6 +27,8 @@ services:
         hard: -1
     ports:
       - 9200:9200
+    volumes:
+      - es7data:/usr/share/elasticsearch/data
 
   xui-manage-cases:
     image: "${XUI_MANAGE_CASES_USE_LOCAL-hmctspublic.azurecr.io/}xui/webapp:${XUI_MANAGE_CASES_TAG:-latest}"
@@ -135,3 +137,4 @@ services:
       JAVA_TOOL_OPTIONS:
 volumes:
   postgres_17_data_volume:
+  es7data:
