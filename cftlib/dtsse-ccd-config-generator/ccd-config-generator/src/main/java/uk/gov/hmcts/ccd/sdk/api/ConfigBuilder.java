@@ -3,15 +3,23 @@ package uk.gov.hmcts.ccd.sdk.api;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+
 import uk.gov.hmcts.ccd.sdk.EventTypeBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseRoleToAccessProfile.CaseRoleToAccessProfileBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Search.SearchBuilder;
 import uk.gov.hmcts.ccd.sdk.api.SearchCases.SearchCasesBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Tab.TabBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.Submit;
 
 public interface ConfigBuilder<T, S, R extends HasRole> {
 
   EventTypeBuilder<T, R, S> event(String id);
+
+  /**
+   * Event that replaces AboutToSubmit/Submitted callbacks
+   * with the mandatory submitHandler.
+   */
+  EventTypeBuilder<T, R, S> decentralisedEvent(String id, Submit<T, S> submitHandler);
 
   EventTypeBuilderImpl<T, R, S> attachScannedDocEvent();
 

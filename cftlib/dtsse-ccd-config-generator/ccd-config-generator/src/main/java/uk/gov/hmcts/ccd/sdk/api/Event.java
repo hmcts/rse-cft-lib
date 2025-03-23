@@ -7,11 +7,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Data;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStart;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToSubmit;
+import uk.gov.hmcts.ccd.sdk.api.callback.Submit;
 import uk.gov.hmcts.ccd.sdk.api.callback.Submitted;
 
 @Builder
@@ -37,6 +39,7 @@ public class Event<T, R extends HasRole, S> {
   private AboutToStart<T, S> aboutToStartCallback;
   private AboutToSubmit<T, S> aboutToSubmitCallback;
   private Submitted<T, S> submittedCallback;
+  private Submit<T, S> submitHandler;
   private FieldCollection fields;
 
   public void name(String s) {
@@ -176,6 +179,25 @@ public class Event<T, R extends HasRole, S> {
         setRetries(value, retries);
       }
 
+      return this;
+    }
+
+    public EventBuilder<T, R, S> submittedCallback(Submitted<T, S> submittedCallback) {
+      // TODO: split out decentralised event building to remove these fields for decentralised events.
+      if (this.submitHandler != null) {
+        throw new IllegalStateException("Cannot set both submitHandler and submittedCallback");
+      }
+      this.submittedCallback = submittedCallback;
+      return this;
+    }
+
+
+    public EventBuilder<T, R, S> aboutToSubmitCallback(AboutToSubmit<T, S> aboutToSubmitCallback) {
+      // TODO: split out decentralised event building to remove these fields for decentralised events.
+      if (this.submitHandler != null) {
+        throw new IllegalStateException("Cannot set both submitHandler and aboutToSubmitCallback");
+      }
+      this.aboutToSubmitCallback = aboutToSubmitCallback;
       return this;
     }
 

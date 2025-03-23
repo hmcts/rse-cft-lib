@@ -17,6 +17,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import uk.gov.hmcts.ccd.sdk.api.EventPayload;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import net.jodah.typetools.TypeResolver;
@@ -200,7 +201,9 @@ public class CaseController {
 
     @SneakyThrows
     private POCCaseEvent dispatchAboutToSubmit(POCCaseEvent event) {
-      if (eventListener.hasAboutToSubmitCallbackForEvent(event.getEventDetails().getCaseType(), event.getEventDetails().getEventId())) {
+      if (eventListener.hasSubmitHandler(event.getEventDetails().getCaseType(), event.getEventDetails().getEventId())) {
+        eventListener.submit(event.getEventDetails().getCaseType(), event.getEventDetails().getEventId(), event);
+      } else if (eventListener.hasAboutToSubmitCallbackForEvent(event.getEventDetails().getCaseType(), event.getEventDetails().getEventId())) {
             var req = CallbackRequest.builder()
                 .caseDetails(toCaseDetails(event.getCaseDetails()))
                 .caseDetailsBefore(toCaseDetails(event.getCaseDetailsBefore()))
