@@ -23,6 +23,7 @@ import uk.gov.hmcts.ccd.sdk.api.SearchCases.SearchCasesBuilder;
 import uk.gov.hmcts.ccd.sdk.api.SearchCriteria.SearchCriteriaBuilder;
 import uk.gov.hmcts.ccd.sdk.api.SearchParty.SearchPartyBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Tab.TabBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.Start;
 import uk.gov.hmcts.ccd.sdk.api.callback.Submit;
 
 public class ConfigBuilderImpl<T, S, R extends HasRole> implements ConfigBuilder<T, S, R> {
@@ -69,13 +70,19 @@ public class ConfigBuilderImpl<T, S, R extends HasRole> implements ConfigBuilder
 
   @Override
   public EventTypeBuilderImpl<T, R, S> event(final String id) {
-    return new EventTypeBuilderImpl<>(config, events, id, null);
+    return new EventTypeBuilderImpl<>(config, events, id, null, null);
   }
 
   @Override
   public EventTypeBuilder<T, R, S> decentralisedEvent(String id, Submit<T, S> submitHandler) {
-    return new EventTypeBuilderImpl<>(config, events, id, submitHandler);
+    return new EventTypeBuilderImpl<>(config, events, id, submitHandler, null);
   }
+
+  @Override
+  public EventTypeBuilder<T, R, S> decentralisedEvent(String id, Submit<T, S> submitHandler, Start<T, S> startHandler) {
+    return new EventTypeBuilderImpl<>(config, events, id, submitHandler, startHandler);
+  }
+
 
   @Override
   public EventTypeBuilderImpl<T, R, S> attachScannedDocEvent() {

@@ -11,10 +11,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Data;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStart;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToSubmit;
-import uk.gov.hmcts.ccd.sdk.api.callback.Submit;
-import uk.gov.hmcts.ccd.sdk.api.callback.Submitted;
+import uk.gov.hmcts.ccd.sdk.api.callback.*;
 
 @Builder
 @Data
@@ -40,6 +37,7 @@ public class Event<T, R extends HasRole, S> {
   private AboutToSubmit<T, S> aboutToSubmitCallback;
   private Submitted<T, S> submittedCallback;
   private Submit<T, S> submitHandler;
+  private Start<T, S> startHandler;
   private FieldCollection fields;
 
   public void name(String s) {

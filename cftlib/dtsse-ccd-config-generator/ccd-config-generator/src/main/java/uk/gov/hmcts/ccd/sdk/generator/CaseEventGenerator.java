@@ -98,7 +98,7 @@ class CaseEventGenerator<T, S, R extends HasRole> implements ConfigGenerator<T, 
     data.put("PostConditionState", getPostStateString(event.getPostState()));
     data.put("SecurityClassification", "Public");
 
-    if (event.getAboutToStartCallback() != null) {
+    if (event.getAboutToStartCallback() != null || event.getStartHandler() != null) {
       String url = callbackHost + "/callbacks/about-to-start?eventId=" + event.getId();
       data.put("CallBackURLAboutToStartEvent", url);
       if (event.getRetries().containsKey(Webhook.AboutToStart)) {

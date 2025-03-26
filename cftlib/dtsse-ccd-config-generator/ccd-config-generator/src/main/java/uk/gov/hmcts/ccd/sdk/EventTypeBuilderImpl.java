@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.EventPayload;
 import uk.gov.hmcts.ccd.sdk.api.EventTypeBuilder;
 import uk.gov.hmcts.ccd.sdk.api.HasRole;
+import uk.gov.hmcts.ccd.sdk.api.callback.Start;
 import uk.gov.hmcts.ccd.sdk.api.callback.Submit;
 
 @AllArgsConstructor
@@ -21,6 +22,7 @@ public class EventTypeBuilderImpl<T, R extends HasRole, S> implements EventTypeB
   protected final Map<String, List<Event.EventBuilder<T, R, S>>> events;
   protected final String id;
   protected final Submit<T, S> submitHandler;
+  protected final Start<T, S> startHandler;
 
   @Override
   public Event.EventBuilder<T, R, S> forState(S state) {
@@ -71,6 +73,7 @@ public class EventTypeBuilderImpl<T, R extends HasRole, S> implements EventTypeB
     Event.EventBuilder<T, R, S> result = Event.EventBuilder
         .builder(id, config.caseClass, new PropertyUtils(), preStates, postStates);
     result.submitHandler(this.submitHandler);
+    result.startHandler(this.startHandler);
     if (!events.containsKey(id)) {
       events.put(id, Lists.newArrayList());
     }

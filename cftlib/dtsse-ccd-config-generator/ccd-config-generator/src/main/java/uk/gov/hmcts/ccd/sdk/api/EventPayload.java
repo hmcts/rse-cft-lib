@@ -1,7 +1,6 @@
 package uk.gov.hmcts.ccd.sdk.api;
 
-import lombok.Builder;
-import lombok.Value;
+import org.springframework.util.MultiValueMap;
 
-public record EventPayload<T, S>(long caseReference, T payload) {
+public record EventPayload<T, S>(long caseReference, T caseData, MultiValueMap<String, String> urlParams) {
 }

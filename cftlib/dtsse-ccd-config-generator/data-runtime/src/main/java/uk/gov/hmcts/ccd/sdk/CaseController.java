@@ -14,19 +14,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.hmcts.ccd.sdk.api.EventPayload;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import net.jodah.typetools.TypeResolver;
 
 
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.net.URI;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -105,7 +106,11 @@ public class CaseController {
         log.info("RoleAssignments: {}", decodeHeader(roleAssignments));
 
         transactionTemplate.execute( status -> {
-                dispatchAboutToSubmit(event);
+          var referer = Objects.requireNonNullElse(headers.getFirst(HttpHeaders.REFERER), "");
+          URI uri = UriComponentsBuilder.fromUriString(referer).build().toUri();
+          var params = UriComponentsBuilder.fromUri(uri).build().getQueryParams();
+
+          dispatchAboutToSubmit(event, params);
                 var id = saveCaseReturningAuditId(event, roleAssignments);
                 if (eventListener.hasSubmittedCallbackForEvent(event.getEventDetails().getCaseType(), event.getEventDetails().getEventId())) {
                     enqueueSubmittedCallback(id, event, headers);
@@ -200,9 +205,9 @@ public class CaseController {
     }
 
     @SneakyThrows
-    private POCCaseEvent dispatchAboutToSubmit(POCCaseEvent event) {
+    private POCCaseEvent dispatchAboutToSubmit(POCCaseEvent event, MultiValueMap<String, String> urlParams) {
       if (eventListener.hasSubmitHandler(event.getEventDetails().getCaseType(), event.getEventDetails().getEventId())) {
-        eventListener.submit(event.getEventDetails().getCaseType(), event.getEventDetails().getEventId(), event);
+        eventListener.submit(event.getEventDetails().getCaseType(), event.getEventDetails().getEventId(), event, urlParams);
       } else if (eventListener.hasAboutToSubmitCallbackForEvent(event.getEventDetails().getCaseType(), event.getEventDetails().getEventId())) {
             var req = CallbackRequest.builder()
                 .caseDetails(toCaseDetails(event.getCaseDetails()))
