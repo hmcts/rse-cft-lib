@@ -175,6 +175,8 @@ class CaseFieldGenerator<T, S, R extends HasRole> implements ConfigGenerator<T, 
           case "Integer":
           case "Float":
           case "Double":
+          case "Long":
+          case "long":
             type = "Number";
             break;
           default:
