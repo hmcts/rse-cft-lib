@@ -1,7 +1,7 @@
 ---
 version: '3.5'
 services:
-  shared-database-pg12:
+  shared-database-pg-17:
     image: postgres:17.4
     environment:
       DB_USERNAME:
@@ -10,9 +10,7 @@ services:
     ports:
       - ${RSE_LIB_DB_PORT:-6432}:5432
     command: ["postgres", "-c", "log_statement=all"]
-    volumes:
-      - postgres_17_data_volume:/var/lib/postgresql/data
-  ccd-elasticsearch:
+  ccd-elasticsearch-7:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.11.1
     environment:
       - JAVA_TOOL_OPTIONS=-Xms128m -Xmx400m
@@ -27,8 +25,6 @@ services:
         hard: -1
     ports:
       - 9200:9200
-    volumes:
-      - es7data:/usr/share/elasticsearch/data
 
   xui-manage-cases:
     image: "${XUI_MANAGE_CASES_USE_LOCAL-hmctspublic.azurecr.io/}xui/webapp:${XUI_MANAGE_CASES_TAG:-latest}"
@@ -74,6 +70,9 @@ services:
       HEALTH_WORK_ALLOCATION_TASK_API: "http://wa-task-management-api-aat.service.core-compute-aat.internal/health"
       SERVICES_LOCATION_REF_API_URL: ${SERVICES_LOCATION_REF_API_URL}
       FEATURE_WORKALLOCATION_ENABLED: ${FEATURE_WORKALLOCATION_ENABLED:-false}
+      # Experimental workaround to expose Referer headers to CCD to enable parameterised CCD events.
+      # https://github.com/hmcts/rpx-xui-webapp/blob/c6c35052bbd20ea8c0f47b660baadc0a4d3eb808/api/application.ts#L36
+      FEATURE_HELMET_ENABLED: ${FEATURE_HELMET_ENABLED:-false}
       WA_SUPPORTED_JURISDICTIONS: "${WA_SUPPORTED_JURISDICTIONS:-IA,CIVIL,PRIVATELAW,PUBLICLAW,EMPLOYMENT,ST_CIC}"
     ports:
       - ${XUI_PORT:-3000}:3000
@@ -135,6 +134,3 @@ services:
       SIMULATOR_OPENID_BASE-URL-OUTSIDE-NETWORK: "${IDAM_SIMULATOR_BASE_URL_OUTSIDE_NETWORK:-http://localhost:5062}"
       SERVER_PORT: 5062
       JAVA_TOOL_OPTIONS:
-volumes:
-  postgres_17_data_volume:
-  es7data:
