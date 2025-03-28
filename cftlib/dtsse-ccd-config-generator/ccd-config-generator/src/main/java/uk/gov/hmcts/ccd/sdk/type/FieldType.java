@@ -27,5 +27,6 @@ public enum FieldType {
   FlagDetail,
   ComponentLauncher,
   SearchCriteria,
-  TTL
+  TTL,
+  MoneyGBP
 }
