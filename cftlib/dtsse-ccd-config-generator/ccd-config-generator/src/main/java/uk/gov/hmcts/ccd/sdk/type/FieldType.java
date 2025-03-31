@@ -8,6 +8,7 @@ public enum FieldType {
   Document,
   Schedule,
   TextArea,
+  Text,
   FixedList,
   FixedRadioList,
   YesOrNo,
