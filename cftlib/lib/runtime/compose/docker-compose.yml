@@ -27,7 +27,7 @@ services:
       - 9200:9200
 
   xui-manage-cases:
-    image: "${XUI_MANAGE_CASES_USE_LOCAL-hmctspublic.azurecr.io/}xui/webapp:${XUI_MANAGE_CASES_TAG:-latest}"
+    image: "${XUI_MANAGE_CASES_USE_LOCAL-ghcr.io/}hmcts/rse-cft-lib/xui-webapp:${XUI_MANAGE_CASES_TAG:-latest}"
     environment:
       FEATURE_APP_INSIGHTS_ENABLED: "false"
       FEATURE_SECURE_COOKIE_ENABLED: "false"
