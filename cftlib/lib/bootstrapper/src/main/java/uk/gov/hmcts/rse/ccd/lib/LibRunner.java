@@ -105,6 +105,9 @@ public class LibRunner {
         System.setProperty("CCD_DEFINITION_STORE_API_BASE_URL", "http://localhost:4451");
 
         System.setProperty("CASE_DOCUMENT_AM_URL", "http://localhost:4455");
+
+        // Prevent definition store generating errors trying to translate welsh
+        System.setProperty("WELSH_TRANSLATION_ENABLED", "false");
     }
 
     private static void launchAppOrFailFast(File classpathFile) {
