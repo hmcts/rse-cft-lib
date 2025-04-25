@@ -35,9 +35,6 @@ dependencies {
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.24.2'
 }
 
-ext['gradle.publish.key'] = System.getenv('GRADLE_PLUGIN_PORTAL_KEY')
-ext['gradle.publish.secret'] = System.getenv('GRADLE_PLUGIN_PORTAL_SECRET')
-
 gradlePlugin {
     // Define the plugin
     plugins {
@@ -46,6 +43,19 @@ gradlePlugin {
             displayName = 'HMCTS CFT development SDK'
             description = 'SDK for local development and testing'
             implementationClass = 'uk.gov.hmcts.rse.CftLibPlugin'
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "AzureArtifacts"
+            url = uri("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1")
+            credentials {
+                username = System.getenv("AZURE_DEVOPS_ARTIFACT_USERNAME")
+                password = System.getenv("AZURE_DEVOPS_ARTIFACT_TOKEN")
+            }
         }
     }
 }
