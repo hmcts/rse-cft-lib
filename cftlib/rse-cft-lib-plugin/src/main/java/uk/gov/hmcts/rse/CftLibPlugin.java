@@ -74,7 +74,7 @@ public class CftLibPlugin implements Plugin<Project> {
         // We do this after evaluation to ensure these repositories are registered after those in the build script.
         project.afterEvaluate(p -> {
             p.getRepositories().mavenCentral();
-            p.getRepositories().maven(m -> m.setUrl("https://jitpack.io"));
+            p.getRepositories().maven(m -> m.setUrl("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1"));
             // Some cft projects (eg. docassembly) make use of milestone releases of spring boot.
             p.getRepositories().maven(m -> m.setUrl("https://repo.spring.io/milestone"));
         });
