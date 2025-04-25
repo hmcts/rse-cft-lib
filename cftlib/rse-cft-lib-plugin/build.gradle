@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'com.github.hmcts.rse-cft-lib'
-version System.getenv('RELEASE_VERSION')?.replace('refs/tags/', '') ?: 'DEV-SNAPSHOT'
+version System.getenv('RELEASE_VERSION') ?: 'DEV-SNAPSHOT'
 
 repositories {
   mavenCentral()
@@ -36,7 +36,6 @@ dependencies {
 }
 
 gradlePlugin {
-    // Define the plugin
     plugins {
         greeting {
             id = 'com.github.hmcts.rse-cft-lib'
