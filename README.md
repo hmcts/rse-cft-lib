@@ -281,6 +281,10 @@ Services run on the following default ports:
 
 For a clean boot define the RSE_LIB_CLEAN_BOOT environment variable, which will force recreate all docker containers upon boot.
 
+### Long Docker Pull Timeout boot
+
+For a long docker pull timeout boot define the RSE_LIB_DOCKER_LONG_TIMEOUT environment variable, which will set the docker timeout to 90 minutes instead of 10. This option is useful when using cftlib for the first time to be able to download the biggest docker images.
+
 ### Live reload
 
 [Spring boot's devtools](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools) can be used to fast-reload your application whilst leaving other CFT services running, significantly 

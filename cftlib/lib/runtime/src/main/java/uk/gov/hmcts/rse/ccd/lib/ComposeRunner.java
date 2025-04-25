@@ -66,13 +66,18 @@ public class ComposeRunner {
             args.add("--renew-anon-volumes");
         }
 
+        long dockerTimeout =10;`
+        if (null != System.getenv("RSE_LIB_DOCKER_LONG_TIMEOUT")) {
+            dockerTimeout = 90;
+        }
+
         new ProcessExecutor().command(args)
             .environment(getEnvironmentVars())
             .redirectOutput(System.out)
             .redirectError(System.err)
             .directory(dir.toFile())
             .exitValueNormal()
-            .timeout(10, TimeUnit.MINUTES)
+            .timeout(dockerTimeout, TimeUnit.MINUTES)
             .execute();
 
     }
