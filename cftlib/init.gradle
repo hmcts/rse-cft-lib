@@ -5,10 +5,7 @@ def configurePublishing(p) {
         p.afterEvaluate { project ->
 
         project.group 'com.github.hmcts.rse-cft-lib'
-        // Override except for the Gradle plugin which sets a version during publish
-        if (name != 'rse-cft-lib-plugin') {
-            version = 'DEV-SNAPSHOT'
-        }
+        version = System.getenv('RELEASE_VERSION') ?: 'DEV-SNAPSHOT'
 
         // Configure publishing
         if (components.hasProperty('java')) {
