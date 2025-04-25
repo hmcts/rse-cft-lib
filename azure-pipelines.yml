@@ -1,0 +1,26 @@
+trigger:
+  tags:
+    include:
+    - '*'
+
+pr: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  artifactVersion: $[replace(variables['Build.SourceBranch'], 'refs/tags/', '')]
+
+resources:
+  repositories:
+  - repository: cnp-azuredevops-libraries
+    type: github
+    ref: refs/heads/azure-artifact-stage
+    name: hmcts/cnp-azuredevops-libraries
+    endpoint: 'hmcts'
+
+jobs:
+  - job: PublishToAzureArtifacts
+    displayName: 'Publish to Azure Artifacts'
+    steps:
+      - template: steps/publish-ado-artifact.yaml@cnp-azuredevops-libraries
