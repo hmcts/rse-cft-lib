@@ -280,7 +280,7 @@ Services run on the following default ports:
 ### Clean boot
 
 For a clean boot define the RSE_LIB_CLEAN_BOOT environment variable, which will force recreate all docker containers upon boot.
-cd 
+
 ### Live reload
 
 [Spring boot's devtools](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools) can be used to fast-reload your application whilst leaving other CFT services running, significantly 
