@@ -19,7 +19,6 @@ version System.getenv('RELEASE_VERSION') ?: 'DEV-SNAPSHOT'
 
 repositories {
   mavenCentral()
-  maven { url 'https://jitpack.io' }
   mavenLocal()
 }
 
