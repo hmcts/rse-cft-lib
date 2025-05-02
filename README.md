@@ -37,16 +37,16 @@ Improved local development and robust automated tests when working with CCD:
 
 ## Getting started
 
-### Add Jitpack as a Gradle plugin repository
+### Add HMCTS Azure Artifacts as a Gradle plugin repository
 
-The plugin is hosted on [jitpack](https://jitpack.io/) so you must add the following to your project's `settings.gradle`; 
+The plugin is hosted on [Azure Artifacts](https://hmcts.github.io/cloud-native-platform/common-pipeline/publishing-libraries/java.html) so you must add the following to your project's `settings.gradle`;
 
 ```gradle
 pluginManagement {
     repositories {
         gradlePluginPortal()
         maven {
-            url "https://jitpack.io"
+            url 'https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1'
         }
     }
 }
@@ -325,7 +325,7 @@ The cftlib Gradle plugin that configures the build of the consuming project, cre
 
 #### lib/
 
-The lib folder contains libraries that are published to the jitpack maven repository and are consumed as dependencies when running the cftlib.
+The lib folder contains libraries that are published to the azure artifacts and are consumed as dependencies when running the cftlib.
 
 ##### lib/bootstrapper
 
@@ -362,7 +362,7 @@ Provides integration testing support using a junit runner.
 
 #### projects/
 
-The CFT projects are found here as git submodules, published as maven libaries by jitpack with some customisation performed using an `init.gradle` script to ensure we reproduce the correct classpath in bootWithCCD.
+The CFT projects are found here as git submodules, published as libaries to azure artifacts with some customisation performed using an `init.gradle` script to ensure we reproduce the correct classpath in bootWithCCD.
 
 ## Previous prototype ideas
 

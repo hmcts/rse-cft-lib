@@ -5,10 +5,7 @@ def configurePublishing(p) {
         p.afterEvaluate { project ->
 
         project.group 'com.github.hmcts.rse-cft-lib'
-        // Override except for the Gradle plugin which sets a version during publish
-        if (name != 'rse-cft-lib-plugin') {
-            version = 'DEV-SNAPSHOT'
-        }
+        version = System.getenv('RELEASE_VERSION') ?: 'DEV-SNAPSHOT'
 
         // Configure publishing
         if (components.hasProperty('java')) {
@@ -45,6 +42,17 @@ def configurePublishing(p) {
             enabled = false
         }
         publishing {
+
+            repositories {
+                maven {
+                    name = "AzureArtifacts"
+                    url = uri("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1")
+                    credentials {
+                        username = System.getenv("AZURE_DEVOPS_ARTIFACT_USERNAME")
+                        password = System.getenv("AZURE_DEVOPS_ARTIFACT_TOKEN")
+                    }
+                }
+            }
             publications {
                 mavenJava(MavenPublication) {
                     from components.java

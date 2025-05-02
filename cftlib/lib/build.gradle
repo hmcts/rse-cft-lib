@@ -16,7 +16,8 @@ subprojects {
     }
 
     group = 'com.github.hmcts.rse-cft-lib'
-    version = 'DEV-SNAPSHOT'
+    version = System.getenv('RELEASE_VERSION') ?: 'DEV-SNAPSHOT'
+
 
     java {
         withSourcesJar()
