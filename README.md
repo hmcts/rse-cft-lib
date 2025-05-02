@@ -325,7 +325,7 @@ The cftlib Gradle plugin that configures the build of the consuming project, cre
 
 #### lib/
 
-The lib folder contains libraries that are published to the jitpack maven repository and are consumed as dependencies when running the cftlib.
+The lib folder contains libraries that are published to the azure artifacts and are consumed as dependencies when running the cftlib.
 
 ##### lib/bootstrapper
 
@@ -362,7 +362,7 @@ Provides integration testing support using a junit runner.
 
 #### projects/
 
-The CFT projects are found here as git submodules, published as maven libaries by jitpack with some customisation performed using an `init.gradle` script to ensure we reproduce the correct classpath in bootWithCCD.
+The CFT projects are found here as git submodules, published as libaries to azure artifacts with some customisation performed using an `init.gradle` script to ensure we reproduce the correct classpath in bootWithCCD.
 
 ## Previous prototype ideas
 
