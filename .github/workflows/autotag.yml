@@ -2,7 +2,7 @@ name: Auto-Tag & publish
 
 on:
   push:
-    branches: [az]
+    branches: [main]
 
 # Grant permissions for creating and pushing tags
 permissions:
