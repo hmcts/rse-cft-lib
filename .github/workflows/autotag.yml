@@ -1,0 +1,29 @@
+name: Auto-Tag
+
+on:
+  push:
+    branches: [az]
+
+# Grant permissions for creating and pushing tags
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Need full history for tags
+
+      - name: Calc Version, Tag & Push
+        id: version_tag # Still need an ID to reference the output
+        run: |
+          # --- Calculate Next Version ---
+          LATEST_TAG=$(git describe --tags --abbrev=0 --match '0.19.*')
+          NEXT_PATCH=$(echo "$LATEST_TAG" | awk -F. '{ print $3+1 }')
+          NEXT_VERSION="0.19.${NEXT_PATCH}"
+
+          echo "Creating and pushing tag: $NEXT_VERSION"
+          git tag "$NEXT_VERSION"
+          git push origin "$NEXT_VERSION"
