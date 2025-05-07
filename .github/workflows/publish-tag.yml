@@ -1,4 +1,4 @@
-name: Publish to Azure Artifacts
+name: Publish Tag to Azure Artifacts
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   PublishToAzureArtifacts:
-    runs-on: ubuntu-latest  # Similar to 'vmImage: ubuntu-latest'
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
