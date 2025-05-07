@@ -1,0 +1,41 @@
+name: Autotag & publish to azure artifacts
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  create_release_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create tag
+        uses: actions/github-script@v5
+        with:
+          script: |
+            try {
+              github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: "refs/tags/" + "0.19." + context.runNumber,
+                sha: context.sha
+              })
+            } catch(err) {
+              core.warning(`Failed to create ${context.runNumber}: ${err}`);
+            }
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'gradle'
+      - name: Publish to Azure DevOps Artifacts
+        run: |
+          (cd cftlib; ./gradlew -i publishToAzureArtifacts)
+        env:
+          AZURE_DEVOPS_ARTIFACT_USERNAME: ${{ secrets.AZURE_DEVOPS_ARTIFACT_USERNAME }}
+          AZURE_DEVOPS_ARTIFACT_TOKEN: ${{ secrets.AZURE_DEVOPS_ARTIFACT_TOKEN }}
+          RELEASE_VERSION: "0.19.${{ github.run_number }}"
+        shell: bash
