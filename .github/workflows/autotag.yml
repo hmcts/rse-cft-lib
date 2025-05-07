@@ -38,7 +38,7 @@ jobs:
 
       - name: Publish Artifact
         run: |
-          (cd cftlib; ./gradlew -i publishToAzureArtifacts)
+          (cd cftlib; ./gradlew -is publishToAzureArtifacts)
         env:
           AZURE_DEVOPS_ARTIFACT_USERNAME: ${{ secrets.AZURE_DEVOPS_ARTIFACT_USERNAME }}
           AZURE_DEVOPS_ARTIFACT_TOKEN: ${{ secrets.AZURE_DEVOPS_ARTIFACT_TOKEN }}
