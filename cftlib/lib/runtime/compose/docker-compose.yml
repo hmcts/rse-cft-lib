@@ -1,8 +1,8 @@
 ---
 version: '3.5'
 services:
-  shared-database-pg12:
-    image: postgres:12.4
+  shared-database-pg${POSTGRES_VERSION:-16}:
+    image: postgres:${POSTGRES_VERSION:-16}
     environment:
       DB_USERNAME:
       DB_PASSWORD:
