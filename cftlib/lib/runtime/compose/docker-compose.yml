@@ -1,7 +1,7 @@
 ---
 version: '3.5'
 services:
-  shared-database-pg${POSTGRES_VERSION:-16}:
+  shared-database-pg:
     image: postgres:${POSTGRES_VERSION:-16}
     environment:
       DB_USERNAME:
