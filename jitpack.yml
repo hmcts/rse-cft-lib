@@ -1,0 +1,3 @@
+install:
+  - echo "JitPack build intentionally disabled."
+  - exit 1
