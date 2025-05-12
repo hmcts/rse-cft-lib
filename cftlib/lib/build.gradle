@@ -1,17 +1,19 @@
 
 plugins {
     id 'uk.gov.hmcts.java' version '0.12.24' apply false
+    id 'io.freefair.lombok' version '8.13.1' apply false
 }
 
 subprojects {
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'uk.gov.hmcts.java'
+    apply plugin: 'io.freefair.lombok'
 
     repositories {
         mavenCentral()
         maven {
-            url 'https://jitpack.io'
+            url = uri('https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1')
         }
     }
 
@@ -29,17 +31,20 @@ subprojects {
                 from components.java
             }
         }
+        repositories {
+            maven {
+                name = "AzureArtifacts"
+                url = uri("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1")
+                credentials {
+                    username = System.getenv("AZURE_DEVOPS_ARTIFACT_USERNAME")
+                    password = System.getenv("AZURE_DEVOPS_ARTIFACT_TOKEN")
+                }
+            }
+        }
     }
 
-    dependencies {
-        compileOnly 'org.projectlombok:lombok:1.18.22'
-        annotationProcessor 'org.projectlombok:lombok:1.18.22'
-
-        testCompileOnly 'org.projectlombok:lombok:1.18.22'
-        testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
-    }
-
-    rootProject.tasks.publish.dependsOn(project.tasks.publishToMavenLocal)
+    rootProject.tasks.publishToMavenLocal.dependsOn(project.tasks.publishToMavenLocal)
+    rootProject.tasks.publishToAzureArtifacts.dependsOn(project.tasks.publishAllPublicationsToAzureArtifactsRepository)
 
     java {
         withJavadocJar()
