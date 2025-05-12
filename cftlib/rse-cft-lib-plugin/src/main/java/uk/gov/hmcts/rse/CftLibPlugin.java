@@ -16,6 +16,8 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
+import org.gradle.api.artifacts.repositories.MavenRepositoryContentDescriptor;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.JavaExec;
@@ -74,8 +76,19 @@ public class CftLibPlugin implements Plugin<Project> {
         // We do this after evaluation to ensure these repositories are registered after those in the build script.
         project.afterEvaluate(p -> {
             p.getRepositories().mavenCentral();
-            // Look in azure artifacts before jitpack
-            p.getRepositories().maven(m -> m.setUrl("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1"));
+            String azureUrl = "https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1";
+            boolean azureRepoExists = project.getRepositories().stream()
+                    .anyMatch(repo -> repo instanceof MavenArtifactRepository
+                            && ((MavenArtifactRepository) repo).getUrl().toString().equals(azureUrl));
+
+            if (!azureRepoExists) {
+                // Look in azure artifacts before jitpack
+                p.getRepositories().maven(m -> {
+                    m.setUrl("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1");
+                    m.setName("HMCTS Azure artifacts repository added by the Cftlib Gradle plugin");
+                    m.mavenContent(MavenRepositoryContentDescriptor::releasesOnly);
+                });
+            }
 
             // Some cft projects (eg. docassembly) make use of milestone releases of spring boot.
             p.getRepositories().maven(m -> m.setUrl("https://repo.spring.io/milestone"));
