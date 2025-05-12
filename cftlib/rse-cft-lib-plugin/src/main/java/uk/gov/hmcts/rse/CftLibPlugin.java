@@ -75,7 +75,6 @@ public class CftLibPlugin implements Plugin<Project> {
     private void registerDependencyRepositories(Project project) {
         // We do this after evaluation to ensure these repositories are registered after those in the build script.
         project.afterEvaluate(p -> {
-            p.getRepositories().mavenCentral();
             String azureUrl = "https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1";
             boolean azureRepoExists = project.getRepositories().stream()
                     .anyMatch(repo -> repo instanceof MavenArtifactRepository
