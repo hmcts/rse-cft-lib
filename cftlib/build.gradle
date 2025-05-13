@@ -1,7 +1,7 @@
 apply plugin: 'idea'
 apply plugin: 'base'
 
-tasks.register('publish')
+tasks.register('publishToMavenLocal')
 tasks.register('publishToAzureArtifacts')
 
 // Create Gradle tasks that build and publish the CFT submodule projects to maven local.
@@ -18,7 +18,7 @@ project.file('../projects').listFiles().each { dir ->
         args '--no-daemon','-i', '-s', '-I', project.file('init.gradle').path, 'publishToMavenLocal'
         workingDir dir
     }
-    publish.dependsOn t
+    publishToMavenLocal.dependsOn t
 
     def p = task "publish${dir.name}ToAzureArtifacts"(type: Exec) {
         executable './gradlew'
@@ -26,10 +26,9 @@ project.file('../projects').listFiles().each { dir ->
         workingDir dir
     }
     publishToAzureArtifacts.dependsOn p
-
 }
 
-publish.dependsOn gradle.includedBuild('rse-cft-lib-plugin').task(':publishToMavenLocal')
+publishToMavenLocal.dependsOn gradle.includedBuild('rse-cft-lib-plugin').task(':publishToMavenLocal')
 publishToAzureArtifacts.dependsOn gradle.includedBuild('rse-cft-lib-plugin').task(':publishAllPublicationsToAzureArtifactsRepository')
 
 tasks.check.dependsOn gradle.includedBuild('rse-cft-lib-plugin').task(':check')

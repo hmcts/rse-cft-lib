@@ -16,6 +16,8 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
+import org.gradle.api.artifacts.repositories.MavenRepositoryContentDescriptor;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.JavaExec;
@@ -73,16 +75,42 @@ public class CftLibPlugin implements Plugin<Project> {
     private void registerDependencyRepositories(Project project) {
         // We do this after evaluation to ensure these repositories are registered after those in the build script.
         project.afterEvaluate(p -> {
-            p.getRepositories().mavenCentral();
-            // Look in azure artifacts before jitpack
-            p.getRepositories().maven(m -> m.setUrl("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1"));
+            String azureUrl = "https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1";
+            boolean azureRepoExists = project.getRepositories().stream()
+                    .anyMatch(repo -> repo instanceof MavenArtifactRepository
+                            && ((MavenArtifactRepository) repo).getUrl().toString().equals(azureUrl));
+
+            if (!azureRepoExists) {
+                // Look in azure artifacts before jitpack
+                p.getRepositories().maven(m -> {
+                    m.setUrl("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1");
+                    m.setName("HMCTS Azure artifacts repository added by the Cftlib Gradle plugin");
+                    m.mavenContent(MavenRepositoryContentDescriptor::releasesOnly);
+                });
+            }
 
             // Some cft projects (eg. docassembly) make use of milestone releases of spring boot.
             p.getRepositories().maven(m -> m.setUrl("https://repo.spring.io/milestone"));
 
             // Keep jitpack as a fallback for now.
             // TODO: remove this once common components have all switched to azure artifacts
-            p.getRepositories().maven(m -> m.setUrl("https://jitpack.io"));
+            p.getRepositories().maven(m -> {
+                m.setUrl("https://jitpack.io");
+                m.content(c -> {
+                    c.includeVersion("com.github.hmcts", "idam-java-client", "2.1.2");
+                    c.includeVersion("com.github.hmcts", "idam-java-client", "2.1.1");
+                    c.includeVersion("com.github.hmcts", "idam-java-client", "2.0.1");
+                    c.includeVersion("com.github.hmcts", "idam-java-client", "1.5.5");
+                    c.includeVersion("com.github.hmcts", "ccd-case-document-am-client", "1.7.1");
+                    c.includeVersion("com.github.hmcts", "auth-checker-lib", "2.1.5");
+                    c.includeVersion("com.github.hmcts.java-logging", "logging", "6.1.8");
+                    c.includeVersion("com.github.hmcts.java-logging", "logging", "6.0.1");
+                    c.includeVersion("com.github.hmcts.java-logging", "logging-appinsights", "6.0.1");
+                    c.includeVersion("com.github.hmcts", "service-auth-provider-java-client", "4.0.3");
+                    c.includeVersion("com.github.hmcts", "service-auth-provider-java-client", "4.0.2");
+                    c.includeVersion("com.github.hmcts", "service-auth-provider-java-client", "3.1.4");
+                });
+            });
         });
     }
 
