@@ -9,6 +9,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - ${RSE_LIB_DB_PORT:-6432}:5432
+    command: ["postgres", "-c", "log_statement=all"]
   ccd-elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.11.1
     environment:
@@ -26,7 +27,7 @@ services:
       - 9200:9200
 
   xui-manage-cases:
-    image: "${XUI_MANAGE_CASES_USE_LOCAL-hmctspublic.azurecr.io/}xui/webapp:${XUI_MANAGE_CASES_TAG:-latest}"
+    image: "${XUI_MANAGE_CASES_USE_LOCAL-ghcr.io/}hmcts/rse-cft-lib/xui-webapp:${XUI_MANAGE_CASES_TAG:-latest}"
     environment:
       FEATURE_APP_INSIGHTS_ENABLED: "false"
       FEATURE_SECURE_COOKIE_ENABLED: "false"
@@ -69,6 +70,9 @@ services:
       HEALTH_WORK_ALLOCATION_TASK_API: "http://wa-task-management-api-aat.service.core-compute-aat.internal/health"
       SERVICES_LOCATION_REF_API_URL: ${SERVICES_LOCATION_REF_API_URL}
       FEATURE_WORKALLOCATION_ENABLED: ${FEATURE_WORKALLOCATION_ENABLED:-false}
+      # Experimental workaround to expose Referer headers to CCD to enable parameterised CCD events.
+      # https://github.com/hmcts/rpx-xui-webapp/blob/c6c35052bbd20ea8c0f47b660baadc0a4d3eb808/api/application.ts#L36
+      FEATURE_HELMET_ENABLED: ${FEATURE_HELMET_ENABLED:-false}
       WA_SUPPORTED_JURISDICTIONS: "${WA_SUPPORTED_JURISDICTIONS:-IA,CIVIL,PRIVATELAW,PUBLICLAW,EMPLOYMENT,ST_CIC}"
     ports:
       - ${XUI_PORT:-3000}:3000
@@ -106,7 +110,7 @@ services:
       MANAGE_CASE_LINK:
       MANAGE_ORG_LINK:
       SESSION_SECRET:
-      CASE_TYPES: "${XUI_MANAGE_ORGANISATIONS_CASETYPES:-NFD,Caveat,GrantOfRepresentation}"
+      CASE_TYPES: "${XUI_MANAGE_ORGANISATIONS_CASETYPES:-NFD,PCS,Caveat,GrantOfRepresentation}"
       FEATURE_APP_INSIGHTS_ENABLED: "false"
       FEATURE_PROXY_ENABLED: "false"
       FEATURE_SECURE_COOKIE_ENABLED: "false"
