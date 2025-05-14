@@ -158,8 +158,7 @@ public class CftLibPlugin implements Plugin<Project> {
         project.getConfigurations().getByName("cftlibTestImplementation")
             .extendsFrom(project.getConfigurations().getByName("cftlibImplementation"))
             .getDependencies().addAll(List.of(
-                project.getDependencies().create("com.github.hmcts.rse-cft-lib:test-runner:"
-                    + getLibVersion(project))
+                libDependencies(project, "test-runner")
             ));
 
         project.getConfigurations().getByName("cftlibTestRuntimeOnly")
@@ -349,7 +348,8 @@ public class CftLibPlugin implements Plugin<Project> {
         return Arrays.stream(libDeps)
             .map(d -> {
                 // If the project exists in our build use a project dependency
-                var proj = project.getRootProject().getAllprojects().stream().filter(x -> x.getName().equals(d)).findFirst();
+                var proj = project.getRootProject().getAllprojects()
+                    .stream().filter(x -> x.getName().equals(d)).findFirst();
                 if (proj.isPresent()) {
                     return project.getDependencies().create(proj.get());
                 }
