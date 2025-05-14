@@ -5,7 +5,7 @@
 	path = projects/ccd-definition-store-api
 	url = https://github.com/hmcts/ccd-definition-store-api.git
 [submodule "projects/ccd-data-store-api"]
-	path = projects/ccd-data-store-api
+	path = cftlib/ccd-data-store-api
 	url = https://github.com/hmcts/ccd-data-store-api.git
 [submodule "projects/aac-manage-case-assignment"]
 	path = projects/aac-manage-case-assignment
