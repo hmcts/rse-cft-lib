@@ -6,7 +6,9 @@ pluginManagement {
 }
 
 includeBuild 'rse-cft-lib-plugin'
+includeBuild 'dtsse-ccd-config-generator'
 include 'test-project'
+include 'pcs-api'
 
 new File(rootDir, "lib").listFiles().each {
   if (it.isDirectory()) {

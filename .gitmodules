@@ -23,3 +23,7 @@
 	path = cftlib/pcs-api
 	url = git@github.com:hmcts/pcs-api.git
 	branch = pcs-decentralised
+[submodule "cftlib/dtsse-ccd-config-generator"]
+	path = cftlib/dtsse-ccd-config-generator
+	url = git@github.com:hmcts/dtsse-ccd-config-generator.git
+	branch = runtimelib

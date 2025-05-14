@@ -25,23 +25,25 @@ import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.jvm.tasks.Jar;
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension;
+import uk.gov.hmcts.ccd.sdk.CcdSdkPlugin;
 
 public class CftLibPlugin implements Plugin<Project> {
 
     final Map<Service, String> projects = Map.of(
-            Service.amRoleAssignmentService, "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication",
-            Service.ccdDataStoreApi, "uk.gov.hmcts.ccd.CoreCaseDataApplication",
-            Service.ccdDefinitionStoreApi, "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication",
-            Service.ccdUserProfileApi, "uk.gov.hmcts.ccd.UserProfileApplication",
-            Service.aacManageCaseAssignment, "uk.gov.hmcts.reform.managecase.Application",
-            Service.ccdCaseDocumentAmApi, "uk.gov.hmcts.reform.ccd.documentam.Application",
-            Service.dgDocassemblyApi, "uk.gov.hmcts.reform.dg.docassembly.Application"
+        Service.amRoleAssignmentService, "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication",
+        Service.ccdDataStoreApi, "uk.gov.hmcts.ccd.CoreCaseDataApplication",
+        Service.ccdDefinitionStoreApi, "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication",
+        Service.ccdUserProfileApi, "uk.gov.hmcts.ccd.UserProfileApplication",
+        Service.aacManageCaseAssignment, "uk.gov.hmcts.reform.managecase.Application",
+        Service.ccdCaseDocumentAmApi, "uk.gov.hmcts.reform.ccd.documentam.Application",
+        Service.dgDocassemblyApi, "uk.gov.hmcts.reform.dg.docassembly.Application"
     );
     private final List<File> manifests = new ArrayList<>();
     private final List<ManifestTask> manifestTasks = Lists.newArrayList();
 
     public void apply(Project project) {
         project.getPlugins().apply("java");
+        project.getPlugins().apply(CcdSdkPlugin.class);
 
         createSourceSets(project);
         createConfigurations(project);
@@ -50,7 +52,8 @@ public class CftLibPlugin implements Plugin<Project> {
         createManifestTasks(project);
         createBootWithCCDTask(project);
         configureJacoco(project, createTestTask(project));
-        surfaceSourcesToIDE(project);
+        // TODO: Fix for latest intellij
+        //surfaceSourcesToIDE(project);
         createCftlibJarTask(project);
     }
 
@@ -75,40 +78,38 @@ public class CftLibPlugin implements Plugin<Project> {
     private void registerDependencyRepositories(Project project) {
         // We do this after evaluation to ensure these repositories are registered after those in the build script.
         project.afterEvaluate(p -> {
-            String azureUrl = "https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1";
+            String azureUrl = "https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmctslib/maven/v1";
             boolean azureRepoExists = project.getRepositories().stream()
-                    .anyMatch(repo -> repo instanceof MavenArtifactRepository
-                            && ((MavenArtifactRepository) repo).getUrl().toString().equals(azureUrl));
+                .anyMatch(repo -> repo instanceof MavenArtifactRepository
+                    && ((MavenArtifactRepository) repo).getUrl().toString().equals(azureUrl));
 
             if (!azureRepoExists) {
                 // Look in azure artifacts before jitpack
                 p.getRepositories().maven(m -> {
-                    m.setUrl("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1");
+                    m.setUrl("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmctslib/maven/v1");
                     m.setName("HMCTS Azure artifacts repository added by the Cftlib Gradle plugin");
                     m.mavenContent(MavenRepositoryContentDescriptor::releasesOnly);
                 });
             }
-
             // Some cft projects (eg. docassembly) make use of milestone releases of spring boot.
             p.getRepositories().maven(m -> m.setUrl("https://repo.spring.io/milestone"));
-
             // Keep jitpack as a fallback for now.
             // TODO: remove this once common components have all switched to azure artifacts
             p.getRepositories().maven(m -> {
                 m.setUrl("https://jitpack.io");
                 m.content(c -> {
-                    c.includeVersion("com.github.hmcts", "idam-java-client", "2.1.2");
-                    c.includeVersion("com.github.hmcts", "idam-java-client", "2.1.1");
-                    c.includeVersion("com.github.hmcts", "idam-java-client", "2.0.1");
-                    c.includeVersion("com.github.hmcts", "idam-java-client", "1.5.5");
-                    c.includeVersion("com.github.hmcts", "ccd-case-document-am-client", "1.7.1");
-                    c.includeVersion("com.github.hmcts", "auth-checker-lib", "2.1.5");
-                    c.includeVersion("com.github.hmcts.java-logging", "logging", "6.1.8");
-                    c.includeVersion("com.github.hmcts.java-logging", "logging", "6.0.1");
-                    c.includeVersion("com.github.hmcts.java-logging", "logging-appinsights", "6.0.1");
-                    c.includeVersion("com.github.hmcts", "service-auth-provider-java-client", "4.0.3");
-                    c.includeVersion("com.github.hmcts", "service-auth-provider-java-client", "4.0.2");
-                    c.includeVersion("com.github.hmcts", "service-auth-provider-java-client", "3.1.4");
+                    c.includeVersion("com.github.hmcts", "idamjavaclient", "2.1.2");
+                    c.includeVersion("com.github.hmcts", "idamjavaclient", "2.1.1");
+                    c.includeVersion("com.github.hmcts", "idamjavaclient", "2.0.1");
+                    c.includeVersion("com.github.hmcts", "idamjavaclient", "1.5.5");
+                    c.includeVersion("com.github.hmcts", "ccdcasedocumentamclient", "1.7.1");
+                    c.includeVersion("com.github.hmcts", "authcheckerlib", "2.1.5");
+                    c.includeVersion("com.github.hmcts.javalogging", "logging", "6.1.8");
+                    c.includeVersion("com.github.hmcts.javalogging", "logging", "6.0.1");
+                    c.includeVersion("com.github.hmcts.javalogging", "loggingappinsights", "6.0.1");
+                    c.includeVersion("com.github.hmcts", "serviceauthproviderjavaclient", "4.0.3");
+                    c.includeVersion("com.github.hmcts", "serviceauthproviderjavaclient", "4.0.2");
+                    c.includeVersion("com.github.hmcts", "serviceauthproviderjavaclient", "3.1.4");
                 });
             });
         });
@@ -123,6 +124,7 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private Configuration detachedConfiguration(Project project, Dependency... deps) {
         var result = project.getConfigurations().detachedConfiguration(deps);
+
         // We don't want Gradle to swap in dependency substitutions in composite builds.
         result.getResolutionStrategy().getUseGlobalDependencySubstitutionRules().set(false);
         return result;
@@ -138,30 +140,30 @@ public class CftLibPlugin implements Plugin<Project> {
      */
     private void surfaceSourcesToIDE(Project project) {
         project.getExtensions().getByType(SourceSetContainer.class)
-                .create("cftlibIDE");
+            .create("cftlibIDE");
         var config = project.getConfigurations().getByName("cftlibIDEImplementation");
         var deps = projects.keySet().stream().map(Service::id).toArray(String[]::new);
         config.getDependencies().addAll(Arrays.asList(
-                libDependencies(project, deps)
+            libDependencies(project, deps)
         ));
     }
 
     private void createConfigurations(Project project) {
         project.getConfigurations().getByName("cftlibImplementation")
-                .extendsFrom(project.getConfigurations().getByName("implementation"))
-                .getDependencies().addAll(List.of(libDependencies(project, "bootstrapper", "cftlib-agent")));
+            .extendsFrom(project.getConfigurations().getByName("implementation"))
+            .getDependencies().addAll(List.of(libDependencies(project, "bootstrapper", "cftlib-agent")));
 
         project.getConfigurations().getByName("cftlibRuntimeOnly")
-                .extendsFrom(project.getConfigurations().getByName("runtimeOnly"));
+            .extendsFrom(project.getConfigurations().getByName("runtimeOnly"));
         project.getConfigurations().getByName("cftlibTestImplementation")
-                .extendsFrom(project.getConfigurations().getByName("cftlibImplementation"))
-                .getDependencies().addAll(List.of(
-                        project.getDependencies().create("com.github.hmcts.rse-cft-lib:test-runner:"
-                                + getLibVersion(project))
-                ));
+            .extendsFrom(project.getConfigurations().getByName("cftlibImplementation"))
+            .getDependencies().addAll(List.of(
+                project.getDependencies().create("com.github.hmcts.rse-cft-lib:test-runner:"
+                    + getLibVersion(project))
+            ));
 
         project.getConfigurations().getByName("cftlibTestRuntimeOnly")
-                .extendsFrom(project.getConfigurations().getByName("cftlibRuntimeOnly"));
+            .extendsFrom(project.getConfigurations().getByName("cftlibRuntimeOnly"));
     }
 
     private void createSourceSets(Project project) {
@@ -199,7 +201,9 @@ public class CftLibPlugin implements Plugin<Project> {
             }
 
             var args = "--rse.lib.service_name=" + project.getName();
-            writeManifests(project, lib.getRuntimeClasspath(), clazz, file, args);
+            // Prepend the runtimeclasspath with the project's resources folder to allow live editing of resources
+            var files = project.files("src/main/resources").plus(lib.getRuntimeClasspath());
+            writeManifests(project, files, clazz, file, args);
         });
         manifest.classpath = lib.getRuntimeClasspath();
         // Task performing main class name resolution changed in spring boot 3
@@ -226,8 +230,7 @@ public class CftLibPlugin implements Plugin<Project> {
         var exec = createRunTask(project, "cftlibTest");
         var file = cftlibBuildDir(project).file("libTest").getAsFile();
         var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(),
-                "org.junit.platform.console.ConsoleLauncher", file, "--select-package=uk.gov.hmcts");
-
+            "org.junit.platform.console.ConsoleLauncher", file, "--select-package=uk.gov.hmcts");
         exec.dependsOn(app);
         exec.dependsOn("cftlibClasses");
         exec.dependsOn("cftlibTestClasses");
@@ -241,10 +244,10 @@ public class CftLibPlugin implements Plugin<Project> {
             // Runtime is always the first manifest
             var file = cftlibBuildDir(project).file("runtime").getAsFile();
             Configuration classpath = detachedConfiguration(project,
-                    libDependencies(project, "runtime"));
+                libDependencies(project, "runtime"));
             var task =
-                    createManifestTask(project, "writeManifestRuntime", classpath,
-                            "uk.gov.hmcts.rse.ccd.lib.Application", file);
+                createManifestTask(project, "writeManifestRuntime", classpath,
+                    "uk.gov.hmcts.rse.ccd.lib.Application", file);
             manifestTasks.add(task);
             manifests.add(file);
         }
@@ -252,19 +255,35 @@ public class CftLibPlugin implements Plugin<Project> {
         for (var e : projects.entrySet()) {
             var file = cftlibBuildDir(project).file(e.getKey().id()).getAsFile();
             var args = Lists.newArrayList(
-                    "--rse.lib.service_name=" + e.getKey());
+                "--rse.lib.service_name=" + e.getKey());
 
             args.addAll(e.getKey().args);
             manifestTasks.add(
-                    createCFTManifestTask(project, e.getKey().id(), e.getValue(), file, args.toArray(String[]::new)));
+                createCFTManifestTask(project, e.getKey().id(), e.getValue(), file, args.toArray(String[]::new)));
             manifests.add(file);
         }
     }
 
     private ManifestTask createCFTManifestTask(Project project, String depName, String mainClass, File file,
                                                String... args) {
-        Configuration classpath = detachedConfiguration(project,
+        FileCollection classpath;
+        if (depName.equals("ccd-data-store-api") && project.findProject(":ccd-data-store-api") != null) {
+            // SOW014 - get the classpath via a project dependency
+            var datastore = project.getRootProject().project(":ccd-data-store-api");
+
+            var existing = datastore.getConfigurations().findByName("cftlibWithAgent");
+            if (existing == null) {
+                var agent = datastore.getConfigurations().create("cftlibWithAgent");
+                agent.getDependencies().add(project.getDependencies().create(datastore));
+                agent.getDependencies().addAll(List.of(libDependencies(project, "cftlib-agent")));
+                classpath = agent;
+            } else {
+                classpath = existing;
+            }
+        } else {
+            classpath = detachedConfiguration(project,
                 libDependencies(project, depName, "cftlib-agent"));
+        }
         return createManifestTask(project, "writeManifest" + depName, classpath, mainClass, file, args);
     }
 
@@ -299,21 +318,19 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private String getLibVersion(Project project) {
         return project.getBuildscript().getConfigurations()
-                .getByName("classpath")
-                .getDependencies()
-                .stream()
-                .filter(x -> x.getGroup().equals("com.github.hmcts.rse-cft-lib")
-                        && x.getName().equals("com.github.hmcts.rse-cft-lib.gradle.plugin"))
-                .findFirst()
-                .map(Dependency::getVersion)
-                .orElse("DEV-SNAPSHOT");
+            .getByName("classpath")
+            .getDependencies()
+            .stream()
+            .filter(x -> x.getGroup().equals("com.github.hmcts.rse-cft-lib")
+                && x.getName().equals("com.github.hmcts.rse-cft-lib.gradle.plugin"))
+            .findFirst()
+            .map(Dependency::getVersion)
+            .orElse("DEV-SNAPSHOT");
     }
 
     private CftlibExec createRunTask(Project project, String name) {
         CftlibExec j = project.getTasks().create(name, CftlibExec.class);
         j.getMainClass().set("uk.gov.hmcts.rse.ccd.lib.LibRunner");
-        // TODO: Wire inputs and outputs
-        j.getOutputs().upToDateWhen(x -> false);
 
 
         j.doFirst(x -> {
@@ -330,8 +347,17 @@ public class CftLibPlugin implements Plugin<Project> {
 
     Dependency[] libDependencies(Project project, String... libDeps) {
         return Arrays.stream(libDeps)
-                .map(d -> project.getDependencies()
-                        .create("com.github.hmcts.rse-cft-lib:" + d + ":" + getLibVersion(project)))
-                .toArray(Dependency[]::new);
+            .map(d -> {
+                // If the project exists in our build use a project dependency
+                var proj = project.getRootProject().getAllprojects().stream().filter(x -> x.getName().equals(d)).findFirst();
+                if (proj.isPresent()) {
+                    return project.getDependencies().create(proj.get());
+                }
+
+                // Otherwise bring it in from maven local
+                return project.getDependencies()
+                    .create("com.github.hmcts.rse-cft-lib:" + d + ":" + getLibVersion(project));
+            })
+            .toArray(Dependency[]::new);
     }
 }
