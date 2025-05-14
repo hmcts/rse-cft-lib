@@ -36,3 +36,5 @@ tasks.check.dependsOn gradle.includedBuild('rse-cft-lib-plugin').task(':check')
 project(':ccd-data-store-api') {
   apply from: rootProject.file('buildSrc/configurePublishing.gradle')
 }
+publishToAzureArtifacts.dependsOn (':ccd-data-store-api:publishAllPublicationsToAzureArtifactsRepository')
+
