@@ -79,7 +79,8 @@ def configurePublishing(p) {
 
                             // Only the root project contains the dependency set.
                             // For multimodule subprojects (eg. definition store) we do not publish dependencies.
-                            if (project == rootProject) {
+                            // Data store is now an included build and not the root project and so a special case.
+                            if (project == rootProject || project.name == 'ccd-data-store-api') {
                                 configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each {
                                     def dependencyNode = dependenciesNode.appendNode('dependency')
                                     dependencyNode.appendNode('groupId', it.moduleVersion.id.group)
