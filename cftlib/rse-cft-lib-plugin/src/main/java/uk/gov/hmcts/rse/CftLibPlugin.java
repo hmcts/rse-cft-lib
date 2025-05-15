@@ -98,18 +98,19 @@ public class CftLibPlugin implements Plugin<Project> {
             p.getRepositories().maven(m -> {
                 m.setUrl("https://jitpack.io");
                 m.content(c -> {
-                    c.includeVersion("com.github.hmcts", "idamjavaclient", "2.1.2");
-                    c.includeVersion("com.github.hmcts", "idamjavaclient", "2.1.1");
-                    c.includeVersion("com.github.hmcts", "idamjavaclient", "2.0.1");
-                    c.includeVersion("com.github.hmcts", "idamjavaclient", "1.5.5");
-                    c.includeVersion("com.github.hmcts", "ccdcasedocumentamclient", "1.7.1");
-                    c.includeVersion("com.github.hmcts", "authcheckerlib", "2.1.5");
-                    c.includeVersion("com.github.hmcts.javalogging", "logging", "6.1.8");
-                    c.includeVersion("com.github.hmcts.javalogging", "logging", "6.0.1");
-                    c.includeVersion("com.github.hmcts.javalogging", "loggingappinsights", "6.0.1");
-                    c.includeVersion("com.github.hmcts", "serviceauthproviderjavaclient", "4.0.3");
-                    c.includeVersion("com.github.hmcts", "serviceauthproviderjavaclient", "4.0.2");
-                    c.includeVersion("com.github.hmcts", "serviceauthproviderjavaclient", "3.1.4");
+                    c.includeVersion("com.github.hmcts", "idam-java-client", "2.1.2");
+                    c.includeVersion("com.github.hmcts", "idam-java-client", "2.1.1");
+                    c.includeVersion("com.github.hmcts", "idam-java-client", "2.0.1");
+                    c.includeVersion("com.github.hmcts", "idam-java-client", "1.5.5");
+                    c.includeVersion("com.github.hmcts", "ccd-case-document-am-client", "1.7.1");
+                    c.includeVersion("com.github.hmcts", "auth-checker-lib", "2.1.5");
+                    c.includeVersion("com.github.hmcts.java-logging", "logging", "6.1.8");
+                    c.includeVersion("com.github.hmcts.java-logging", "logging", "6.0.1");
+                    c.includeVersion("com.github.hmcts.java-logging", "logging-appinsights", "6.0.1");
+                    c.includeVersion("com.github.hmcts", "service-auth-provider-java-client", "4.0.3");
+                    c.includeVersion("com.github.hmcts", "service-auth-provider-java-client", "4.0.2");
+                    c.includeVersion("com.github.hmcts", "service-auth-provider-java-client", "3.1.4");
+
                 });
             });
         });
