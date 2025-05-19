@@ -174,6 +174,7 @@ public class CftLibPlugin implements Plugin<Project> {
             x.setRuntimeClasspath(main.plus(x.getRuntimeClasspath()));
         }));
 
+        // TODO: Fix stale up to date checks
         s.add(s.create("cftlibTest", x -> {
             var cftlib = s.getByName("cftlib").getOutput();
             var main = s.getByName("main").getOutput();
@@ -236,6 +237,7 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.dependsOn("cftlibTestClasses");
         exec.args(file);
         exec.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
+        exec.getOutputs().upToDateWhen(x -> false);
         return exec;
     }
 
