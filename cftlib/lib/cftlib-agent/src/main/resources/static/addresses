@@ -41,6 +41,36 @@
         "MATCH": 1.0,
         "MATCH_DESCRIPTION": "EXACT"
       }
-    }
+    },
+        {
+          "DPA": {
+            "UPRN": "12101281",
+            "UDPRN": "2392690",
+            "ADDRESS":"1, Bedford Way, Bedford, BED FORD",
+            "BUILDING_NUMBER": 1,
+            "THOROUGHFARE_NAME": "Bedford Way",
+            "POST_TOWN": "Bedford",
+            "POSTCODE": "BED FORD",
+            "RPC": "2",
+            "X_COORDINATE": 526874.0,
+            "Y_COORDINATE": 176714.0,
+            "STATUS": "APPROVED",
+            "LOGICAL_STATUS_CODE": "1",
+            "CLASSIFICATION_CODE": "RD08",
+            "CLASSIFICATION_CODE_DESCRIPTION": "Sheltered Accommodation",
+            "LOCAL_CUSTODIAN_CODE": 5960,
+            "LOCAL_CUSTODIAN_CODE_DESCRIPTION": "WANDSWORTH",
+            "POSTAL_ADDRESS_CODE": "D",
+            "POSTAL_ADDRESS_CODE_DESCRIPTION": "A record which is linked to PAF",
+            "BLPU_STATE_CODE": null,
+            "BLPU_STATE_CODE_DESCRIPTION": "Unknown/Not applicable",
+            "TOPOGRAPHY_LAYER_TOID": "osgb1000042165547",
+            "LAST_UPDATE_DATE": "13/02/2019",
+            "ENTRY_DATE": "19/03/2002",
+            "LANGUAGE": "EN",
+            "MATCH": 1.0,
+            "MATCH_DESCRIPTION": "EXACT"
+          }
+        }
   ]
 }
