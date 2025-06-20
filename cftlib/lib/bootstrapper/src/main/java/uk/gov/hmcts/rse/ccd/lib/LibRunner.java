@@ -82,6 +82,12 @@ public class LibRunner {
         System.setProperty("ROLE_ASSIGNMENT_DB_USERNAME", "postgres");
         System.setProperty("ROLE_ASSIGNMENT_DB_PASSWORD", "postgres");
 
+        // WA task api
+        System.setProperty("POSTGRES_HOST", dbHost);
+        System.setProperty("POSTGRES_PORT", dbPort);
+        System.setProperty("POSTGRES_USERNAME", "postgres");
+        System.setProperty("POSTGRES_U", "postgres");
+
         var esHost = getenv("SEARCH_ELASTIC_HOSTS") != null ? getenv("SEARCH_ELASTIC_HOSTS") : "http://localhost:9200";
 
         System.setProperty("SEARCH_ELASTIC_HOSTS", esHost);

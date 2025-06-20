@@ -36,7 +36,8 @@ public class CftLibPlugin implements Plugin<Project> {
         Service.ccdUserProfileApi, "uk.gov.hmcts.ccd.UserProfileApplication",
         Service.aacManageCaseAssignment, "uk.gov.hmcts.reform.managecase.Application",
         Service.ccdCaseDocumentAmApi, "uk.gov.hmcts.reform.ccd.documentam.Application",
-        Service.dgDocassemblyApi, "uk.gov.hmcts.reform.dg.docassembly.Application"
+        Service.dgDocassemblyApi, "uk.gov.hmcts.reform.dg.docassembly.Application",
+        Service.waTaskManagementApi, "uk.gov.hmcts.reform.wataskmanagementapi.Application"
     );
     private final List<File> manifests = new ArrayList<>();
     private final List<ManifestTask> manifestTasks = Lists.newArrayList();
@@ -103,10 +104,12 @@ public class CftLibPlugin implements Plugin<Project> {
                     c.includeVersion("com.github.hmcts", "idam-java-client", "2.0.1");
                     c.includeVersion("com.github.hmcts", "idam-java-client", "1.5.5");
                     c.includeVersion("com.github.hmcts", "ccd-case-document-am-client", "1.7.1");
+                    c.includeVersion("com.github.hmcts", "core-case-data-store-client", "4.9.2");
                     c.includeVersion("com.github.hmcts", "auth-checker-lib", "2.1.5");
                     c.includeVersion("com.github.hmcts.java-logging", "logging", "6.1.8");
                     c.includeVersion("com.github.hmcts.java-logging", "logging", "6.0.1");
                     c.includeVersion("com.github.hmcts.java-logging", "logging-appinsights", "6.0.1");
+                    c.includeVersion("com.github.hmcts", "service-auth-provider-java-client", "5.1.2");
                     c.includeVersion("com.github.hmcts", "service-auth-provider-java-client", "4.0.3");
                     c.includeVersion("com.github.hmcts", "service-auth-provider-java-client", "4.0.2");
                     c.includeVersion("com.github.hmcts", "service-auth-provider-java-client", "3.1.4");

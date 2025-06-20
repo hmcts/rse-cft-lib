@@ -11,7 +11,8 @@ public enum Service {
     ccdUserProfileApi,
     aacManageCaseAssignment("--idam.client.secret=${IDAM_OAUTH2_AAC_CLIENT_SECRET:}"),
     ccdCaseDocumentAmApi,
-    dgDocassemblyApi;
+    dgDocassemblyApi,
+    waTaskManagementApi;
 
     public final List<String> args;
 
