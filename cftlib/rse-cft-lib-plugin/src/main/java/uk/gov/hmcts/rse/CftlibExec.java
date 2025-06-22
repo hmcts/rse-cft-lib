@@ -37,7 +37,6 @@ public class CftlibExec extends JavaExec {
             // Required by CDAM
             environment("S2S_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
             environment("IDAM_S2S_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
-            environment("IDAM_S2S-AUTH_MICROSERVICE", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
 
             // Idam simulator
             environment("IDAM_API_URL", "${IDAM_SIMULATOR_BASE_URL:http://localhost:5062}");

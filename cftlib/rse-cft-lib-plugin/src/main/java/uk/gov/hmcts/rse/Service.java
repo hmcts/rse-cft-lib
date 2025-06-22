@@ -12,7 +12,7 @@ public enum Service {
     aacManageCaseAssignment("--idam.client.secret=${IDAM_OAUTH2_AAC_CLIENT_SECRET:}"),
     ccdCaseDocumentAmApi,
     dgDocassemblyApi,
-    waTaskManagementApi;
+    waTaskManagementApi("--idam.s2s-auth.microservice=wa_task_management");
 
     public final List<String> args;
 
