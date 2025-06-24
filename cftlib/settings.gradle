@@ -11,7 +11,7 @@ include 'ccd-data-store-api'
 // PCS API is our new test project now.
 //include 'test-project'
 //include 'pcs-api'
-include 'sptribs-case-api'
+//include 'sptribs-case-api'
 
 new File(rootDir, "lib").listFiles().each {
   if (it.isDirectory()) {

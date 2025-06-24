@@ -39,10 +39,10 @@ project(':ccd-data-store-api') {
 }
 publishToAzureArtifacts.dependsOn (':ccd-data-store-api:publishAllPublicationsToAzureArtifactsRepository')
 
-project(':sptribs-case-api').afterEvaluate {
-    it.tasks.matching {
-        it.name.startsWith("writeManifest")
-    }.each {
-        it.dependsOn rootProject.tasks.publishToMavenLocal
-    }
-}
+//project(':sptribs-case-api').afterEvaluate {
+//    it.tasks.matching {
+//        it.name.startsWith("writeManifest")
+//    }.each {
+//        it.dependsOn rootProject.tasks.publishToMavenLocal
+//    }
+//}
