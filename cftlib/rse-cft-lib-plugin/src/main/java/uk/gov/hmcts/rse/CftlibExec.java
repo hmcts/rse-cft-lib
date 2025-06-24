@@ -77,7 +77,7 @@ public class CftlibExec extends JavaExec {
                 var cmd  = new ArrayList<>(List.of("az", "keyvault", "secret", "show", "-o", "tsv", "--query", "value",
                     // Pin to a specific version of the .env file for reproducible builds.
                     // This will need to be updated when the keyvault is modified.
-                    "--version", "3aa0d793f49049f682aac07c490cc166",
+                    "--version", "0325a462e9d243c6a113c9078795f0b7",
                     "--id", "https://rse-cft-lib.vault.azure.net/secrets/aat-env"));
                 // TODO: use the Azure java client library for cross platform secret retrieval
                 if (Os.isFamily(Os.FAMILY_WINDOWS)) {

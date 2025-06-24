@@ -39,7 +39,7 @@ project(':ccd-data-store-api') {
 }
 publishToAzureArtifacts.dependsOn (':ccd-data-store-api:publishAllPublicationsToAzureArtifactsRepository')
 
-project(':pcs-api').afterEvaluate {
+project(':sptribs-case-api').afterEvaluate {
     it.tasks.matching {
         it.name.startsWith("writeManifest")
     }.each {

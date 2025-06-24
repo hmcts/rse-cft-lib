@@ -28,6 +28,7 @@ services:
 
   xui-manage-cases:
     image: "${XUI_MANAGE_CASES_USE_LOCAL-ghcr.io/}hmcts/rse-cft-lib/xui-webapp:${XUI_MANAGE_CASES_TAG:-latest}"
+#    profiles: ["off"]
     environment:
       FEATURE_APP_INSIGHTS_ENABLED: "false"
       FEATURE_SECURE_COOKIE_ENABLED: "false"
@@ -66,10 +67,13 @@ services:
       SERVICES_ROLE_ASSIGNMENT_API: http://${JVM_HOST:-host.docker.internal}:4096
       HEALTH_ROLE_ASSIGNMENT_API: http://${JVM_HOST:-host.docker.internal}:4096/health
       SERVICES_PRD_COMMONDATA_API: ${SERVICES_PRD_COMMONDATA_API}
-      SERVICES_WORK_ALLOCATION_TASK_API: "http://localhost:8087"
-      HEALTH_WORK_ALLOCATION_TASK_API: "http://localhost:8087/health"
-      SERVICES_LOCATION_REF_API_URL: ${SERVICES_LOCATION_REF_API_URL}
-      FEATURE_WORKALLOCATION_ENABLED: ${FEATURE_WORKALLOCATION_ENABLED:-false}
+      SERVICES_WORK_ALLOCATION_TASK_API: "http://host.docker.internal:8087"
+      HEALTH_WORK_ALLOCATION_TASK_API: "http://host.docker.internal:8087/health"
+      SERVICES_LOCATION_REF_API_URL: http://rd-location-ref-api-aat.service.core-compute-aat.internal
+      SERVICES_LOCATION_API: http://rd-location-ref-api-aat.service.core-compute-aat.internal
+      FEATURE_WORKALLOCATION_ENABLED: ${FEATURE_WORKALLOCATION_ENABLED:-true}
+      SERVICES_CASE_CASEWORKER_API: http://rd-caseworker-ref-api-aat.service.core-compute-aat.internal
+
       # Experimental workaround to expose Referer headers to CCD to enable parameterised CCD events.
       # https://github.com/hmcts/rpx-xui-webapp/blob/c6c35052bbd20ea8c0f47b660baadc0a4d3eb808/api/application.ts#L36
       FEATURE_HELMET_ENABLED: ${FEATURE_HELMET_ENABLED:-false}
@@ -81,6 +85,7 @@ services:
 
   xui-manage-org:
     image: hmctspublic.azurecr.io/xui/mo-webapp:latest
+#    profiles: ["off"]
     environment:
       DEBUG: '*:*'
       IDAM_API_SERVICE: "${XUI_IDAM_API_URL:-https://idam-api.aat.platform.hmcts.net}"

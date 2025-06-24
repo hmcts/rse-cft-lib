@@ -30,3 +30,6 @@
 [submodule "projects/wa-task-management-api"]
 	path = projects/wa-task-management-api
 	url = git@github.com:hmcts/wa-task-management-api.git
+[submodule "cftlib/sptribs-case-api"]
+	path = cftlib/sptribs-case-api
+	url = git@github.com:hmcts/sptribs-case-api.git
