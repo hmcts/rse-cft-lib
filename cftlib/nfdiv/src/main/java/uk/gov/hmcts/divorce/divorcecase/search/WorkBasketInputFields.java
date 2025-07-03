@@ -8,10 +8,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 @Component
-public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
+public class WorkBasketInputFields implements CCDConfig<CaseData, State, UserRole> {
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        configBuilder.searchInputFields().field("applicationType", "applicationType");
+        configBuilder.workBasketInputFields().field("applicationType", "applicationType");
     }
 }

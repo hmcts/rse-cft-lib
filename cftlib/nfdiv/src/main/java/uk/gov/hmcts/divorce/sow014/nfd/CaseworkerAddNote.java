@@ -1,7 +1,5 @@
 package uk.gov.hmcts.divorce.sow014.nfd;
 
-import java.time.Clock;
-
 import static org.jooq.nfdiv.public_.Tables.CASE_NOTES;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -37,9 +35,6 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private IdamService idamService;
-
-    @Autowired
-    private Clock clock;
 
     @Autowired
     private DSLContext db;

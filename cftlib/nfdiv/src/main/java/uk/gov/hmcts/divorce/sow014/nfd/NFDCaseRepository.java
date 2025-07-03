@@ -18,8 +18,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Payment;
-import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Party;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Solicitor;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -77,8 +75,6 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
         caseData.setParties(loadParties(caseRef));
         caseData.setSolicitors(loadSolicitors(caseRef));
 
-        caseData.getApplication().setApplicationPayments(getApplicationPayments(caseRef));
-
         caseData.setMarkdownTabField(renderExampleTab(caseRef, caseData.getNotes()));
 
         caseData.setHyphenatedCaseRef(CaseData.formatCaseRef(caseRef));
@@ -90,24 +86,6 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
 //        addSolicitorClaims(caseRef, caseData);
 
         return caseData;
-    }
-
-    private List<ListValue<Payment>> getApplicationPayments(long caseRef) {
-        return db.fetch(PAYMENT, PAYMENT.CASE_REFERENCE.eq(caseRef)).stream().map(created ->
-                ListValue.<uk.gov.hmcts.divorce.divorcecase.model.Payment>builder()
-                    .id(created.getId())
-                    .value(uk.gov.hmcts.divorce.divorcecase.model.Payment.builder()
-                        .reference(created.getReference())
-                        .created(created.getCreated())
-                        .amount(created.getAmount().intValue())
-                        .serviceRequestReference(created.getServiceRequestReference())
-                        .transactionId(created.getTransactionId())
-                        .channel(created.getChannel())
-                        .status(PaymentStatus.fromLabel(created.getStatus()))
-                        .feeCode(created.getFeeCode())
-                        .build())
-                    .build())
-            .toList();
     }
 
     private List<ListValue<Solicitor>> loadSolicitors(long caseRef) {

@@ -11,8 +11,6 @@ import uk.gov.hmcts.reform.idam.client.IdamClient;
 
 import java.util.concurrent.TimeUnit;
 
-import static uk.gov.hmcts.divorce.common.config.ControllerConstants.BEARER_PREFIX;
-
 @Service
 public class IdamService {
     @Value("${idam.systemupdate.username}")
@@ -23,6 +21,10 @@ public class IdamService {
 
     @Autowired
     private IdamClient idamClient;
+
+    public static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
+    public static final String BEARER_PREFIX = "Bearer" + " ";
+
 
     private final Cache<String, String> cache = Caffeine.newBuilder().expireAfterWrite(2, TimeUnit.HOURS).build();
 

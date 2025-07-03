@@ -32,7 +32,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.sow014.nfd.CreateTestCase;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
@@ -64,10 +63,8 @@ public class TestWithCCD extends CftlibTest {
             "data", Map.of(
                 "applicationType", "soleApplication",
                 "applicant1SolicitorRepresented", "No",
-                "applicant2SolicitorRepresented", "No",
+                "applicant2SolicitorRepresented", "No"
                 // applicant2@gmail.com  =  6e508b49-1fa8-3d3c-8b53-ec466637315b
-                "applicant2UserId", "6e508b49-1fa8-3d3c-8b53-ec466637315b",
-                "stateToTransitionApplicationTo", "AwaitingPayment"
             ),
             "event", Map.of(
                 "id", "create-test-application",
@@ -90,12 +87,11 @@ public class TestWithCCD extends CftlibTest {
         var r = new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class);
         caseRef = Long.parseLong((String) r.get("id"));
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
-        assertThat(r.get("state"), equalTo("AwaitingPayment"));
+        assertThat(r.get("state"), equalTo("Draft"));
 
         // Check we can load the case
         var c = ccdApi.getCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"), getServiceAuth(), String.valueOf(caseRef));
-        assertThat(c.getState(), equalTo("AwaitingPayment"));
-        assertThat(CreateTestCase.submittedCallbackTriggered, equalTo(true));
+        assertThat(c.getState(), equalTo("Draft"));
         assertThat(c.getLastModified(), greaterThan(LocalDateTime.now().minusMinutes(5)));
         var caseData = mapper.readValue(mapper.writeValueAsString(c.getData()), CaseData.class);
         assertThat(caseData.getApplicant1().getFirstName(), equalTo("app1_first_name"));
@@ -148,8 +144,8 @@ public class TestWithCCD extends CftlibTest {
         assertThat(caseData.getNotes().size(), equalTo(2));
         var firstEvent = (Map) auditEvents.getLast();
         // First event should be in the 'Holding' state
-        assertThat(firstEvent.get("state_id"), equalTo("AwaitingPayment"));
-        assertThat(firstEvent.get("state_name"), equalTo("Application awaiting payment"));
+        assertThat(firstEvent.get("state_id"), equalTo("Draft"));
+        assertThat(firstEvent.get("state_name"), equalTo("Draft"));
     }
 
     @Order(4)

@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccessExcludingCAA;
-import uk.gov.hmcts.divorce.divorcecase.model.access.LegalAdvisorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 
 import java.util.EnumSet;
@@ -78,32 +76,11 @@ public enum State {
     Archived,
 
     @CCD(
-        label = "Awaiting admin clarification",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
-    )
-    AwaitingAdminClarification,
-
-    @CCD(
         label = "Awaiting alternative service",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
     AwaitingAlternativeService,
-
-    @CCD(
-        label = "Awaiting amended application",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
-    )
-    AwaitingAmendedApplication,
-
-    @CCD(
-        label = "Awaiting applicant",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class}
-    )
-    AwaitingDocuments,
 
     @CCD(
         label = "Awaiting applicant 1 response",
@@ -132,13 +109,6 @@ public enum State {
         access = {DefaultStateAccess.class}
     )
     AwaitingBailiffService,
-
-    @CCD(
-        label = "Awaiting clarification",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
-    )
-    AwaitingClarification,
 
     @CCD(
         label = "Awaiting conditional order",
@@ -174,27 +144,6 @@ public enum State {
         access = {DefaultStateAccess.class}
     )
     AwaitingGeneralReferralPayment,
-
-    @CCD(
-        label = "Awaiting HWF decision",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class}
-    )
-    AwaitingHWFDecision,
-
-    @CCD(
-        label = "Awaiting HWF evidence",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class}
-    )
-    AwaitingHWFEvidence,
-
-    @CCD(
-        label = "Awaiting HWF part payment",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class}
-    )
-    AwaitingHWFPartPayment,
 
     @CCD(
         label = "Awaiting joint conditional order",
@@ -253,20 +202,6 @@ public enum State {
     AwaitingServicePayment,
 
     @CCD(
-        label = "AwaitingAnswer",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class}
-    )
-    AwaitingAnswer,
-
-    @CCD(
-        label = "AwaitingJS/Nullity",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class}
-    )
-    AwaitingJsNullity,
-
-    @CCD(
         label = "Bailiff service refused",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -318,7 +253,7 @@ public enum State {
     @CCD(
         label = "Draft",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class, SolicitorAccess.class}
+        access = {SolicitorAccess.class}
     )
     Draft,
 
@@ -374,14 +309,14 @@ public enum State {
     @CCD(
         label = "LA Review",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
+        access = {DefaultStateAccess.class}
     )
     LAReview,
 
     @CCD(
         label = "Listed; awaiting pronouncement",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
+        access = {DefaultStateAccess.class}
     )
     AwaitingPronouncement,
 
@@ -391,13 +326,6 @@ public enum State {
         access = {DefaultStateAccess.class}
     )
     NewPaperCase,
-
-    @CCD(
-        label = "Offline document received by CW",
-        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class}
-    )
-    OfflineDocumentReceived,
 
     @CCD(
         label = "Pending hearing date",
@@ -444,7 +372,7 @@ public enum State {
     @CCD(
         label = "Submitted",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class}
+        access = {DefaultStateAccess.class}
     )
     Submitted,
 
@@ -462,79 +390,5 @@ public enum State {
     )
     WelshTranslationReview;
 
-    public static final EnumSet<State> POST_SUBMISSION_STATES = EnumSet.complementOf(EnumSet.of(
-        Draft,
-        AwaitingApplicant1Response,
-        AwaitingApplicant2Response,
-        Applicant2Approved,
-        Withdrawn,
-        Rejected
-    ));
-
-    public static final EnumSet<State> PRE_SUBMISSION_STATES = EnumSet.of(
-        Draft,
-        AwaitingApplicant1Response,
-        AwaitingApplicant2Response,
-        Applicant2Approved,
-        AwaitingPayment,
-        AwaitingHWFDecision,
-        AwaitingDocuments
-    );
-
-    public static final EnumSet<State> POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED = EnumSet.complementOf(EnumSet.of(
-        Draft,
-        AwaitingApplicant1Response,
-        AwaitingApplicant2Response,
-        Applicant2Approved
-    ));
-
-    public static final EnumSet<State> STATES_NOT_WITHDRAWN_OR_REJECTED = EnumSet.complementOf(EnumSet.of(
-        Withdrawn,
-        Rejected
-    ));
-
-    public static final EnumSet<State> PRE_RETURN_TO_PREVIOUS_STATES = EnumSet.complementOf(EnumSet.of(
-        Draft,
-        AwaitingApplicant1Response,
-        AwaitingApplicant2Response,
-        Applicant2Approved,
-        Withdrawn,
-        AwaitingClarification,
-        AwaitingAmendedApplication
-    ));
-
-    public static final EnumSet<State> POST_ISSUE_STATES = EnumSet.complementOf(EnumSet.of(
-        Draft,
-        AwaitingApplicant1Response,
-        AwaitingApplicant2Response,
-        Applicant2Approved,
-        AwaitingPayment,
-        AwaitingHWFDecision,
-        AwaitingDocuments,
-        Submitted,
-        Withdrawn,
-        Rejected
-    ));
-
-    public static final State[] AOS_STATES = {
-        Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral, BailiffRefused,
-        AwaitingServiceConsideration, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
-        AwaitingJudgeClarification, GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGeneralConsideration,
-        GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate
-    };
-
-    public static final State[] POST_SUBMISSION_PRE_AWAITING_CO_STATES = {
-        Submitted,
-        AwaitingService,
-        AwaitingAos,
-        AwaitingServicePayment,
-        AwaitingServiceConsideration,
-        AwaitingBailiffReferral,
-        BailiffRefused,
-        AosOverdue,
-        AosDrafted,
-        AwaitingBailiffService,
-        IssuedToBailiff
-    };
 }
 

@@ -1,7 +1,5 @@
 package uk.gov.hmcts.divorce.divorcecase.model.access;
 
-import uk.gov.hmcts.ccd.sdk.api.Permission;
-
 import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.api.Permission.CR;
@@ -10,6 +8,8 @@ import static uk.gov.hmcts.ccd.sdk.api.Permission.CRUD;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.D;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
+
+import uk.gov.hmcts.ccd.sdk.api.Permission;
 
 public final class Permissions {
 
