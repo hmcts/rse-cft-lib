@@ -1,0 +1,28 @@
+{
+  "data": {
+    "changeOfRepresentatives": [],
+    "supplementaryCaseType": "notApplicable",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "scannedDocuments": [
+      {
+        "value": {
+          "type": "other",
+          "subtype": "aos",
+          "fileName": "doc1.pdf"
+        }
+      }
+    ],
+    "scannedDocumentNames": {
+      "list_items": [
+        {
+          "code": "${json-unit.ignore}",
+          "label": "doc1.pdf"
+        }
+      ]
+    },
+    "dataVersion": 5,
+    "warnings": []
+  }
+}

@@ -1,0 +1,8 @@
+# Your clients
+
+You are representing the following clients:
+
+{% for client in clients %}
+  * {{ client.forename }} who is a {{ client.role }} in the dispute of '{{ client.description}}' for the amount of £{{ client.amountPence / 100 }}
+
+{% endfor %}

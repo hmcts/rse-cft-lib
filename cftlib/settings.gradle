@@ -11,6 +11,8 @@ include 'ccd-data-store-api'
 // PCS API is our new test project now.
 //include 'test-project'
 include 'pcs-api'
+include 'nfdiv'
+include 'nfdiv:flyway'
 
 new File(rootDir, "lib").listFiles().each {
   if (it.isDirectory()) {

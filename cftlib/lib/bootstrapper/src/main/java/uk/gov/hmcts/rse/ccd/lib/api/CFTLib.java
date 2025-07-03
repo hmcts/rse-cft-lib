@@ -58,4 +58,8 @@ public interface CFTLib {
      * Private method invoked automatically to create CCD's global search elasticsearch index.
      */
     void createGlobalSearchIndex();
+
+    String generateDummyS2SToken(String serviceName);
+
+    String buildJwt();
 }
