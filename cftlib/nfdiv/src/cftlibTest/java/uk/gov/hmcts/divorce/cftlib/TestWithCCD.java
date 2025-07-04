@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,6 +24,9 @@ import org.apache.http.util.EntityUtils;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -31,6 +35,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
@@ -228,6 +235,41 @@ public class TestWithCCD extends CftlibTest {
             .ignoreExceptions()
             .until(this::caseAppearsInSearch);
     }
+
+    @Test
+    @Order(7)
+    void shouldCreateSupplementaryDataWhenNotExists() throws Exception {
+        final String url = "http://localhost:4452/cases/" + caseRef + "/supplementary-data";
+        var body = """
+            {
+              "supplementary_data_updates": {
+                "$set": {
+                  "orgs_assigned_users.organisationA": 22
+                },
+                "$inc": {
+                  "orgs_assigned_users.organisationB": -4,
+                  "foo": 5
+                }
+              }
+            }""";
+
+        var request = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
+            url,
+            HttpPost::new);
+
+        request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+
+        var response = HttpClientBuilder.create().build().execute(request);
+
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+
+        var result = mapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
+        var data = (Map) result.get("supplementary_data");
+        assertThat(data.get("orgs_assigned_users.organisationA"), equalTo(22));
+        assertThat(data.get("foo"), equalTo(5));
+        assertThat(data.get("orgs_assigned_users.organisationB"), equalTo(-4));
+    }
+
 
     @SneakyThrows
     private Boolean caseAppearsInSearch() {
