@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -99,7 +100,7 @@ public class TestWithCCD extends CftlibTest {
         // Check we can load the case
         var c = ccdApi.getCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"), getServiceAuth(), String.valueOf(caseRef));
         assertThat(c.getState(), equalTo("Draft"));
-        assertThat(c.getLastModified(), greaterThan(LocalDateTime.now().minusMinutes(5)));
+        assertThat(c.getLastModified(), greaterThan(LocalDateTime.now(ZoneOffset.UTC).minusMinutes(5)));
         var caseData = mapper.readValue(mapper.writeValueAsString(c.getData()), CaseData.class);
         assertThat(caseData.getApplicant1().getFirstName(), equalTo("app1_first_name"));
         assertThat(caseData.getApplicant2().getFirstName(), equalTo("app2_first_name"));
