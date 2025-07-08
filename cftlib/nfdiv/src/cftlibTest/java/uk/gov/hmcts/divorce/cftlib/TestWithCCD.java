@@ -245,7 +245,8 @@ public class TestWithCCD extends CftlibTest {
             {
               "supplementary_data_updates": {
                 "$set": {
-                  "orgs_assigned_users.organisationA": 22
+                  "orgs_assigned_users.organisationA": 22,
+                  "baz": "qux"
                 },
                 "$inc": {
                   "orgs_assigned_users.organisationB": -4,
@@ -269,7 +270,43 @@ public class TestWithCCD extends CftlibTest {
         assertThat(data.get("orgs_assigned_users.organisationA"), equalTo(22));
         assertThat(data.get("foo"), equalTo(5));
         assertThat(data.get("orgs_assigned_users.organisationB"), equalTo(-4));
+        assertThat(data.get("baz"), equalTo("qux"));
     }
+
+    @Test
+    @Order(8)
+    void shouldUpdateSupplementaryData() throws Exception {
+        final String url = "http://localhost:4452/cases/" + caseRef + "/supplementary-data";
+        var body = """
+            {
+              "supplementary_data_updates": {
+                "$set": {
+                  "orgs_assigned_users.organisationA": 21,
+                  "foo": "bar"
+                },
+                "$inc": {
+                  "orgs_assigned_users.organisationB": -4
+                }
+              }
+            }""";
+
+        var request = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
+            url,
+            HttpPost::new);
+
+        request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+
+        var response = HttpClientBuilder.create().build().execute(request);
+
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+
+        var result = mapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
+        var data = (Map) result.get("supplementary_data");
+        assertThat(data.get("orgs_assigned_users.organisationA"), equalTo(21));
+        assertThat(data.get("foo"), equalTo("bar"));
+        assertThat(data.get("orgs_assigned_users.organisationB"), equalTo(-8));
+    }
+
 
 
     @SneakyThrows

@@ -88,7 +88,7 @@ public class CftLibConfig implements CFTLibConfigurer {
 
         // Import CCD definitions
         lib.importJsonDefinition(new File("build/definitions/NFD"));
-        lib.importJsonDefinition(new File("build/definitions/NO_FAULT_DIVORCE_BulkAction"));
+//        lib.importJsonDefinition(new File("build/definitions/NO_FAULT_DIVORCE_BulkAction"));
         // TODO: quick fix to remove AboutToSubmit/Submitted callbacks
         try (Connection c = ControlPlane.getApi().getConnection(Database.Definitionstore)) {
             c.createStatement().execute("delete from event_webhook where webhook_type in ('PRE_SUBMIT', 'POST_SUBMIT')");
