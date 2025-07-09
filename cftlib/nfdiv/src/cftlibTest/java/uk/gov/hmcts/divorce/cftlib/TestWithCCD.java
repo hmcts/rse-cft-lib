@@ -80,7 +80,17 @@ public class TestWithCCD extends CftlibTest {
                 "description", ""
             ),
             "event_token", token,
-            "ignore_warning", false
+            "ignore_warning", false,
+            "supplementary_data_request", Map.of(
+            "$set", Map.of(
+                "orgs_assigned_users.organisationA", 22,
+                    "baz", "qux"
+                ),
+            "$inc", Map.of(
+                "orgs_assigned_users.organisationB", -4,
+                    "foo", 5
+                )
+            )
         );
 
         var createCase =
@@ -268,8 +278,8 @@ public class TestWithCCD extends CftlibTest {
         var result = mapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
         var data = (Map) result.get("supplementary_data");
         assertThat(data.get("orgs_assigned_users.organisationA"), equalTo(22));
-        assertThat(data.get("foo"), equalTo(5));
-        assertThat(data.get("orgs_assigned_users.organisationB"), equalTo(-4));
+        assertThat(data.get("foo"), equalTo(10));
+        assertThat(data.get("orgs_assigned_users.organisationB"), equalTo(-8));
         assertThat(data.get("baz"), equalTo("qux"));
     }
 
@@ -304,12 +314,41 @@ public class TestWithCCD extends CftlibTest {
         var data = (Map) result.get("supplementary_data");
         assertThat(data.get("orgs_assigned_users.organisationA"), equalTo(21));
         assertThat(data.get("foo"), equalTo("bar"));
-        assertThat(data.get("orgs_assigned_users.organisationB"), equalTo(-8));
+        assertThat(data.get("orgs_assigned_users.organisationB"), equalTo(-12));
     }
 
-
-
+    @Test
+    @Order(9)
     @SneakyThrows
+    void fetchesSupplementaryData() {
+        final String url = "http://localhost:4452/internal/cases/" + caseRef + "/event-triggers/caseworker-add-note";
+
+        var request = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
+            url,
+            HttpGet::new);
+
+        request.addHeader("experimental", "true");
+        request.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-start-event-trigger.v2+json;charset=UTF-8");
+
+        var response = HttpClientBuilder.create().build().execute(request);
+
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+
+        var result = mapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
+        var supplementaryData = (Map) result.get("supplementary_data");
+
+        assertNotNull(supplementaryData, "Supplementary data should not be null");
+
+        var orgsAssignedUsers = (Map) supplementaryData.get("orgs_assigned_users");
+        assertThat(orgsAssignedUsers.get("organisationA"), equalTo(21));
+        // Should have been incremented by -4 three times.
+        assertThat(orgsAssignedUsers.get("organisationB"), equalTo(-12));
+        assertThat(supplementaryData.get("foo"), equalTo("bar"));
+        assertThat(supplementaryData.get("baz"), equalTo("qux"));
+    }
+
+        @SneakyThrows
     private Boolean caseAppearsInSearch() {
         var request = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
             "http://localhost:4452/data/internal/searchCases?ctid=NFD&page=1",
