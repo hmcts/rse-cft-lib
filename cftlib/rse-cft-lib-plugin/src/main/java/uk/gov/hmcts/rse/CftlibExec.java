@@ -9,7 +9,9 @@ import org.gradle.api.tasks.JavaExec;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
 
-import java.util.Arrays;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.file.Files;
 import java.util.List;
 
 public class CftlibExec extends JavaExec {
@@ -72,26 +74,32 @@ public class CftlibExec extends JavaExec {
             return;
         }
 
-        SecretClient secretClient = new SecretClientBuilder()
-                .credential(new AzureCliCredentialBuilder().build())
-                .vaultUrl("https://rse-cft-lib.vault.azure.net")
-                .buildClient();
+        var env = CftLibPlugin.cftlibBuildDir(getProject()).file(".aat-env").getAsFile();
+        if (!env.exists()) {
+            try (var os = new OutputStreamWriter(new FileOutputStream(getProject().file(env)))) {
+                SecretClient secretClient = new SecretClientBuilder()
+                        .credential(new AzureCliCredentialBuilder().build())
+                        .vaultUrl("https://rse-cft-lib.vault.azure.net")
+                        .buildClient();
 
-        // Pin to a specific version of the .env file for reproducible builds.
-        // This will need to be updated when the keyvault is modified.
-        String secretVersion = "3aa0d793f49049f682aac07c490cc166";
-        KeyVaultSecret secret = secretClient.getSecret("aat-env", secretVersion);
+                // Pin to a specific version of the .env file for reproducible builds.
+                // This will need to be updated when the keyvault is modified.
+                String secretVersion = "3aa0d793f49049f682aac07c490cc166";
+                KeyVaultSecret secret = secretClient.getSecret("aat-env", secretVersion);
 
-        String[] lines = secret.getValue().split("\n");
-        Arrays.stream(lines)
-                .forEach(line -> {
-                    var index = line.indexOf("=");
-                    if (index != -1) {
-                        var key = line.substring(0, index);
-                        var value = line.substring(index + 1);
-                        environment(key, value);
-                    }
-                });
+                os.write(secret.getValue());
+            }
+        }
+
+        var lines = Files.readAllLines(env.toPath());
+        for (String line : lines) {
+            var index = line.indexOf("=");
+            if (index != -1) {
+                var key = line.substring(0, index);
+                var value = line.substring(index + 1);
+                environment(key, value);
+            }
+        }
 
     }
 
