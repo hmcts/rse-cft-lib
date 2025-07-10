@@ -59,6 +59,8 @@ public class TestWithCCD extends CftlibTest {
     @Autowired
     private CoreCaseDataApi ccdApi;
 
+    private long firstEventId;
+
     @Order(1)
     @Test
     public void caseCreation() throws Exception {
@@ -164,6 +166,7 @@ public class TestWithCCD extends CftlibTest {
         // First event should be in the 'Holding' state
         assertThat(firstEvent.get("state_id"), equalTo("Draft"));
         assertThat(firstEvent.get("state_name"), equalTo("Draft"));
+        this.firstEventId = Long.valueOf(firstEvent.get("event_instance_id").toString());
     }
 
     @Order(4)
@@ -370,6 +373,38 @@ public class TestWithCCD extends CftlibTest {
 
         assertThat("Response code should be 400 Bad Request for unsupported operator",
             response.getStatusLine().getStatusCode(), equalTo(400));
+    }
+
+    @Order(12)
+    @Test
+    public void getCaseEventById() throws Exception {
+        // 1. Build the request URL with the stored caseRef and firstEventId
+        final String url = "http://localhost:4452/internal/cases/" + caseRef + "/events/" + firstEventId;
+        var get = buildRequest("TEST_CASE_WORKER_USER@mailinator.com", url, HttpGet::new);
+
+        // 2. Add required headers
+        get.addHeader("experimental", "true");
+        get.addHeader("Accept", "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-event-view.v2+json;charset=UTF-8");
+
+        // 3. Execute the request
+        var response = HttpClientBuilder.create().build().execute(get);
+        String responseBody = EntityUtils.toString(response.getEntity());
+
+        // 4. Assert status code
+        assertEquals(200, response.getStatusLine().getStatusCode(), "Expected HTTP 200 OK");
+
+        // 5. Deserialize and assert the response body
+        Map<String, Object> result = mapper.readValue(responseBody, new TypeReference<>() {});
+        assertThat(result.get("case_id"), equalTo(String.valueOf(caseRef)));
+
+        Map event = (Map) result.get("event");
+        assertNotNull(event, "Event object should not be null");
+
+        // The 'id' in the event object is the event's internal ID, which is what we queried for
+        assertThat(((Number)event.get("id")).longValue(), equalTo(firstEventId));
+        // The 'event_id' is the string identifier from the definition
+        assertThat(event.get("event_id"), equalTo("create-test-application"));
+        assertThat(event.get("event_name"), equalTo("Create test case"));
     }
 
     @SneakyThrows
