@@ -348,7 +348,31 @@ public class TestWithCCD extends CftlibTest {
         assertThat(supplementaryData.get("baz"), equalTo("qux"));
     }
 
-        @SneakyThrows
+    @Test
+    @Order(11)
+    @SneakyThrows
+    void testUpdateFailsForUnsupportedOperator() {
+        log.info("Testing failure for an unsupported operator on case {}", caseRef);
+        final String url = "http://localhost:4452/cases/" + caseRef + "/supplementary-data";
+        // "$push" is not a supported operator according to the LLD.
+        var body = """
+            {
+              "supplementary_data_updates": {
+                "$push": {
+                  "someArray": "value"
+                }
+              }
+            }""";
+
+        var request = buildRequest("TEST_CASE_WORKER_USER@mailinator.com", url, HttpPost::new);
+        request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+        var response = HttpClientBuilder.create().build().execute(request);
+
+        assertThat("Response code should be 400 Bad Request for unsupported operator",
+            response.getStatusLine().getStatusCode(), equalTo(400));
+    }
+
+    @SneakyThrows
     private Boolean caseAppearsInSearch() {
         var request = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
             "http://localhost:4452/data/internal/searchCases?ctid=NFD&page=1",
