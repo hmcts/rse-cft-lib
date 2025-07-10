@@ -1,15 +1,16 @@
 package uk.gov.hmcts.rse;
 
-import java.io.FileOutputStream;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.azure.identity.AzureCliCredentialBuilder;
+import com.azure.security.keyvault.secrets.SecretClient;
+import com.azure.security.keyvault.secrets.SecretClientBuilder;
+import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import lombok.SneakyThrows;
-import org.apache.tools.ant.taskdefs.condition.Os;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class CftlibExec extends JavaExec {
     public AuthMode authMode = AuthMode.AAT;
@@ -69,34 +70,27 @@ public class CftlibExec extends JavaExec {
             return;
         }
 
-        var env = CftLibPlugin.cftlibBuildDir(getProject()).file(".aat-env").getAsFile();
-        if (!env.exists()) {
-            try (var os = new FileOutputStream(getProject().file(env))) {
-                var cmd  = new ArrayList<>(List.of("az", "keyvault", "secret", "show", "-o", "tsv", "--query", "value",
-                    // Pin to a specific version of the .env file for reproducible builds.
-                    // This will need to be updated when the keyvault is modified.
-                    "--version", "3aa0d793f49049f682aac07c490cc166",
-                    "--id", "https://rse-cft-lib.vault.azure.net/secrets/aat-env"));
-                // TODO: use the Azure java client library for cross platform secret retrieval
-                if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                    cmd.addAll(0, List.of("cmd", "/c"));
-                }
-                getProject().exec(x -> {
-                    x.commandLine(cmd);
-                    x.setStandardOutput(os);
-                });
-            }
-        }
+        SecretClient secretClient = new SecretClientBuilder()
+                .credential(new AzureCliCredentialBuilder().build())
+                .vaultUrl("https://rse-cft-lib.vault.azure.net")
+                .buildClient();
 
-        var lines = Files.readAllLines(env.toPath());
-        for (String line : lines) {
-            var index = line.indexOf("=");
-            if (index != -1) {
-                var key = line.substring(0, index);
-                var value = line.substring(index + 1);
-                environment(key, value);
-            }
-        }
+        // Pin to a specific version of the .env file for reproducible builds.
+        // This will need to be updated when the keyvault is modified.
+        String secretVersion = "3aa0d793f49049f682aac07c490cc166";
+        KeyVaultSecret secret = secretClient.getSecret("aat-env", secretVersion);
+
+        String[] lines = secret.getValue().split("\n");
+        Arrays.stream(lines)
+                .forEach(line -> {
+                    var index = line.indexOf("=");
+                    if (index != -1) {
+                        var key = line.substring(0, index);
+                        var value = line.substring(index + 1);
+                        environment(key, value);
+                    }
+                });
+
     }
 
     @SneakyThrows
