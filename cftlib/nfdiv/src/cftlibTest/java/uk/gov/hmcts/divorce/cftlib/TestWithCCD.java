@@ -37,6 +37,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -58,6 +59,9 @@ public class TestWithCCD extends CftlibTest {
 
     @Autowired
     private CoreCaseDataApi ccdApi;
+
+    @Autowired
+    NamedParameterJdbcTemplate db;
 
     private long firstEventId;
 
@@ -405,6 +409,43 @@ public class TestWithCCD extends CftlibTest {
         // The 'event_id' is the string identifier from the definition
         assertThat(event.get("event_id"), equalTo("create-test-application"));
         assertThat(event.get("event_name"), equalTo("Create test case"));
+    }
+
+    @Order(13)
+    @Test
+    public void testEventSubmissionIsIdempotent() throws Exception {
+        var firstEvent = ccdApi.startEvent(
+            getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
+            getServiceAuth(), String.valueOf(caseRef), "caseworker-add-note").getToken();
+
+        var body = Map.of(
+            "event_data", Map.of(
+                "note", "Test!"
+            ),
+            "event", Map.of(
+                "id", "caseworker-add-note",
+                "summary", "summary",
+                "description", "description"
+            ),
+            "event_token", firstEvent,
+            "ignore_warning", false
+        );
+
+        var e =
+            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
+                "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
+        e.addHeader("experimental", "true");
+        e.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
+
+        e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        String sql = "SELECT count(*) FROM case_notes";
+        Integer initialCount = db.queryForObject(sql, Map.of(), Integer.class);
+        var response = HttpClientBuilder.create().build().execute(e);
+        // Resubmit the same event a second time which should have no effect.
+        HttpClientBuilder.create().build().execute(e);
+        Integer thirdCount = db.queryForObject(sql, Map.of(), Integer.class);
+        assertThat("The note count should increment by exactly one.", thirdCount, equalTo(initialCount + 1));
     }
 
     @SneakyThrows
