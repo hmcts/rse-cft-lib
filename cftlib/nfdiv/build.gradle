@@ -1,5 +1,6 @@
 import uk.gov.hmcts.rse.AuthMode
 import uk.gov.hmcts.rse.ManifestTask
+import uk.gov.hmcts.rse.CftlibExec
 
 buildscript {
   repositories {
@@ -423,6 +424,10 @@ generateTypeScript {
 
 ccd {
   configDir = file('build/definitions')
+}
+
+tasks.withType(CftlibExec.class).configureEach {
+  environment 'CCD_DECENTRALISED_CASE-TYPE-SERVICE-URLS_NFD', 'http://localhost:4013'
 }
 
 bootWithCCD {
