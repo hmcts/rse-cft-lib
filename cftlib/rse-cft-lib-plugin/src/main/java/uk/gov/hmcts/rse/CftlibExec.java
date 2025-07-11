@@ -74,7 +74,11 @@ public class CftlibExec extends JavaExec {
             return;
         }
 
-        var env = CftLibPlugin.cftlibBuildDir(getProject()).file(".aat-env").getAsFile();
+        // Pin to a specific version of the .env file for reproducible builds.
+        // This will need to be updated when the keyvault is modified.
+        String secretVersion = "3aa0d793f49049f682aac07c490cc166";
+
+        var env = CftLibPlugin.cftlibBuildDir(getProject()).file(".aat-env-" + secretVersion).getAsFile();
         if (!env.exists()) {
             try (var os = new OutputStreamWriter(new FileOutputStream(getProject().file(env)))) {
                 SecretClient secretClient = new SecretClientBuilder()
@@ -82,9 +86,6 @@ public class CftlibExec extends JavaExec {
                         .vaultUrl("https://rse-cft-lib.vault.azure.net")
                         .buildClient();
 
-                // Pin to a specific version of the .env file for reproducible builds.
-                // This will need to be updated when the keyvault is modified.
-                String secretVersion = "3aa0d793f49049f682aac07c490cc166";
                 KeyVaultSecret secret = secretClient.getSecret("aat-env", secretVersion);
 
                 os.write(secret.getValue());
