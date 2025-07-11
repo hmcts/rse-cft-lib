@@ -27,3 +27,6 @@
 	path = cftlib/dtsse-ccd-config-generator
 	url = git@github.com:hmcts/dtsse-ccd-config-generator.git
 	branch = runtimelib
+[submodule "cftlib/sptribs-case-api"]
+	path = cftlib/sptribs-case-api
+	url = git@github.com:hmcts/sptribs-case-api.git
