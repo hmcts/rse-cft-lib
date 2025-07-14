@@ -1,15 +1,18 @@
 package uk.gov.hmcts.rse;
 
-import java.io.FileOutputStream;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.azure.identity.AzureCliCredentialBuilder;
+import com.azure.security.keyvault.secrets.SecretClient;
+import com.azure.security.keyvault.secrets.SecretClientBuilder;
+import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import lombok.SneakyThrows;
-import org.apache.tools.ant.taskdefs.condition.Os;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
+
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.util.List;
 
 public class CftlibExec extends JavaExec {
     public AuthMode authMode = AuthMode.AAT;
@@ -71,22 +74,21 @@ public class CftlibExec extends JavaExec {
             return;
         }
 
-        var env = CftLibPlugin.cftlibBuildDir(getProject()).file(".aat-env").getAsFile();
+        // Pin to a specific version of the .env file for reproducible builds.
+        // This will need to be updated when the keyvault is modified.
+        String secretVersion = "3aa0d793f49049f682aac07c490cc166";
+
+        var env = CftLibPlugin.cftlibBuildDir(getProject()).file(".aat-env-" + secretVersion).getAsFile();
         if (!env.exists()) {
-            try (var os = new FileOutputStream(getProject().file(env))) {
-                var cmd  = new ArrayList<>(List.of("az", "keyvault", "secret", "show", "-o", "tsv", "--query", "value",
-                    // Pin to a specific version of the .env file for reproducible builds.
-                    // This will need to be updated when the keyvault is modified.
-                    "--version", "3aa0d793f49049f682aac07c490cc166",
-                    "--id", "https://rse-cft-lib.vault.azure.net/secrets/aat-env"));
-                // TODO: use the Azure java client library for cross platform secret retrieval
-                if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                    cmd.addAll(0, List.of("cmd", "/c"));
-                }
-                getProject().exec(x -> {
-                    x.commandLine(cmd);
-                    x.setStandardOutput(os);
-                });
+            try (var os = new OutputStreamWriter(new FileOutputStream(getProject().file(env)))) {
+                SecretClient secretClient = new SecretClientBuilder()
+                        .credential(new AzureCliCredentialBuilder().build())
+                        .vaultUrl("https://rse-cft-lib.vault.azure.net")
+                        .buildClient();
+
+                KeyVaultSecret secret = secretClient.getSecret("aat-env", secretVersion);
+
+                os.write(secret.getValue());
             }
         }
 
@@ -99,6 +101,7 @@ public class CftlibExec extends JavaExec {
                 environment(key, value);
             }
         }
+
     }
 
     @SneakyThrows
