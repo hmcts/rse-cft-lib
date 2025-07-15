@@ -170,7 +170,6 @@ public class TestWithCCD extends CftlibTest {
         // First event should be in the 'Holding' state
         assertThat(firstEvent.get("state_id"), equalTo("Draft"));
         assertThat(firstEvent.get("state_name"), equalTo("Draft"));
-        this.firstEventId = Long.valueOf(firstEvent.get("event_instance_id").toString());
     }
 
     @Order(4)
@@ -379,37 +378,6 @@ public class TestWithCCD extends CftlibTest {
             response.getStatusLine().getStatusCode(), equalTo(400));
     }
 
-    @Order(12)
-    @Test
-    public void getCaseEventById() throws Exception {
-        // 1. Build the request URL with the stored caseRef and firstEventId
-        final String url = "http://localhost:4452/internal/cases/" + caseRef + "/events/" + firstEventId;
-        var get = buildRequest("TEST_CASE_WORKER_USER@mailinator.com", url, HttpGet::new);
-
-        // 2. Add required headers
-        get.addHeader("experimental", "true");
-        get.addHeader("Accept", "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-event-view.v2+json;charset=UTF-8");
-
-        // 3. Execute the request
-        var response = HttpClientBuilder.create().build().execute(get);
-        String responseBody = EntityUtils.toString(response.getEntity());
-
-        // 4. Assert status code
-        assertEquals(200, response.getStatusLine().getStatusCode(), "Expected HTTP 200 OK");
-
-        // 5. Deserialize and assert the response body
-        Map<String, Object> result = mapper.readValue(responseBody, new TypeReference<>() {});
-        assertThat(result.get("case_id"), equalTo(String.valueOf(caseRef)));
-
-        Map event = (Map) result.get("event");
-        assertNotNull(event, "Event object should not be null");
-
-        // The 'id' in the event object is the event's internal ID, which is what we queried for
-        assertThat(((Number)event.get("id")).longValue(), equalTo(firstEventId));
-        // The 'event_id' is the string identifier from the definition
-        assertThat(event.get("event_id"), equalTo("create-test-application"));
-        assertThat(event.get("event_name"), equalTo("Create test case"));
-    }
 
     @Order(13)
     @Test
@@ -448,6 +416,63 @@ public class TestWithCCD extends CftlibTest {
         assertThat("The note count should increment by exactly one.", thirdCount, equalTo(initialCount + 1));
     }
 
+    @Order(14)
+    @Test
+    public void getEventHistory_ShouldReturnAllEventsWithCorrectState() throws Exception {
+        String url = String.format("http://localhost:4452/internal/cases/%s", caseRef);
+
+        var get = buildRequest("TEST_CASE_WORKER_USER@mailinator.com", url, HttpGet::new);
+        get.addHeader("experimental", "true");
+        get.addHeader("Accept", "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-case-view.v2+json;charset=UTF-8");
+
+        var response = HttpClientBuilder.create().build().execute(get);
+
+        Map<String, Object> result = mapper.readValue(EntityUtils.toString(response.getEntity()), new TypeReference<>() {});
+
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
+
+        List auditEvents = (List) result.get("events");
+        assertThat("Incorrect number of events found", auditEvents.size(), equalTo(7));
+
+        // Get the oldest event (the creation event), which is the last in the list
+        var firstEvent = (Map) auditEvents.get(auditEvents.size() - 1);
+        assertThat("First event should be in the 'Draft' state", firstEvent.get("state_id"), equalTo("Draft"));
+        assertThat("First event should have the state name 'Draft'", firstEvent.get("state_name"), equalTo("Draft"));
+
+        this.firstEventId = Long.valueOf(firstEvent.get("id").toString());
+    }
+
+    @Order(15)
+    @Test
+    public void getCaseEventById() throws Exception {
+        // 1. Build the request URL with the stored caseRef and firstEventId
+        final String url = "http://localhost:4452/internal/cases/" + caseRef + "/events/" + firstEventId;
+        var get = buildRequest("TEST_CASE_WORKER_USER@mailinator.com", url, HttpGet::new);
+
+        // 2. Add required headers
+        get.addHeader("experimental", "true");
+        get.addHeader("Accept", "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-event-view.v2+json;charset=UTF-8");
+
+        // 3. Execute the request
+        var response = HttpClientBuilder.create().build().execute(get);
+        String responseBody = EntityUtils.toString(response.getEntity());
+
+        // 4. Assert status code
+        assertEquals(200, response.getStatusLine().getStatusCode(), "Expected HTTP 200 OK");
+
+        // 5. Deserialize and assert the response body
+        Map<String, Object> result = mapper.readValue(responseBody, new TypeReference<>() {});
+        assertThat(result.get("case_id"), equalTo(String.valueOf(caseRef)));
+
+        Map event = (Map) result.get("event");
+        assertNotNull(event, "Event object should not be null");
+
+        // The 'id' in the event object is the event's internal ID, which is what we queried for
+        assertThat(((Number)event.get("id")).longValue(), equalTo(firstEventId));
+        // The 'event_id' is the string identifier from the definition
+        assertThat(event.get("event_id"), equalTo("create-test-application"));
+        assertThat(event.get("event_name"), equalTo("Create test case"));
+    }
     @SneakyThrows
     private Boolean caseAppearsInSearch() {
         var request = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
