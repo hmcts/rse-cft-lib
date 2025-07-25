@@ -36,6 +36,10 @@ public class CaseData {
     )
     private ApplicationType applicationType;
 
+    @CCD( access = {DefaultAccess.class})
+    private String setInAboutToStart;
+
+
     @JsonUnwrapped(prefix = "applicant1")
     @Builder.Default
     @CCD(access = {DefaultAccess.class})

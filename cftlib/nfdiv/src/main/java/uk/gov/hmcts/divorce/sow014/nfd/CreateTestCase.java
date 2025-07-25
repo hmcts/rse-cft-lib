@@ -99,6 +99,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
         new PageBuilder(configBuilder
             .event(TEST_CREATE)
             .initialState(Draft)
+            .aboutToStartCallback(this::start)
             .aboutToSubmitCallback(this::submit)
             .name("Create test case")
             .grant(CREATE_READ_UPDATE, roles.toArray(UserRole[]::new))
@@ -106,6 +107,14 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             .page("Create test case")
             .mandatory(CaseData::getApplicationType)
             .done();
+    }
+
+    private AboutToStartOrSubmitResponse<CaseData, State> start(CaseDetails<CaseData, State> caseDetails) {
+        var data = caseDetails.getData();
+        data.setSetInAboutToStart("My custom value");
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .build();
     }
 
     private AboutToStartOrSubmitResponse<CaseData, State> submit(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> before) {

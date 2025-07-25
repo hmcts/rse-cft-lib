@@ -68,10 +68,16 @@ public class TestWithCCD extends CftlibTest {
     @Order(1)
     @Test
     public void caseCreation() throws Exception {
-        var token = ccdApi.startCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"),
+        var start = ccdApi.startCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"),
             getServiceAuth(),
             "NFD",
-            "create-test-application").getToken();
+            "create-test-application");
+
+        var startData = mapper.readValue(mapper.writeValueAsString(start.getCaseDetails().getData()), CaseData.class);
+        assertThat(startData.getSetInAboutToStart(), equalTo("My custom value"));
+
+        start.getCaseDetails();
+        var token = start.getToken();
 
         var body = Map.of(
             "data", Map.of(
