@@ -62,4 +62,6 @@ public interface CFTLib {
     String generateDummyS2SToken(String serviceName);
 
     String buildJwt();
+
+    String getCaseTypeDefinitionFromDefinitionStore(String caseTypeId);
 }

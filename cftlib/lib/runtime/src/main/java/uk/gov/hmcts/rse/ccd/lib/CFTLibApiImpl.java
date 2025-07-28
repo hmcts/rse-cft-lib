@@ -225,4 +225,31 @@ public class CFTLibApiImpl implements CFTLib {
                             + response.getStatusLine().getStatusCode() + " " + body);
         }
     }
+
+    /**
+     * Retrieves the definition for a given case type as a JSON string.
+     * This calls the ccd-definition-store API endpoint to get the fully resolved
+     * case type definition.
+     */
+    @SneakyThrows
+    @Override
+    public String getCaseTypeDefinitionFromDefinitionStore(String caseTypeId) {
+        var url = "http://localhost:4451/api/data/case-type/" + caseTypeId;
+        var request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("Authorization", "Bearer " + buildJwt())
+            .header("ServiceAuthorization", generateDummyS2SToken("ccd_data"))
+            .GET()
+            .build();
+
+        var client = HttpClient.newHttpClient();
+        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (!String.valueOf(response.statusCode()).startsWith("2")) {
+            throw new RuntimeException("Failed to get case type '" + caseTypeId + "'. HTTP Status: "
+                + response.statusCode() + ", Body: " + response.body());
+        }
+
+        return response.body();
+    }
 }
