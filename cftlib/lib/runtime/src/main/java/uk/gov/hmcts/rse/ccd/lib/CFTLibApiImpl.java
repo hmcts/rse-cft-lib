@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +54,44 @@ public class CFTLibApiImpl implements CFTLib {
             .withExpiresAt(Date.from(LocalDateTime.now().plusDays(100).toInstant(ZoneOffset.UTC)))
             .withClaim("tokenName", "access_token")
             .sign(Algorithm.HMAC256("secret"));
+    }
+
+    @SneakyThrows
+    @Override
+    public void dumpDefinitionSnapshots() {
+        // 1. Define and create the output directory.
+        File outputDir = new File("build/cftlib/definition-snapshots");
+        Files.createDirectories(outputDir.toPath());
+        System.out.println("Dumping definition snapshots to " + outputDir.getCanonicalPath());
+
+        // 2. Get a unique list of case type references from the database.
+        List<String> caseTypeReferences = new ArrayList<>();
+        try (Connection c = getConnection(Database.Definitionstore);
+             var s = c.createStatement();
+             var rs = s.executeQuery("select distinct reference from case_type")) {
+            while (rs.next()) {
+                caseTypeReferences.add(rs.getString("reference"));
+            }
+        }
+
+        System.out.println("Found case types: " + String.join(", ", caseTypeReferences));
+
+        // 3. For each case type, fetch its definition and write it to a file.
+        for (String caseTypeRef : caseTypeReferences) {
+            try {
+                System.out.println("Dumping definition for: " + caseTypeRef);
+                // Fetch the definition as a JSON string.
+                String definitionJson = getCaseTypeDefinitionFromDefinitionStore(caseTypeRef);
+
+                // Write the JSON string to a file named after the case type.
+                var outputFile = new File(outputDir, caseTypeRef + ".json");
+                Files.writeString(outputFile.toPath(), definitionJson, StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                // Log an error but continue with the next case type.
+                System.err.println("Failed to dump definition for " + caseTypeRef + ": " + e.getMessage());
+            }
+        }
+        System.out.println("Definition snapshot dump finished.");
     }
 
     @SneakyThrows
@@ -232,8 +271,7 @@ public class CFTLibApiImpl implements CFTLib {
      * case type definition.
      */
     @SneakyThrows
-    @Override
-    public String getCaseTypeDefinitionFromDefinitionStore(String caseTypeId) {
+    private String getCaseTypeDefinitionFromDefinitionStore(String caseTypeId) {
         var url = "http://localhost:4451/api/data/case-type/" + caseTypeId;
         var request = HttpRequest.newBuilder()
             .uri(URI.create(url))

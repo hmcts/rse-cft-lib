@@ -50,7 +50,11 @@ public class CftLibPlugin implements Plugin<Project> {
 
         registerDependencyRepositories(project);
         createManifestTasks(project);
-        createBootWithCCDTask(project);
+        var manifestTask = createHostAppManifestTask(project);
+        createBootWithCCDTask(project, manifestTask, "bootWithCCD");
+        var dumpDefinitions = createBootWithCCDTask(project, manifestTask, "dumpCCDDefinitions");
+        dumpDefinitions.environment("RSE_LIB_DUMP_DEFINITIONS", "true");
+
         configureJacoco(project, createTestTask(project));
         // TODO: Fix for latest intellij
         //surfaceSourcesToIDE(project);
@@ -185,13 +189,28 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
 
-    private void createBootWithCCDTask(Project project) {
+    private CftlibExec createBootWithCCDTask(Project project, ManifestTask hostAppManifestTask, String name) {
+        var exec = createRunTask(project, name);
+        exec.dependsOn(hostAppManifestTask);
+
+        exec.dependsOn("cftlibClasses");
+
+        exec.args(getHostApplicationManifestFile(project));
+        return exec;
+    }
+
+
+    private File getHostApplicationManifestFile(Project project) {
+        return cftlibBuildDir(project).file("hostApplication").getAsFile();
+    }
+
+    private ManifestTask createHostAppManifestTask(Project project) {
         SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
         var lib = s.getByName("cftlib");
 
-        var file = cftlibBuildDir(project).file("hostApplication").getAsFile();
-        var manifest = project.getTasks().create("createManifestApplication", ManifestTask.class);
-        manifest.doFirst(m -> {
+        var hostApplicationManifest = getHostApplicationManifestFile(project);
+        var manifestTask = project.getTasks().create("createManifestApplication", ManifestTask.class);
+        manifestTask.doFirst(m -> {
             JavaExec e = (JavaExec) project.getTasks().getByName("bootRun");
             String clazz = "";
 
@@ -204,24 +223,19 @@ public class CftLibPlugin implements Plugin<Project> {
             var args = "--rse.lib.service_name=" + project.getName();
             // Prepend the runtimeclasspath with the project's resources folder to allow live editing of resources
             var files = project.files("src/main/resources").plus(lib.getRuntimeClasspath());
-            writeManifests(project, files, clazz, file, args);
+            writeManifests(project, files, clazz, hostApplicationManifest, args);
         });
-        manifest.classpath = lib.getRuntimeClasspath();
+        manifestTask.classpath = lib.getRuntimeClasspath();
         // Task performing main class name resolution changed in spring boot 3
         for (String name : List.of("resolveMainClassName", "bootRunMainClassName")) {
             var t = project.getTasks().findByName(name);
             if (null != t) {
-                manifest.dependsOn(t);
+                manifestTask.dependsOn(t);
             }
         }
 
-        manifestTasks.add(manifest);
-        var exec = createRunTask(project, "bootWithCCD");
-        exec.dependsOn(manifest);
-
-        exec.dependsOn("cftlibClasses");
-
-        exec.args(file);
+        manifestTasks.add(manifestTask);
+        return manifestTask;
     }
 
     private CftlibExec createTestTask(Project project) {

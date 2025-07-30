@@ -63,5 +63,5 @@ public interface CFTLib {
 
     String buildJwt();
 
-    String getCaseTypeDefinitionFromDefinitionStore(String caseTypeId);
+    void dumpDefinitionSnapshots();
 }
