@@ -41,6 +41,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.sow014.nfd.CreateTestCase;
+import uk.gov.hmcts.divorce.sow014.nfd.FailingSubmittedCallback;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
@@ -479,6 +481,41 @@ public class TestWithCCD extends CftlibTest {
         assertThat(event.get("event_id"), equalTo("create-test-application"));
         assertThat(event.get("event_name"), equalTo("Create test case"));
     }
+
+    @SneakyThrows
+    @Order(16)
+    @Test
+    public void testSubmittedCallback() {
+        var token = ccdApi.startEvent(
+            getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
+            getServiceAuth(), String.valueOf(caseRef), FailingSubmittedCallback.class.getSimpleName()).getToken();
+
+        var body = Map.of(
+            "data", Map.of(
+                "note", "Test!"
+            ),
+            "event", Map.of(
+                "id", FailingSubmittedCallback.class.getSimpleName(),
+                "summary", "summary",
+                "description", "description"
+            ),
+            "event_token", token,
+            "ignore_warning", false
+        );
+
+        var e =
+            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
+                "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
+        e.addHeader("experimental", "true");
+        e.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
+
+        e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        var response = HttpClientBuilder.create().build().execute(e);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
+        assertThat(FailingSubmittedCallback.callbackAttempts, equalTo(3));
+    }
+
     @SneakyThrows
     private Boolean caseAppearsInSearch() {
         var request = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",

@@ -57,6 +57,8 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
     private static final String SOLE_APPLICATION = "classpath:data/sole.json";
     private static final String JOINT_APPLICATION = "classpath:data/joint.json";
     public static volatile boolean submittedCallbackTriggered = false;
+    public static volatile CaseData submitted;
+
 
     @Getter
     enum SolicitorRoles {
@@ -101,12 +103,20 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             .initialState(Draft)
             .aboutToStartCallback(this::start)
             .aboutToSubmitCallback(this::submit)
+            .submittedCallback(this::submitted)
             .name("Create test case")
             .grant(CREATE_READ_UPDATE, roles.toArray(UserRole[]::new))
             .grantHistoryOnly(SUPER_USER, CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, CITIZEN, JUDGE))
             .page("Create test case")
             .mandatory(CaseData::getApplicationType)
             .done();
+    }
+
+    private SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                                CaseDetails<CaseData, State> before) {
+        submittedCallbackTriggered = true;
+        submitted = details.getData();
+        return SubmittedCallbackResponse.builder().build();
     }
 
     private AboutToStartOrSubmitResponse<CaseData, State> start(CaseDetails<CaseData, State> caseDetails) {
