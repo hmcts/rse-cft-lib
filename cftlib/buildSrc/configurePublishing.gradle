@@ -30,7 +30,10 @@ def configurePublishing(p) {
                     from(sourceSets.main.output.classesDirs) {
                         include("uk/gov/hmcts/ccd/domain/model/**")
                         include("uk/gov/hmcts/ccd/data/casedetails/SecurityClassification.class")
+                        include("uk/gov/hmcts/ccd/config/MessagingProperties.class")
                         include("uk/gov/hmcts/ccd/domain/service/message/additionaldata/**")
+                        include("uk/gov/hmcts/ccd/domain/service/message/MessageContext.class")
+                        include("uk/gov/hmcts/ccd/endpoint/exceptions/ServiceException.class")
                     }
                 }
             }

@@ -430,7 +430,7 @@ tasks.withType(CftlibExec.class).configureEach {
   environment 'CCD_DECENTRALISED_CASE-TYPE-SERVICE-URLS_NFD', 'http://localhost:4013'
 }
 
-bootWithCCD {
+tasks.withType(CftlibExec).configureEach {
   group = 'ccd tasks'
   dependsOn(loadEnvSecrets)
   authMode = AuthMode.Local
