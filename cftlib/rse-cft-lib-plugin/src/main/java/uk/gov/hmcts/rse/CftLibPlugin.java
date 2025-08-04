@@ -54,6 +54,7 @@ public class CftLibPlugin implements Plugin<Project> {
         createBootWithCCDTask(project, manifestTask, "bootWithCCD");
         var dumpDefinitions = createBootWithCCDTask(project, manifestTask, "dumpCCDDefinitions");
         dumpDefinitions.environment("RSE_LIB_DUMP_DEFINITIONS", "true");
+        project.getTasks().getByName("assemble").dependsOn(dumpDefinitions);
 
         configureJacoco(project, createTestTask(project));
         // TODO: Fix for latest intellij

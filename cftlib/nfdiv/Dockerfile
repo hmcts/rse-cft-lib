@@ -6,6 +6,7 @@ FROM hmctspublic.azurecr.io/base/java:21-distroless
 USER hmcts
 COPY build/libs/nfdiv-case-api.jar /opt/app/
 COPY lib/applicationinsights.json /opt/app/
+COPY build/cftlib/definition-snapshots /opt/app/build/cftlib/definition-snapshots
 
 EXPOSE 4013
 CMD [ "nfdiv-case-api.jar" ]

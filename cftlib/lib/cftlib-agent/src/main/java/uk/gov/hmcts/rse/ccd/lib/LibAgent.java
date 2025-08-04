@@ -51,8 +51,10 @@ public class LibAgent {
         for (CFTLibConfigurer configurer : configurers) {
             configurer.configure(ControlPlane.getApi());
         }
-        if (!configurers.isEmpty() && dumpDefinitions) {
+        if (!configurers.isEmpty()) {
             ControlPlane.getApi().dumpDefinitionSnapshots();
+        }
+        if (dumpDefinitions) {
             // This is a one off build-time operation to capture static definition snapshots.
             Runtime.getRuntime().halt(0);
         }

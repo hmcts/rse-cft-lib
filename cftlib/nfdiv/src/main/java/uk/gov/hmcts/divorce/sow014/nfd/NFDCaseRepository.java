@@ -32,7 +32,6 @@ import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.jooq.nfdiv.ccd.Tables.FAILED_JOBS;
 import static org.jooq.nfdiv.civil.Civil.CIVIL;
 import static org.jooq.nfdiv.civil.Tables.SOLICITORS;
 import static org.jooq.nfdiv.civil.tables.Parties.PARTIES;
@@ -161,9 +160,7 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
         PebbleTemplate compiledTemplate = pebl.getTemplate("admin");
         Writer writer = new StringWriter();
 
-        var failedJobs = db.fetch(FAILED_JOBS, FAILED_JOBS.REFERENCE.eq(caseRef));
         Map<String, Object> context = new HashMap<>();
-        context.put("failedJobs", failedJobs);
         context.put("caseRef", caseRef);
 
         compiledTemplate.evaluate(writer, context);
