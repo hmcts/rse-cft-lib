@@ -87,7 +87,7 @@ public class CftLibConfig implements CFTLibConfigurer {
         }
 
         // Import CCD definitions
-        lib.importJsonDefinition(new File("build/definitions/NFD"));
+        lib.importJsonDefinition(new File("build/definitions/NFD-2498"));
 //        lib.importJsonDefinition(new File("build/definitions/NO_FAULT_DIVORCE_BulkAction"));
         // TODO: quick fix to remove AboutToSubmit/Submitted callbacks
         try (Connection c = ControlPlane.getApi().getConnection(Database.Definitionstore)) {

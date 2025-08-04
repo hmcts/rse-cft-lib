@@ -72,7 +72,7 @@ public class TestWithCCD extends CftlibTest {
     public void caseCreation() throws Exception {
         var start = ccdApi.startCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"),
             getServiceAuth(),
-            "NFD",
+            "NFD-2498",
             "create-test-application");
 
         var startData = mapper.readValue(mapper.writeValueAsString(start.getCaseDetails().getData()), CaseData.class);
@@ -109,7 +109,7 @@ public class TestWithCCD extends CftlibTest {
 
         var createCase =
             buildRequest("TEST_SOLICITOR@mailinator.com",
-                "http://localhost:4452/data/case-types/NFD/cases?ignore-warning=false", HttpPost::new);
+                "http://localhost:4452/data/case-types/NFD-2498/cases?ignore-warning=false", HttpPost::new);
         createCase.addHeader("experimental", "true");
         createCase.addHeader("Accept",
             "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-case.v2+json;charset=UTF-8");
@@ -559,7 +559,7 @@ public class TestWithCCD extends CftlibTest {
     @SneakyThrows
     private Boolean caseAppearsInSearch() {
         var request = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-            "http://localhost:4452/data/internal/searchCases?ctid=NFD&page=1",
+            "http://localhost:4452/data/internal/searchCases?ctid=NFD-2498&page=1",
             HttpPost::new);
         var query = """
             {

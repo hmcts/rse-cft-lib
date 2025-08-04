@@ -53,10 +53,10 @@ public class LibAgent {
         }
         if (!configurers.isEmpty()) {
             ControlPlane.getApi().dumpDefinitionSnapshots();
-        }
-        if (dumpDefinitions) {
-            // This is a one off build-time operation to capture static definition snapshots.
-            Runtime.getRuntime().halt(0);
+            if (dumpDefinitions) {
+                // This is a one off build-time operation to capture static definition snapshots.
+                Runtime.getRuntime().halt(0);
+            }
         }
     }
 }

@@ -427,12 +427,7 @@ ccd {
 }
 
 tasks.withType(CftlibExec.class).configureEach {
-  environment 'CCD_DECENTRALISED_CASE-TYPE-SERVICE-URLS_NFD', 'http://localhost:4013'
-}
-
-bootWithCCD {
   group = 'ccd tasks'
-  dependsOn(loadEnvSecrets)
   authMode = AuthMode.Local
 
   doFirst() {
@@ -442,13 +437,15 @@ bootWithCCD {
 //      def value = it.substring(index + 1)
 //      environment key, value
 //    }
+    environment 'CCD_DECENTRALISED_CASE-TYPE-SERVICE-URLS_NFD', 'http://localhost:4013'
+    environment 'RSE_LIB_ADDITIONAL_DATABASES', 'nfd'
+    environment 'CHANGE_ID', '2498'
     environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
     environment 'LOGGING_LEVEL_UK_GOV_HMCTS_DIVORCE', 'info'
     environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
     environment 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
     environment 'XUI_MO_PORT', '3009'
     environment 'RSE_LIB_ADDITIONAL_DATABASES', 'nfd'
-    environment 'CCD_POCS_URL', 'http://localhost:4013'
     environment 'CCD_DOCUMENT_URL_PATTERN', '.*'
     environment 'ENABLE_PSEUDO_ROLE_ASSIGNMENTS_GENERATION', true
     environment 'S2S_AUTHORISED_SERVICES', 'ccd_definition,ccd_data,xui_webapp,nfdiv_case_api,ccd_gw,divorce_frontend'
