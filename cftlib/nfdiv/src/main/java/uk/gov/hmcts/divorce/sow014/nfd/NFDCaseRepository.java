@@ -1,7 +1,5 @@
 package uk.gov.hmcts.divorce.sow014.nfd;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.pebbletemplates.pebble.PebbleEngine;
 import io.pebbletemplates.pebble.template.PebbleTemplate;
@@ -9,10 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
-import org.jooq.nfdiv.civil.tables.records.PaymentRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.CaseAssignedUserRole;
 import uk.gov.hmcts.ccd.sdk.CaseRepository;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -22,24 +18,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.sow014.Party;
 import uk.gov.hmcts.divorce.divorcecase.model.sow014.Solicitor;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
-import uk.gov.hmcts.divorce.sow014.lib.RoleAssignment;
-import uk.gov.hmcts.divorce.sow014.lib.RoleAssignmentAttributes;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.jooq.nfdiv.civil.Civil.CIVIL;
 import static org.jooq.nfdiv.civil.Tables.SOLICITORS;
 import static org.jooq.nfdiv.civil.tables.Parties.PARTIES;
-import static org.jooq.nfdiv.civil.tables.Payment.PAYMENT;
 import static org.jooq.nfdiv.public_.Tables.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
 @Slf4j
 @Component
@@ -238,18 +228,4 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
         return writer.toString();
     }
 
-    private Set<String> decodeHeader(String roleAssignmentsInput) throws JsonProcessingException {
-        String roleAssignments = new String(Base64.getDecoder().decode(roleAssignmentsInput));
-        log.info("roleAssignments: {}", roleAssignments);
-
-        return getMapper.readValue(roleAssignments, new TypeReference<List<CaseAssignedUserRole>>() {
-            })
-            .stream().map(CaseAssignedUserRole::getCaseRole).collect(Collectors.toSet());
-    }
-
-    private static boolean isForCaseId(long caseRef, RoleAssignment r) {
-        RoleAssignmentAttributes attributes = r.getAttributes();
-        Optional<String> caseId = attributes.getCaseId();
-        return caseId.isPresent() && caseId.get().equals(Long.toString(caseRef));
-    }
 }
