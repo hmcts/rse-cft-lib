@@ -21,6 +21,22 @@ def configurePublishing(p) {
             tasks.named('sourcesJar'){
                 dependsOn(tasks.named('generateJsonSchema2Pojo'))
             }
+
+            // Publish a library jar containing only the POJOs we want
+            // to reuse ccd's event publishing code.
+            tasks.register("filteredCCDPOJOJar", Jar) {
+                archiveBaseName = 'ccd-lib'
+
+                from(sourceSets.main.output.classesDirs) {
+                    include("uk/gov/hmcts/ccd/domain/model/**")
+                    include("uk/gov/hmcts/ccd/data/casedetails/SecurityClassification.class")
+                    include("uk/gov/hmcts/ccd/config/MessagingProperties.class")
+                    include("uk/gov/hmcts/ccd/domain/service/message/additionaldata/**")
+                    include("uk/gov/hmcts/ccd/domain/service/message/MessageContext.class")
+                    include("uk/gov/hmcts/ccd/endpoint/exceptions/ServiceException.class")
+                    include("uk/gov/hmcts/ccd/data/persistence/dto/**")
+                }
+            }
         }
 
         // Temporary workaround until RAS upgrade to java 21
@@ -54,6 +70,15 @@ def configurePublishing(p) {
                 }
             }
             publications {
+                if (project.name == "ccd-data-store-api")     {
+                    mavenLib(MavenPublication) {
+                        groupId = project.group.toString()
+                        artifactId = 'ccd-lib'
+
+                        // Add the custom filteredJar containing only the POJOs we want
+                        artifact(tasks.named('filteredCCDPOJOJar'))
+                    }
+                }
                 mavenJava(MavenPublication) {
                     from components.java
                     // Remap these service entry point project to fit our naming convention
