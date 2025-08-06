@@ -8,12 +8,12 @@ pluginManagement {
 includeBuild 'rse-cft-lib-plugin'
 includeBuild 'dtsse-ccd-config-generator'
 include 'ccd-data-store-api'
-if (System.getenv("PUBLISH_ONLY") != "true") {
-    include 'pcs-api'
-    include 'sptribs-case-api'
-    include 'nfdiv'
-    include 'nfdiv:flyway'
-}
+// PCS API is our new test project now.
+//include 'test-project'
+include 'pcs-api'
+include 'sptribs-case-api'
+include 'nfdiv'
+include 'nfdiv:flyway'
 
 new File(rootDir, "lib").listFiles().each {
   if (it.isDirectory()) {

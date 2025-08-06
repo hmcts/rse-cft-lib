@@ -39,12 +39,10 @@ project(':ccd-data-store-api') {
 }
 publishToAzureArtifacts.dependsOn (':ccd-data-store-api:publishAllPublicationsToAzureArtifactsRepository')
 
-if (System.getenv("PUBLISH_ONLY") != "true") {
-    project(':pcs-api').afterEvaluate {
-        it.tasks.matching {
-            it.name.startsWith("writeManifest")
-        }.each {
-            it.dependsOn rootProject.tasks.publishToMavenLocal
-        }
+project(':pcs-api').afterEvaluate {
+    it.tasks.matching {
+        it.name.startsWith("writeManifest")
+    }.each {
+        it.dependsOn rootProject.tasks.publishToMavenLocal
     }
 }
