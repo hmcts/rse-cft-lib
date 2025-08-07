@@ -93,7 +93,6 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         var roles = new ArrayList<UserRole>();
-        var env = getenv().getOrDefault("S2S_URL_BASE", "aat");
 
         roles.add(SOLICITOR);
         roles.add(CASE_WORKER);
@@ -132,6 +131,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
         details.getData().getApplicant2().setFirstName("app2_first_name");
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
+            .state(State.Submitted)
             .build();
     }
 }
