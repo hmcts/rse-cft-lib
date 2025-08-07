@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import java.nio.charset.Charset;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -44,8 +47,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.sow014.nfd.CreateTestCase;
 import uk.gov.hmcts.divorce.sow014.nfd.FailingSubmittedCallback;
 import uk.gov.hmcts.divorce.sow014.nfd.PublishedEvent;
+import uk.gov.hmcts.divorce.sow014.nfd.ReturnErrorWhenCreateTestCase;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
+import uk.gov.hmcts.rse.ccd.lib.Database;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -555,6 +560,77 @@ public class TestWithCCD extends CftlibTest {
 
         Integer secondCount = db.queryForObject(sql, Map.of(), Integer.class);
         assertThat(secondCount - initialCount, equalTo(1));
+    }
+
+    @SneakyThrows
+    @Order(18)
+    @Test
+    public void testReturnErrorWhenCreateTestCase() {
+        log.info("Testing that a case create that returns errors is rolled back in CCD");
+
+        var initialPointerCount = getDataStoreCasePointerCount();
+
+        // 1. Get initial case count from CCD database
+        String sql = "SELECT count(*) FROM ccd.case_data";
+        Integer initialCaseCount = db.queryForObject(sql, Map.of(), Integer.class);
+        assertNotNull(initialCaseCount);
+
+        // 2. Start the event to get a valid event token
+        var start = ccdApi.startCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"),
+            getServiceAuth(),
+            "NFD",
+            ReturnErrorWhenCreateTestCase.class.getSimpleName());
+        var token = start.getToken();
+
+        // 3. Construct the request body for the event that is designed to fail
+        var body = Map.of(
+            "data", Map.of(
+                "applicationType", "soleApplication" // Mandatory field as per event definition
+            ),
+            "event", Map.of(
+                "id", ReturnErrorWhenCreateTestCase.class.getSimpleName(),
+                "summary", "Test summary for failing case creation",
+                "description", "Testing rollback of case pointer"
+            ),
+            "event_token", token,
+            "ignore_warning", false
+        );
+
+        // 4. Build and execute the POST request to submit the case
+        var createCaseRequest =
+            buildRequest("TEST_SOLICITOR@mailinator.com",
+                "http://localhost:4452/data/case-types/NFD/cases?ignore-warning=false", HttpPost::new);
+        createCaseRequest.addHeader("experimental", "true");
+        createCaseRequest.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-case.v2+json;charset=UTF-8");
+        createCaseRequest.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        var response = HttpClientBuilder.create().build().execute(createCaseRequest);
+
+        // 5. Assert the response indicates failure with the correct error
+        assertThat("Expected HTTP 422 Unprocessable Entity",
+            response.getStatusLine().getStatusCode(), equalTo(422));
+
+        Integer finalCaseCount = db.queryForObject(sql, Map.of(), Integer.class);
+        assertThat("Case count should not increment on failed submission", finalCaseCount, equalTo(initialCaseCount));
+
+        var finalPointerCount = getDataStoreCasePointerCount();
+        assertThat("Case pointer count should not increment on failed submission", finalPointerCount, equalTo(initialPointerCount));
+    }
+
+    @SneakyThrows
+    private int getDataStoreCasePointerCount() {
+        String sql = "SELECT COUNT(*) FROM case_data";
+        int caseCount = 0;
+
+        try (Connection dataStoredb = super.cftlib().getConnection(Database.Datastore);
+             PreparedStatement statement = dataStoredb.prepareStatement(sql);
+             ResultSet rs = statement.executeQuery()) {
+
+            if (rs.next()) {
+                caseCount = rs.getInt(1);
+            }
+        }
+        return caseCount;
     }
 
     @SneakyThrows
