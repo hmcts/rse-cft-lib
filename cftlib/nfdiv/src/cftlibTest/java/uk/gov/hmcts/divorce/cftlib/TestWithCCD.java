@@ -312,7 +312,7 @@ public class TestWithCCD extends CftlibTest {
               "supplementary_data_updates": {
                 "$set": {
                   "orgs_assigned_users.organisationA": 21,
-                  "foo": "bar"
+                  "foo": 8
                 },
                 "$inc": {
                   "orgs_assigned_users.organisationB": -4
@@ -333,7 +333,7 @@ public class TestWithCCD extends CftlibTest {
         var result = mapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
         var data = (Map) result.get("supplementary_data");
         assertThat(data.get("orgs_assigned_users.organisationA"), equalTo(21));
-        assertThat(data.get("foo"), equalTo("bar"));
+        assertThat(data.get("foo"), equalTo(8));
         assertThat(data.get("orgs_assigned_users.organisationB"), equalTo(-12));
     }
 
@@ -364,7 +364,7 @@ public class TestWithCCD extends CftlibTest {
         assertThat(orgsAssignedUsers.get("organisationA"), equalTo(21));
         // Should have been incremented by -4 three times.
         assertThat(orgsAssignedUsers.get("organisationB"), equalTo(-12));
-        assertThat(supplementaryData.get("foo"), equalTo("bar"));
+        assertThat(supplementaryData.get("foo"), equalTo(8));
         assertThat(supplementaryData.get("baz"), equalTo("qux"));
     }
 
