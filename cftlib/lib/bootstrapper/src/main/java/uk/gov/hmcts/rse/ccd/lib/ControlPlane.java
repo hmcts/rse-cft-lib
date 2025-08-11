@@ -10,17 +10,8 @@ public class ControlPlane {
     private static final CountDownLatch DB_READY = new CountDownLatch(1);
     private static final CountDownLatch ES_READY = new CountDownLatch(1);
     private static final CountDownLatch AUTH_READY = new CountDownLatch(1);
-    private static final Set COMMON_COMPONENTS = Set.of(
-        Project.Datastore,
-        Project.Definitionstore,
-        Project.Userprofile,
-        Project.CaseDocumentAccessManagement,
-        Project.AM,
-        Project.AacManageCaseAssignment,
-        Project.DocAssembly
-    );
     // Used to wait for all services to be ready
-    public static final CountDownLatch COMMON_COMPONENTS_READY = new CountDownLatch(COMMON_COMPONENTS.size());
+    private static final CountDownLatch APPS_READY = new CountDownLatch(Project.values().length);
     // Wait for the API to be provided from the runtime
     private static final CountDownLatch API_READY = new CountDownLatch(1);
     private static volatile Throwable INIT_EXCEPTION;
@@ -64,7 +55,7 @@ public class ControlPlane {
 
     @SneakyThrows
     public static synchronized void waitForBoot() {
-        COMMON_COMPONENTS_READY.await();
+        APPS_READY.await();
         if (!booted) {
             // One-off global search index creation
             API_READY.await();
@@ -80,8 +71,8 @@ public class ControlPlane {
 
     // Signal that an application has booted.
     public static void appReady(String name) {
-        COMMON_COMPONENTS_READY.countDown();
-        var c = COMMON_COMPONENTS_READY.getCount();
+        APPS_READY.countDown();
+        var c = APPS_READY.getCount();
         System.out.println("**** Cftlib application " + name + " is ready **** " + c + " remaining");
     }
 
