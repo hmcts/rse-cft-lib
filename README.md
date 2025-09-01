@@ -225,6 +225,22 @@ XUI requires a valid LD client ID to function, which should be provided by setti
 
 #### Databases
 
+##### Data persistence Strategy
+
+A versioned named volume strategy is used for stateful data services (PostgreSQL and Elasticsearch).
+
+Named Docker volumes are generated from any POSTGRES_VERSION and ELASTICSEARCH_VERSION variables (e.g., ...-pg16-es7.11.1).
+
+This ensures a reliable start when upgrading PostgreSQL or Elasticsearch, avoiding mismatched data directories (eg. postgres 15 reading a V14 data directory).
+
+It also ensures Data Consistency across postgres and elasticsearch by coupling the lifecycle of database and search index. An upgrade to either automatically resets both.
+
+##### Named volumes
+
+The shared-database-pg docker service uses a named Docker volume for its data. 
+
+Since postgres data directories are tied to specific postgres versions the volume's name is dynamically generated based on the POSTGRES_VERSION environment variable (e.g., shared-database-pg-data-16).
+
 ##### Creating additional databases
 
 If your application requires a database(s) then you can have the cftlib create them for you by setting the `RSE_LIB_ADDITIONAL_DATABASES` environment variable as a comma delimited value.
