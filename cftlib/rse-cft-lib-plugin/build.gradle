@@ -22,15 +22,18 @@ repositories {
 }
 
 dependencies {
-    // Use JUnit test framework for unit tests
-    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.36'
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.36'
-    implementation 'com.google.guava:guava:32.0.1-jre'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.38'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.38'
+    implementation 'com.google.guava:guava:33.4.8-jre'
 
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation group: 'commons-io', name: 'commons-io', version: '2.13.0'
+    implementation platform('com.azure:azure-sdk-bom:1.2.37')
+    implementation group: 'com.azure', name: 'azure-security-keyvault-secrets'
+    implementation group: 'com.azure', name: 'azure-identity'
+
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+    testImplementation group: 'commons-io', name: 'commons-io', version: '2.20.0'
     testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.24.2'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.4'
 }
 
 gradlePlugin {
