@@ -1,15 +1,6 @@
 
 repositories {
     mavenLocal()
-    maven {
-        // TODO: Remove once CCD no longer uses jitpack
-        url 'https://jitpack.io'
-        content {
-            includeVersion 'com.github.hmcts.java-logging', 'logging', '6.0.1'
-            includeVersion 'com.github.hmcts', 'service-auth-provider-java-client', '4.0.3'
-            includeVersion 'com.github.hmcts', 'idam-java-client', '2.0.1'
-        }
-    }
 }
 
 // Used to compile classes for Spring Boot 3 that cannot be compiled with a Spring Boot 2 classpath.
