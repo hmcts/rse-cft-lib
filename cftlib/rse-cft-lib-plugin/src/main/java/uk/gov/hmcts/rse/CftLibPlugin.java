@@ -87,9 +87,6 @@ public class CftLibPlugin implements Plugin<Project> {
                     m.mavenContent(MavenRepositoryContentDescriptor::releasesOnly);
                 });
             }
-
-            // Some cft projects (eg. docassembly) make use of milestone releases of spring boot.
-            p.getRepositories().maven(m -> m.setUrl("https://repo.spring.io/milestone"));
         });
     }
 
