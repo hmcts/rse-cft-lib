@@ -52,7 +52,7 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
 
     @SneakyThrows
     @Override
-    public CaseData getCase(long caseRef, CaseData caseData) {
+    public CaseData getCase(long caseRef, String state, CaseData caseData) {
         var isLeadCase = db.fetchOptional(MULTIPLES, MULTIPLES.LEAD_CASE_ID.eq(caseRef));
         if (isLeadCase.isPresent()) {
             addLeadCaseInfo(caseRef, caseData);
