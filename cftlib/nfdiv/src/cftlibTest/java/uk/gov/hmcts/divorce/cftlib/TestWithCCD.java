@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -180,6 +181,18 @@ public class TestWithCCD extends CftlibTest {
         // First event should be in the 'Holding' state
         assertThat(firstEvent.get("state_id"), equalTo("Submitted"));
         assertThat(firstEvent.get("state_name"), equalTo("Submitted"));
+
+        // Dates should be in UTC time so check it is within 2 mins of now
+        String createdDateString = (String) firstEvent.get("created_date");
+
+        LocalDateTime createdLocalDateTime = LocalDateTime.parse(createdDateString);
+
+        Instant actualCreatedInstant = createdLocalDateTime.atZone(ZoneOffset.UTC).toInstant();
+
+        Instant nowUtc = Instant.now();
+        Duration maxAllowedDeviation = Duration.ofMinutes(2);
+        Duration timeDifference = Duration.between(actualCreatedInstant, nowUtc).abs();
+        assertThat(timeDifference, is(lessThanOrEqualTo(maxAllowedDeviation)));
     }
 
     @Order(4)
