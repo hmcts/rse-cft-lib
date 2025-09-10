@@ -34,6 +34,7 @@ def configurePublishing(p) {
                         include("uk/gov/hmcts/ccd/domain/service/message/additionaldata/**")
                         include("uk/gov/hmcts/ccd/domain/service/message/MessageContext.class")
                         include("uk/gov/hmcts/ccd/endpoint/exceptions/ServiceException.class")
+                        include("uk/gov/hmcts/ccd/data/persistence/dto/**")
                     }
                 }
             }

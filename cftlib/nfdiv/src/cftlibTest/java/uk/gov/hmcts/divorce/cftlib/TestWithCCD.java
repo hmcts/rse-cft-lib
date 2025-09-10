@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import java.nio.charset.Charset;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -36,16 +39,14 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.sow014.nfd.CreateTestCase;
 import uk.gov.hmcts.divorce.sow014.nfd.FailingSubmittedCallback;
 import uk.gov.hmcts.divorce.sow014.nfd.PublishedEvent;
+import uk.gov.hmcts.divorce.sow014.nfd.ReturnErrorWhenCreateTestCase;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
+import uk.gov.hmcts.rse.ccd.lib.Database;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -120,11 +121,11 @@ public class TestWithCCD extends CftlibTest {
         var r = new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class);
         caseRef = Long.parseLong((String) r.get("id"));
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
-        assertThat(r.get("state"), equalTo("Draft"));
+        assertThat(r.get("state"), equalTo("Submitted"));
 
         // Check we can load the case
         var c = ccdApi.getCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"), getServiceAuth(), String.valueOf(caseRef));
-        assertThat(c.getState(), equalTo("Draft"));
+        assertThat(c.getState(), equalTo("Submitted"));
         assertThat(c.getLastModified(), greaterThan(LocalDateTime.now(ZoneOffset.UTC).minusMinutes(5)));
         var caseData = mapper.readValue(mapper.writeValueAsString(c.getData()), CaseData.class);
         assertThat(caseData.getApplicant1().getFirstName(), equalTo("app1_first_name"));
@@ -177,8 +178,8 @@ public class TestWithCCD extends CftlibTest {
         assertThat(caseData.getNotes().size(), equalTo(2));
         var firstEvent = (Map) auditEvents.getLast();
         // First event should be in the 'Holding' state
-        assertThat(firstEvent.get("state_id"), equalTo("Draft"));
-        assertThat(firstEvent.get("state_name"), equalTo("Draft"));
+        assertThat(firstEvent.get("state_id"), equalTo("Submitted"));
+        assertThat(firstEvent.get("state_name"), equalTo("Submitted"));
     }
 
     @Order(4)
@@ -307,7 +308,7 @@ public class TestWithCCD extends CftlibTest {
               "supplementary_data_updates": {
                 "$set": {
                   "orgs_assigned_users.organisationA": 21,
-                  "foo": "bar"
+                  "foo": 8
                 },
                 "$inc": {
                   "orgs_assigned_users.organisationB": -4
@@ -328,7 +329,7 @@ public class TestWithCCD extends CftlibTest {
         var result = mapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
         var data = (Map) result.get("supplementary_data");
         assertThat(data.get("orgs_assigned_users.organisationA"), equalTo(21));
-        assertThat(data.get("foo"), equalTo("bar"));
+        assertThat(data.get("foo"), equalTo(8));
         assertThat(data.get("orgs_assigned_users.organisationB"), equalTo(-12));
     }
 
@@ -359,7 +360,7 @@ public class TestWithCCD extends CftlibTest {
         assertThat(orgsAssignedUsers.get("organisationA"), equalTo(21));
         // Should have been incremented by -4 three times.
         assertThat(orgsAssignedUsers.get("organisationB"), equalTo(-12));
-        assertThat(supplementaryData.get("foo"), equalTo("bar"));
+        assertThat(supplementaryData.get("foo"), equalTo(8));
         assertThat(supplementaryData.get("baz"), equalTo("qux"));
     }
 
@@ -445,8 +446,8 @@ public class TestWithCCD extends CftlibTest {
 
         // Get the oldest event (the creation event), which is the last in the list
         var firstEvent = (Map) auditEvents.get(auditEvents.size() - 1);
-        assertThat("First event should be in the 'Draft' state", firstEvent.get("state_id"), equalTo("Draft"));
-        assertThat("First event should have the state name 'Draft'", firstEvent.get("state_name"), equalTo("Draft"));
+        assertThat("First event should be in the 'Submitted' state", firstEvent.get("state_id"), equalTo("Submitted"));
+        assertThat("First event should have the state name 'Submitted'", firstEvent.get("state_name"), equalTo("Submitted"));
 
         this.firstEventId = Long.valueOf(firstEvent.get("id").toString());
     }
@@ -555,6 +556,97 @@ public class TestWithCCD extends CftlibTest {
 
         Integer secondCount = db.queryForObject(sql, Map.of(), Integer.class);
         assertThat(secondCount - initialCount, equalTo(1));
+
+        String noteCheck = """
+            SELECT message_information->'AdditionalData'->'Data'->>'note'
+             FROM ccd.message_queue_candidates
+             WHERE reference = :caseReference 
+             """;
+
+        String retrievedNote = db.queryForObject(noteCheck, Map.of("caseReference", caseRef), String.class);
+        assertThat(retrievedNote, equalTo("Test!"));
+
+        // Verify the EventTimeStamp from the JSON blob
+        String timestampCheckSql = """
+            SELECT message_information->>'EventTimeStamp'
+             FROM ccd.message_queue_candidates 
+             WHERE reference = :caseReference """;
+        String retrievedTimestampStr = db.queryForObject(timestampCheckSql, Map.of("caseReference", caseRef), String.class);
+        assertThat(retrievedTimestampStr, is(notNullValue()));
+        // Validate it's a parsable timestamp and it is recent
+        LocalDateTime eventTimestamp = LocalDateTime.parse(retrievedTimestampStr);
+        assertThat(eventTimestamp, is(greaterThan(LocalDateTime.now(ZoneOffset.UTC).minusMinutes(1))));
+    }
+
+    @SneakyThrows
+    @Order(18)
+    @Test
+    public void testReturnErrorWhenCreateTestCase() {
+        log.info("Testing that a case create that returns errors is rolled back in CCD");
+
+        var initialPointerCount = getDataStoreCasePointerCount();
+
+        // 1. Get initial case count from CCD database
+        String sql = "SELECT count(*) FROM ccd.case_data";
+        Integer initialCaseCount = db.queryForObject(sql, Map.of(), Integer.class);
+        assertNotNull(initialCaseCount);
+
+        // 2. Start the event to get a valid event token
+        var start = ccdApi.startCase(getAuthorisation("TEST_SOLICITOR@mailinator.com"),
+            getServiceAuth(),
+            "NFD",
+            ReturnErrorWhenCreateTestCase.class.getSimpleName());
+        var token = start.getToken();
+
+        // 3. Construct the request body for the event that is designed to fail
+        var body = Map.of(
+            "data", Map.of(
+                "applicationType", "soleApplication" // Mandatory field as per event definition
+            ),
+            "event", Map.of(
+                "id", ReturnErrorWhenCreateTestCase.class.getSimpleName(),
+                "summary", "Test summary for failing case creation",
+                "description", "Testing rollback of case pointer"
+            ),
+            "event_token", token,
+            "ignore_warning", false
+        );
+
+        // 4. Build and execute the POST request to submit the case
+        var createCaseRequest =
+            buildRequest("TEST_SOLICITOR@mailinator.com",
+                "http://localhost:4452/data/case-types/NFD/cases?ignore-warning=false", HttpPost::new);
+        createCaseRequest.addHeader("experimental", "true");
+        createCaseRequest.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-case.v2+json;charset=UTF-8");
+        createCaseRequest.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        var response = HttpClientBuilder.create().build().execute(createCaseRequest);
+
+        // 5. Assert the response indicates failure with the correct error
+        assertThat("Expected HTTP 422 Unprocessable Entity",
+            response.getStatusLine().getStatusCode(), equalTo(422));
+
+        Integer finalCaseCount = db.queryForObject(sql, Map.of(), Integer.class);
+        assertThat("Case count should not increment on failed submission", finalCaseCount, equalTo(initialCaseCount));
+
+        var finalPointerCount = getDataStoreCasePointerCount();
+        assertThat("Case pointer count should not increment on failed submission", finalPointerCount, equalTo(initialPointerCount));
+    }
+
+    @SneakyThrows
+    private int getDataStoreCasePointerCount() {
+        String sql = "SELECT COUNT(*) FROM case_data";
+        int caseCount = 0;
+
+        try (Connection dataStoredb = super.cftlib().getConnection(Database.Datastore);
+             PreparedStatement statement = dataStoredb.prepareStatement(sql);
+             ResultSet rs = statement.executeQuery()) {
+
+            if (rs.next()) {
+                caseCount = rs.getInt(1);
+            }
+        }
+        return caseCount;
     }
 
     @SneakyThrows
