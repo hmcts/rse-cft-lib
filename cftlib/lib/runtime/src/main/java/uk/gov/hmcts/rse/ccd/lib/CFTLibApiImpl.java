@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -38,14 +39,14 @@ public class CFTLibApiImpl implements CFTLib {
 
     private String lastImportHash;
 
-    public static String generateDummyS2SToken(String serviceName) {
+    public String generateDummyS2SToken(String serviceName) {
         return JWT.create()
             .withSubject(serviceName)
             .withIssuedAt(new Date())
             .sign(Algorithm.HMAC256("secret"));
     }
 
-    public static String buildJwt() {
+    public String buildJwt() {
         return JWT.create()
             .withSubject("banderous")
             .withNotBefore(new Date())
@@ -53,6 +54,44 @@ public class CFTLibApiImpl implements CFTLib {
             .withExpiresAt(Date.from(LocalDateTime.now().plusDays(100).toInstant(ZoneOffset.UTC)))
             .withClaim("tokenName", "access_token")
             .sign(Algorithm.HMAC256("secret"));
+    }
+
+    @SneakyThrows
+    @Override
+    public void dumpDefinitionSnapshots() {
+        // 1. Define and create the output directory.
+        File outputDir = new File("build/cftlib/definition-snapshots");
+        Files.createDirectories(outputDir.toPath());
+        System.out.println("Dumping definition snapshots to " + outputDir.getCanonicalPath());
+
+        // 2. Get a unique list of case type references from the database.
+        List<String> caseTypeReferences = new ArrayList<>();
+        try (Connection c = getConnection(Database.Definitionstore);
+             var s = c.createStatement();
+             var rs = s.executeQuery("select distinct reference from case_type")) {
+            while (rs.next()) {
+                caseTypeReferences.add(rs.getString("reference"));
+            }
+        }
+
+        System.out.println("Found case types: " + String.join(", ", caseTypeReferences));
+
+        // 3. For each case type, fetch its definition and write it to a file.
+        for (String caseTypeRef : caseTypeReferences) {
+            try {
+                System.out.println("Dumping definition for: " + caseTypeRef);
+                // Fetch the definition as a JSON string.
+                String definitionJson = getCaseTypeDefinitionFromDefinitionStore(caseTypeRef);
+
+                // Write the JSON string to a file named after the case type.
+                var outputFile = new File(outputDir, caseTypeRef + ".json");
+                Files.writeString(outputFile.toPath(), definitionJson, StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                // Log an error but continue with the next case type.
+                System.err.println("Failed to dump definition for " + caseTypeRef + ": " + e.getMessage());
+            }
+        }
+        System.out.println("Definition snapshot dump finished.");
     }
 
     @SneakyThrows
@@ -224,5 +263,31 @@ public class CFTLibApiImpl implements CFTLib {
                     "Failed to create GlobalSearch ElasticSearch index: HTTP "
                             + response.getStatusLine().getStatusCode() + " " + body);
         }
+    }
+
+    /**
+     * Retrieves the definition for a given case type as a JSON string.
+     * This calls the ccd-definition-store API endpoint to get the fully resolved
+     * case type definition.
+     */
+    @SneakyThrows
+    private String getCaseTypeDefinitionFromDefinitionStore(String caseTypeId) {
+        var url = "http://localhost:4451/api/data/case-type/" + caseTypeId;
+        var request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("Authorization", "Bearer " + buildJwt())
+            .header("ServiceAuthorization", generateDummyS2SToken("ccd_data"))
+            .GET()
+            .build();
+
+        var client = HttpClient.newHttpClient();
+        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (!String.valueOf(response.statusCode()).startsWith("2")) {
+            throw new RuntimeException("Failed to get case type '" + caseTypeId + "'. HTTP Status: "
+                + response.statusCode() + ", Body: " + response.body());
+        }
+
+        return response.body();
     }
 }

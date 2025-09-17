@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,12 @@ public class LibAgent {
     @Autowired(required = false)
     private List<CFTLibConfigurer> configurers = new ArrayList<>();
 
+    @Value("${rse.lib.service_name:unknown}")
+    private String serviceName;
+
+    @Value("${rse.lib.dump_definitions:false}")
+    private boolean dumpDefinitions;
+
     // Block any database access until ready for use.
     @Before("execution(* javax.sql.DataSource.*(..))")
     public void waitForDB() {
@@ -39,10 +46,15 @@ public class LibAgent {
     @SneakyThrows
     @EventListener(ApplicationReadyEvent.class)
     public void onReady() {
-        ControlPlane.appReady();
         // If this application defines any cftlib configs then execute them once fully booted up.
+        ControlPlane.appReady(serviceName);
         for (CFTLibConfigurer configurer : configurers) {
             configurer.configure(ControlPlane.getApi());
+        }
+        if (!configurers.isEmpty() && dumpDefinitions) {
+            ControlPlane.getApi().dumpDefinitionSnapshots();
+            // This is a one off build-time operation to capture static definition snapshots.
+            Runtime.getRuntime().halt(0);
         }
     }
 }

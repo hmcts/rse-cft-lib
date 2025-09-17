@@ -10,6 +10,7 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -19,6 +20,7 @@ import java.util.Set;
 // Simple indexer replicating logstash functionality
 // but saving up to ~1GB of RAM.
 @Component
+@ConditionalOnProperty(value = "ccd.sdk.decentralised", havingValue = "false", matchIfMissing = true)
 public class ESIndexer {
 
     @SneakyThrows
