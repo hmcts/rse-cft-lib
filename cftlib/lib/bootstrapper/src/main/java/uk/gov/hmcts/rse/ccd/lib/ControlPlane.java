@@ -69,14 +69,15 @@ public class ControlPlane {
     }
 
     // Signal that an application has booted.
-    public static void appReady() {
+    public static void appReady(String name) {
         APPS_READY.countDown();
+        var c = APPS_READY.getCount();
+        System.out.println("**** Cftlib application " + name + " is ready **** " + c + " remaining");
     }
 
     @SneakyThrows
     public static CFTLib getApi() {
         waitForBoot();
-        API_READY.await();
         return api;
     }
 
