@@ -1,0 +1,148 @@
+def configurePublishing(p) {
+    p.configure(p, {
+        apply plugin: 'java'
+        apply plugin: 'maven-publish'
+        p.afterEvaluate { project ->
+
+            project.group 'com.github.hmcts.rse-cft-lib'
+            version = System.getenv('RELEASE_VERSION') ?: 'DEV-SNAPSHOT'
+
+            // Configure publishing
+            if (components.hasProperty('java')) {
+                configure(project) {
+                    java {
+                        withSourcesJar()
+                    }
+                }
+            }
+
+            //Configure sourcesJar for ccd-data-store for dependency fix
+            if (project.name == 'ccd-data-store-api'){
+                tasks.named('sourcesJar'){
+                    dependsOn(tasks.named('generateJsonSchema2Pojo'))
+                }
+
+                // Publish a library jar containing only the POJOs we want
+                // to reuse ccd's event publishing code.
+                tasks.register("filteredCCDPOJOJar", Jar) {
+                    archiveBaseName = 'ccd-lib'
+
+                    from(sourceSets.main.output.classesDirs) {
+                        include("uk/gov/hmcts/ccd/domain/model/**")
+                        include("uk/gov/hmcts/ccd/data/casedetails/SecurityClassification.class")
+                        include("uk/gov/hmcts/ccd/config/MessagingProperties.class")
+                        include("uk/gov/hmcts/ccd/domain/service/message/additionaldata/**")
+                        include("uk/gov/hmcts/ccd/domain/service/message/MessageContext.class")
+                        include("uk/gov/hmcts/ccd/endpoint/exceptions/ServiceException.class")
+                        include("uk/gov/hmcts/ccd/data/persistence/dto/**")
+                    }
+                }
+            }
+
+            // Temporary workaround until RAS upgrade to java 21
+            // This dependency needs bumping
+            // https://github.com/mvel/mvel/commit/2eba49dee022e5fd786941be52dde89c6d3631f9
+            if (project.name == 'am-role-assignment-service') {
+                dependencies {
+                    implementation('org.mvel:mvel2') {
+                        version {
+                            strictly '2.5.0.Final'
+                        }
+                    }
+                }
+            }
+
+
+            // Disable gradle module metadata resolution and rely on maven pom
+            tasks.withType(GenerateModuleMetadata) {
+                enabled = false
+            }
+            publishing {
+
+                repositories {
+                    maven {
+                        name = "AzureArtifacts"
+                        url = uri("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1")
+                        credentials {
+                            username = System.getenv("AZURE_DEVOPS_ARTIFACT_USERNAME")
+                            password = System.getenv("AZURE_DEVOPS_ARTIFACT_TOKEN")
+                        }
+                    }
+                }
+                publications {
+                    if (project.name == "ccd-data-store-api")     {
+                        mavenLib(MavenPublication) {
+                            groupId = project.group.toString()
+                            artifactId = 'ccd-lib'
+
+                            // Add the custom filteredJar containing only the POJOs we want
+                            artifact(tasks.named('filteredCCDPOJOJar'))
+                        }
+                    }
+                    mavenJava(MavenPublication) {
+                        from components.java
+                        // Remap these service entry point project to fit our naming convention
+                        if (project.name == "case-definition-store-api")     {
+                            artifactId 'ccd-definition-store-api'
+                        } else if (project.name == "user-profile-api")     {
+                            artifactId 'ccd-user-profile-api'
+                        } else if (project.name == "rpa-dg-docassembly") {
+                            artifactId 'dg-docassembly-api'
+                        }
+
+
+                        // We need to be able to reproduce the exact runtime classpath of each project.
+                        // To do this we replace the pom dependencies with the complete runtime classpath.
+                        // ie. making every dependency direct, including transitive dependencies.
+                        // We can also then disable transitive dependencies with an exclusion, since they
+                        // will now be direct dependencies.
+                        pom.withXml {
+                            asNode().dependencies.replaceNode {}
+                            asNode().dependencyManagement.each { it.parent().remove(it) }
+
+                            def dependenciesNode = asNode().appendNode('dependencies')
+
+                            // Only the root project contains the dependency set.
+                            // For multimodule subprojects (eg. definition store) we do not publish dependencies.
+                            // Data store is now an included build and not the root project and so a special case.
+                            if (project == rootProject || project.name == 'ccd-data-store-api') {
+                                configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each {
+                                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                                    dependencyNode.appendNode('groupId', it.moduleVersion.id.group)
+                                    dependencyNode.appendNode('artifactId', it.moduleVersion.id.name)
+                                    dependencyNode.appendNode('version', it.moduleVersion.id.version)
+
+                                    def exclusion = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                                    exclusion.appendNode('groupId', '*')
+                                    exclusion.appendNode('artifactId', '*')
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // We are consuming spring boot projects as libraries.
+            // By default spring boot switches off jar generation
+            // so we need to turn it back on in each cft project.
+            if (project.hasProperty('jar')) {
+                configure(project) {
+                    jar {
+                        enabled = true
+                    }
+                }
+            }
+
+            // Spring configures jar artifacts to have a "-plain" suffix
+            // which we need to remove for POM publishing to work.
+            // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#packaging-executable.and-plain-archives
+            tasks.named("jar") {
+                archiveClassifier = ''
+            }
+        }
+    })
+}
+
+allprojects {
+    configurePublishing(it)
+}
