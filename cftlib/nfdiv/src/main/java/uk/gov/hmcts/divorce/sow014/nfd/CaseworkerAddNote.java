@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.sow014.nfd;
 
-import static org.jooq.nfdiv.public_.Tables.CASE_NOTES;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -11,8 +10,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -37,7 +37,7 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
     private IdamService idamService;
 
     @Autowired
-    private DSLContext db;
+    private NamedParameterJdbcTemplate db;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -67,11 +67,15 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
         var caseData = details.getData();
         final User caseworkerUser = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
 
-        var caseNote = db.newRecord(CASE_NOTES);
-        caseNote.setReference(details.getId());
-        caseNote.setAuthor(caseworkerUser.getUserDetails().getName());
-        caseNote.setNote(caseData.getNote());
-        caseNote.store();
+        var params = new MapSqlParameterSource()
+            .addValue("reference", details.getId())
+            .addValue("author", caseworkerUser.getUserDetails().getName())
+            .addValue("note", caseData.getNote());
+
+        db.update(
+            "insert into case_notes(reference, author, note) values (:reference, :author, :note)",
+            params
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

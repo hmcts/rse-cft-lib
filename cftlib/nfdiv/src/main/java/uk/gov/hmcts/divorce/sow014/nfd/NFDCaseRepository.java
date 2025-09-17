@@ -6,8 +6,10 @@ import io.pebbletemplates.pebble.template.PebbleTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.CaseRepository;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -25,10 +27,6 @@ import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.util.*;
 
-import static org.jooq.nfdiv.civil.Civil.CIVIL;
-import static org.jooq.nfdiv.civil.Tables.SOLICITORS;
-import static org.jooq.nfdiv.civil.tables.Parties.PARTIES;
-import static org.jooq.nfdiv.public_.Tables.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
@@ -36,7 +34,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class NFDCaseRepository implements CaseRepository<CaseData> {
 
     @Autowired
-    private DSLContext db;
+    private NamedParameterJdbcTemplate db;
 
     @Autowired
     private ObjectMapper getMapper;
@@ -53,8 +51,9 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
     @SneakyThrows
     @Override
     public CaseData getCase(long caseRef, String state, CaseData caseData) {
-        var isLeadCase = db.fetchOptional(MULTIPLES, MULTIPLES.LEAD_CASE_ID.eq(caseRef));
-        if (isLeadCase.isPresent()) {
+        var params = new MapSqlParameterSource().addValue("caseRef", caseRef);
+        var isLeadCase = db.queryForList("select 1 from multiples where lead_case_id = :caseRef limit 1", params);
+        if (!isLeadCase.isEmpty()) {
             addLeadCaseInfo(caseRef, caseData);
         } else {
             caseData = addSubCaseInfo(caseRef, caseData);
@@ -78,32 +77,39 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
     }
 
     private List<ListValue<Solicitor>> loadSolicitors(long caseRef) {
-        return db.select()
-            .from(SOLICITORS)
-            .where(SOLICITORS.REFERENCE.eq(caseRef))
-            .orderBy(SOLICITORS.SOLICITOR_ID.desc())
-            .fetchInto(Solicitor.class)
-            .stream().map(n -> new ListValue<>(null, n))
-            .toList();
+        var params = new MapSqlParameterSource().addValue("caseRef", caseRef);
+        var rows = db.query(
+            "select solicitor_id as \"solicitorId\", reference, role, forename, surname, version " +
+                "from civil.solicitors where reference = :caseRef order by solicitor_id desc",
+            params,
+            BeanPropertyRowMapper.newInstance(Solicitor.class)
+        );
+        return rows.stream().map(n -> new ListValue<>(null, n)).toList();
     }
 
     private List<ListValue<Party>> loadParties(long caseRef) {
-        return db.select()
-            .from(PARTIES)
-            .where(PARTIES.REFERENCE.eq(caseRef))
-            .orderBy(PARTIES.PARTY_ID.desc())
-            .fetchInto(Party.class)
-            .stream().map(n -> new ListValue<>(null, n))
-            .toList();
+        var params = new MapSqlParameterSource().addValue("caseRef", caseRef);
+        var rows = db.query(
+            "select party_id as \"partyId\", version, forename, surname " +
+                "from civil.parties where reference = :caseRef order by party_id desc",
+            params,
+            BeanPropertyRowMapper.newInstance(Party.class)
+        );
+        return rows.stream().map(n -> new ListValue<>(null, n)).toList();
     }
 
     @SneakyThrows
     private void addSolicitorClaims(long caseRef, CaseData caseData) {
         final User caseworkerUser = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
 
-        var clients = db.fetch(CIVIL.CLAIMS_BY_CLIENT,
-            CIVIL.CLAIMS_BY_CLIENT.REFERENCE.eq(caseRef),
-            CIVIL.CLAIMS_BY_CLIENT.SOLICITOR_ID.eq(Long.valueOf(caseworkerUser.getUserDetails().getUid()))
+        var params = new MapSqlParameterSource()
+            .addValue("caseRef", caseRef)
+            .addValue("solicitorId", Long.valueOf(caseworkerUser.getUserDetails().getUid()));
+
+        var clients = db.queryForList(
+            "select solicitor_id, forename, role, reference, description, amount_pence as \"amountPence\" " +
+                "from civil.claims_by_client where reference = :caseRef and solicitor_id = :solicitorId",
+            params
         );
 
         PebbleTemplate compiledTemplate = pebl.getTemplate("yourClients");
@@ -118,7 +124,13 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
 
     @SneakyThrows
     private void addClaims(long caseRef, CaseData caseData) {
-        var claims = db.fetch(CIVIL.JUDGE_CLAIMS, CIVIL.JUDGE_CLAIMS.REFERENCE.eq(caseRef));
+        var params = new MapSqlParameterSource().addValue("caseRef", caseRef);
+        var claims = db.queryForList(
+            "select claim_id, reference, description, amount_pence as \"amountPence\", " +
+                "claimants::text as claimants, defendants::text as defendants " +
+                "from civil.judge_claims where reference = :caseRef",
+            params
+        );
 
         PebbleTemplate compiledTemplate = pebl.getTemplate("claims");
         Writer writer = new StringWriter();
@@ -132,8 +144,10 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
 
     @SneakyThrows
     private void addPendingApplications(long caseRef, CaseData caseData) {
-        var applications = db.select()
-            .from(CIVIL.PENDING_APPLICATIONS);
+        var applications = db.queryForList(
+            "select forename, description, reason from civil.pending_applications",
+            new MapSqlParameterSource()
+        );
 
         PebbleTemplate compiledTemplate = pebl.getTemplate("pendingApplications");
         Writer writer = new StringWriter();
@@ -158,13 +172,23 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
     }
 
     private void addLeadCaseInfo(long caseRef, CaseData caseData) throws IOException {
-        // Fetch first 50
-        var total = db.fetchCount(SUB_CASES, SUB_CASES.LEAD_CASE_ID.eq(caseRef));
-        var subCases = db.selectFrom(SUB_CASES)
-            .where(SUB_CASES.LEAD_CASE_ID.eq(caseRef))
-            .limit(50)
-            .fetch();
-        if (subCases.isNotEmpty()) {
+        var params = new MapSqlParameterSource().addValue("caseRef", caseRef);
+        var total = db.queryForObject(
+            "select count(*) from sub_cases where lead_case_id = :caseRef",
+            params,
+            Integer.class
+        );
+        var subCases = db.queryForList(
+            "select name, " +
+                "lead_case_id as \"leadCaseId\", " +
+                "sub_case_id as \"subCaseId\", " +
+                "last_modified as lastmodified, " +
+                "applicant1FirstName as applicant1firstname, " +
+                "applicant1LastName as applicant1lastname " +
+                "from sub_cases where lead_case_id = :caseRef order by last_modified desc limit 50",
+            params
+        );
+        if (!subCases.isEmpty()) {
             caseData.setLeadCase(YesOrNo.YES);
 
             PebbleTemplate compiledTemplate = pebl.getTemplate("subcases");
@@ -182,18 +206,26 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
     }
 
     private CaseData addSubCaseInfo(long caseRef, CaseData caseData) throws IOException {
-        var leadCase = db.fetchOptional(SUB_CASES, SUB_CASES.SUB_CASE_ID.eq(caseRef));
+        var params = new MapSqlParameterSource().addValue("caseRef", caseRef);
+        var leadCases = db.queryForList(
+            "select name, lead_case_id as \"leadCaseId\" from sub_cases where sub_case_id = :caseRef",
+            params
+        );
 
-        if (leadCase.isPresent()) {
-            var derivedData = db.fetchOptional(DERIVED_CASES, DERIVED_CASES.SUB_CASE_ID.eq(caseRef));
-            caseData = getMapper.readValue(derivedData.get().getData().data(), CaseData.class);
+        if (!leadCases.isEmpty()) {
+            var json = db.queryForObject(
+                "select data::text as data from derived_cases where sub_case_id = :caseRef",
+                params,
+                String.class
+            );
+            caseData = getMapper.readValue(json, CaseData.class);
             caseData.setLeadCase(YesOrNo.NO);
 
             PebbleTemplate compiledTemplate = pebl.getTemplate("leadcase");
             Writer writer = new StringWriter();
 
             Map<String, Object> context = new HashMap<>();
-            context.put("leadCase", leadCase.get());
+            context.put("leadCase", leadCases.getFirst());
 
             compiledTemplate.evaluate(writer, context);
             caseData.setSubCaseMd(writer.toString());
@@ -203,13 +235,13 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
 
 
     private List<ListValue<CaseNote>> loadNotes(long caseRef) {
-        return db.select()
-            .from(CASE_NOTES)
-            .where(CASE_NOTES.REFERENCE.eq(caseRef))
-            .orderBy(CASE_NOTES.ID.desc())
-            .fetchInto(CaseNote.class)
-            .stream().map(n -> new ListValue<>(null, n))
-            .toList();
+        var params = new MapSqlParameterSource().addValue("caseRef", caseRef);
+        var rows = db.query(
+            "select author, timestamp, note from case_notes where reference = :caseRef order by id desc",
+            params,
+            BeanPropertyRowMapper.newInstance(CaseNote.class)
+        );
+        return rows.stream().map(n -> new ListValue<>(null, n)).toList();
     }
 
     @SneakyThrows

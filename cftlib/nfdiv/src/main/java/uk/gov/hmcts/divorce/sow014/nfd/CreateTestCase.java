@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import static java.lang.System.getenv;
 import static java.util.Collections.singletonList;
-import static org.jooq.nfdiv.civil.Tables.SOLICITORS;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -27,10 +26,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.jooq.DSLContext;
-import org.jooq.nfdiv.civil.tables.Payment;
-import org.jooq.nfdiv.civil.tables.records.PaymentRecord;
-import org.jooq.nfdiv.civil.tables.records.SolicitorsRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
@@ -86,9 +81,6 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private IdamService idamService;
-
-    @Autowired
-    private DSLContext db;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

@@ -1,10 +1,9 @@
 package uk.gov.hmcts.divorce.caseworker.event.page;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jooq.DSLContext;
-import org.jooq.nfdiv.public_.tables.records.SubCasesRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -14,14 +13,12 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
 import uk.gov.hmcts.divorce.sow014.lib.DynamicRadioListElement;
+import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jooq.impl.DSL.upper;
-import static org.jooq.nfdiv.public_.Tables.*;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -31,7 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class ChangeLeadCase implements CCDConfig<CaseData, State, UserRole> {
     @Autowired
-    private DSLContext db;
+    private NamedParameterJdbcTemplate db;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -56,19 +53,24 @@ public class ChangeLeadCase implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private AboutToStartOrSubmitResponse<CaseData, State> searchCases(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
-
         var choices = new ArrayList<DynamicRadioListElement>();
-        // Search subcases by applicantFirstName
-        db.selectFrom(SUB_CASES)
-            .where( SUB_CASES.LEAD_CASE_ID.eq(details.getId())
-                    .and(upper(SUB_CASES.APPLICANT1FIRSTNAME).eq(upper(details.getData().getCaseSearchTerm())))
-            )
-            .limit(100)
-            .fetch()
-            .forEach(fetch -> choices.add(DynamicRadioListElement.builder()
-                .code(fetch.getSubCaseId().toString())
-                .label(fetch.getSubCaseId() + " - " + fetch.getApplicant1firstname() + " - " + fetch.getApplicant1lastname())
-                .build()));
+        var params = new MapSqlParameterSource()
+            .addValue("leadCaseId", details.getId())
+            .addValue("term", details.getData().getCaseSearchTerm());
+
+        var rows = db.queryForList(
+            "select sub_case_id as \"subCaseId\", " +
+                "applicant1FirstName as applicant1firstname, " +
+                "applicant1LastName as applicant1lastname " +
+                "from sub_cases where lead_case_id = :leadCaseId " +
+                "and upper(applicant1FirstName) = upper(:term) limit 100",
+            params
+        );
+
+        rows.forEach(r -> choices.add(DynamicRadioListElement.builder()
+            .code(String.valueOf(r.get("subCaseId")))
+            .label(r.get("subCaseId") + " - " + r.get("applicant1firstname") + " - " + r.get("applicant1lastname"))
+            .build()));
 
         MyRadioList radioList = MyRadioList.builder()
             .value(choices.get(0))
@@ -89,14 +91,16 @@ public class ChangeLeadCase implements CCDConfig<CaseData, State, UserRole> {
         var choice = details.getData().getCaseSearchResults().getValue();
 
         // Make the chosen case the lead case.
-        db.update(MULTIPLES)
-            .set(MULTIPLES.LEAD_CASE_ID, Long.parseLong(choice.getCode()))
-            .where(MULTIPLES.LEAD_CASE_ID.eq(details.getId()))
-            .execute();
+        var params = new MapSqlParameterSource()
+            .addValue("newLead", Long.parseLong(choice.getCode()))
+            .addValue("currentLead", details.getId());
+        db.update(
+            "update multiples set lead_case_id = :newLead where lead_case_id = :currentLead",
+            params
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .build();
     }
 }
-
