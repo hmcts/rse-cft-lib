@@ -12,6 +12,10 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -534,6 +538,56 @@ public class TestWithCCD extends CftlibTest {
     }
 
     @SneakyThrows
+    @Order(18)
+    @Test
+    public void duplicateSubmittedCallbackShouldNotReRun() {
+        // Reset counter on existing failing submitted callback
+        FailingSubmittedCallback.callbackAttempts = 0;
+
+        // Obtain a single event token and reuse it for both submissions
+        var token = ccdApi.startEvent(
+            getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
+            getServiceAuth(), String.valueOf(caseRef), FailingSubmittedCallback.class.getSimpleName()).getToken();
+
+        var body = Map.of(
+            "data", Map.of(
+                "note", "dup-submitted-callback-test"
+            ),
+            "event", Map.of(
+                "id", FailingSubmittedCallback.class.getSimpleName(),
+                "summary", "summary",
+                "description", "description"
+            ),
+            "event_token", token,
+            "ignore_warning", false
+        );
+
+        var req1 = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
+            "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
+        req1.addHeader("experimental", "true");
+        req1.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
+
+        req1.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        var resp1 = HttpClientBuilder.create().build().execute(req1);
+        assertThat(resp1.getStatusLine().getStatusCode(), equalTo(201));
+
+        // Second submission with the SAME event token (duplicate request)
+        var req2 = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
+            "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
+        req2.addHeader("experimental", "true");
+        req2.addHeader("Accept",
+            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
+        req2.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        var resp2 = HttpClientBuilder.create().build().execute(req2);
+        assertThat(resp2.getStatusLine().getStatusCode(), equalTo(201));
+
+        // Desired behaviour: only initial 3 attempts (from retry policy), not run again on duplicate
+        assertThat("Submitted callback must not re-run for duplicate request",
+            FailingSubmittedCallback.callbackAttempts, equalTo(3));
+    }
+
+    @SneakyThrows
     @Order(17)
     @Test
     public void testPublishingToMessageOutbox() {
@@ -669,20 +723,33 @@ public class TestWithCCD extends CftlibTest {
         var request = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
             "http://localhost:4452/data/internal/searchCases?ctid=NFD&page=1",
             HttpPost::new);
-        var query = """
+        var query = String.format("""
             {
-              "native_es_query":{"from":0,"query":{"bool":{"must":[]}},"size":25,"sort":[{"_id": "desc"}]},
+              "native_es_query":{
+                "from":0,
+                "query":{
+                  "bool":{
+                    "filter":[
+                      {"term":{"reference":%d}}
+                    ]
+                  }
+                },
+                "size":25,
+                "sort":[{"_id": "desc"}]
+              },
               "supplementary_data":["*"]
-            }""";
+            }
+            """, caseRef);
         request.setEntity(new StringEntity(query, ContentType.APPLICATION_JSON));
         var response = HttpClientBuilder.create().build().execute(request);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
         var r = mapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
         var aCase = (Map) ((List)r.get("cases")).get(0);
         var fields = (Map) aCase.get("fields");
-        assertThat(fields.get("applicant1FirstName"), equalTo("app1_first_name"));;
-        assertThat(fields.get("applicant2FirstName"), equalTo("app2_first_name"));;
-        assertThat(((List)fields.get("notes")).size(), equalTo(4));;
+        assertThat(fields.get("applicant1FirstName"), equalTo("app1_first_name"));
+        assertThat(fields.get("applicant2FirstName"), equalTo("app2_first_name"));
+        assertThat(((List)fields.get("notes")).size(), equalTo(4));
+
         assertThat(fields.get("[LAST_MODIFIED_DATE]"), notNullValue());
         assertThat(fields.get("[LAST_STATE_MODIFIED_DATE]"), notNullValue());
 
