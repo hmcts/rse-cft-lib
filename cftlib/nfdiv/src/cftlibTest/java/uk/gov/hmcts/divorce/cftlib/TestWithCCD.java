@@ -44,6 +44,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.sow014.nfd.FailingSubmittedCallback;
 import uk.gov.hmcts.divorce.sow014.nfd.PublishedEvent;
 import uk.gov.hmcts.divorce.sow014.nfd.ReturnErrorWhenCreateTestCase;
+import uk.gov.hmcts.divorce.sow014.nfd.DecentralisedCaseworkerAddNote;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.rse.ccd.lib.Database;
@@ -779,6 +780,39 @@ public class TestWithCCD extends CftlibTest {
     private HttpPost prepareEventRequest(String user, String eventId, Map<String, ?> data) {
         var token = ccdApi.startEvent(getAuthorisation(user), getServiceAuth(), String.valueOf(caseRef), eventId).getToken();
         return prepareEventRequestWithToken(user, eventId, data, token);
+    }
+
+    @Order(19)
+    @Test
+    public void testDecentralisedEventStartAndSubmitHandlers() throws Exception {
+        // Verify start handler pre-populates data
+        var start = ccdApi.startEvent(
+            getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
+            getServiceAuth(), String.valueOf(caseRef), DecentralisedCaseworkerAddNote.CASEWORKER_DECENTRALISED_ADD_NOTE);
+
+        var startData = mapper.readValue(mapper.writeValueAsString(start.getCaseDetails().getData()), CaseData.class);
+        assertThat(startData.getNote(), startsWith("[start] set by "));
+
+        // Verify submit handler persists the note
+        String noteText = "Decentralised test note";
+        String sqlCount = "SELECT count(*) FROM case_notes";
+        Integer before = db.queryForObject(sqlCount, Map.of(), Integer.class);
+
+        var e = prepareEventRequestWithToken(
+            "TEST_CASE_WORKER_USER@mailinator.com",
+            DecentralisedCaseworkerAddNote.CASEWORKER_DECENTRALISED_ADD_NOTE,
+            Map.of("note", noteText),
+            start.getToken());
+
+        var response = HttpClientBuilder.create().build().execute(e);
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
+
+        Integer after = db.queryForObject(sqlCount, Map.of(), Integer.class);
+        assertThat(after, equalTo(before + 1));
+
+        String lastNoteSql = "SELECT note FROM case_notes WHERE reference = :ref ORDER BY id DESC LIMIT 1";
+        String latestNote = db.queryForObject(lastNoteSql, Map.of("ref", caseRef), String.class);
+        assertThat(latestNote, equalTo(noteText));
     }
 
 }
