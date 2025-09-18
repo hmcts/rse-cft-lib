@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,10 +11,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -73,6 +68,21 @@ public class TestWithCCD extends CftlibTest {
     NamedParameterJdbcTemplate db;
 
     private long firstEventId;
+    private static final String BASE_URL = "http://localhost:4452";
+    private static final String ACCEPT_CREATE_CASE =
+        "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-case.v2+json;charset=UTF-8";
+    private static final String ACCEPT_CREATE_EVENT =
+        "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8";
+    private static final String ACCEPT_CASE =
+        "application/vnd.uk.gov.hmcts.ccd-data-store-api.case.v2+json;charset=UTF-8";
+    private static final String ACCEPT_CASE_EVENTS =
+        "application/vnd.uk.gov.hmcts.ccd-data-store-api.case-events.v2+json;charset=UTF-8";
+    private static final String ACCEPT_UI_CASE_VIEW =
+        "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-case-view.v2+json;charset=UTF-8";
+    private static final String ACCEPT_UI_EVENT_VIEW =
+        "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-event-view.v2+json;charset=UTF-8";
+    private static final String ACCEPT_UI_START_EVENT =
+        "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-start-event-trigger.v2+json;charset=UTF-8";
 
     @Order(1)
     @Test
@@ -114,12 +124,11 @@ public class TestWithCCD extends CftlibTest {
             )
         );
 
-        var createCase =
-            buildRequest("TEST_SOLICITOR@mailinator.com",
-                "http://localhost:4452/data/case-types/NFD/cases?ignore-warning=false", HttpPost::new);
-        createCase.addHeader("experimental", "true");
-        createCase.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-case.v2+json;charset=UTF-8");
+        var createCase = buildRequest(
+            "TEST_SOLICITOR@mailinator.com",
+            BASE_URL + "/data/case-types/NFD/cases?ignore-warning=false",
+            HttpPost::new);
+        withCcdAccept(createCase, ACCEPT_CREATE_CASE);
 
         createCase.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
         var response = HttpClientBuilder.create().build().execute(createCase);
@@ -145,12 +154,11 @@ public class TestWithCCD extends CftlibTest {
         addNote();
         addNote();
 
-        var get =
-            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-                "http://localhost:4452/cases/" + caseRef, HttpGet::new);
-        get.addHeader("experimental", "true");
-        get.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.case.v2+json;charset=UTF-8");
+        var get = buildRequest(
+            "TEST_CASE_WORKER_USER@mailinator.com",
+            BASE_URL + "/cases/" + caseRef,
+            HttpGet::new);
+        withCcdAccept(get, ACCEPT_CASE);
 
         var response = HttpClientBuilder.create().build().execute(get);
         var result = mapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
@@ -165,12 +173,11 @@ public class TestWithCCD extends CftlibTest {
     @Order(3)
     @Test
     public void getEventHistory() throws Exception {
-        var get =
-                buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-                        "http://localhost:4452/cases/" + caseRef + "/events", HttpGet::new);
-        get.addHeader("experimental", "true");
-        get.addHeader("Accept",
-                "application/vnd.uk.gov.hmcts.ccd-data-store-api.case-events.v2+json;charset=UTF-8");
+        var get = buildRequest(
+            "TEST_CASE_WORKER_USER@mailinator.com",
+            BASE_URL + "/cases/" + caseRef + "/events",
+            HttpGet::new);
+        withCcdAccept(get, ACCEPT_CASE_EVENTS);
 
         var response = HttpClientBuilder.create().build().execute(get);
         System.out.println(response.getEntity().getContent());
@@ -207,31 +214,16 @@ public class TestWithCCD extends CftlibTest {
             getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
             getServiceAuth(), String.valueOf(caseRef), "caseworker-add-note").getToken();
 
-        var body = Map.of(
-            // Use 'data' key so callback receives the note value
-            "data", Map.of(
-                "note", "Test note 3"
-            ),
-            "event", Map.of(
-                "id", "caseworker-add-note",
-                "summary", "summary",
-                "description", "description"
-            ),
-            "event_token", firstEvent,
-            "ignore_warning", false
-        );
+        var data = Map.of("note", "Test note 3");
 
         // Concurrent change to case notes should be allowed without raising a conflict
         addNote();
 
-        var e =
-            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-                "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
-        e.addHeader("experimental", "true");
-        e.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
-
-        e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        var e = prepareEventRequestWithToken(
+            "TEST_CASE_WORKER_USER@mailinator.com",
+            "caseworker-add-note",
+            data,
+            firstEvent);
         var response = HttpClientBuilder.create().build().execute(e);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
     }
@@ -243,30 +235,16 @@ public class TestWithCCD extends CftlibTest {
             getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
             getServiceAuth(), String.valueOf(caseRef), "caseworker-update-due-date").getToken();
 
-        var body = Map.of(
-            "data", Map.of(
-                "dueDate", "2020-01-01"
-            ),
-            "event", Map.of(
-                "id", "caseworker-update-due-date",
-                "summary", "summary",
-                "description", "description"
-            ),
-            "event_token", firstEvent,
-            "ignore_warning", false
-        );
+        var data = Map.of("dueDate", "2020-01-01");
 
         // Concurrent change to json blob should be rejected
         updateDueDate();
 
-        var e =
-            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-                "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
-        e.addHeader("experimental", "true");
-        e.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
-
-        e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        var e = prepareEventRequestWithToken(
+            "TEST_CASE_WORKER_USER@mailinator.com",
+            "caseworker-update-due-date",
+            data,
+            firstEvent);
         var response = HttpClientBuilder.create().build().execute(e);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(409));
     }
@@ -285,7 +263,7 @@ public class TestWithCCD extends CftlibTest {
     @Test
     @Order(7)
     void shouldCreateSupplementaryDataWhenNotExists() throws Exception {
-        final String url = "http://localhost:4452/cases/" + caseRef + "/supplementary-data";
+        final String url = BASE_URL + "/cases/" + caseRef + "/supplementary-data";
         var body = """
             {
               "supplementary_data_updates": {
@@ -321,7 +299,7 @@ public class TestWithCCD extends CftlibTest {
     @Test
     @Order(8)
     void shouldUpdateSupplementaryData() throws Exception {
-        final String url = "http://localhost:4452/cases/" + caseRef + "/supplementary-data";
+        final String url = BASE_URL + "/cases/" + caseRef + "/supplementary-data";
         var body = """
             {
               "supplementary_data_updates": {
@@ -356,15 +334,13 @@ public class TestWithCCD extends CftlibTest {
     @Order(9)
     @SneakyThrows
     void fetchesSupplementaryData() {
-        final String url = "http://localhost:4452/internal/cases/" + caseRef + "/event-triggers/caseworker-add-note";
+        final String url = BASE_URL + "/internal/cases/" + caseRef + "/event-triggers/caseworker-add-note";
 
         var request = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
             url,
             HttpGet::new);
 
-        request.addHeader("experimental", "true");
-        request.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-start-event-trigger.v2+json;charset=UTF-8");
+        withCcdAccept(request, ACCEPT_UI_START_EVENT);
 
         var response = HttpClientBuilder.create().build().execute(request);
 
@@ -388,7 +364,7 @@ public class TestWithCCD extends CftlibTest {
     @SneakyThrows
     void testUpdateFailsForUnsupportedOperator() {
         log.info("Testing failure for an unsupported operator on case {}", caseRef);
-        final String url = "http://localhost:4452/cases/" + caseRef + "/supplementary-data";
+        final String url = BASE_URL + "/cases/" + caseRef + "/supplementary-data";
         // "$push" is not a supported operator according to the LLD.
         var body = """
             {
@@ -415,27 +391,12 @@ public class TestWithCCD extends CftlibTest {
             getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
             getServiceAuth(), String.valueOf(caseRef), "caseworker-add-note").getToken();
 
-        var body = Map.of(
-            "data", Map.of(
-                "note", "Test idempotence note should only appear once"
-            ),
-            "event", Map.of(
-                "id", "caseworker-add-note",
-                "summary", "summary",
-                "description", "description"
-            ),
-            "event_token", firstEvent,
-            "ignore_warning", false
-        );
-
-        var e =
-            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-                "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
-        e.addHeader("experimental", "true");
-        e.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
-
-        e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        var data = Map.of("note", "Test idempotence note should only appear once");
+        var e = prepareEventRequestWithToken(
+            "TEST_CASE_WORKER_USER@mailinator.com",
+            "caseworker-add-note",
+            data,
+            firstEvent);
         String sql = "SELECT count(*) FROM case_notes";
         Integer initialCount = db.queryForObject(sql, Map.of(), Integer.class);
         var response = HttpClientBuilder.create().build().execute(e);
@@ -451,8 +412,7 @@ public class TestWithCCD extends CftlibTest {
         String url = String.format("http://localhost:4452/internal/cases/%s", caseRef);
 
         var get = buildRequest("TEST_CASE_WORKER_USER@mailinator.com", url, HttpGet::new);
-        get.addHeader("experimental", "true");
-        get.addHeader("Accept", "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-case-view.v2+json;charset=UTF-8");
+        withCcdAccept(get, ACCEPT_UI_CASE_VIEW);
 
         var response = HttpClientBuilder.create().build().execute(get);
 
@@ -479,8 +439,7 @@ public class TestWithCCD extends CftlibTest {
         var get = buildRequest("TEST_CASE_WORKER_USER@mailinator.com", url, HttpGet::new);
 
         // 2. Add required headers
-        get.addHeader("experimental", "true");
-        get.addHeader("Accept", "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-event-view.v2+json;charset=UTF-8");
+        withCcdAccept(get, ACCEPT_UI_EVENT_VIEW);
 
         // 3. Execute the request
         var response = HttpClientBuilder.create().build().execute(get);
@@ -524,12 +483,11 @@ public class TestWithCCD extends CftlibTest {
             "ignore_warning", false
         );
 
-        var e =
-            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-                "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
-        e.addHeader("experimental", "true");
-        e.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
+        var e = buildRequest(
+            "TEST_CASE_WORKER_USER@mailinator.com",
+            BASE_URL + "/cases/" + caseRef + "/events",
+            HttpPost::new);
+        withCcdAccept(e, ACCEPT_CREATE_EVENT);
 
         e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
         var response = HttpClientBuilder.create().build().execute(e);
@@ -562,22 +520,22 @@ public class TestWithCCD extends CftlibTest {
             "ignore_warning", false
         );
 
-        var req1 = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-            "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
-        req1.addHeader("experimental", "true");
-        req1.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
+        var req1 = buildRequest(
+            "TEST_CASE_WORKER_USER@mailinator.com",
+            BASE_URL + "/cases/" + caseRef + "/events",
+            HttpPost::new);
+        withCcdAccept(req1, ACCEPT_CREATE_EVENT);
 
         req1.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
         var resp1 = HttpClientBuilder.create().build().execute(req1);
         assertThat(resp1.getStatusLine().getStatusCode(), equalTo(201));
 
         // Second submission with the SAME event token (duplicate request)
-        var req2 = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-            "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
-        req2.addHeader("experimental", "true");
-        req2.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
+        var req2 = buildRequest(
+            "TEST_CASE_WORKER_USER@mailinator.com",
+            BASE_URL + "/cases/" + caseRef + "/events",
+            HttpPost::new);
+        withCcdAccept(req2, ACCEPT_CREATE_EVENT);
         req2.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
         var resp2 = HttpClientBuilder.create().build().execute(req2);
         assertThat(resp2.getStatusLine().getStatusCode(), equalTo(201));
@@ -608,12 +566,11 @@ public class TestWithCCD extends CftlibTest {
             "ignore_warning", false
         );
 
-        var e =
-            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-                "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
-        e.addHeader("experimental", "true");
-        e.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
+        var e = buildRequest(
+            "TEST_CASE_WORKER_USER@mailinator.com",
+            BASE_URL + "/cases/" + caseRef + "/events",
+            HttpPost::new);
+        withCcdAccept(e, ACCEPT_CREATE_EVENT);
 
         e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
 
@@ -682,12 +639,11 @@ public class TestWithCCD extends CftlibTest {
         );
 
         // 4. Build and execute the POST request to submit the case
-        var createCaseRequest =
-            buildRequest("TEST_SOLICITOR@mailinator.com",
-                "http://localhost:4452/data/case-types/NFD/cases?ignore-warning=false", HttpPost::new);
-        createCaseRequest.addHeader("experimental", "true");
-        createCaseRequest.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-case.v2+json;charset=UTF-8");
+        var createCaseRequest = buildRequest(
+            "TEST_SOLICITOR@mailinator.com",
+            BASE_URL + "/data/case-types/NFD/cases?ignore-warning=false",
+            HttpPost::new);
+        withCcdAccept(createCaseRequest, ACCEPT_CREATE_CASE);
         createCaseRequest.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
         var response = HttpClientBuilder.create().build().execute(createCaseRequest);
 
@@ -720,8 +676,9 @@ public class TestWithCCD extends CftlibTest {
 
     @SneakyThrows
     private Boolean caseAppearsInSearch() {
-        var request = buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-            "http://localhost:4452/data/internal/searchCases?ctid=NFD&page=1",
+        var request = buildRequest(
+            "TEST_CASE_WORKER_USER@mailinator.com",
+            BASE_URL + "/data/internal/searchCases?ctid=NFD&page=1",
             HttpPost::new);
         var query = String.format("""
             {
@@ -758,32 +715,11 @@ public class TestWithCCD extends CftlibTest {
 
 
     private void updateDueDate() throws Exception {
-
-        var token = ccdApi.startEvent(
-            getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
-            getServiceAuth(), String.valueOf(caseRef), "caseworker-update-due-date").getToken();
-
-        var body = Map.of(
-            "data", Map.of(
-                "dueDate", "2020-01-01"
-            ),
-            "event", Map.of(
-                "id", "caseworker-update-due-date",
-                "summary", "summary",
-                "description", "description"
-            ),
-            "event_token", token,
-            "ignore_warning", false
+        var e = prepareEventRequest(
+            "TEST_CASE_WORKER_USER@mailinator.com",
+            "caseworker-update-due-date",
+            Map.of("dueDate", "2020-01-01")
         );
-
-        var e =
-            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-                "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
-        e.addHeader("experimental", "true");
-        e.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
-
-        e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
         var response = HttpClientBuilder.create().build().execute(e);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
     }
@@ -791,32 +727,11 @@ public class TestWithCCD extends CftlibTest {
 
     private static int noteCount = 0;
     private void addNote() throws Exception {
-
-        var token = ccdApi.startEvent(
-            getAuthorisation("TEST_CASE_WORKER_USER@mailinator.com"),
-            getServiceAuth(), String.valueOf(caseRef), "caseworker-add-note").getToken();
-
-        var body = Map.of(
-            "data", Map.of(
-                "note", "Test note " + noteCount++
-            ),
-            "event", Map.of(
-                "id", "caseworker-add-note",
-                "summary", "summary",
-                "description", "description"
-            ),
-            "event_token", token,
-            "ignore_warning", false
+        var e = prepareEventRequest(
+            "TEST_CASE_WORKER_USER@mailinator.com",
+            "caseworker-add-note",
+            Map.of("note", "Test note " + noteCount++)
         );
-
-        var e =
-            buildRequest("TEST_CASE_WORKER_USER@mailinator.com",
-                "http://localhost:4452/cases/" + caseRef + "/events", HttpPost::new);
-        e.addHeader("experimental", "true");
-        e.addHeader("Accept",
-            "application/vnd.uk.gov.hmcts.ccd-data-store-api.create-event.v2+json;charset=UTF-8");
-
-        e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
         var response = HttpClientBuilder.create().build().execute(e);
         assertThat(response.getStatusLine().getStatusCode(), equalTo(201));
     }
@@ -836,6 +751,34 @@ public class TestWithCCD extends CftlibTest {
         request.addHeader("ServiceAuthorization", cftlib().generateDummyS2SToken("ccd_gw"));
         request.addHeader("Authorization",  token);
         return request;
+    }
+
+    private void withCcdAccept(HttpRequestBase request, String accept) {
+        request.addHeader("experimental", "true");
+        request.addHeader("Accept", accept);
+    }
+
+    private HttpPost prepareEventRequestWithToken(String user, String eventId, Map<String, ?> data, String token) {
+        var body = Map.of(
+            "data", data,
+            "event", Map.of(
+                "id", eventId,
+                "summary", "summary",
+                "description", "description"
+            ),
+            "event_token", token,
+            "ignore_warning", false
+        );
+
+        var e = buildRequest(user, BASE_URL + "/cases/" + caseRef + "/events", HttpPost::new);
+        withCcdAccept(e, ACCEPT_CREATE_EVENT);
+        e.setEntity(new StringEntity(new Gson().toJson(body), ContentType.APPLICATION_JSON));
+        return e;
+    }
+
+    private HttpPost prepareEventRequest(String user, String eventId, Map<String, ?> data) {
+        var token = ccdApi.startEvent(getAuthorisation(user), getServiceAuth(), String.valueOf(caseRef), eventId).getToken();
+        return prepareEventRequestWithToken(user, eventId, data, token);
     }
 
 }
