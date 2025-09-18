@@ -154,7 +154,8 @@ public class TestWithCCD extends CftlibTest {
         var data = (Map) result.get("data");
         var caseData = mapper.readValue(mapper.writeValueAsString(data), CaseData.class);
         assertThat(caseData.getNotes().size(), equalTo(2));
-        assertThat(caseData.getNotes().get(0).getValue().getNote(), equalTo("Test!"));
+        // Notes are ordered by creation desc
+        assertThat(caseData.getNotes().get(0).getValue().getNote(), equalTo("Test note 1"));
     }
 
     @Order(3)
@@ -203,8 +204,9 @@ public class TestWithCCD extends CftlibTest {
             getServiceAuth(), String.valueOf(caseRef), "caseworker-add-note").getToken();
 
         var body = Map.of(
-            "event_data", Map.of(
-                "note", "Test!"
+            // Use 'data' key so callback receives the note value
+            "data", Map.of(
+                "note", "Test note 3"
             ),
             "event", Map.of(
                 "id", "caseworker-add-note",
@@ -410,8 +412,8 @@ public class TestWithCCD extends CftlibTest {
             getServiceAuth(), String.valueOf(caseRef), "caseworker-add-note").getToken();
 
         var body = Map.of(
-            "event_data", Map.of(
-                "note", "Test!"
+            "data", Map.of(
+                "note", "Test idempotence note should only appear once"
             ),
             "event", Map.of(
                 "id", "caseworker-add-note",
@@ -720,6 +722,7 @@ public class TestWithCCD extends CftlibTest {
     }
 
 
+    private static int noteCount = 0;
     private void addNote() throws Exception {
 
         var token = ccdApi.startEvent(
@@ -728,7 +731,7 @@ public class TestWithCCD extends CftlibTest {
 
         var body = Map.of(
             "data", Map.of(
-                "note", "Test!"
+                "note", "Test note " + noteCount++
             ),
             "event", Map.of(
                 "id", "caseworker-add-note",

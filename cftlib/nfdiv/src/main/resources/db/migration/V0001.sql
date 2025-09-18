@@ -2,7 +2,7 @@ create table case_notes(
    reference bigint references ccd.case_data(reference) ,
    id bigserial,
    timestamp timestamp not null default now(),
-   note varchar(10000),
+   note varchar(10000) not null,
    author varchar(200) not null,
    primary key(reference, id)
 );
