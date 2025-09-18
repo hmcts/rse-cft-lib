@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
-import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.DecentralisedConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import uk.gov.hmcts.ccd.sdk.api.EventPayload;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -41,7 +41,7 @@ public class DecentralisedCaseworkerAddNote implements CCDConfig<CaseData, State
     private NamedParameterJdbcTemplate db;
 
     @Override
-    public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    public void configureDecentralised(final DecentralisedConfigBuilder<CaseData, State, UserRole> configBuilder) {
         EventBuilder<CaseData, UserRole, State> eventBuilder = configBuilder
             .decentralisedEvent(CASEWORKER_DECENTRALISED_ADD_NOTE, this::submit, this::start)
             .forAllStates()
@@ -84,4 +84,3 @@ public class DecentralisedCaseworkerAddNote implements CCDConfig<CaseData, State
         log.info("Decentralised add note submitted for case {}", reference);
     }
 }
-
