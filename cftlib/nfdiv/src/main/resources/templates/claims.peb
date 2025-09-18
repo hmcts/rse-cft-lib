@@ -1,7 +1,0 @@
-# All claims
-
-| Claimants | Defendants | Claim | Amount |
-| ---- | ----- | ------ | ---- |
-{% for claim in claims %}
-  |{{ claim.claimants }} | {{ claim.defendants }} | {{ claim.description }} | £{{ claim.amountPence / 100 }} |
-{% endfor %}

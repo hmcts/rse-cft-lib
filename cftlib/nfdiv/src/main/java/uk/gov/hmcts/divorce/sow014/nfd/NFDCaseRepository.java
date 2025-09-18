@@ -1,8 +1,6 @@
 package uk.gov.hmcts.divorce.sow014.nfd;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.pebbletemplates.pebble.PebbleEngine;
-import io.pebbletemplates.pebble.template.PebbleTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +20,6 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.lang.management.ManagementFactory;
 import java.util.*;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -38,9 +33,6 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
 
     @Autowired
     private ObjectMapper getMapper;
-
-    @Autowired
-    private PebbleEngine pebl;
 
     @Autowired
     private IdamService idamService;
@@ -62,8 +54,6 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
         caseData.setNotes(loadNotes(caseRef));
         caseData.setParties(loadParties(caseRef));
         caseData.setSolicitors(loadSolicitors(caseRef));
-
-        caseData.setMarkdownTabField(renderExampleTab(caseRef, caseData.getNotes()));
 
         caseData.setHyphenatedCaseRef(CaseData.formatCaseRef(caseRef));
 
@@ -111,15 +101,6 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
                 "from civil.claims_by_client where reference = :caseRef and solicitor_id = :solicitorId",
             params
         );
-
-        PebbleTemplate compiledTemplate = pebl.getTemplate("yourClients");
-        Writer writer = new StringWriter();
-
-        Map<String, Object> context = new HashMap<>();
-        context.put("clients", clients);
-
-        compiledTemplate.evaluate(writer, context);
-        caseData.setClientsMd(writer.toString());
     }
 
     @SneakyThrows
@@ -132,14 +113,6 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
             params
         );
 
-        PebbleTemplate compiledTemplate = pebl.getTemplate("claims");
-        Writer writer = new StringWriter();
-
-        Map<String, Object> context = new HashMap<>();
-        context.put("claims", claims);
-
-        compiledTemplate.evaluate(writer, context);
-        caseData.setClaimsMd(writer.toString());
     }
 
     @SneakyThrows
@@ -149,26 +122,9 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
             new MapSqlParameterSource()
         );
 
-        PebbleTemplate compiledTemplate = pebl.getTemplate("pendingApplications");
-        Writer writer = new StringWriter();
-
-        Map<String, Object> context = new HashMap<>();
-        context.put("pendingApplications", applications);
-
-        compiledTemplate.evaluate(writer, context);
-        caseData.setPendingApplicationsMd(writer.toString());
-
     }
 
     private void addAdminPanel(long caseRef, CaseData caseData) throws IOException {
-        PebbleTemplate compiledTemplate = pebl.getTemplate("admin");
-        Writer writer = new StringWriter();
-
-        Map<String, Object> context = new HashMap<>();
-        context.put("caseRef", caseRef);
-
-        compiledTemplate.evaluate(writer, context);
-        caseData.setAdminMd(writer.toString());
     }
 
     private void addLeadCaseInfo(long caseRef, CaseData caseData) throws IOException {
@@ -191,15 +147,6 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
         if (!subCases.isEmpty()) {
             caseData.setLeadCase(YesOrNo.YES);
 
-            PebbleTemplate compiledTemplate = pebl.getTemplate("subcases");
-            Writer writer = new StringWriter();
-
-            Map<String, Object> context = new HashMap<>();
-            context.put("subcases", subCases);
-            context.put("total", total);
-
-            compiledTemplate.evaluate(writer, context);
-            caseData.setLeadCaseMd(writer.toString());
         } else {
             caseData.setLeadCase(YesOrNo.NO);
         }
@@ -221,14 +168,6 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
             caseData = getMapper.readValue(json, CaseData.class);
             caseData.setLeadCase(YesOrNo.NO);
 
-            PebbleTemplate compiledTemplate = pebl.getTemplate("leadcase");
-            Writer writer = new StringWriter();
-
-            Map<String, Object> context = new HashMap<>();
-            context.put("leadCase", leadCases.getFirst());
-
-            compiledTemplate.evaluate(writer, context);
-            caseData.setSubCaseMd(writer.toString());
         }
         return caseData;
     }
@@ -242,22 +181,6 @@ public class NFDCaseRepository implements CaseRepository<CaseData> {
             BeanPropertyRowMapper.newInstance(CaseNote.class)
         );
         return rows.stream().map(n -> new ListValue<>(null, n)).toList();
-    }
-
-    @SneakyThrows
-    private String renderExampleTab(long caseRef, List<ListValue<CaseNote>> notes) {
-        PebbleTemplate compiledTemplate = pebl.getTemplate("notes");
-        Writer writer = new StringWriter();
-
-        long uptimeInSeconds = ManagementFactory.getRuntimeMXBean().getUptime() / 1000;
-        Map<String, Object> context = new HashMap<>();
-        context.put("caseRef", caseRef);
-        context.put("age", uptimeInSeconds);
-        context.put("notes", notes);
-
-        compiledTemplate.evaluate(writer, context);
-
-        return writer.toString();
     }
 
 }
