@@ -29,8 +29,6 @@ public class JacksonConfiguration {
             .build();
 
         SimpleModule deserialization = new SimpleModule();
-        deserialization.addDeserializer(HasRole.class, new HasRoleDeserializer());
-        deserialization.addDeserializer(InternalHealth.class, new InternalHealthDeserializer());
         mapper.registerModule(deserialization);
 
         JavaTimeModule datetime = new JavaTimeModule();

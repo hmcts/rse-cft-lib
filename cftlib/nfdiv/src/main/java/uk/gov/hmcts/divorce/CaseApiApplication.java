@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import uk.gov.hmcts.divorce.client.RoleAssignmentServiceApi;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.CaseEventsApi;
@@ -31,7 +30,6 @@ import java.util.TimeZone;
         CaseAssignmentApi.class,
         CaseDocumentClientApi.class,
         CaseEventsApi.class,
-        RoleAssignmentServiceApi.class
     }
 )
 @EnableScheduling
