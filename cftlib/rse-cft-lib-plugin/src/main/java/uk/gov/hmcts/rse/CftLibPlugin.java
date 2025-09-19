@@ -48,7 +48,13 @@ public class CftLibPlugin implements Plugin<Project> {
 
         registerDependencyRepositories(project);
         createManifestTasks(project);
-        createBootWithCCDTask(project);
+        var manifestTask = createHostAppManifestTask(project);
+        createBootWithCCDTask(project, manifestTask, "bootWithCCD");
+        var dumpDefinitions = createBootWithCCDTask(project, manifestTask, "dumpCCDDefinitions");
+        dumpDefinitions.environment("RSE_LIB_DUMP_DEFINITIONS", "true");
+        dumpDefinitions.authMode = AuthMode.Local;
+        dumpDefinitions.getOutputs().upToDateWhen(x -> false);
+
         configureJacoco(project, createTestTask(project));
         surfaceSourcesToIDE(project);
         createCftlibJarTask(project);
@@ -158,13 +164,28 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
 
-    private void createBootWithCCDTask(Project project) {
+    private CftlibExec createBootWithCCDTask(Project project, ManifestTask hostAppManifestTask, String name) {
+        var exec = createRunTask(project, name);
+        exec.dependsOn(hostAppManifestTask);
+
+        exec.dependsOn("cftlibClasses");
+
+        exec.args(getHostApplicationManifestFile(project));
+        return exec;
+    }
+
+
+    private File getHostApplicationManifestFile(Project project) {
+        return cftlibBuildDir(project).file("hostApplication").getAsFile();
+    }
+
+    private ManifestTask createHostAppManifestTask(Project project) {
         SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
         var lib = s.getByName("cftlib");
 
-        var file = cftlibBuildDir(project).file("hostApplication").getAsFile();
-        var manifest = project.getTasks().create("createManifestApplication", ManifestTask.class);
-        manifest.doFirst(m -> {
+        var hostApplicationManifest = getHostApplicationManifestFile(project);
+        var manifestTask = project.getTasks().create("createManifestApplication", ManifestTask.class);
+        manifestTask.doFirst(m -> {
             JavaExec e = (JavaExec) project.getTasks().getByName("bootRun");
             String clazz = "";
 
@@ -175,24 +196,21 @@ public class CftLibPlugin implements Plugin<Project> {
             }
 
             var args = "--rse.lib.service_name=" + project.getName();
-            writeManifests(project, lib.getRuntimeClasspath(), clazz, file, args);
+            // Prepend the runtimeclasspath with the project's resources folder to allow live editing of resources
+            var files = project.files("src/main/resources").plus(lib.getRuntimeClasspath());
+            writeManifests(project, files, clazz, hostApplicationManifest, args);
         });
-        manifest.classpath = lib.getRuntimeClasspath();
+        manifestTask.classpath = lib.getRuntimeClasspath();
         // Task performing main class name resolution changed in spring boot 3
         for (String name : List.of("resolveMainClassName", "bootRunMainClassName")) {
             var t = project.getTasks().findByName(name);
             if (null != t) {
-                manifest.dependsOn(t);
+                manifestTask.dependsOn(t);
             }
         }
 
-        manifestTasks.add(manifest);
-        var exec = createRunTask(project, "bootWithCCD");
-        exec.dependsOn(manifest);
-
-        exec.dependsOn("cftlibClasses");
-
-        exec.args(file);
+        manifestTasks.add(manifestTask);
+        return manifestTask;
     }
 
     private CftlibExec createTestTask(Project project) {
@@ -209,6 +227,7 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.dependsOn("cftlibTestClasses");
         exec.args(file);
         exec.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
+        exec.getOutputs().upToDateWhen(x -> false);
         return exec;
     }
 
@@ -217,10 +236,10 @@ public class CftLibPlugin implements Plugin<Project> {
             // Runtime is always the first manifest
             var file = cftlibBuildDir(project).file("runtime").getAsFile();
             Configuration classpath = detachedConfiguration(project,
-                    libDependencies(project, "runtime"));
+                libDependencies(project, "runtime"));
             var task =
-                    createManifestTask(project, "writeManifestRuntime", classpath,
-                            "uk.gov.hmcts.rse.ccd.lib.Application", file);
+                createManifestTask(project, "writeManifestRuntime", classpath,
+                    "uk.gov.hmcts.rse.ccd.lib.Application", file);
             manifestTasks.add(task);
             manifests.add(file);
         }
@@ -228,11 +247,11 @@ public class CftLibPlugin implements Plugin<Project> {
         for (var e : projects.entrySet()) {
             var file = cftlibBuildDir(project).file(e.getKey().id()).getAsFile();
             var args = Lists.newArrayList(
-                    "--rse.lib.service_name=" + e.getKey());
+                "--rse.lib.service_name=" + e.getKey());
 
             args.addAll(e.getKey().args);
             manifestTasks.add(
-                    createCFTManifestTask(project, e.getKey().id(), e.getValue(), file, args.toArray(String[]::new)));
+                createCFTManifestTask(project, e.getKey().id(), e.getValue(), file, args.toArray(String[]::new)));
             manifests.add(file);
         }
     }
@@ -275,14 +294,14 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private String getLibVersion(Project project) {
         return project.getBuildscript().getConfigurations()
-                .getByName("classpath")
-                .getDependencies()
-                .stream()
-                .filter(x -> x.getGroup().equals("com.github.hmcts.rse-cft-lib")
-                        && x.getName().equals("com.github.hmcts.rse-cft-lib.gradle.plugin"))
-                .findFirst()
-                .map(Dependency::getVersion)
-                .orElse("DEV-SNAPSHOT");
+            .getByName("classpath")
+            .getDependencies()
+            .stream()
+            .filter(x -> x.getGroup().equals("com.github.hmcts.rse-cft-lib")
+                && x.getName().equals("com.github.hmcts.rse-cft-lib.gradle.plugin"))
+            .findFirst()
+            .map(Dependency::getVersion)
+            .orElse("DEV-SNAPSHOT");
     }
 
     private CftlibExec createRunTask(Project project, String name) {
