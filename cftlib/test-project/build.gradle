@@ -1,3 +1,4 @@
+import groovy.json.JsonSlurper
 import uk.gov.hmcts.rse.AuthMode
 import uk.gov.hmcts.rse.ManifestTask
 
@@ -97,4 +98,20 @@ tasks.withType(ManifestTask).each {
 }
 configurations.each {
     it.resolutionStrategy.useGlobalDependencySubstitutionRules = false
+}
+
+tasks.named('dumpCCDDefinitions') {
+    doLast {
+        def snapshotFile = project.file('build/cftlib/definition-snapshots/NFD.json')
+
+        if (!snapshotFile.exists()) {
+            throw new GradleException("Missing definition snapshot at ${snapshotFile}")
+        }
+
+        try {
+            new JsonSlurper().parse(snapshotFile)
+        } catch (Exception ex) {
+            throw new GradleException("Invalid JSON in definition snapshot at ${snapshotFile}", ex)
+        }
+    }
 }
