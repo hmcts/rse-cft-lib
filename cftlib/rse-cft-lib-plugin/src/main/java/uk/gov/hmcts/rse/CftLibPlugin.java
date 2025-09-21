@@ -245,22 +245,16 @@ public class CftLibPlugin implements Plugin<Project> {
         }
 
         for (var e : projects.entrySet()) {
-            var file = cftlibBuildDir(project).file(e.getKey().id()).getAsFile();
+            var service = e.getKey();
+            var file = cftlibBuildDir(project).file(service.id()).getAsFile();
             var args = Lists.newArrayList(
-                "--rse.lib.service_name=" + e.getKey());
+                "--rse.lib.service_name=" + service);
 
-            args.addAll(e.getKey().args);
+            args.addAll(service.args);
             manifestTasks.add(
-                createCFTManifestTask(project, e.getKey().id(), e.getValue(), file, args.toArray(String[]::new)));
+                createServiceManifestTask(project, service, e.getValue(), file, args.toArray(String[]::new)));
             manifests.add(file);
         }
-    }
-
-    private ManifestTask createCFTManifestTask(Project project, String depName, String mainClass, File file,
-                                               String... args) {
-        Configuration classpath = detachedConfiguration(project,
-                libDependencies(project, depName, "cftlib-agent"));
-        return createManifestTask(project, "writeManifest" + depName, classpath, mainClass, file, args);
     }
 
     private ManifestTask createManifestTask(Project project, String name, FileCollection configuration,
@@ -328,5 +322,32 @@ public class CftLibPlugin implements Plugin<Project> {
                 .map(d -> project.getDependencies()
                         .create("com.github.hmcts.rse-cft-lib:" + d + ":" + getLibVersion(project)))
                 .toArray(Dependency[]::new);
+    }
+
+    private ManifestTask createServiceManifestTask(Project project, Service service, String mainClass, File file,
+                                                   String... args) {
+        var result = project.getTasks().create("writeManifest" + service.id(), ManifestTask.class);
+        result.doFirst(x -> {
+            var dependency = resolveDependencyFor(project, service);
+            Configuration classpath = detachedConfiguration(project,
+                    libDependencies(project, dependency, "cftlib-agent"));
+            result.classpath = classpath;
+            writeManifests(project, classpath, mainClass, file, args);
+        });
+        result.getOutputs().file(file);
+        return result;
+    }
+
+    private String resolveDependencyFor(Project project, Service service) {
+        if (service == Service.ccdDataStoreApi) {
+            var extraProperties = project.getExtensions().getExtraProperties();
+            if (extraProperties.has("cftlib.datastore")) {
+                var value = extraProperties.get("cftlib.datastore").toString().trim();
+                if ("decentralised".equalsIgnoreCase(value) || "decentralized".equalsIgnoreCase(value)) {
+                    return "ccd-data-store-api-decentralised";
+                }
+            }
+        }
+        return service.id();
     }
 }
