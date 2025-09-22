@@ -327,10 +327,29 @@ public class CftLibPlugin implements Plugin<Project> {
     private ManifestTask createServiceManifestTask(Project project, Service service, String mainClass, File file,
                                                    String... args) {
         var result = project.getTasks().create("writeManifest" + service.id(), ManifestTask.class);
+        result.getInputs().property(
+            "cftlib.datastore.decentralised",
+            project.provider(() -> isDatastoreDecentralised(project)));
         result.doFirst(x -> {
             var dependency = resolveDependencyFor(project, service);
-            Configuration classpath = detachedConfiguration(project,
+            FileCollection classpath;
+            if (dependency.startsWith("ccd-data-store-api") && project.findProject(":ccd-data-store-api") != null) {
+                // A local development facility to work with data store as a sibling project
+                var datastore = project.getRootProject().project(":ccd-data-store-api");
+
+                var existing = datastore.getConfigurations().findByName("cftlibWithAgent");
+                if (existing == null) {
+                    var agent = datastore.getConfigurations().create("cftlibWithAgent");
+                    agent.getDependencies().add(project.getDependencies().create(datastore));
+                    agent.getDependencies().addAll(List.of(libDependencies(project, "cftlib-agent")));
+                    classpath = agent;
+                } else {
+                    classpath = existing;
+                }
+            } else {
+                classpath = detachedConfiguration(project,
                     libDependencies(project, dependency, "cftlib-agent"));
+            }
             result.classpath = classpath;
             writeManifests(project, classpath, mainClass, file, args);
         });
@@ -339,15 +358,18 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
     private String resolveDependencyFor(Project project, Service service) {
-        if (service == Service.ccdDataStoreApi) {
-            var extraProperties = project.getExtensions().getExtraProperties();
-            if (extraProperties.has("cftlib.datastore")) {
-                var value = extraProperties.get("cftlib.datastore").toString().trim();
-                if ("decentralised".equalsIgnoreCase(value) || "decentralized".equalsIgnoreCase(value)) {
-                    return "ccd-data-store-api-decentralised";
-                }
-            }
+        if (service == Service.ccdDataStoreApi && isDatastoreDecentralised(project)) {
+            return "ccd-data-store-api-decentralised";
         }
         return service.id();
+    }
+
+    private boolean isDatastoreDecentralised(Project project) {
+        var extraProperties = project.getExtensions().getExtraProperties();
+        if (extraProperties.has("cftlib.datastore")) {
+            var value = extraProperties.get("cftlib.datastore").toString().trim();
+            return "decentralised".equalsIgnoreCase(value) || "decentralized".equalsIgnoreCase(value);
+        }
+        return false;
     }
 }
