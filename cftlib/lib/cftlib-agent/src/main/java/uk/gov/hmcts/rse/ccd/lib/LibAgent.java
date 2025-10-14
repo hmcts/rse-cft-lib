@@ -1,12 +1,12 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.SneakyThrows;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.ComponentScan;
@@ -22,14 +22,20 @@ import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 @ComponentScan
 public class LibAgent {
 
-    @Autowired(required = false)
-    private List<CFTLibConfigurer> configurers = new ArrayList<>();
+    private final ObjectProvider<CFTLibConfigurer> configurerProvider;
 
     @Value("${rse.lib.service_name:unknown}")
     private String serviceName;
 
     @Value("${rse.lib.dump_definitions:false}")
     private boolean dumpDefinitions;
+
+    // We use a provider for lazy loading to avoid circular bean dependencies
+    // since we also have an aspect that blocks database use.
+    @Autowired
+    public LibAgent(ObjectProvider<CFTLibConfigurer> configurerProvider) {
+        this.configurerProvider = configurerProvider;
+    }
 
     // Block any database access until ready for use.
     @Before("execution(* javax.sql.DataSource.*(..))")
@@ -48,6 +54,7 @@ public class LibAgent {
     public void onReady() {
         // If this application defines any cftlib configs then execute them once fully booted up.
         ControlPlane.appReady(serviceName);
+        List<CFTLibConfigurer> configurers = configurerProvider.orderedStream().toList();
         for (CFTLibConfigurer configurer : configurers) {
             configurer.configure(ControlPlane.getApi());
         }
