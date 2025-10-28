@@ -1,10 +1,21 @@
 package uk.gov.hmcts.rse;
 
-import lombok.RequiredArgsConstructor;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 
-@RequiredArgsConstructor
 public class ManifestTask extends DefaultTask {
-    public FileCollection classpath;
+    private FileCollection classpath;
+
+    @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
+    public FileCollection getClasspath() {
+        return classpath;
+    }
+
+    public void setClasspath(FileCollection classpath) {
+        this.classpath = classpath;
+    }
 }
