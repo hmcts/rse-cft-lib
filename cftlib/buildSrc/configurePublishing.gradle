@@ -23,7 +23,7 @@ def configurePublishing(p) {
             }
 
             //Configure sourcesJar for ccd-data-store for dependency fix
-            if (project.projectDir.name == 'ccd-data-store-api-decentralised'){
+            if (project.projectDir.name == 'ccd-data-store-api'){
 
                 // Publish a library jar containing only the POJOs we want
                 // to reuse ccd's event publishing code.
@@ -32,12 +32,18 @@ def configurePublishing(p) {
 
                     from(sourceSets.main.output.classesDirs) {
                         include("uk/gov/hmcts/ccd/domain/model/**")
+                        include("uk/gov/hmcts/ccd/domain/service/processor/GlobalSearchProcessorService.class")
+                        include("uk/gov/hmcts/ccd/domain/service/common/ObjectMapperService.class")
+                        include("uk/gov/hmcts/ccd/domain/service/search/global/**")
+                        include("uk/gov/hmcts/ccd/domain/types/sanitiser/CollectionSanitiser.class")
                         include("uk/gov/hmcts/ccd/data/casedetails/SecurityClassification.class")
                         include("uk/gov/hmcts/ccd/config/MessagingProperties.class")
+                        include("uk/gov/hmcts/ccd/config/JacksonUtils.class")
+                        include('uk/gov/hmcts/ccd/config/JacksonUtils$*.class')
                         include("uk/gov/hmcts/ccd/domain/service/message/additionaldata/**")
                         include("uk/gov/hmcts/ccd/domain/service/message/MessageContext.class")
                         include("uk/gov/hmcts/ccd/endpoint/exceptions/ServiceException.class")
-                        include("uk/gov/hmcts/ccd/data/persistence/dto/**")
+                        include("uk/gov/hmcts/ccd/decentralised/dto/**")
                     }
                 }
             }
@@ -73,7 +79,7 @@ def configurePublishing(p) {
                     }
                 }
                 publications {
-                    if (project.name == "ccd-data-store-api-decentralised")     {
+                    if (project.name == "ccd-data-store-api")     {
                         mavenLib(MavenPublication) {
                             groupId = project.group.toString()
                             artifactId = 'ccd-lib'
