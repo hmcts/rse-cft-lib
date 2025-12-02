@@ -34,6 +34,7 @@ def configurePublishing(p) {
                         include("uk/gov/hmcts/ccd/domain/model/**")
                         include("uk/gov/hmcts/ccd/domain/service/processor/GlobalSearchProcessorService.class")
                         include("uk/gov/hmcts/ccd/domain/service/common/ObjectMapperService.class")
+                        include("uk/gov/hmcts/ccd/domain/service/common/DefaultObjectMapperService.class")
                         include("uk/gov/hmcts/ccd/domain/service/search/global/**")
                         include("uk/gov/hmcts/ccd/domain/types/sanitiser/CollectionSanitiser.class")
                         include("uk/gov/hmcts/ccd/data/casedetails/SecurityClassification.class")
