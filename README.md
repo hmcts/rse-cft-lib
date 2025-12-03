@@ -262,7 +262,7 @@ psql postgresql://postgres:postgres@localhost:6432/datastore
 Services run on the following default ports:
 
 | Service | Port |
-| ------- | ---- |
+| ------- |------|
 | CCD definition store | 4451 |
 | CCD data store | 4452 |
 | CCD user profile | 4453 |
@@ -270,8 +270,8 @@ Services run on the following default ports:
 | AM role assignment service | 4096 |
 | AAC assign access to a case | 4454 |
 | Doc assembly | 8080 |
-| XUI Manage cases | 4454 |
-| XUI Manage org | 4454 |
+| XUI Manage cases | 3000 |
+| XUI Manage org | 3001 |
 | IDAM Simulator* | 5062 |
 | S2S Simulator* | 8489 |
 
