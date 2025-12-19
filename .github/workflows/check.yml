@@ -21,7 +21,7 @@ jobs:
         distribution: 'temurin'
         java-version: 17
         cache: 'gradle'
-    - name: Cleanup Disk
+    - name: Free up disk space
       run: |
         sudo rm -rf /usr/share/dotnet
         sudo rm -rf /usr/local/lib/android
