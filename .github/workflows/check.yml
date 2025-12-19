@@ -21,5 +21,11 @@ jobs:
         distribution: 'temurin'
         java-version: 17
         cache: 'gradle'
+    - name: Cleanup Disk
+      run: |
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /usr/local/lib/android
+        sudo rm -rf /opt/ghc
+        sudo rm -rf "/usr/local/share/boost"
     - name: Build
       run: (cd cftlib;./gradlew -PtestSpringBootVersion=${{inputs.test_spring_boot_version}} check -i)
