@@ -23,6 +23,7 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.jvm.tasks.Jar;
+import org.gradle.testing.jacoco.plugins.JacocoTaskExtension;
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension;
 
@@ -67,6 +68,11 @@ public class CftLibPlugin implements Plugin<Project> {
         if (p.getPlugins().hasPlugin(JacocoPlugin.class)) {
             var e = p.getExtensions().getByType(JacocoPluginExtension.class);
             e.applyTo(task);
+            var jacoco = task.getExtensions().findByType(JacocoTaskExtension.class);
+            if (jacoco != null) {
+                // Drools' generated lexer has a method too large for JaCoCo to instrument reliably and can crash CI.
+                jacoco.setExcludes(List.of("org/drools/**"));
+            }
         }
     }
 
