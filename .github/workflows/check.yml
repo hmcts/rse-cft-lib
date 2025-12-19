@@ -21,28 +21,5 @@ jobs:
         distribution: 'temurin'
         java-version: 17
         cache: 'gradle'
-    - name: Diagnostics (pre-build)
-      run: |
-        set -euxo pipefail
-        echo "=== uname ==="
-        uname -a || true
-        echo "=== df -h ==="
-        df -h || true
-        echo "=== docker system df ==="
-        docker system df || true
-        echo "=== docker images (top 50) ==="
-        docker images --format '{{.Repository}}:{{.Tag}}\t{{.Size}}' | head -n 50 || true
-        echo "=== free -h ==="
-        free -h || true
     - name: Build
       run: (cd cftlib;./gradlew -PtestSpringBootVersion=${{inputs.test_spring_boot_version}} check -i)
-    - name: Diagnostics (post-failure)
-      if: failure()
-      run: |
-        set -euxo pipefail
-        echo "=== df -h ==="
-        df -h || true
-        echo "=== docker system df ==="
-        docker system df || true
-        echo "=== docker ps ==="
-        docker ps -a || true
