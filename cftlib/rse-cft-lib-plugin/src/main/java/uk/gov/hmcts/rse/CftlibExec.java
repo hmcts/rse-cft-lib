@@ -33,7 +33,8 @@ public class CftlibExec extends JavaExec {
         if (authMode == AuthMode.Local) {
             environment("RSE_LIB_AUTH-MODE", "localAuth");
             // Enable idam simulator
-            environment("COMPOSE_PROFILES", "localAuth");
+            // Also enable optional XUI containers when running locally.
+            environment("COMPOSE_PROFILES", "localAuth,xui");
 
             // S2S simulator
             environment("IDAM_S2S-AUTH_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
