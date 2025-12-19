@@ -27,6 +27,7 @@ services:
 
   xui-manage-cases:
     image: "${XUI_MANAGE_CASES_USE_LOCAL-hmctspublic.azurecr.io/}xui/webapp:${XUI_MANAGE_CASES_TAG:-latest}"
+    profiles: ["xui"]
     environment:
       FEATURE_APP_INSIGHTS_ENABLED: "false"
       FEATURE_SECURE_COOKIE_ENABLED: "false"
@@ -85,6 +86,7 @@ services:
 
   xui-manage-org:
     image: hmctspublic.azurecr.io/xui/mo-webapp:latest
+    profiles: ["xui"]
     environment:
       DEBUG: '*:*'
       IDAM_API_SERVICE: "${XUI_IDAM_API_URL:-https://idam-api.aat.platform.hmcts.net}"
