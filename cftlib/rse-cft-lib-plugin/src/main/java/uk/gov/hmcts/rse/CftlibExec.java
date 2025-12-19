@@ -5,7 +5,6 @@ import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import lombok.SneakyThrows;
-import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
@@ -17,7 +16,6 @@ import java.util.List;
 
 public class CftlibExec extends JavaExec {
     public AuthMode authMode = AuthMode.AAT;
-    private boolean startXui = true;
 
     public CftlibExec() {
         setJavaToolChain();
@@ -35,7 +33,8 @@ public class CftlibExec extends JavaExec {
         if (authMode == AuthMode.Local) {
             environment("RSE_LIB_AUTH-MODE", "localAuth");
             // Enable idam simulator
-            environment("COMPOSE_PROFILES", startXui ? "localAuth,xui" : "localAuth");
+            // Start XUI containers locally; CI doesn't set this and will skip them.
+            environment("COMPOSE_PROFILES", "localAuth,xui");
 
             // S2S simulator
             environment("IDAM_S2S-AUTH_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
@@ -102,15 +101,6 @@ public class CftlibExec extends JavaExec {
             }
         }
 
-    }
-
-    @Input
-    public boolean isStartXui() {
-        return startXui;
-    }
-
-    public void setStartXui(boolean startXui) {
-        this.startXui = startXui;
     }
 
     @SneakyThrows
