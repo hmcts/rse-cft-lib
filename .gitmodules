@@ -24,3 +24,6 @@
 	path = projects/ccd-data-store-api-decentralised
 	url = https://github.com/hmcts/ccd-data-store-api.git
 	branch = poc-sow014-changes
+[submodule "projects/wa-task-management-api"]
+	path = projects/wa-task-management-api
+	url = git@github.com:hmcts/wa-task-management-api.git

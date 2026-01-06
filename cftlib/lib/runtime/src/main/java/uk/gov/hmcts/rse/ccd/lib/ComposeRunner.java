@@ -168,6 +168,8 @@ public class ComposeRunner {
                 .stream().map(Objects::toString)
                 .collect(Collectors.toCollection(ArrayList::new));
 
+            dbs.add("cft_task_db");
+
             var additionalDbs = System.getenv("RSE_LIB_ADDITIONAL_DATABASES");
             if (additionalDbs != null) {
                 dbs.addAll(List.of(additionalDbs.split(",")));

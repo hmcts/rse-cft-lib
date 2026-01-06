@@ -9,4 +9,5 @@ public enum Project {
     AacManageCaseAssignment,
     Application,
     DocAssembly,
+    WaTaskManagementApi,
 }
