@@ -93,9 +93,6 @@ tasks.compileCftlibJava.dependsOn rootProject.tasks.publishToMavenLocal
 tasks.withType(ManifestTask).each {
     it.dependsOn rootProject.tasks.publishToMavenLocal
 }
-configurations.each {
-    it.resolutionStrategy.useGlobalDependencySubstitutionRules = false
-}
 
 tasks.named('dumpCCDDefinitions') {
     doLast {
