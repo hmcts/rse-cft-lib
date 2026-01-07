@@ -1,42 +1,36 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
+import java.io.IOException;
+
 /**
  * Names threads for easier debugging.
  * Implements URL remappings handled by the CCD API Gateway.
- * TODO: delete this and consolidate the springBoot3 sourceset when we can drop support for Spring Boot 2.
  */
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnClass({IdamApi.class, HttpServletRequest.class})
-@ConditionalOnExpression("#{T(org.springframework.boot.SpringBootVersion).getVersion().startsWith('2')}")
 @Component
-public class SpringBoot2RequestFilter extends OncePerRequestFilter {
+public class SpringBoot3RequestFilter extends OncePerRequestFilter {
 
-    @Autowired
     private final IdamApi idam;
-
     private final String name;
-
     private final boolean isCCD;
 
     @Autowired
-    public SpringBoot2RequestFilter(IdamApi idam,
+    public SpringBoot3RequestFilter(IdamApi idam,
                                     @Value("${rse.lib.service_name:***CFT lib***}") String name) {
         this.idam = idam;
         this.name = name;

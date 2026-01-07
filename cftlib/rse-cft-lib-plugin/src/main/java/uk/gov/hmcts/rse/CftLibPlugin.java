@@ -191,22 +191,27 @@ public class CftLibPlugin implements Plugin<Project> {
 
         var hostApplicationManifest = getHostApplicationManifestFile(project);
         var manifestTask = project.getTasks().create("createManifestApplication", ManifestTask.class);
-        manifestTask.doFirst(m -> {
+        var args = "--rse.lib.service_name=" + project.getName();
+        var files = project.files("src/main/resources").plus(lib.getRuntimeClasspath());
+        manifestTask.getClasspath().from(files);
+        manifestTask.getOutputFile().set(hostApplicationManifest);
+        manifestTask.getArgs().set(List.of(args));
+        manifestTask.getMainClass().set(project.provider(() -> {
             JavaExec e = (JavaExec) project.getTasks().getByName("bootRun");
-            String clazz = "";
-
             if (e.getMainClass().isPresent()) {
-                clazz = e.getMainClass().get();
-            } else {
-                clazz = project.getProperties().get("mainClassName").toString();
+                return e.getMainClass().get();
             }
+            return project.getProperties().get("mainClassName").toString();
+        }));
 
-            var args = "--rse.lib.service_name=" + project.getName();
-            // Prepend the runtimeclasspath with the project's resources folder to allow live editing of resources
-            var files = project.files("src/main/resources").plus(lib.getRuntimeClasspath());
-            writeManifests(project, files, clazz, hostApplicationManifest, args);
+        manifestTask.doFirst(m -> {
+            writeManifests(
+                project,
+                manifestTask.getClasspath(),
+                manifestTask.getMainClass().get(),
+                manifestTask.getOutputFile().get().getAsFile(),
+                manifestTask.getArgs().get().toArray(new String[0]));
         });
-        manifestTask.classpath = lib.getRuntimeClasspath();
         // Task performing main class name resolution changed in spring boot 3
         for (String name : List.of("resolveMainClassName", "bootRunMainClassName")) {
             var t = project.getTasks().findByName(name);
@@ -266,11 +271,18 @@ public class CftLibPlugin implements Plugin<Project> {
     private ManifestTask createManifestTask(Project project, String name, FileCollection configuration,
                                             String mainClass, File file, String... args) {
         var result = project.getTasks().create(name, ManifestTask.class);
-        result.classpath = configuration;
+        result.getClasspath().from(configuration);
+        result.getMainClass().set(mainClass);
+        result.getArgs().set(Arrays.asList(args));
+        result.getOutputFile().set(file);
         result.doFirst(x -> {
-            writeManifests(project, configuration, mainClass, file, args);
+            writeManifests(
+                project,
+                result.getClasspath(),
+                result.getMainClass().get(),
+                result.getOutputFile().get().getAsFile(),
+                result.getArgs().get().toArray(new String[0]));
         });
-        result.getOutputs().file(file);
         return result;
     }
 
@@ -336,31 +348,38 @@ public class CftLibPlugin implements Plugin<Project> {
         result.getInputs().property(
             "cftlib.datastore.decentralised",
             project.provider(() -> isDatastoreDecentralised(project)));
+        result.getMainClass().set(mainClass);
+        result.getArgs().set(Arrays.asList(args));
+        result.getOutputFile().set(file);
+        result.getClasspath().from(resolveServiceClasspath(project, service));
         result.doFirst(x -> {
-            var dependency = resolveDependencyFor(project, service);
-            FileCollection classpath;
-            if (dependency.startsWith("ccd-data-store-api") && project.findProject(":ccd-data-store-api") != null) {
-                // A local development facility to work with data store as a sibling project
-                var datastore = project.getRootProject().project(":ccd-data-store-api");
-
-                var existing = datastore.getConfigurations().findByName("cftlibWithAgent");
-                if (existing == null) {
-                    var agent = datastore.getConfigurations().create("cftlibWithAgent");
-                    agent.getDependencies().add(project.getDependencies().create(datastore));
-                    agent.getDependencies().addAll(List.of(libDependencies(project, "cftlib-agent")));
-                    classpath = agent;
-                } else {
-                    classpath = existing;
-                }
-            } else {
-                classpath = detachedConfiguration(project,
-                    libDependencies(project, dependency, "cftlib-agent"));
-            }
-            result.classpath = classpath;
-            writeManifests(project, classpath, mainClass, file, args);
+            writeManifests(
+                project,
+                result.getClasspath(),
+                result.getMainClass().get(),
+                result.getOutputFile().get().getAsFile(),
+                result.getArgs().get().toArray(new String[0]));
         });
-        result.getOutputs().file(file);
         return result;
+    }
+
+    private FileCollection resolveServiceClasspath(Project project, Service service) {
+        var dependency = resolveDependencyFor(project, service);
+        if (dependency.startsWith("ccd-data-store-api") && project.findProject(":ccd-data-store-api") != null) {
+            // A local development facility to work with data store as a sibling project
+            var datastore = project.getRootProject().project(":ccd-data-store-api");
+
+            var existing = datastore.getConfigurations().findByName("cftlibWithAgent");
+            if (existing == null) {
+                var agent = datastore.getConfigurations().create("cftlibWithAgent");
+                agent.getDependencies().add(project.getDependencies().create(datastore));
+                agent.getDependencies().addAll(List.of(libDependencies(project, "cftlib-agent")));
+                return agent;
+            }
+            return existing;
+        }
+
+        return detachedConfiguration(project, libDependencies(project, dependency, "cftlib-agent"));
     }
 
     private String resolveDependencyFor(Project project, Service service) {
