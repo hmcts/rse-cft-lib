@@ -22,5 +22,7 @@ jobs:
         sudo rm -rf /usr/local/lib/android
         sudo rm -rf /opt/ghc
         sudo rm -rf "/usr/local/share/boost"
+    - name: Publish to Maven Local
+      run: (cd cftlib; ./gradlew publishToMavenLocal -i)
     - name: Build
-      run: (cd cftlib;./gradlew check -i)
+      run: (cd cftlib; ./gradlew check -i)
