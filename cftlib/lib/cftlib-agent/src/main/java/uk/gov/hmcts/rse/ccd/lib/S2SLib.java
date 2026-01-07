@@ -25,7 +25,8 @@ class S2SLib {
     private final boolean stubOutbound;
 
     @Autowired
-    public S2SLib(@Value("${idam.s2s-auth.microservice}") String service,
+    public S2SLib(
+                  @Value("${idam.s2s-auth.microservice:${idam.s2s-auth.name:unknown}}") String service,
                   @Value("${rse.lib.stub.auth.outbound:false}") boolean stubOutbound
     ) {
         this.service = service;
