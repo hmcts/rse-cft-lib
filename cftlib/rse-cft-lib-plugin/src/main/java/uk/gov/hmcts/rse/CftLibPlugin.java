@@ -334,17 +334,8 @@ public class CftLibPlugin implements Plugin<Project> {
     private ManifestTask createServiceManifestTask(Project project, Service service, String mainClass, File file,
                                                    String... args) {
         var result = project.getTasks().create("writeManifest" + service.id(), ManifestTask.class);
-        result.getInputs().property(
-            "cftlib.datastore.decentralised",
-            project.provider(() -> isDatastoreDecentralised(project)));
         var dependency = resolveDependencyFor(project, service);
-        Project localProject = null;
-        if (dependency.startsWith("ccd-data-store-api") && project.findProject(":ccd-data-store-api") != null) {
-            localProject = project.getRootProject().project(":ccd-data-store-api");
-        } else if (dependency.startsWith("wa-task-management-api")
-            && project.findProject(":wa-task-management-api") != null) {
-            localProject = project.getRootProject().project(":wa-task-management-api");
-        }
+        var localProject = resolveLocalProject(project, dependency);
         if (localProject != null) {
             localProject.getTasks()
                 .matching(task -> "classes".equals(task.getName()))
@@ -352,15 +343,8 @@ public class CftLibPlugin implements Plugin<Project> {
         }
         result.doFirst(x -> {
             FileCollection classpath;
-            if (dependency.startsWith("ccd-data-store-api") && project.findProject(":ccd-data-store-api") != null) {
-                // A local development facility to work with data store as a sibling project
-                var datastore = project.getRootProject().project(":ccd-data-store-api");
-                classpath = localProjectClasspath(project, datastore);
-            } else if (dependency.startsWith("wa-task-management-api")
-                && project.findProject(":wa-task-management-api") != null) {
-                // A local development facility to work with WA task management as a sibling project
-                var waTask = project.getRootProject().project(":wa-task-management-api");
-                classpath = localProjectClasspath(project, waTask);
+            if (localProject != null) {
+                classpath = localProjectClasspath(project, localProject);
             } else {
                 classpath = detachedConfiguration(project,
                     libDependencies(project, dependency, "cftlib-agent"));
@@ -373,10 +357,18 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
     private String resolveDependencyFor(Project project, Service service) {
-        if (service == Service.ccdDataStoreApi && isDatastoreDecentralised(project)) {
-            return "ccd-data-store-api-decentralised";
-        }
         return service.id();
+    }
+
+    private Project resolveLocalProject(Project project, String dependency) {
+        if (dependency.startsWith("ccd-data-store-api") && project.findProject(":ccd-data-store-api") != null) {
+            return project.getRootProject().project(":ccd-data-store-api");
+        }
+        if (dependency.startsWith("wa-task-management-api")
+            && project.findProject(":wa-task-management-api") != null) {
+            return project.getRootProject().project(":wa-task-management-api");
+        }
+        return null;
     }
 
     private FileCollection localProjectClasspath(Project project, Project localProject) {
@@ -386,12 +378,4 @@ public class CftLibPlugin implements Plugin<Project> {
         return project.files(runtimeClasspath, agent);
     }
 
-    private boolean isDatastoreDecentralised(Project project) {
-        var extraProperties = project.getExtensions().getExtraProperties();
-        if (extraProperties.has("cftlib.datastore")) {
-            var value = extraProperties.get("cftlib.datastore").toString().trim();
-            return "decentralised".equalsIgnoreCase(value) || "decentralized".equalsIgnoreCase(value);
-        }
-        return false;
-    }
 }

@@ -26,4 +26,4 @@
 	branch = poc-sow014-changes
 [submodule "projects/wa-task-management-api"]
 	path = projects/wa-task-management-api
-	url = git@github.com:hmcts/wa-task-management-api.git
+	url = https://github.com/hmcts/wa-task-management-api.git
