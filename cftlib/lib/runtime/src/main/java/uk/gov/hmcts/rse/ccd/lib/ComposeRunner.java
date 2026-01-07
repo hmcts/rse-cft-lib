@@ -126,11 +126,14 @@ public class ComposeRunner {
                     ? hostEnv
                     : "host.docker.internal");
             var runtime = host + ":5062";
+            var waTaskApi = host + ":8087";
 
             builder.putAll(Map.of(
                 "XUI_S2S_URL", host + ":" + ControlPlane.getEnvVar("RSE_LIB_S2S_PORT", 8489),
                 "XUI_IDAM_API_URL", runtime,
                 "XUI_IDAM_LOGIN_URL", "http://localhost:5062",
+                "SERVICES_WORK_ALLOCATION_TASK_API", waTaskApi,
+                "HEALTH_WORK_ALLOCATION_TASK_API", waTaskApi + "/health",
                 // TODO: placeholder to pass health checks
                 "XUI_EM_DOCASSEMBLY_API", ControlPlane.getEnvVar("XUI_EM_DOCASSEMBLY_API", runtime),
                 "XUI_DOCUMENTS_API", ControlPlane.getEnvVar("XUI_DOCUMENTS_API", runtime),

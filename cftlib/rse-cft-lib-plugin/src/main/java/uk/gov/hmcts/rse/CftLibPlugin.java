@@ -337,9 +337,8 @@ public class CftLibPlugin implements Plugin<Project> {
         var dependency = resolveDependencyFor(project, service);
         var localProject = resolveLocalProject(project, dependency);
         if (localProject != null) {
-            localProject.getTasks()
-                .matching(task -> "classes".equals(task.getName()))
-                .configureEach(task -> result.dependsOn(task));
+            localProject.getPlugins().withId("java",
+                plugin -> result.dependsOn(localProject.getTasks().named("classes")));
         }
         result.doFirst(x -> {
             FileCollection classpath;
