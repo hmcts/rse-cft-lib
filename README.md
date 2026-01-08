@@ -72,6 +72,7 @@ This will define the following in your Gradle build:
     - Access Management role assignment service
     - Assign access to a case
     - Doc Assembly
+    - WA Task Management API
   - (in docker)
     - Required dependencies (postgres, elasticsearch etc)
     - XUI Manage cases
@@ -133,6 +134,7 @@ This will launch (in a single JVM):
 * AM role assignment service
 * Assign access to a case
 * Doc assembly
+* WA Task Management API
 
 Plus (in docker):
 
@@ -251,6 +253,7 @@ Database connections can be obtained programmatically via the `Cftlib::getConnec
 | CCD data store | datastore |
 | CCD user profile | userprofile |
 | AM role assignment service | am |
+| WA Task Management API | cft_task_db |
 
 eg. to connect to ccd data store db 
 ```
@@ -270,6 +273,7 @@ Services run on the following default ports:
 | AM role assignment service | 4096 |
 | AAC assign access to a case | 4454 |
 | Doc assembly | 8080 |
+| WA Task Management API | 8087 |
 | XUI Manage cases | 3000 |
 | XUI Manage org | 3001 |
 | IDAM Simulator* | 5062 |
