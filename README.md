@@ -1,4 +1,4 @@
-# RSE CFT lib ![Java CI](https://github.com/hmcts/rse-cft-lib/workflows/Java%20CI/badge.svg) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hmcts/rse-cft-lib?label=release)
+# RSE CFT lib ![Build](https://github.com/hmcts/rse-cft-lib/actions/workflows/build.yml/badge.svg) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hmcts/rse-cft-lib?label=release)
 
 ## A reform common component SDK
 
