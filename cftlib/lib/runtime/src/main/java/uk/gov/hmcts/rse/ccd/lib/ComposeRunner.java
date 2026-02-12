@@ -4,15 +4,19 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.util.LinkedHashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -23,6 +27,7 @@ import org.awaitility.Awaitility;
 import org.zeroturnaround.exec.ProcessExecutor;
 
 public class ComposeRunner {
+    static final String XUI_ENV_PREFIX = "RSE_LIB_XUI_ENV_";
 
     void startBoot() {
         try {
@@ -59,6 +64,8 @@ public class ComposeRunner {
         }
         var dir = Files.createTempDirectory("cftlib");
         new ZipFile(f).extractAll(dir.toString());
+        writeEnvFile(dir.resolve("xui.env"), buildPrefixedEnvOverrides(System.getenv(), System.getProperties(),
+            XUI_ENV_PREFIX));
         var args = new ArrayList<String>(List.of("docker", "compose", "-p", "cftlib", "up", "-d", "--remove-orphans"));
         // When running on a CI server ensure clean container builds.
         if (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT")) {
@@ -108,6 +115,52 @@ public class ComposeRunner {
             .until(this::esReady);
 
         ControlPlane.setESReady();
+    }
+
+    static Map<String, String> buildPrefixedEnvOverrides(
+        Map<String, String> env,
+        Properties properties,
+        String prefix
+    ) {
+        var output = new LinkedHashMap<String, String>();
+
+        if (env != null) {
+            for (var entry : env.entrySet()) {
+                var key = entry.getKey();
+                if (key != null && key.startsWith(prefix)) {
+                    var value = entry.getValue();
+                    var stripped = key.substring(prefix.length());
+                    if (!stripped.isBlank() && value != null && !value.isBlank()) {
+                        output.put(stripped, value);
+                    }
+                }
+            }
+        }
+
+        if (properties != null) {
+            for (var key : properties.stringPropertyNames()) {
+                if (key.startsWith(prefix)) {
+                    var value = properties.getProperty(key);
+                    var stripped = key.substring(prefix.length());
+                    if (!stripped.isBlank() && value != null && !value.isBlank()) {
+                        output.put(stripped, value);
+                    }
+                }
+            }
+        }
+
+        return output;
+    }
+
+    static void writeEnvFile(Path file, Map<String, String> values) throws Exception {
+        if (values == null || values.isEmpty()) {
+            Files.writeString(file, "", StandardCharsets.UTF_8);
+            return;
+        }
+        var lines = values.entrySet().stream()
+            .map(entry -> entry.getKey() + "=" + entry.getValue())
+            .collect(Collectors.joining("\n"));
+        Files.writeString(file, lines + "\n", StandardCharsets.UTF_8);
     }
 
     private Map<String, String> getEnvironmentVars() {
