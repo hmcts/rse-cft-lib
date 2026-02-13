@@ -260,12 +260,19 @@ class LibConsumerApplicationTests extends CftlibTest {
     void xuiContainerReceivesPrefixedEnvVars() {
         var expected = "DECENTRALISED_EVENT_BASE_URLS={\"E2E\":\"https://example.com\"}";
 
-        var containerId = await()
+        var containerIds = await()
             .timeout(Duration.ofSeconds(30))
             .pollInterval(Duration.ofSeconds(1))
-            .until(() -> dockerCompose("ps", "-q", "xui-manage-cases"), id -> id != null && !id.isBlank());
+            .until(() -> dockerCompose("ps", "-aq", "xui-manage-cases"),
+                ids -> ids != null && ids.lines().anyMatch(id -> !id.isBlank()));
 
-        var env = docker("inspect", containerId.trim(), "--format", "{{range .Config.Env}}{{println .}}{{end}}");
+        var containerId = containerIds.lines()
+            .map(String::trim)
+            .filter(id -> !id.isBlank())
+            .findFirst()
+            .orElseThrow();
+
+        var env = docker("inspect", containerId, "--format", "{{range .Config.Env}}{{println .}}{{end}}");
         assertThat(env.contains(expected), is(true));
     }
 
