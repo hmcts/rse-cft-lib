@@ -54,9 +54,13 @@ bootWithCCD {
     environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
     // Force container recreation.
     environment('RSE_LIB_CLEAN_BOOT', 'true')
+
+    // Used by LibConsumerApplicationTests to verify env vars are propagated into the xui-manage-cases container.
+    environment 'RSE_LIB_XUI_ENV_DECENTRALISED_EVENT_BASE_URLS', '{"E2E":"https://example.com"}'
 }
 
 cftlibTest {
+    authMode = AuthMode.Local
     environment("RSE_LIB_ADDITIONAL_DATABASES", "mydb")
     // Check that we are able to override the default port.
     environment 'RSE_LIB_S2S_PORT', '7431'
@@ -64,6 +68,9 @@ cftlibTest {
 
     // Test environment variable substitution - this value should be subbed into one of our FixedLists
     environment 'CCD_DEF_CHANGED_NAME_HOW', '"ID": "ChangedNameHow"'
+
+    // Used by LibConsumerApplicationTests to verify env vars are propagated into the xui-manage-cases container.
+    environment 'RSE_LIB_XUI_ENV_DECENTRALISED_EVENT_BASE_URLS', '{"E2E":"https://example.com"}'
 }
 
 test {

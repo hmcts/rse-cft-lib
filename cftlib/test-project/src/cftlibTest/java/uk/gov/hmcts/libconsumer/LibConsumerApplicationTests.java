@@ -2,6 +2,7 @@ package uk.gov.hmcts.libconsumer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -255,6 +256,26 @@ class LibConsumerApplicationTests extends CftlibTest {
         cftlib().importJsonDefinition(new File("../lib/cftlib-agent/src/test/resources/definition"));
     }
 
+    @Test
+    void xuiContainerReceivesPrefixedEnvVars() {
+        var expected = "DECENTRALISED_EVENT_BASE_URLS={\"E2E\":\"https://example.com\"}";
+
+        var containerIds = await()
+            .timeout(Duration.ofSeconds(30))
+            .pollInterval(Duration.ofSeconds(1))
+            .until(() -> dockerCompose("ps", "-aq", "xui-manage-cases"),
+                ids -> ids != null && ids.lines().anyMatch(id -> !id.isBlank()));
+
+        var containerId = containerIds.lines()
+            .map(String::trim)
+            .filter(id -> !id.isBlank())
+            .findFirst()
+            .orElseThrow();
+
+        var env = docker("inspect", containerId, "--format", "{{range .Config.Env}}{{println .}}{{end}}");
+        assertThat(env.contains(expected), is(true));
+    }
+
 
     @SneakyThrows
     private Boolean caseAppearsInSearch() {
@@ -322,6 +343,39 @@ class LibConsumerApplicationTests extends CftlibTest {
         request.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
         request.addHeader("Authorization", "Bearer " + buildJwt());
         return request;
+    }
+
+    private String dockerCompose(String... args) {
+        var cmd = new String[args.length + 3];
+        cmd[0] = "compose";
+        cmd[1] = "-p";
+        cmd[2] = "cftlib";
+        System.arraycopy(args, 0, cmd, 3, args.length);
+        return docker(cmd);
+    }
+
+    private String docker(String... args) {
+        var cmd = new String[args.length + 1];
+        cmd[0] = "docker";
+        System.arraycopy(args, 0, cmd, 1, args.length);
+        return runCommand(cmd);
+    }
+
+    private String runCommand(String... cmd) {
+        try {
+            var process = new ProcessBuilder(cmd)
+                .redirectErrorStream(true)
+                .start();
+            try (InputStream is = process.getInputStream()) {
+                var output = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                if (process.waitFor() != 0) {
+                    throw new IllegalStateException(String.join(" ", cmd) + " failed: " + output);
+                }
+                return output;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

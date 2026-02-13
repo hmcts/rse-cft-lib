@@ -143,6 +143,8 @@ Plus (in docker):
 * XUI manage org, available on http://localhost:3001
 
 The manage cases port can be overridden using the environment variable `XUI_PORT` and manage orgs can be overridden with `XUI_MO_PORT`.
+To pass arbitrary environment variables into the XUI manage cases container, prefix them with `RSE_LIB_XUI_ENV_`.
+For example, set `RSE_LIB_XUI_ENV_DECENTRALISED_EVENT_BASE_URLS='{"E2E":"https://example.com"}'`.
 
 ElasticSearch indexing is handled by a simple poller [functionally equivalent to logstash](cftlib/lib/runtime/src/main/java/uk/gov/hmcts/rse/ccd/lib/ESIndexer.java)
 
