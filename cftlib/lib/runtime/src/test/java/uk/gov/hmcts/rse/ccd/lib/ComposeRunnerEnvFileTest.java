@@ -36,13 +36,13 @@ class ComposeRunnerEnvFileTest {
         Path envFile = tempDir.resolve("xui.env");
         Map<String, String> values = Map.of(
             "DECENTRALISED_EVENT_BASE_URLS", "{\"E2E\":\"https://example.com\"}",
-            "FOO", "bar"
+            "FOO", "abc$BAR"
         );
 
         ComposeRunner.writeEnvFile(envFile, values);
 
         var contents = Files.readString(envFile);
         assertThat(contents).contains("DECENTRALISED_EVENT_BASE_URLS={\"E2E\":\"https://example.com\"}");
-        assertThat(contents).contains("FOO=bar");
+        assertThat(contents).contains("FOO=abc$$BAR");
     }
 }

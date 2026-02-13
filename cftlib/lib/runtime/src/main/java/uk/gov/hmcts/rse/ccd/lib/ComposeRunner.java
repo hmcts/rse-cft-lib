@@ -158,9 +158,13 @@ public class ComposeRunner {
             return;
         }
         var lines = values.entrySet().stream()
-            .map(entry -> entry.getKey() + "=" + entry.getValue())
+            .map(entry -> entry.getKey() + "=" + escapeForComposeEnvFile(entry.getValue()))
             .collect(Collectors.joining("\n"));
         Files.writeString(file, lines + "\n", StandardCharsets.UTF_8);
+    }
+
+    static String escapeForComposeEnvFile(String value) {
+        return value.replace("$", "$$");
     }
 
     private Map<String, String> getEnvironmentVars() {
