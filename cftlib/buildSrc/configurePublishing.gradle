@@ -22,8 +22,8 @@ def configurePublishing(p) {
                 }
             }
 
-            //Configure sourcesJar for ccd-data-store for dependency fix
-            if (project.projectDir.name == 'ccd-data-store-api-decentralised'){
+            // Publish the filtered CCD DTO/model jar from the main data store project.
+            if (project.projectDir.name == 'ccd-data-store-api') {
 
                 // Publish a library jar containing only the POJOs we want
                 // to reuse ccd's event publishing code.
@@ -80,7 +80,7 @@ def configurePublishing(p) {
                     }
                 }
                 publications {
-                    if (project.name == "ccd-data-store-api-decentralised")     {
+                    if (project.name == "ccd-data-store-api") {
                         mavenLib(MavenPublication) {
                             groupId = project.group.toString()
                             artifactId = 'ccd-lib'
