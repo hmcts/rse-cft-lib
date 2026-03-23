@@ -3,12 +3,11 @@ package uk.gov.hmcts.rse.ccd.lib;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.http.HttpHost;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.RequestOptions;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
+import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -22,6 +21,8 @@ import java.util.Set;
 @Component
 @ConditionalOnProperty(value = "ccd.sdk.decentralised", havingValue = "false", matchIfMissing = true)
 public class ESIndexer {
+
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @SneakyThrows
     @Autowired
@@ -37,8 +38,9 @@ public class ESIndexer {
     private void index() {
         ControlPlane.waitForBoot();
 
-        RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
-                new HttpHost("localhost", 9200)));
+        // Use the low-level RestClient to avoid RestHighLevelClient response-parsing
+        // incompatibilities with Elasticsearch 8+.
+        RestClient client = RestClient.builder(new HttpHost("localhost", 9200)).build();
 
         try (Connection c = ControlPlane.getApi().getConnection(Database.Datastore)) {
             while (true) {
@@ -73,18 +75,23 @@ public class ESIndexer {
                           from updated) row
                         """).executeQuery();
 
-                BulkRequest request = new BulkRequest();
+                // Build NDJSON bulk request body directly, bypassing the high-level client
+                // which cannot parse responses from Elasticsearch 8+.
+                var bulkBody = new StringBuilder();
+                int actionCount = 0;
+
                 while (results.next()) {
                     var row = results.getString("row");
-                    request.add(new IndexRequest(results.getString("index_id"))
-                            .id(results.getString("id"))
-                            .source(row, XContentType.JSON));
+                    var indexId = results.getString("index_id");
+                    var id = results.getString("id");
+
+                    appendBulkIndex(bulkBody, indexId, id, row);
+                    actionCount++;
 
                     // Replicate CCD's globalsearch logstash setup.
                     // Where cases define a 'SearchCriteria' field we index certain fields into CCD's central
                     // 'global search' index.
                     // https://github.com/hmcts/cnp-flux-config/blob/master/apps/ccd/ccd-logstash/ccd-logstash.yaml#L99-L175
-                    var mapper = new ObjectMapper();
                     Map<String, Object> map = mapper.readValue(row, Map.class);
                     var data = (Map<String, Object>) map.get("data");
                     if (data.containsKey("SearchCriteria")) {
@@ -99,20 +106,39 @@ public class ESIndexer {
                         map.remove("created_date");
                         map.put("index_id", "global_search");
 
-                        request.add(new IndexRequest("global_search")
-                                .id(results.getString("id"))
-                                .source(mapper.writeValueAsString(map), XContentType.JSON));
+                        appendBulkIndex(bulkBody, "global_search", id, mapper.writeValueAsString(map));
+                        actionCount++;
                     }
                 }
-                if (request.numberOfActions() > 0) {
-                    var r = client.bulk(request, RequestOptions.DEFAULT);
-                    if (r.hasFailures()) {
-                        throw  new RuntimeException("**** Cftlib elasticsearch indexing error(s): "
-                                + r.buildFailureMessage());
+
+                if (actionCount > 0) {
+                    var request = new Request("POST", "/_bulk");
+                    request.addParameter("timeout", "1m");
+                    request.setEntity(new StringEntity(
+                            bulkBody.toString(),
+                            ContentType.create("application/x-ndjson", "UTF-8")));
+
+                    var response = client.performRequest(request);
+                    var statusCode = response.getStatusLine().getStatusCode();
+                    if (statusCode != 200) {
+                        throw new RuntimeException(
+                                "**** Cftlib elasticsearch bulk indexing failed with HTTP status: " + statusCode);
+                    }
+                    var responseBody = EntityUtils.toString(response.getEntity());
+                    var responseMap = mapper.readValue(responseBody, Map.class);
+                    if (Boolean.TRUE.equals(responseMap.get("errors"))) {
+                        throw new RuntimeException(
+                                "**** Cftlib elasticsearch indexing error(s): " + responseBody);
                     }
                 }
             }
         }
+    }
+
+    private void appendBulkIndex(StringBuilder bulk, String index, String id, String source) {
+        bulk.append("{\"index\":{\"_index\":\"").append(index)
+            .append("\",\"_id\":\"").append(id).append("\"}}").append('\n');
+        bulk.append(source).append('\n');
     }
 
     public void filter(Map<String, Object> map, String... forKeys) {
