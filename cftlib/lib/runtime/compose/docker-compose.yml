@@ -27,7 +27,7 @@ services:
       - 9200:9200
 
   xui-manage-cases:
-    image: "${XUI_MANAGE_CASES_USE_LOCAL-hmctspublic.azurecr.io/}xui/webapp:${XUI_MANAGE_CASES_TAG:-latest}"
+    image: "${XUI_MANAGE_CASES_USE_LOCAL-hmctsprod.azurecr.io/}xui/webapp:${XUI_MANAGE_CASES_TAG:-latest}"
     env_file:
       - ./xui.env
     environment:
@@ -87,7 +87,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   xui-manage-org:
-    image: hmctspublic.azurecr.io/xui/mo-webapp:latest
+    image: hmctsprod.azurecr.io/xui/mo-webapp:latest
     environment:
       DEBUG: '*:*'
       IDAM_API_SERVICE: "${XUI_IDAM_API_URL:-https://idam-api.aat.platform.hmcts.net}"
@@ -131,7 +131,7 @@ services:
       - ${XUI_MO_PORT:-3001}:3001
 
   rse-idam-simulator:
-    image: "hmctspublic.azurecr.io/hmcts/rse/rse-idam-simulator:latest"
+    image: "hmctsprod.azurecr.io/hmcts/rse/rse-idam-simulator:latest"
     profiles: ["localAuth"]
     ports:
       - 5062:5062
