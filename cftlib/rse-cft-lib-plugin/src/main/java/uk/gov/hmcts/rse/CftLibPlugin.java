@@ -1,17 +1,12 @@
 package uk.gov.hmcts.rse;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import lombok.SneakyThrows;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -192,22 +187,18 @@ public class CftLibPlugin implements Plugin<Project> {
 
         var hostApplicationManifest = getHostApplicationManifestFile(project);
         var manifestTask = project.getTasks().create("createManifestApplication", ManifestTask.class);
-        manifestTask.doFirst(m -> {
+        manifestTask.getMainClassName().set(project.provider(() -> {
             JavaExec e = (JavaExec) project.getTasks().getByName("bootRun");
-            String clazz = "";
-
             if (e.getMainClass().isPresent()) {
-                clazz = e.getMainClass().get();
-            } else {
-                clazz = project.getProperties().get("mainClassName").toString();
+                return e.getMainClass().get();
             }
+            return project.getProperties().get("mainClassName").toString();
+        }));
+        manifestTask.getManifestArgs().set(List.of("--rse.lib.service_name=" + project.getName()));
+        // Prepend the runtimeclasspath with the project's resources folder to allow live editing of resources
+        manifestTask.getClasspath().from(project.files("src/main/resources").plus(lib.getRuntimeClasspath()));
+        manifestTask.getManifestFile().set(hostApplicationManifest);
 
-            var args = "--rse.lib.service_name=" + project.getName();
-            // Prepend the runtimeclasspath with the project's resources folder to allow live editing of resources
-            var files = project.files("src/main/resources").plus(lib.getRuntimeClasspath());
-            writeManifests(project, files, clazz, hostApplicationManifest, args);
-        });
-        manifestTask.classpath = lib.getRuntimeClasspath();
         // Task performing main class name resolution changed in spring boot 3
         for (String name : List.of("resolveMainClassName", "bootRunMainClassName")) {
             var t = project.getTasks().findByName(name);
@@ -267,30 +258,11 @@ public class CftLibPlugin implements Plugin<Project> {
     private ManifestTask createManifestTask(Project project, String name, FileCollection configuration,
                                             String mainClass, File file, String... args) {
         var result = project.getTasks().create(name, ManifestTask.class);
-        result.classpath = configuration;
-        result.doFirst(x -> {
-            writeManifests(project, configuration, mainClass, file, args);
-        });
-        result.getOutputs().file(file);
+        result.getClasspath().from(configuration);
+        result.getMainClassName().set(mainClass);
+        result.getManifestArgs().set(List.of(args));
+        result.getManifestFile().set(file);
         return result;
-    }
-
-    @SneakyThrows
-    private void writeManifests(Project project, FileCollection classpath, String mainClass, File file,
-                                String... args) {
-        cftlibBuildDir(project).getAsFile().mkdirs();
-        writeManifest(file, mainClass, classpath, File::getAbsolutePath, args);
-    }
-
-    @SneakyThrows
-    private void writeManifest(File file, String mainClass, FileCollection classpath,
-                               Function<File, String> pathResolver, String... args) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
-            writer.println(mainClass + " " + Joiner.on(" ").join(args));
-            for (var f : classpath) {
-                writer.println(pathResolver.apply(f));
-            }
-        }
     }
 
     private String getLibVersion(Project project) {
@@ -336,22 +308,21 @@ public class CftLibPlugin implements Plugin<Project> {
         var result = project.getTasks().create("writeManifest" + service.id(), ManifestTask.class);
         var dependency = resolveDependencyFor(project, service);
         var localProject = resolveLocalProject(project, dependency);
+        FileCollection classpath;
+        if (localProject != null) {
+            classpath = localProjectClasspath(project, localProject);
+        } else {
+            classpath = detachedConfiguration(project,
+                libDependencies(project, dependency, "cftlib-agent"));
+        }
         if (localProject != null) {
             localProject.getPlugins().withId("java",
                 plugin -> result.dependsOn(localProject.getTasks().named("classes")));
         }
-        result.doFirst(x -> {
-            FileCollection classpath;
-            if (localProject != null) {
-                classpath = localProjectClasspath(project, localProject);
-            } else {
-                classpath = detachedConfiguration(project,
-                    libDependencies(project, dependency, "cftlib-agent"));
-            }
-            result.classpath = classpath;
-            writeManifests(project, classpath, mainClass, file, args);
-        });
-        result.getOutputs().file(file);
+        result.getClasspath().from(classpath);
+        result.getMainClassName().set(mainClass);
+        result.getManifestArgs().set(List.of(args));
+        result.getManifestFile().set(file);
         return result;
     }
 
