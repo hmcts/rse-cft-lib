@@ -45,11 +45,12 @@ public class S2S {
 
     @GetMapping("/details")
     @ResponseBody
-    public ResponseEntity<String> authCheck(@RequestHeader(name = "Authorization") String bearerToken)
+    public ResponseEntity<String> authCheck(@RequestHeader Map<String, String> headers)
         throws JsonProcessingException {
+        var bearerToken = headers.getOrDefault("Authorization", headers.get("ServiceAuthorization"));
         bearerToken = bearerToken.replace("Bearer ", "");
         var payload = bearerToken.substring(bearerToken.indexOf(".") + 1, bearerToken.lastIndexOf("."));
-        var json = new String(Base64.getDecoder().decode(payload));
+        var json = new String(Base64.getUrlDecoder().decode(payload));
         var token = new ObjectMapper().readValue(json, Map.class);
 
         return ok(token.get("sub").toString());
