@@ -47,8 +47,16 @@ public class S2S {
     @ResponseBody
     public ResponseEntity<String> authCheck(@RequestHeader Map<String, String> headers)
         throws JsonProcessingException {
-        var bearerToken = headers.getOrDefault("Authorization", headers.get("ServiceAuthorization"));
+        var bearerToken = headers.entrySet().stream()
+            .filter(e -> e.getKey().equalsIgnoreCase("Authorization")
+                || e.getKey().equalsIgnoreCase("ServiceAuthorization"))
+            .map(Map.Entry::getValue)
+            .findFirst()
+            .orElse("");
         bearerToken = bearerToken.replace("Bearer ", "");
+        if (!bearerToken.contains(".")) {
+            return ok(bearerToken);
+        }
         var payload = bearerToken.substring(bearerToken.indexOf(".") + 1, bearerToken.lastIndexOf("."));
         var json = new String(Base64.getUrlDecoder().decode(payload));
         var token = new ObjectMapper().readValue(json, Map.class);

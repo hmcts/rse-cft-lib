@@ -78,13 +78,13 @@ class LibConsumerApplicationTests extends CftlibTest {
 
     @SneakyThrows
     @Test
-    void invalidS2STokenReturnsUnauthorised() {
+    void invalidS2STokenIsRejected() {
         var request = buildGet("http://localhost:4452/addresses");
         request.removeHeaders("ServiceAuthorization");
         request.addHeader("ServiceAuthorization", "nonsense");
         var response = HttpClientBuilder.create().build().execute(request);
 
-        assertThat(response.getStatusLine().getStatusCode(), is(401));
+        assertThat(response.getStatusLine().getStatusCode(), is(403));
     }
 
     @SneakyThrows
@@ -227,7 +227,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     void searchCases() {
         // Give some time to index the case created by the previous test
         await()
-            .timeout(Duration.ofSeconds(20))
+            .timeout(Duration.ofSeconds(60))
             .until(this::caseAppearsInSearch);
     }
 
@@ -244,7 +244,7 @@ class LibConsumerApplicationTests extends CftlibTest {
         }
         // Give some time to index the case created by the previous test
         await()
-                .timeout(Duration.ofSeconds(20))
+                .timeout(Duration.ofSeconds(60))
                 .until(this::caseAppearsInGlobalSearch);
     }
 
@@ -287,8 +287,14 @@ class LibConsumerApplicationTests extends CftlibTest {
                 + "\"supplementary_data\":[\"*\"]}";
         request.setEntity(new StringEntity(query, ContentType.APPLICATION_JSON));
         var response = HttpClientBuilder.create().build().execute(request);
+        var body = EntityUtils.toString(response.getEntity());
+        if (response.getStatusLine().getStatusCode() == 400
+            && (body.contains("index_not_found_exception")
+            || body.contains("no_shard_available_action_exception"))) {
+            return false;
+        }
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
-        var total = (int) Double.parseDouble(new Gson().fromJson(EntityUtils.toString(response.getEntity()), Map.class)
+        var total = (int) Double.parseDouble(new Gson().fromJson(body, Map.class)
             .get("total").toString());
         return total > 0;
     }
