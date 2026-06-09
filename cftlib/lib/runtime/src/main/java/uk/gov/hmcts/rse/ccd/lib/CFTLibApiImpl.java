@@ -252,17 +252,47 @@ public class CFTLibApiImpl implements CFTLib {
     @SneakyThrows
     @Override
     public void createGlobalSearchIndex() {
-        HttpPost create = new HttpPost("http://localhost:4451/elastic-support/global-search/index");
-        create.addHeader("Authorization", "Bearer " + buildJwt());
-        create.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));
-        var response = HttpClients.createDefault().execute(create);
-
-        if (!String.valueOf(response.getStatusLine().getStatusCode()).startsWith("2")) {
-            var body = EntityUtils.toString(response.getEntity());
-            throw new RuntimeException(
-                    "Failed to create GlobalSearch ElasticSearch index: HTTP "
-                            + response.getStatusLine().getStatusCode() + " " + body);
+        var client = HttpClient.newHttpClient();
+        var aliasCheck = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:9200/_alias/global_search"))
+            .method("HEAD", HttpRequest.BodyPublishers.noBody())
+            .build();
+        var aliasResponse = client.send(aliasCheck, HttpResponse.BodyHandlers.discarding());
+        if (aliasResponse.statusCode() == 200) {
+            return;
         }
+        if (aliasResponse.statusCode() != 404) {
+            throw new RuntimeException("Failed to check GlobalSearch ElasticSearch alias: HTTP "
+                + aliasResponse.statusCode());
+        }
+
+        var settings = new Gson().fromJson(resource("globalSearchCasesIndexSettings.json"), Map.class);
+        settings.put("index.number_of_shards", 1);
+        settings.put("index.number_of_replicas", 0);
+        settings.put("index.mapping.total_fields.limit", 10000);
+
+        var mapping = new Gson().fromJson(resource("globalSearchCasesMapping.json"), Map.class);
+        var body = new Gson().toJson(Map.of(
+            "aliases", Map.of("global_search", Map.of()),
+            "settings", settings,
+            "mappings", mapping
+        ));
+        var create = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:9200/global_search-000001"))
+            .header("Content-Type", "application/json")
+            .PUT(HttpRequest.BodyPublishers.ofString(body))
+            .build();
+        var response = client.send(create, HttpResponse.BodyHandlers.ofString());
+
+        if (!String.valueOf(response.statusCode()).startsWith("2")) {
+            throw new RuntimeException("Failed to create GlobalSearch ElasticSearch index: HTTP "
+                + response.statusCode() + " " + response.body());
+        }
+    }
+
+    @SneakyThrows
+    private String resource(String name) {
+        return Resources.toString(Resources.getResource(name), StandardCharsets.UTF_8);
     }
 
     /**

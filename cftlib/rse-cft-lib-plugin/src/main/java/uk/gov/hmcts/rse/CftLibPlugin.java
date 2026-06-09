@@ -346,13 +346,22 @@ public class CftLibPlugin implements Plugin<Project> {
                 classpath = localProjectClasspath(project, localProject);
             } else {
                 classpath = detachedConfiguration(project,
-                    libDependencies(project, dependency, "cftlib-agent"));
+                    serviceManifestDependencies(project, dependency, service));
             }
             result.classpath = classpath;
             writeManifests(project, classpath, mainClass, file, args);
         });
         result.getOutputs().file(file);
         return result;
+    }
+
+    private Dependency[] serviceManifestDependencies(Project project, String dependency, Service service) {
+        var dependencies = Lists.newArrayList(libDependencies(project, dependency, "cftlib-agent"));
+        if (service == Service.ccdDefinitionStoreApi) {
+            dependencies.add(project.getDependencies()
+                .create("org.elasticsearch.client:elasticsearch-rest-high-level-client:7.11.2"));
+        }
+        return dependencies.toArray(Dependency[]::new);
     }
 
     private String resolveDependencyFor(Project project, Service service) {
