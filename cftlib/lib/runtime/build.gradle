@@ -32,10 +32,6 @@ task zipCompose(type: Zip) {
 
 processResources {
     from zipCompose
-    from(rootProject.file('../projects/ccd-definition-store-api/elastic-search-support/src/main/resources')) {
-        include 'globalSearchCasesIndexSettings.json'
-        include 'globalSearchCasesMapping.json'
-    }
 }
 
 test {
