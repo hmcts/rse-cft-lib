@@ -359,7 +359,7 @@ public class CftLibPlugin implements Plugin<Project> {
         var dependencies = Lists.newArrayList(libDependencies(project, dependency, "cftlib-agent"));
         if (service == Service.ccdDefinitionStoreApi) {
             dependencies.add(project.getDependencies()
-                .create("org.elasticsearch.client:elasticsearch-rest-high-level-client:7.11.2"));
+                .create("co.elastic.clients:elasticsearch-java:9.1.2"));
         }
         return dependencies.toArray(Dependency[]::new);
     }
