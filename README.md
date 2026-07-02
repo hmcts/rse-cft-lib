@@ -37,6 +37,49 @@ az login
 az acr login --name hmctsprod
 ```
 
+### Running CFTLib in GitHub Actions
+
+GitHub Actions workflows that run `bootWithCCD`, `cftlibTest`, or any other task that starts the bundled Docker Compose environment need Docker access to `hmctsprod.azurecr.io`.
+
+First, the repository must be allowed to exchange GitHub's OIDC token for an Azure token. Add the repository subjects to [`hmcts/azure-github-federation-config`](https://github.com/hmcts/azure-github-federation-config), under an app registration with `AcrPull` on the `hmctsprod` ACR resource group.
+
+```yaml
+- name: DTS Developers GitHub Actions ACR Publisher 3
+  subjects:
+    - 'repo:hmcts/<repo-name>:ref:refs/heads/main'
+    - 'repo:hmcts/<repo-name>:pull_request'
+  permissions:
+    - role_definition_name: 'AcrPull'
+      scopes:
+        - /subscriptions/8999dec3-0104-4a27-94ee-6588559729d1/resourceGroups/rpe-acr-prod-rg
+```
+
+Then log in to Azure and ACR before running the CFTLib task:
+
+```yaml
+permissions:
+  contents: read
+  id-token: write
+
+steps:
+  - uses: actions/checkout@v4
+
+  - name: Az CLI login
+    uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43
+    with:
+      client-id: 82f79201-9a30-4160-b264-7bbed775c7f4
+      tenant-id: 531ff96d-0ae9-462a-8d2d-bec7c0b42082
+      allow-no-subscriptions: true
+
+  - name: ACR Login
+    run: az acr login --name hmctsprod
+
+  - name: Run CFTLib tests
+    run: ./gradlew cftlibTest
+```
+
+Use the `client-id` for the app registration that contains your repository's federated credential. The example above is the shared app registration used by this repository; other repositories should use whichever app registration contains their own `repo:hmcts/<repo-name>:...` subjects.
+
 ## Example integrations
 
 - [No fault divorce](https://github.com/hmcts/nfdiv-case-api)
