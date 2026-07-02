@@ -30,6 +30,13 @@ Improved local development and robust automated tests when working with CCD:
 - Docker
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) (when using automated AAT secret management)
 
+The bundled Docker Compose environment pulls some HMCTS images from `hmctsprod.azurecr.io`. Log in before running `bootWithCCD` or `cftlibTest`:
+
+```sh
+az login
+az acr login --name hmctsprod
+```
+
 ## Example integrations
 
 - [No fault divorce](https://github.com/hmcts/nfdiv-case-api)
