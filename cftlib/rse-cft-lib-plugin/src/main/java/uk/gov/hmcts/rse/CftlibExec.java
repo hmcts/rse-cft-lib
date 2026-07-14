@@ -74,7 +74,7 @@ public class CftlibExec extends JavaExec {
 
         // Pin to a specific version of the .env file for reproducible builds.
         // This will need to be updated when the keyvault is modified.
-        String version = "1657438f080948a29a330542724d5a13";
+        String version = "9965bd45e4b9480fbcef609a8a0151f3";
 
         var env = CftLibPlugin.cftlibBuildDir(getProject()).file(".aat-env-" + version).getAsFile();
         if (!env.exists()) {
