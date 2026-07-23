@@ -44,7 +44,7 @@ GitHub Actions workflows that run `bootWithCCD`, `cftlibTest`, or any other task
 First, the repository must be allowed to exchange GitHub's OIDC token for an Azure token. Add the repository subjects to [`hmcts/azure-github-federation-config`](https://github.com/hmcts/azure-github-federation-config), under an app registration with `AcrPull` on the `hmctsprod` ACR resource group.
 
 ```yaml
-- name: DTS Developers GitHub Actions ACR Publisher 3
+- name: DTS Developers GitHub Actions ACR Puller 1
   subjects:
     - 'repo:hmcts/<repo-name>:ref:refs/heads/main'
     - 'repo:hmcts/<repo-name>:pull_request'
@@ -67,7 +67,7 @@ steps:
   - name: Az CLI login
     uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43
     with:
-      client-id: 82f79201-9a30-4160-b264-7bbed775c7f4
+      client-id: 7dbe3da2-315b-4937-bac6-3ab22a9c7b91
       tenant-id: 531ff96d-0ae9-462a-8d2d-bec7c0b42082
       allow-no-subscriptions: true
 
