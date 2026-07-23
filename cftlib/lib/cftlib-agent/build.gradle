@@ -33,6 +33,7 @@ dependencies {
     compileOnly('com.github.hmcts.rse-cft-lib:excel-importer:DEV-SNAPSHOT') {
         transitive = false
     }
+    compileOnly 'org.apache.poi:poi-ooxml:5.5.1'
 
     // Provide definition store parser classes for tests.
     testImplementation('com.github.hmcts.rse-cft-lib:excel-importer:DEV-SNAPSHOT') {
