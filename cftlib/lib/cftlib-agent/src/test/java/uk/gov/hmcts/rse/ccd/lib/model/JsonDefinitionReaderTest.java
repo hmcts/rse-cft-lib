@@ -19,7 +19,7 @@ import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -273,51 +273,38 @@ class JsonDefinitionReaderTest {
     private void assertSheetsEqual(DefinitionSheet expected, DefinitionSheet actual) {
         assertThat(expected.getName()).isEqualTo(actual.getName());
         assertThat(actual.getDataItems().size()).isEqualTo(expected.getDataItems().size());
-        expected.getDataItems().sort(Comparator.comparing(this::extractSortKey));
-        actual.getDataItems().sort(Comparator.comparing(this::extractSortKey));
-        for (int t = 0; t < expected.getDataItems().size(); t++) {
-            assertItemsEqual(actual.getDataItems().get(t), expected.getDataItems().get(t));
+        Map<String, List<DefinitionDataItem>> unmatchedItems = new HashMap<>();
+        actual.getDataItems().forEach(item ->
+                unmatchedItems.computeIfAbsent(matchKey(item), key -> new ArrayList<>()).add(item)
+        );
+        for (DefinitionDataItem expectedItem : expected.getDataItems()) {
+            var candidates = unmatchedItems.getOrDefault(matchKey(expectedItem), List.of());
+            var matchingItem = candidates.stream()
+                    .filter(actualItem -> itemsEqual(actualItem, expectedItem))
+                    .findFirst();
+            assertThat(matchingItem)
+                    .as("No matching row in %s for %s", expected.getName(), expectedItem.getCaseFieldId())
+                    .isPresent();
+            candidates.remove(matchingItem.orElseThrow());
         }
         System.out.println(expected.getName() + " is ok");
     }
 
-    /**
-     * Different definition sheets have different 'primary keys'
-     * ie. the columns that uniquely identify a row.
-     */
-    private List<List<ColumnName>> compoundSortKeys = List.of(
-            List.of(ColumnName.ID),
-            List.of(ColumnName.DISPLAY_ORDER),
-            List.of(ColumnName.STATE_ID),
-            List.of(ColumnName.CASE_EVENT_ID),
-            List.of(ColumnName.TAB_ID),
-            List.of(ColumnName.CASE_FIELD_ID, ColumnName.ACCESS_PROFILE)
-    );
-
-    /**
-     * Generate a string for sorting on by looking through our known
-     * list of keys and finding the first contained in the item.
-     */
-    @SneakyThrows
-    private String extractSortKey(DefinitionDataItem item) {
-        for (List<ColumnName> compoundKey : compoundSortKeys) {
-            try {
-                var sortKey = "";
-                for (ColumnName key : compoundKey) {
-                    var val = item.findAttribute(key);
-                    if (null != val) {
-                        sortKey += val;
-                    }
-                }
-                if (!sortKey.isEmpty()) {
-                    return sortKey;
-                }
-            } catch (MapperException m) {
-                // Expected if the key is not found for a particular item.
-            }
+    private String matchKey(DefinitionDataItem item) {
+        try {
+            return item.getCaseFieldId();
+        } catch (MapperException mapperException) {
+            return "";
         }
+    }
 
-        throw new RuntimeException("No known keys to compare: " + item.getCaseFieldId());
+    private boolean itemsEqual(DefinitionDataItem actual, DefinitionDataItem expected) {
+        try {
+            assertItemsEqual(actual, expected);
+            return true;
+        } catch (AssertionFailedError assertionFailedError) {
+            return false;
+        }
     }
 
     @SneakyThrows
