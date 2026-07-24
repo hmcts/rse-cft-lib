@@ -185,6 +185,10 @@ environment substitutions beginning with `CCD_DEF`, `ET_COS`, or `ET_ENV`. `*-pr
 excluded by default for the local cftlib environment. Set `CCD_DEF_EXCLUDED_FILENAME_PATTERNS` to a
 comma-separated list of glob patterns to override this.
 
+If an ancestor of the JSON directory contains `configs/environment/env.json`, cftlib loads its `cftlib`
+values before applying process environment variables and system properties. Set `ET_ENV` to select a
+different entry. Imports fail when a supported environment placeholder remains unresolved.
+
 If the JSON directory has a sibling `data/ccd-template.xlsx`, its sheet names and columns are used in the
 same way as the JSON-to-XLSX processor. This supports definitions whose physical template sheet name differs
 from its CCD sheet name and ensures unknown JSON properties are ignored consistently.

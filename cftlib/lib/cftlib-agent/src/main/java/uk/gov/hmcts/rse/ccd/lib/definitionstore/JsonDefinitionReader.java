@@ -39,6 +39,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,7 +59,16 @@ public class JsonDefinitionReader extends SpreadsheetParser {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
+    private static final Logger LOG = Logger.getLogger(JsonDefinitionReader.class.getName());
+
     private static final String EXCLUDED_FILENAME_PATTERNS = "CCD_DEF_EXCLUDED_FILENAME_PATTERNS";
+
+    private static final String ET_ENV = "ET_ENV";
+
+    private static final Pattern UNRESOLVED_ENVIRONMENT_VARIABLE =
+            Pattern.compile("\\$\\{(?:CCD_DEF|ET_COS|ET_ENV)[^}]*}");
+
+    private final SpreadsheetValidator spreadsheetValidator;
 
     private static final Map<String, List<String>> SHEET_PATHS = Map.of(
             "EventToComplexTypes", List.of("EventToComplexTypes", "CaseEventToComplexTypes"),
@@ -66,6 +78,7 @@ public class JsonDefinitionReader extends SpreadsheetParser {
     @Autowired
     public JsonDefinitionReader(SpreadsheetValidator spreadsheetValidator) {
         super(spreadsheetValidator);
+        this.spreadsheetValidator = spreadsheetValidator;
     }
 
     /**
@@ -79,7 +92,7 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         var path =  new String(data);
         try {
             if (Path.of(path).toFile().exists()) {
-                var jsonDefinition = fromJson(path);
+                var jsonDefinition = fromJson(path, spreadsheetValidator);
                 var template = findTemplate(path);
                 if (template != null) {
                     Map<String, DefinitionSheet> definition = super.parse(Files.newInputStream(template));
@@ -108,6 +121,7 @@ public class JsonDefinitionReader extends SpreadsheetParser {
 
     @SneakyThrows
     public static List<Map<String, Object>> readPath(String path) {
+        var environmentVariables = definitionEnvironmentVariables(path);
         var fi = Paths.get(path).toFile();
         List<File> files = new ArrayList<>();
         if (fi.exists()) {
@@ -125,13 +139,16 @@ public class JsonDefinitionReader extends SpreadsheetParser {
 
         return files.stream()
                 .filter(f -> f.exists() && f.getName().endsWith(".json") && f.canRead() && !isExcluded(f))
-                .flatMap(JsonDefinitionReader::readFile)
+                .flatMap(fileToRead -> readFile(fileToRead, environmentVariables))
                 .collect(Collectors.toList());
     }
 
     private static int compareJsonFiles(File first, File second) {
         var firstName = first.getName().replaceFirst("\\.json$", "");
         var secondName = second.getName().replaceFirst("\\.json$", "");
+        if (firstName.equals(secondName)) {
+            return first.getPath().compareTo(second.getPath());
+        }
         if (secondName.startsWith(firstName)) {
             return -1;
         }
@@ -158,10 +175,16 @@ public class JsonDefinitionReader extends SpreadsheetParser {
     }
 
     @SneakyThrows
-    private static Stream<Map<String, Object>> readFile(File file) {
+    private static Stream<Map<String, Object>> readFile(File file, Map<String, String> environmentVariables) {
         var s = FileUtils.readFileToString(file);
-        for (var entry : definitionEnvironmentVariables().entrySet()) {
+        for (var entry : environmentVariables.entrySet()) {
             s = s.replace("${" + entry.getKey() + "}", entry.getValue());
+        }
+        var unresolvedVariable = UNRESOLVED_ENVIRONMENT_VARIABLE.matcher(s);
+        if (unresolvedVariable.find()) {
+            throw new IllegalArgumentException(
+                    "Unresolved definition environment variable " + unresolvedVariable.group() + " in " + file
+            );
         }
 
         List<Map<String, Object>> entries = mapper.readValue(
@@ -172,8 +195,9 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         return entries.stream().flatMap(JsonDefinitionReader::expandAccessControl);
     }
 
-    private static Map<String, String> definitionEnvironmentVariables() {
+    private static Map<String, String> definitionEnvironmentVariables(String definitionPath) {
         var result = new LinkedHashMap<String, String>();
+        addDefinitionEnvironmentConfig(result, definitionPath);
         addDefinitionEnvironmentVariables(result, System.getenv());
 
         Properties properties = System.getProperties();
@@ -181,6 +205,42 @@ public class JsonDefinitionReader extends SpreadsheetParser {
                 .filter(JsonDefinitionReader::isDefinitionEnvironmentVariable)
                 .forEach(key -> result.put(key, properties.getProperty(key)));
         return result;
+    }
+
+    private static void addDefinitionEnvironmentConfig(Map<String, String> result, String definitionPath) {
+        var config = findDefinitionEnvironmentConfig(definitionPath);
+        if (config == null) {
+            return;
+        }
+
+        try {
+            Map<String, Map<String, String>> environments = mapper.readValue(
+                    config.toFile(),
+                    new TypeReference<Map<String, Map<String, String>>>() { }
+            );
+            var environment = System.getProperty(ET_ENV, System.getenv().getOrDefault(ET_ENV, "cftlib"));
+            var values = environments.get(environment);
+            if (values != null) {
+                addDefinitionEnvironmentVariables(result, values);
+            }
+        } catch (IOException exception) {
+            LOG.log(Level.WARNING, "Could not load definition environment config from " + config, exception);
+        }
+    }
+
+    private static Path findDefinitionEnvironmentConfig(String definitionPath) {
+        var current = Paths.get(definitionPath).toAbsolutePath().normalize();
+        if (Files.isRegularFile(current)) {
+            current = current.getParent();
+        }
+        while (current != null) {
+            var config = current.resolve("configs/environment/env.json");
+            if (Files.isRegularFile(config)) {
+                return config;
+            }
+            current = current.getParent();
+        }
+        return null;
     }
 
     private static void addDefinitionEnvironmentVariables(Map<String, String> result, Map<String, String> values) {
@@ -343,16 +403,23 @@ public class JsonDefinitionReader extends SpreadsheetParser {
     }
 
     public static Map<String, DefinitionSheet> fromJson(String path) {
+        return fromJson(path, null);
+    }
+
+    private static Map<String, DefinitionSheet> fromJson(String path, SpreadsheetValidator spreadsheetValidator) {
         Map<String, DefinitionSheet> result = new HashMap<>();
         var j = toJson(path);
         var templateHeaders = templateSheetHeaders(path);
+        var templatePaths = templateSheetPaths(path);
         final var dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         for (String s : j.keySet()) {
             var sheet = j.get(s);
+            var validationSheetName = templatePaths.getOrDefault(s, s);
             var defSheet = new DefinitionSheet();
             defSheet.setName(s);
             result.put(s, defSheet);
-            for (Map<String, Object> row : sheet) {
+            for (var rowIndex = 0; rowIndex < sheet.size(); rowIndex++) {
+                Map<String, Object> row = sheet.get(rowIndex);
                 var item = new DefinitionDataItem(s);
                 defSheet.getDataItems().add(item);
                 for (String s1 : row.keySet()) {
@@ -376,6 +443,9 @@ public class JsonDefinitionReader extends SpreadsheetParser {
                             var ld = LocalDate.parse(val.toString(), dateFormatter);
                             val = Date.from(ld.atStartOfDay(ZoneId.of("UTC")).toInstant());
                         }
+                    }
+                    if (spreadsheetValidator != null && val instanceof String stringValue) {
+                        spreadsheetValidator.validate(validationSheetName, s1, stringValue, rowIndex + 4);
                     }
                     item.addAttribute(s1, val);
                 }

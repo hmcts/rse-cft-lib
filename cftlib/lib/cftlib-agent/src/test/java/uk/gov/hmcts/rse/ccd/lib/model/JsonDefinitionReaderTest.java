@@ -7,6 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.opentest4j.AssertionFailedError;
+import uk.gov.hmcts.ccd.definition.store.excel.endpoint.exception.InvalidImportException;
 import uk.gov.hmcts.ccd.definition.store.excel.endpoint.exception.MapperException;
 import uk.gov.hmcts.ccd.definition.store.excel.parser.SpreadsheetParser;
 import uk.gov.hmcts.ccd.definition.store.excel.parser.model.DefinitionDataItem;
@@ -15,6 +16,7 @@ import uk.gov.hmcts.ccd.definition.store.excel.util.mapper.ColumnName;
 import uk.gov.hmcts.ccd.definition.store.excel.validation.SpreadsheetValidator;
 import uk.gov.hmcts.rse.ccd.lib.definitionstore.JsonDefinitionReader;
 
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,6 +27,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JsonDefinitionReaderTest {
 
@@ -245,6 +248,90 @@ class JsonDefinitionReaderTest {
         } finally {
             System.clearProperty("ET_COS_URL");
         }
+    }
+
+    @Test
+    @SneakyThrows
+    void loadsCftlibDefinitionEnvironmentConfig() {
+        var definitionRoot = Files.createDirectories(tempDir.resolve("ccd-definitions"));
+        var jsonDirectory = Files.createDirectories(
+                definitionRoot.resolve("jurisdictions/england-wales/json")
+        );
+        var environmentDirectory = Files.createDirectories(definitionRoot.resolve("configs/environment"));
+        Files.writeString(
+                environmentDirectory.resolve("env.json"),
+                """
+                {
+                  "cftlib": {
+                    "CCD_DEF_URL": "http://localhost:4452",
+                    "CCD_DEF_AAC_URL": "http://localhost:4454"
+                  }
+                }
+                """
+        );
+        Files.writeString(
+                jsonDirectory.resolve("CaseType.json"),
+                """
+                [{"ID":"case-type","PrintableDocumentsUrl":"${CCD_DEF_URL}/documents"}]
+                """
+        );
+
+        System.setProperty("ET_ENV", "cftlib");
+        try {
+            var result = JsonDefinitionReader.readPath(jsonDirectory.resolve("CaseType").toString());
+
+            assertThat(result.get(0).get("PrintableDocumentsUrl"))
+                    .isEqualTo("http://localhost:4452/documents");
+        } finally {
+            System.clearProperty("ET_ENV");
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    void rejectsUnresolvedDefinitionEnvironmentVariables() {
+        Files.writeString(
+                tempDir.resolve("CaseType.json"),
+                """
+                [{"ID":"case-type","PrintableDocumentsUrl":"${CCD_DEF_MISSING}/documents"}]
+                """
+        );
+
+        assertThrows(
+                IllegalArgumentException.class,
+            () -> JsonDefinitionReader.readPath(tempDir.resolve("CaseType").toString())
+        );
+    }
+
+    @Test
+    @SneakyThrows
+    void sortsDuplicateFragmentNamesByPath() {
+        var sheetDirectory = Files.createDirectories(tempDir.resolve("CaseEvent"));
+        var firstDirectory = Files.createDirectories(sheetDirectory.resolve("a"));
+        var secondDirectory = Files.createDirectories(sheetDirectory.resolve("b"));
+        Files.writeString(firstDirectory.resolve("fragment.json"), "[{\"ID\":\"first\"}]");
+        Files.writeString(secondDirectory.resolve("fragment.json"), "[{\"ID\":\"second\"}]");
+
+        var result = JsonDefinitionReader.readPath(sheetDirectory.toString());
+
+        assertThat(result).extracting(row -> row.get("ID")).containsExactly("first", "second");
+    }
+
+    @Test
+    @SneakyThrows
+    void validatesJsonCellsLikeSpreadsheetCells() {
+        Files.writeString(
+                tempDir.resolve("Jurisdiction.json"),
+                """
+                [{"ID":"EMPLOYMENT","Name":"This jurisdiction name is more than thirty characters long"}]
+                """
+        );
+        var reader = new JsonDefinitionReader(new SpreadsheetValidator());
+
+        assertThrows(
+                InvalidImportException.class,
+            () -> reader.parse(new ByteArrayInputStream(tempDir.toString().getBytes()))
+        );
     }
 
     @Test
