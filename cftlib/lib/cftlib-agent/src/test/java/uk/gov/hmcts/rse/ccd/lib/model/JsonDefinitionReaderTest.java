@@ -319,6 +319,21 @@ class JsonDefinitionReaderTest {
 
     @Test
     @SneakyThrows
+    void sortsNestedFragmentsWithOneTotalPathOrdering() {
+        var sheetDirectory = Files.createDirectories(tempDir.resolve("CaseEvent"));
+        var firstDirectory = Files.createDirectories(sheetDirectory.resolve("a"));
+        var secondDirectory = Files.createDirectories(sheetDirectory.resolve("b"));
+        Files.writeString(firstDirectory.resolve("AB.json"), "[{\"ID\":\"first\"}]");
+        Files.writeString(firstDirectory.resolve("B.json"), "[{\"ID\":\"second\"}]");
+        Files.writeString(secondDirectory.resolve("A.json"), "[{\"ID\":\"third\"}]");
+
+        var result = JsonDefinitionReader.readPath(sheetDirectory.toString());
+
+        assertThat(result).extracting(row -> row.get("ID")).containsExactly("first", "second", "third");
+    }
+
+    @Test
+    @SneakyThrows
     void validatesJsonCellsLikeSpreadsheetCells() {
         Files.writeString(
                 tempDir.resolve("Jurisdiction.json"),

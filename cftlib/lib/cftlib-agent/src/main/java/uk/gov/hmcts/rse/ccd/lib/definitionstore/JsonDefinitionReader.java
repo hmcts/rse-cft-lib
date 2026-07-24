@@ -144,18 +144,9 @@ public class JsonDefinitionReader extends SpreadsheetParser {
     }
 
     private static int compareJsonFiles(File first, File second) {
-        var firstName = first.getName().replaceFirst("\\.json$", "");
-        var secondName = second.getName().replaceFirst("\\.json$", "");
-        if (firstName.equals(secondName)) {
-            return first.getPath().compareTo(second.getPath());
-        }
-        if (secondName.startsWith(firstName)) {
-            return -1;
-        }
-        if (firstName.startsWith(secondName)) {
-            return 1;
-        }
-        return first.getPath().compareTo(second.getPath());
+        var firstPath = first.getPath().replaceFirst("\\.json$", "");
+        var secondPath = second.getPath().replaceFirst("\\.json$", "");
+        return firstPath.compareTo(secondPath);
     }
 
     private static boolean isExcluded(File file) {
