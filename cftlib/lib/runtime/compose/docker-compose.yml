@@ -62,6 +62,7 @@ services:
       HEALTH_CCD_DATA_API: http://${JVM_HOST:-host.docker.internal}:4452/health
       SERVICES_PRD_API: "${RD_PROFESSIONAL_API_URL:-http://rd-professional-api-aat.service.core-compute-aat.internal}"
       APPINSIGHTS_INSTRUMENTATIONKEY: TESTVAR
+      APPINSIGHTS_CONNECTION_STRING: "InstrumentationKey=dummy-key;IngestionEndpoint=https://uksouth-0.in.applicationinsights.azure.com/"
       IDAM_SECRET: "${XUI_OAUTH_SECRET:-AAAAAAAAAAAAAAA}"
       S2S_SECRET: "${XUI_SERVICE_KEY:-AAAAAAAAAAAAAAAA}"
       SESSION_SECRET: "${XUI_SESSION_SECRET:-secretSauce}"
@@ -103,6 +104,7 @@ services:
       ACA_SERVICE_API_BASEURL: http://${JVM_HOST:-host.docker.internal}:4454
       SERVICES_MCA_PROXY_API: http://${JVM_HOST:-host.docker.internal}:4454
       APPINSIGHTS_INSTRUMENTATIONKEY: "AAAAAAAAAAAAAAAC"
+      APPINSIGHTS_CONNECTION_STRING: "InstrumentationKey=dummy-key;IngestionEndpoint=https://uksouth-0.in.applicationinsights.azure.com/"
       IDAM_SECRET: "${XUI_MANAGE_ORG_OAUTH_SECRET:-AAAAAAAAAAAAAAA}"
       S2S_SECRET: "${XUI_SERVICE_KEY:-AAAAAAAAAAAAAAAA}"
       LAUNCH_DARKLY_CLIENT_ID: "${XUI_LD_ID:-5de6610b23ce5408280f2268}"
