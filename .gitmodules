@@ -7,6 +7,7 @@
 [submodule "projects/ccd-data-store-api"]
 	path = projects/ccd-data-store-api
 	url = https://github.com/hmcts/ccd-data-store-api.git
+	branch = codex/spring-boot-4
 [submodule "projects/aac-manage-case-assignment"]
 	path = projects/aac-manage-case-assignment
 	url = https://github.com/hmcts/aac-manage-case-assignment.git
