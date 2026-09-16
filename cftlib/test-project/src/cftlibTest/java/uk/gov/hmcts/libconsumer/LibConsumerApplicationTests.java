@@ -235,7 +235,7 @@ class LibConsumerApplicationTests extends CftlibTest {
     void searchCases() {
         // Give some time to index the case created by the previous test
         await()
-            .timeout(Duration.ofSeconds(120))
+            .timeout(Duration.ofSeconds(60))
             .until(this::caseAppearsInSearch);
     }
 
@@ -252,7 +252,7 @@ class LibConsumerApplicationTests extends CftlibTest {
         }
         // Give some time to index the case created by the previous test
         await()
-                .timeout(Duration.ofSeconds(120))
+                .timeout(Duration.ofSeconds(60))
                 .until(this::caseAppearsInGlobalSearch);
     }
 
