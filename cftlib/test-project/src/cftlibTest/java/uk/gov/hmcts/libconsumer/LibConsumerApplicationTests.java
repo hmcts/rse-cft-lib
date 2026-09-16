@@ -166,15 +166,23 @@ class LibConsumerApplicationTests extends CftlibTest {
                 Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8);
         cftlib().configureRoleAssignments(json);
         try (var c = cftlib().getConnection(Database.AM)) {
-            var query = "select count(*) from role_assignment group by actor_id order by actor_id asc";
+            var query = """
+                select actor_id, count(*)
+                from role_assignment
+                where actor_id in ('1', '2')
+                group by actor_id
+                order by actor_id asc
+                """;
             var v = c.createStatement().executeQuery(query);
             v.next();
             // User id '1' specifies clean assignments.
-            assertThat(v.getInt(1), equalTo(7));
+            assertThat(v.getString(1), equalTo("1"));
+            assertThat(v.getInt(2), equalTo(7));
 
             // User id '2' specifies additive assignments.
             v.next();
-            assertThat(v.getInt(1), greaterThan(1));
+            assertThat(v.getString(1), equalTo("2"));
+            assertThat(v.getInt(2), greaterThan(1));
         }
     }
 
