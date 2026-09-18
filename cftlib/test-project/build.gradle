@@ -5,7 +5,7 @@ import uk.gov.hmcts.rse.ManifestTask
 
 plugins {
     id 'jacoco'
-    id 'org.springframework.boot' version '3.4.1'
+    id 'org.springframework.boot' version '4.1.1'
     id 'java'
     id 'com.github.hmcts.rse-cft-lib'
     id 'io.freefair.lombok' version '8.13.1'
@@ -26,24 +26,24 @@ repositories {
 
 dependencies {
 
-    // Test this conflicting dependency doesn't break us on spring boot 3.
+    // Test this conflicting dependency doesn't break us on spring boot.
     cftlibImplementation 'javax.servlet:javax.servlet-api:4.0.1'
 
     // Enable live reload of just our application
     cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
 
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation group: 'com.google.guava', name: 'guava', version: '32.0.1-jre'
     // Presence of JWT related deps will activate the IdamAugmenter
     implementation 'com.auth0:java-jwt:4.4.0'
-    implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose', version: '6.2.3'
+    implementation 'org.springframework.security:spring-security-oauth2-jose'
 
     cftlibTestImplementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
 
-    cftlibTestImplementation 'org.springframework.boot:spring-boot-starter-test'
+    cftlibTestImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     cftlibTestImplementation 'org.springframework.security:spring-security-test'
 
-    cftlibTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+    cftlibTestImplementation 'org.springframework.boot:spring-boot-starter-webmvc'
     cftlibTestImplementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.14'
     cftlibTestImplementation 'com.google.code.gson:gson'
     cftlibTestImplementation 'org.awaitility:awaitility:4.2.0'

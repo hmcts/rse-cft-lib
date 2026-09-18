@@ -59,12 +59,32 @@ public class CFTLibApiImpl implements CFTLib {
     @SneakyThrows
     @Override
     public void dumpDefinitionSnapshots() {
-        // 1. Define and create the output directory.
-        File outputDir = new File("build/cftlib/definition-snapshots");
+        dumpDefinitionSnapshots(new File("build/cftlib/definition-snapshots"));
+    }
+
+    @SneakyThrows
+    void dumpDefinitionSnapshots(File outputDir) {
         Files.createDirectories(outputDir.toPath());
         System.out.println("Dumping definition snapshots to " + outputDir.getCanonicalPath());
 
-        // 2. Get a unique list of case type references from the database.
+        List<String> caseTypeReferences = getCaseTypeReferences();
+        System.out.println("Found case types: " + String.join(", ", caseTypeReferences));
+
+        for (String caseTypeRef : caseTypeReferences) {
+            System.out.println("Dumping definition for: " + caseTypeRef);
+            try {
+                String definitionJson = getCaseTypeDefinitionFromDefinitionStore(caseTypeRef);
+                var outputFile = new File(outputDir, caseTypeRef + ".json");
+                Files.writeString(outputFile.toPath(), definitionJson, StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to dump definition for " + caseTypeRef, e);
+            }
+        }
+        System.out.println("Definition snapshot dump finished.");
+    }
+
+    @SneakyThrows
+    List<String> getCaseTypeReferences() {
         List<String> caseTypeReferences = new ArrayList<>();
         try (Connection c = getConnection(Database.Definitionstore);
              var s = c.createStatement();
@@ -73,25 +93,7 @@ public class CFTLibApiImpl implements CFTLib {
                 caseTypeReferences.add(rs.getString("reference"));
             }
         }
-
-        System.out.println("Found case types: " + String.join(", ", caseTypeReferences));
-
-        // 3. For each case type, fetch its definition and write it to a file.
-        for (String caseTypeRef : caseTypeReferences) {
-            try {
-                System.out.println("Dumping definition for: " + caseTypeRef);
-                // Fetch the definition as a JSON string.
-                String definitionJson = getCaseTypeDefinitionFromDefinitionStore(caseTypeRef);
-
-                // Write the JSON string to a file named after the case type.
-                var outputFile = new File(outputDir, caseTypeRef + ".json");
-                Files.writeString(outputFile.toPath(), definitionJson, StandardCharsets.UTF_8);
-            } catch (Exception e) {
-                // Log an error but continue with the next case type.
-                System.err.println("Failed to dump definition for " + caseTypeRef + ": " + e.getMessage());
-            }
-        }
-        System.out.println("Definition snapshot dump finished.");
+        return caseTypeReferences;
     }
 
     @SneakyThrows
@@ -271,7 +273,7 @@ public class CFTLibApiImpl implements CFTLib {
      * case type definition.
      */
     @SneakyThrows
-    private String getCaseTypeDefinitionFromDefinitionStore(String caseTypeId) {
+    String getCaseTypeDefinitionFromDefinitionStore(String caseTypeId) {
         var url = "http://localhost:4451/api/data/case-type/" + caseTypeId;
         var request = HttpRequest.newBuilder()
             .uri(URI.create(url))

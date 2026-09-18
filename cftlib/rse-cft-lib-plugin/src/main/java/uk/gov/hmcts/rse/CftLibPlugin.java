@@ -20,6 +20,7 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.artifacts.repositories.MavenRepositoryContentDescriptor;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.tasks.ClasspathNormalizer;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.jvm.tasks.Jar;
@@ -58,7 +59,6 @@ public class CftLibPlugin implements Plugin<Project> {
         dumpDefinitions.getOutputs().upToDateWhen(x -> false);
 
         configureJacoco(project, createTestTask(project));
-        surfaceSourcesToIDE(project);
         createCftlibJarTask(project);
     }
 
@@ -115,24 +115,6 @@ public class CftLibPlugin implements Plugin<Project> {
         // We don't want Gradle to swap in dependency substitutions in composite builds.
         result.getResolutionStrategy().getUseGlobalDependencySubstitutionRules().set(false);
         return result;
-    }
-
-    /**
-     * Ensure the source/bytecode of the cft services is picked up by the IDE,
-     * since we resolve these dependencies in detached configurations that
-     * the IDE would not otherwise find.
-     *
-     * <p>We do this by creating an otherwise unused 'cftlibIDE' sourceset and associated
-     * dependency configuration.
-     */
-    private void surfaceSourcesToIDE(Project project) {
-        project.getExtensions().getByType(SourceSetContainer.class)
-                .create("cftlibIDE");
-        var config = project.getConfigurations().getByName("cftlibIDEImplementation");
-        var deps = projects.keySet().stream().map(Service::id).toArray(String[]::new);
-        config.getDependencies().addAll(Arrays.asList(
-                libDependencies(project, deps)
-        ));
     }
 
     private void createConfigurations(Project project) {
@@ -208,6 +190,9 @@ public class CftLibPlugin implements Plugin<Project> {
             writeManifests(project, files, clazz, hostApplicationManifest, args);
         });
         manifestTask.classpath = lib.getRuntimeClasspath();
+        manifestTask.getInputs().files(manifestTask.classpath)
+            .withPropertyName("classpath")
+            .withNormalizer(ClasspathNormalizer.class);
         // Task performing main class name resolution changed in spring boot 3
         for (String name : List.of("resolveMainClassName", "bootRunMainClassName")) {
             var t = project.getTasks().findByName(name);
@@ -227,7 +212,7 @@ public class CftLibPlugin implements Plugin<Project> {
         var exec = createRunTask(project, "cftlibTest");
         var file = cftlibBuildDir(project).file("libTest").getAsFile();
         var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(),
-                "org.junit.platform.console.ConsoleLauncher", file, "--select-package=uk.gov.hmcts");
+                "org.junit.platform.console.ConsoleLauncher", file, "execute --select-package=uk.gov.hmcts");
 
         exec.dependsOn(app);
         exec.dependsOn("cftlibClasses");
@@ -268,6 +253,11 @@ public class CftLibPlugin implements Plugin<Project> {
                                             String mainClass, File file, String... args) {
         var result = project.getTasks().create(name, ManifestTask.class);
         result.classpath = configuration;
+        result.getInputs().files(configuration)
+            .withPropertyName("classpath")
+            .withNormalizer(ClasspathNormalizer.class);
+        result.getInputs().property("mainClass", mainClass);
+        result.getInputs().property("args", Arrays.asList(args));
         result.doFirst(x -> {
             writeManifests(project, configuration, mainClass, file, args);
         });
@@ -340,15 +330,16 @@ public class CftLibPlugin implements Plugin<Project> {
             localProject.getPlugins().withId("java",
                 plugin -> result.dependsOn(localProject.getTasks().named("classes")));
         }
+        FileCollection classpath = localProject != null
+            ? localProjectClasspath(project, localProject)
+            : detachedConfiguration(project, serviceManifestDependencies(project, dependency, service));
+        result.classpath = classpath;
+        result.getInputs().files(classpath)
+            .withPropertyName("classpath")
+            .withNormalizer(ClasspathNormalizer.class);
+        result.getInputs().property("mainClass", mainClass);
+        result.getInputs().property("args", Arrays.asList(args));
         result.doFirst(x -> {
-            FileCollection classpath;
-            if (localProject != null) {
-                classpath = localProjectClasspath(project, localProject);
-            } else {
-                classpath = detachedConfiguration(project,
-                    serviceManifestDependencies(project, dependency, service));
-            }
-            result.classpath = classpath;
             writeManifests(project, classpath, mainClass, file, args);
         });
         result.getOutputs().file(file);

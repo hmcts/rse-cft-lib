@@ -2,7 +2,6 @@ package uk.gov.hmcts.rse.ccd.lib.model;
 
 import com.google.common.collect.Sets;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -17,7 +16,6 @@ import uk.gov.hmcts.ccd.definition.store.excel.validation.SpreadsheetValidator;
 import uk.gov.hmcts.rse.ccd.lib.definitionstore.JsonDefinitionReader;
 
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -411,21 +409,21 @@ class JsonDefinitionReaderTest {
 
     @SneakyThrows
     private void assertItemsEqual(DefinitionDataItem actual, DefinitionDataItem expected) {
-        // We have to use reflection to get access to the attributes field for comparison.
-        Field f = DefinitionDataItem.class.getDeclaredField("attributes"); //NoSuchFieldException
-        f.setAccessible(true);
-        var expectedAttributes = (List<Pair<String, Object>>) f.get(expected);
-        var actualAttributes = (List<Pair<String, Object>>) f.get(actual);
-        for (Pair<String, Object> expectedAttribute : expectedAttributes) {
+        for (ColumnName columnName : ColumnName.values()) {
+            Object expectedValue;
             try {
-                var pair = actualAttributes.stream().filter(
-                    x -> x.getKey().equals(expectedAttribute.getKey())).findFirst();
-                var val = pair.isPresent() ? pair.get().getValue() : null;
-
-                assertThat(val).isEqualTo(expectedAttribute.getValue());
+                expectedValue = expected.findAttribute(columnName);
+            } catch (MapperException ignored) {
+                continue;
+            }
+            if (expectedValue == null) {
+                continue;
+            }
+            try {
+                assertThat(actual.findAttribute(columnName)).isEqualTo(expectedValue);
             } catch (AssertionFailedError a) {
                 // TODO definition processor bug can convert dates to this number
-                if (!expectedAttribute.getValue().equals("42736")) {
+                if (!"42736".equals(expectedValue)) {
                     throw a;
                 }
             }

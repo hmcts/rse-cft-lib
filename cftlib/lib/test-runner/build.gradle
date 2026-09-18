@@ -6,7 +6,8 @@ dependencies {
     // Will be put on the runtime classpath by the gradle plugin.
     compileOnly project(':lib:bootstrapper')
 
-    implementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
-    implementation 'org.junit.platform:junit-platform-console-standalone:1.8.2'
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.12.2'
+    // Do not use the standalone jar: its embedded Platform classes cannot be aligned by consuming builds.
+    implementation 'org.junit.platform:junit-platform-console:1.12.2'
     implementation 'com.auth0:java-jwt:3.18.3'
 }
