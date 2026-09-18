@@ -59,7 +59,6 @@ public class CftLibPlugin implements Plugin<Project> {
         dumpDefinitions.getOutputs().upToDateWhen(x -> false);
 
         configureJacoco(project, createTestTask(project));
-        surfaceSourcesToIDE(project);
         createCftlibJarTask(project);
     }
 
@@ -116,24 +115,6 @@ public class CftLibPlugin implements Plugin<Project> {
         // We don't want Gradle to swap in dependency substitutions in composite builds.
         result.getResolutionStrategy().getUseGlobalDependencySubstitutionRules().set(false);
         return result;
-    }
-
-    /**
-     * Ensure the source/bytecode of the cft services is picked up by the IDE,
-     * since we resolve these dependencies in detached configurations that
-     * the IDE would not otherwise find.
-     *
-     * <p>We do this by creating an otherwise unused 'cftlibIDE' sourceset and associated
-     * dependency configuration.
-     */
-    private void surfaceSourcesToIDE(Project project) {
-        project.getExtensions().getByType(SourceSetContainer.class)
-                .create("cftlibIDE");
-        var config = project.getConfigurations().getByName("cftlibIDEImplementation");
-        var deps = projects.keySet().stream().map(Service::id).toArray(String[]::new);
-        config.getDependencies().addAll(Arrays.asList(
-                libDependencies(project, deps)
-        ));
     }
 
     private void createConfigurations(Project project) {
@@ -231,7 +212,7 @@ public class CftLibPlugin implements Plugin<Project> {
         var exec = createRunTask(project, "cftlibTest");
         var file = cftlibBuildDir(project).file("libTest").getAsFile();
         var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(),
-                "org.junit.platform.console.ConsoleLauncher", file, "--select-package=uk.gov.hmcts");
+                "org.junit.platform.console.ConsoleLauncher", file, "execute --select-package=uk.gov.hmcts");
 
         exec.dependsOn(app);
         exec.dependsOn("cftlibClasses");
