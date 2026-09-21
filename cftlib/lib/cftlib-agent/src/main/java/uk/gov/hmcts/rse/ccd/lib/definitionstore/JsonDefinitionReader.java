@@ -103,9 +103,15 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         if (request.template() == null) {
             return jsonDefinition;
         }
+        var templateRowOffsets = templateDataRowOffsets(request.template());
         try (var input = Files.newInputStream(Path.of(request.template()))) {
             Map<String, DefinitionSheet> definition = super.parse(input);
-            jsonDefinition.forEach((sheetName, sheet) -> mergeJsonRows(definition, sheetName, sheet));
+            jsonDefinition.forEach((sheetName, sheet) -> mergeJsonRows(
+                    definition,
+                    sheetName,
+                    sheet,
+                    templateRowOffsets.getOrDefault(sheetName, List.of())
+            ));
             return definition;
         }
     }
@@ -113,7 +119,8 @@ public class JsonDefinitionReader extends SpreadsheetParser {
     private static void mergeJsonRows(
             Map<String, DefinitionSheet> definition,
             String sheetName,
-            DefinitionSheet jsonSheet
+            DefinitionSheet jsonSheet,
+            List<Integer> templateRowOffsets
     ) {
         var templateSheet = definition.get(sheetName);
         if (templateSheet == null) {
@@ -123,13 +130,52 @@ public class JsonDefinitionReader extends SpreadsheetParser {
 
         var templateRows = templateSheet.getDataItems();
         var jsonRows = jsonSheet.getDataItems();
-        for (var rowIndex = 0; rowIndex < jsonRows.size(); rowIndex++) {
-            if (rowIndex < templateRows.size()) {
-                templateRows.set(rowIndex, jsonRows.get(rowIndex));
-            } else {
-                templateRows.add(jsonRows.get(rowIndex));
+        var mergedRows = new ArrayList<>(jsonRows);
+        for (var rowIndex = 0; rowIndex < templateRows.size(); rowIndex++) {
+            var worksheetOffset = rowIndex < templateRowOffsets.size()
+                    ? templateRowOffsets.get(rowIndex)
+                    : rowIndex;
+            if (worksheetOffset >= jsonRows.size()) {
+                mergedRows.add(templateRows.get(rowIndex));
             }
         }
+        templateRows.clear();
+        templateRows.addAll(mergedRows);
+    }
+
+    @SneakyThrows
+    private static Map<String, List<Integer>> templateDataRowOffsets(String template) {
+        var result = new HashMap<String, List<Integer>>();
+        try (var input = Files.newInputStream(Path.of(template)); var workbook = new XSSFWorkbook(input)) {
+            workbook.sheetIterator().forEachRemaining(sheet -> {
+                var firstRow = sheet.getRow(0);
+                if (firstRow == null || firstRow.getCell(0) == null) {
+                    return;
+                }
+                var rowOffsets = new ArrayList<Integer>();
+                for (var rowIndex = 3; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+                    var row = sheet.getRow(rowIndex);
+                    if (row != null && row.cellIterator().hasNext() && rowHasValues(row)) {
+                        rowOffsets.add(rowIndex - 3);
+                    }
+                }
+                result.put(firstRow.getCell(0).getStringCellValue(), rowOffsets);
+            });
+        }
+        return result;
+    }
+
+    private static boolean rowHasValues(org.apache.poi.ss.usermodel.Row row) {
+        for (var cell : row) {
+            if (cell.getCellType() == org.apache.poi.ss.usermodel.CellType.STRING) {
+                if (!cell.getStringCellValue().isBlank()) {
+                    return true;
+                }
+            } else if (cell.getCellType() != org.apache.poi.ss.usermodel.CellType.BLANK) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

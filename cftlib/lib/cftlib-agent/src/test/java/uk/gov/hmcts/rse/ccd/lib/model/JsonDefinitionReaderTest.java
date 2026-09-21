@@ -307,7 +307,7 @@ class JsonDefinitionReaderTest {
 
     @Test
     @SneakyThrows
-    void preservesTrailingTemplateRowsWhenJsonReplacesEarlierRows() {
+    void preservesTemplateRowsAfterBlankWorksheetPositions() {
         var jsonDirectory = Files.createDirectories(tempDir.resolve("json"));
         var template = tempDir.resolve("ccd-template.xlsx");
         Files.writeString(jsonDirectory.resolve("CaseType.json"),
@@ -319,9 +319,7 @@ class JsonDefinitionReaderTest {
             var headers = sheet.createRow(2);
             headers.createCell(0).setCellValue("ID");
             headers.createCell(1).setCellValue("Name");
-            var firstDefault = sheet.createRow(3);
-            firstDefault.createCell(0).setCellValue("first-default");
-            firstDefault.createCell(1).setCellValue("First default");
+            sheet.createRow(3);
             var trailingDefault = sheet.createRow(4);
             trailingDefault.createCell(0).setCellValue("trailing-default");
             trailingDefault.createCell(1).setCellValue("Trailing default");
