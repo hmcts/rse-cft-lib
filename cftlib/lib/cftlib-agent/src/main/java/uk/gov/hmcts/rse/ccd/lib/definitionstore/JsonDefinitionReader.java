@@ -82,7 +82,10 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         var data = inputStream.readAllBytes();
         var path = new String(data, StandardCharsets.UTF_8);
         if (path.startsWith(JsonDefinitionImport.PREFIX)) {
-            var request = mapper.readValue(path.substring(JsonDefinitionImport.PREFIX.length()), JsonDefinitionImport.class);
+            var request = mapper.readValue(
+                    path.substring(JsonDefinitionImport.PREFIX.length()),
+                    JsonDefinitionImport.class
+            );
             return parseJson(request);
         }
         try {
@@ -142,7 +145,10 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         files.add(file);
 
         return files.stream()
-                .filter(f -> f.exists() && f.getName().endsWith(".json") && f.canRead() && !isExcluded(f, request.excludedFilenamePatterns()))
+                .filter(f -> f.exists()
+                        && f.getName().endsWith(".json")
+                        && f.canRead()
+                        && !isExcluded(f, request.excludedFilenamePatterns()))
                 .flatMap(fileToRead -> readFile(fileToRead, request.substitutions()))
                 .collect(Collectors.toList());
     }
@@ -256,7 +262,10 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         return FILES.stream()
                 .map(file -> new AbstractMap.SimpleEntry<>(
                         file,
-                        JsonDefinitionReader.readPath(resolveSheetPath(request.directory(), file, templateSheetPaths), request)
+                        JsonDefinitionReader.readPath(
+                                resolveSheetPath(request.directory(), file, templateSheetPaths),
+                                request
+                        )
                 ))
                 .collect(Collectors.toMap(
                     AbstractMap.SimpleEntry::getKey,

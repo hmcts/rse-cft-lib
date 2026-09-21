@@ -238,21 +238,42 @@ class JsonDefinitionReaderTest {
 
     @Test
     @SneakyThrows
-    void readsExplicitImportPayloadWithServiceDefinedSubstitutions() {
-        Files.writeString(tempDir.resolve("CaseType.json"),
+    void importsConfiguredJsonPayloadWithTemplateSubstitutionsAndExclusions() {
+        var jsonDirectory = Files.createDirectories(tempDir.resolve("json"));
+        var template = tempDir.resolve("ccd-template.xlsx");
+        Files.writeString(jsonDirectory.resolve("CaseType.json"),
                 """
-                [{"ID":"case-type","Name":"${caseField}","PrintableDocumentsUrl":"${SERVICE_URL}/documents"}]
+                [{"ID":"case-type","Name":"${CASE_NAME}","PrintableDocumentsUrl":"${SERVICE_URL}/documents"}]
                 """);
-        var request = new JsonDefinitionImport(tempDir.toString(), null,
-                Map.of("SERVICE_URL", "http://localhost:8081"), List.of());
+        Files.writeString(jsonDirectory.resolve("CaseType-prod.json"),
+                """
+                [{"ID":"production-case-type","Name":"Production"}]
+                """);
+        try (var workbook = new XSSFWorkbook();
+             var output = Files.newOutputStream(template)) {
+            var sheet = workbook.createSheet("CaseType");
+            sheet.createRow(0).createCell(0).setCellValue("CaseType");
+            var headers = sheet.createRow(2);
+            headers.createCell(0).setCellValue("ID");
+            headers.createCell(1).setCellValue("Name");
+            headers.createCell(2).setCellValue("PrintableDocumentsUrl");
+            workbook.write(output);
+        }
+        var request = new JsonDefinitionImport(
+                jsonDirectory.toString(),
+                template.toString(),
+                Map.of("CASE_NAME", "Example case", "SERVICE_URL", "http://localhost:8081"),
+                List.of("*-prod.json")
+        );
         var payload = JsonDefinitionImport.PREFIX + new ObjectMapper().writeValueAsString(request);
         var reader = new JsonDefinitionReader(new SpreadsheetValidator());
 
         var result = reader.parse(new ByteArrayInputStream(payload.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        var items = result.get("CaseType").getDataItems();
 
-        assertThat(result.get("CaseType").getDataItems().get(0).findAttribute(ColumnName.NAME))
-                .isEqualTo("${caseField}");
-        assertThat(result.get("CaseType").getDataItems().get(0).findAttribute(ColumnName.PRINTABLE_DOCUMENTS_URL))
+        assertThat(items).hasSize(1);
+        assertThat(items.get(0).findAttribute(ColumnName.NAME)).isEqualTo("Example case");
+        assertThat(items.get(0).findAttribute(ColumnName.PRINTABLE_DOCUMENTS_URL))
                 .isEqualTo("http://localhost:8081/documents");
     }
 
