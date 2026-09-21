@@ -371,8 +371,8 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
     private FileCollection localProjectClasspath(Project project, Project localProject) {
-        var sourceSets = localProject.getExtensions().getByType(SourceSetContainer.class);
-        var runtimeClasspath = sourceSets.getByName("main").getRuntimeClasspath();
+        var runtimeClasspath = project.provider(() -> localProject.getExtensions()
+            .getByType(SourceSetContainer.class).getByName("main").getRuntimeClasspath());
         var agent = detachedConfiguration(project, libDependencies(project, "cftlib-agent"));
         return project.files(runtimeClasspath, agent);
     }

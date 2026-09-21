@@ -172,6 +172,37 @@ public class CFTLibConfig implements CFTLibConfigurer {
 
 Note that your CFTLibConfigurer implementation must be in the cftlib sourceset.
 
+CCD definitions can also be imported directly from the JSON source used by the CCD definition processor:
+
+```java
+lib.importJsonDefinition(
+    new File("ccd-definitions/jurisdictions/england-wales/json")
+);
+```
+
+This supports split sheet directories, the processor's `AccessControl` and `UserRoles` shorthand, and
+process environment or system property substitutions beginning with `CCD_DEF`.
+
+Consumers that need a template, additional substitutions, or filename exclusions should configure them
+explicitly:
+
+```java
+lib.importJsonDefinition(
+    new File("ccd-definitions/json"),
+    new File("ccd-definitions/data/ccd-template.xlsx"),
+    Map.of(
+        "CALLBACK_URL", "http://localhost:8080",
+        "DATA_STORE_URL", "http://localhost:4452"
+    ),
+    "*-prod.json"
+);
+```
+
+The template supplies sheet names, columns, and defaults in the same way as the JSON-to-XLSX processor.
+CFTLib does not discover environment configuration, templates, or exclusions for the explicit API; these
+remain under the consuming project's control. Imports fail when an uppercase configuration placeholder such
+as `${CALLBACK_URL}` remains unresolved; CCD runtime expressions such as `${caseReference}` are preserved.
+
 ### 3. Launch your application + CCD
 ```gradle
 ./gradlew bootWithCCD
