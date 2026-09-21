@@ -209,14 +209,33 @@ public class CFTLibApiImpl implements CFTLib {
     @SneakyThrows
     @Override
     public void importJsonDefinition(File defFolder) {
-        if (!defFolder.exists()) {
+        if (!defFolder.isDirectory()) {
             throw new FileNotFoundException(defFolder.getCanonicalPath());
         }
         postDefinition(defFolder.getCanonicalPath().getBytes(StandardCharsets.UTF_8));
     }
 
     @SneakyThrows
-    private void postDefinition(byte[] data) {
+    @Override
+    public void importJsonDefinition(File defFolder, File template, Map<String, String> substitutions,
+                                     String... excludedFilenamePatterns) {
+        if (!defFolder.isDirectory()) {
+            throw new FileNotFoundException(defFolder.getCanonicalPath());
+        }
+        if (template != null && !template.isFile()) {
+            throw new FileNotFoundException(template.getCanonicalPath());
+        }
+        var request = new JsonDefinitionImport(
+                defFolder.getCanonicalPath(),
+                template == null ? null : template.getCanonicalPath(),
+                substitutions,
+                List.of(excludedFilenamePatterns)
+        );
+        postDefinition((JsonDefinitionImport.PREFIX + new Gson().toJson(request)).getBytes(StandardCharsets.UTF_8));
+    }
+
+    @SneakyThrows
+    void postDefinition(byte[] data) {
         HttpPost uploadFile = new HttpPost("http://localhost:4451/import");
         uploadFile.addHeader("Authorization", "Bearer " + buildJwt());
         uploadFile.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));

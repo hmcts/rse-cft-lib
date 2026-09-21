@@ -4,6 +4,7 @@ import uk.gov.hmcts.rse.ccd.lib.Database;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.Map;
 
 public interface CFTLib {
     /**
@@ -48,6 +49,18 @@ public interface CFTLib {
      * @param defFolder folder containing json ccd definition
      */
     void importJsonDefinition(File defFolder);
+
+    /**
+     * Import JSON with explicit substitutions, an optional spreadsheet template and filename exclusions.
+     * No environment configuration or template is discovered automatically.
+     *
+     * @param defFolder folder containing JSON CCD definition
+     * @param template spreadsheet supplying sheet names, columns and defaults, or null
+     * @param substitutions values to replace ${NAME} placeholders, including JSON fragments
+     * @param excludedFilenamePatterns filename glob patterns to omit
+     */
+    void importJsonDefinition(File defFolder, File template, Map<String, String> substitutions,
+                              String... excludedFilenamePatterns);
 
     /**
      * Obtain connections to common component databases.

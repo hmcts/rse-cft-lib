@@ -3,12 +3,12 @@ package uk.gov.hmcts.rse.ccd.lib.definitionstore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.SneakyThrows;
-import org.apache.commons.io.FileUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication;
+import uk.gov.hmcts.rse.ccd.lib.JsonDefinitionImport;
 import uk.gov.hmcts.ccd.definition.store.excel.parser.SpreadsheetParser;
 import uk.gov.hmcts.ccd.definition.store.excel.parser.model.DefinitionDataItem;
 import uk.gov.hmcts.ccd.definition.store.excel.parser.model.DefinitionSheet;
@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.FileSystems;
 import java.nio.file.InvalidPathException;
@@ -37,10 +38,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -59,14 +57,7 @@ public class JsonDefinitionReader extends SpreadsheetParser {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    private static final Logger LOG = Logger.getLogger(JsonDefinitionReader.class.getName());
-
-    private static final String EXCLUDED_FILENAME_PATTERNS = "CCD_DEF_EXCLUDED_FILENAME_PATTERNS";
-
-    private static final String ET_ENV = "ET_ENV";
-
-    private static final Pattern UNRESOLVED_ENVIRONMENT_VARIABLE =
-            Pattern.compile("\\$\\{(?:CCD_DEF|ET_COS|ET_ENV)[^}]*}");
+    private static final Pattern UNRESOLVED_ENVIRONMENT_VARIABLE = Pattern.compile("\\$\\{CCD_DEF[^}]*}");
 
     private final SpreadsheetValidator spreadsheetValidator;
 
@@ -89,26 +80,35 @@ public class JsonDefinitionReader extends SpreadsheetParser {
     @Override
     public Map<String, DefinitionSheet> parse(InputStream inputStream) throws IOException {
         var data = inputStream.readAllBytes();
-        var path =  new String(data);
+        var path = new String(data, StandardCharsets.UTF_8);
+        if (path.startsWith(JsonDefinitionImport.PREFIX)) {
+            var request = mapper.readValue(path.substring(JsonDefinitionImport.PREFIX.length()), JsonDefinitionImport.class);
+            return parseJson(request);
+        }
         try {
-            if (Path.of(path).toFile().exists()) {
-                var jsonDefinition = fromJson(path, spreadsheetValidator);
-                var template = findTemplate(path);
-                if (template != null) {
-                    Map<String, DefinitionSheet> definition = super.parse(Files.newInputStream(template));
-                    jsonDefinition.forEach((sheetName, sheet) -> {
-                        if (!sheet.getDataItems().isEmpty() || !definition.containsKey(sheetName)) {
-                            definition.put(sheetName, sheet);
-                        }
-                    });
-                    return definition;
-                }
-                return jsonDefinition;
+            if (Files.isDirectory(Path.of(path))) {
+                return parseJson(defaultImport(path));
             }
         } catch (InvalidPathException i) {
             // Treat it as xlsx
         }
         return super.parse(new ByteArrayInputStream(data));
+    }
+
+    private Map<String, DefinitionSheet> parseJson(JsonDefinitionImport request) throws IOException {
+        var jsonDefinition = fromJson(request, spreadsheetValidator);
+        if (request.template() == null) {
+            return jsonDefinition;
+        }
+        try (var input = Files.newInputStream(Path.of(request.template()))) {
+            Map<String, DefinitionSheet> definition = super.parse(input);
+            jsonDefinition.forEach((sheetName, sheet) -> {
+                if (!sheet.getDataItems().isEmpty() || !definition.containsKey(sheetName)) {
+                    definition.put(sheetName, sheet);
+                }
+            });
+            return definition;
+        }
     }
 
     /**
@@ -121,7 +121,11 @@ public class JsonDefinitionReader extends SpreadsheetParser {
 
     @SneakyThrows
     public static List<Map<String, Object>> readPath(String path) {
-        var environmentVariables = definitionEnvironmentVariables(path);
+        return readPath(path, defaultImport(path));
+    }
+
+    @SneakyThrows
+    private static List<Map<String, Object>> readPath(String path, JsonDefinitionImport request) {
         var fi = Paths.get(path).toFile();
         List<File> files = new ArrayList<>();
         if (fi.exists()) {
@@ -138,8 +142,8 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         files.add(file);
 
         return files.stream()
-                .filter(f -> f.exists() && f.getName().endsWith(".json") && f.canRead() && !isExcluded(f))
-                .flatMap(fileToRead -> readFile(fileToRead, environmentVariables))
+                .filter(f -> f.exists() && f.getName().endsWith(".json") && f.canRead() && !isExcluded(f, request.excludedFilenamePatterns()))
+                .flatMap(fileToRead -> readFile(fileToRead, request.substitutions()))
                 .collect(Collectors.toList());
     }
 
@@ -149,25 +153,15 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         return firstPath.compareTo(secondPath);
     }
 
-    private static boolean isExcluded(File file) {
-        var configuredPatterns = System.getProperty(EXCLUDED_FILENAME_PATTERNS);
-        if (configuredPatterns == null) {
-            configuredPatterns = System.getenv(EXCLUDED_FILENAME_PATTERNS);
-        }
-        if (configuredPatterns == null) {
-            configuredPatterns = "*-prod.json";
-        }
-
-        return Arrays.stream(configuredPatterns.split(","))
-                .map(String::trim)
-                .filter(pattern -> !pattern.isEmpty())
+    private static boolean isExcluded(File file, List<String> patterns) {
+        return patterns.stream()
                 .map(pattern -> FileSystems.getDefault().getPathMatcher("glob:" + pattern))
                 .anyMatch(matcher -> matcher.matches(file.toPath().getFileName()));
     }
 
     @SneakyThrows
     private static Stream<Map<String, Object>> readFile(File file, Map<String, String> environmentVariables) {
-        var s = FileUtils.readFileToString(file);
+        var s = Files.readString(file.toPath());
         for (var entry : environmentVariables.entrySet()) {
             s = s.replace("${" + entry.getKey() + "}", entry.getValue());
         }
@@ -186,62 +180,18 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         return entries.stream().flatMap(JsonDefinitionReader::expandAccessControl);
     }
 
-    private static Map<String, String> definitionEnvironmentVariables(String definitionPath) {
-        var result = new LinkedHashMap<String, String>();
-        addDefinitionEnvironmentConfig(result, definitionPath);
-        addDefinitionEnvironmentVariables(result, System.getenv());
-
-        Properties properties = System.getProperties();
-        properties.stringPropertyNames().stream()
-                .filter(JsonDefinitionReader::isDefinitionEnvironmentVariable)
-                .forEach(key -> result.put(key, properties.getProperty(key)));
-        return result;
-    }
-
-    private static void addDefinitionEnvironmentConfig(Map<String, String> result, String definitionPath) {
-        var config = findDefinitionEnvironmentConfig(definitionPath);
-        if (config == null) {
-            return;
-        }
-
-        try {
-            Map<String, Map<String, String>> environments = mapper.readValue(
-                    config.toFile(),
-                    new TypeReference<Map<String, Map<String, String>>>() { }
-            );
-            var environment = System.getProperty(ET_ENV, System.getenv().getOrDefault(ET_ENV, "cftlib"));
-            var values = environments.get(environment);
-            if (values != null) {
-                addDefinitionEnvironmentVariables(result, values);
+    // Preserve the original CCD_DEF environment substitutions for the folder-only API.
+    private static JsonDefinitionImport defaultImport(String path) {
+        var variables = new LinkedHashMap<String, String>();
+        System.getenv().forEach((key, value) -> {
+            if (key.startsWith("CCD_DEF")) {
+                variables.put(key, value);
             }
-        } catch (IOException exception) {
-            LOG.log(Level.WARNING, "Could not load definition environment config from " + config, exception);
-        }
-    }
-
-    private static Path findDefinitionEnvironmentConfig(String definitionPath) {
-        var current = Paths.get(definitionPath).toAbsolutePath().normalize();
-        if (Files.isRegularFile(current)) {
-            current = current.getParent();
-        }
-        while (current != null) {
-            var config = current.resolve("configs/environment/env.json");
-            if (Files.isRegularFile(config)) {
-                return config;
-            }
-            current = current.getParent();
-        }
-        return null;
-    }
-
-    private static void addDefinitionEnvironmentVariables(Map<String, String> result, Map<String, String> values) {
-        values.entrySet().stream()
-                .filter(entry -> isDefinitionEnvironmentVariable(entry.getKey()))
-                .forEach(entry -> result.put(entry.getKey(), entry.getValue()));
-    }
-
-    private static boolean isDefinitionEnvironmentVariable(String name) {
-        return name.startsWith("CCD_DEF") || name.startsWith("ET_COS") || name.startsWith("ET_ENV");
+        });
+        System.getProperties().stringPropertyNames().stream()
+                .filter(key -> key.startsWith("CCD_DEF"))
+                .forEach(key -> variables.put(key, System.getProperty(key)));
+        return new JsonDefinitionImport(path, null, variables, List.of());
     }
 
     private static Stream<Map<String, Object>> expandAccessControl(Map<String, Object> row) {
@@ -298,11 +248,15 @@ public class JsonDefinitionReader extends SpreadsheetParser {
 
     @SneakyThrows
     public static Map<String, List<Map<String, Object>>> toJson(final String path) {
-        var templateSheetPaths = templateSheetPaths(path);
+        return toJson(defaultImport(path));
+    }
+
+    public static Map<String, List<Map<String, Object>>> toJson(JsonDefinitionImport request) {
+        var templateSheetPaths = templateSheetPaths(request.template());
         return FILES.stream()
                 .map(file -> new AbstractMap.SimpleEntry<>(
                         file,
-                        JsonDefinitionReader.readPath(resolveSheetPath(path, file, templateSheetPaths))
+                        JsonDefinitionReader.readPath(resolveSheetPath(request.directory(), file, templateSheetPaths), request)
                 ))
                 .collect(Collectors.toMap(
                     AbstractMap.SimpleEntry::getKey,
@@ -330,14 +284,13 @@ public class JsonDefinitionReader extends SpreadsheetParser {
     }
 
     @SneakyThrows
-    private static Map<String, String> templateSheetPaths(String jsonPath) {
-        var template = findTemplate(jsonPath);
+    private static Map<String, String> templateSheetPaths(String template) {
         if (template == null) {
             return Map.of();
         }
 
         var result = new HashMap<String, String>();
-        try (var input = Files.newInputStream(template); var workbook = new XSSFWorkbook(input)) {
+        try (var input = Files.newInputStream(Path.of(template)); var workbook = new XSSFWorkbook(input)) {
             workbook.sheetIterator().forEachRemaining(sheet -> {
                 var firstRow = sheet.getRow(0);
                 if (firstRow != null && firstRow.getCell(0) != null) {
@@ -349,14 +302,13 @@ public class JsonDefinitionReader extends SpreadsheetParser {
     }
 
     @SneakyThrows
-    private static Map<String, Set<String>> templateSheetHeaders(String jsonPath) {
-        var template = findTemplate(jsonPath);
+    private static Map<String, Set<String>> templateSheetHeaders(String template) {
         if (template == null) {
             return Map.of();
         }
 
         var result = new HashMap<String, Set<String>>();
-        try (var input = Files.newInputStream(template); var workbook = new XSSFWorkbook(input)) {
+        try (var input = Files.newInputStream(Path.of(template)); var workbook = new XSSFWorkbook(input)) {
             workbook.sheetIterator().forEachRemaining(sheet -> {
                 var firstRow = sheet.getRow(0);
                 var headerRow = sheet.getRow(2);
@@ -375,16 +327,6 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         return result;
     }
 
-    private static Path findTemplate(String jsonPath) {
-        var jsonDirectory = Paths.get(jsonPath).toAbsolutePath().normalize();
-        var jurisdictionDirectory = jsonDirectory.getParent();
-        if (jurisdictionDirectory == null) {
-            return null;
-        }
-        var template = jurisdictionDirectory.resolve("data/ccd-template.xlsx");
-        return Files.isRegularFile(template) ? template : null;
-    }
-
     private static String pathFor(String root, String sheetName) {
         return Paths.get(root, sheetName).toString();
     }
@@ -394,14 +336,19 @@ public class JsonDefinitionReader extends SpreadsheetParser {
     }
 
     public static Map<String, DefinitionSheet> fromJson(String path) {
-        return fromJson(path, null);
+        return fromJson(defaultImport(path));
     }
 
-    private static Map<String, DefinitionSheet> fromJson(String path, SpreadsheetValidator spreadsheetValidator) {
+    public static Map<String, DefinitionSheet> fromJson(JsonDefinitionImport request) {
+        return fromJson(request, null);
+    }
+
+    private static Map<String, DefinitionSheet> fromJson(JsonDefinitionImport request,
+                                                        SpreadsheetValidator spreadsheetValidator) {
         Map<String, DefinitionSheet> result = new HashMap<>();
-        var j = toJson(path);
-        var templateHeaders = templateSheetHeaders(path);
-        var templatePaths = templateSheetPaths(path);
+        var j = toJson(request);
+        var templateHeaders = templateSheetHeaders(request.template());
+        var templatePaths = templateSheetPaths(request.template());
         final var dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         for (String s : j.keySet()) {
             var sheet = j.get(s);

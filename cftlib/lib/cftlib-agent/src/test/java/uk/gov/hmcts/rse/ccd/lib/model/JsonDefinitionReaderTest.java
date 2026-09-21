@@ -1,6 +1,7 @@
 package uk.gov.hmcts.rse.ccd.lib.model;
 
 import com.google.common.collect.Sets;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import uk.gov.hmcts.ccd.definition.store.excel.parser.model.DefinitionSheet;
 import uk.gov.hmcts.ccd.definition.store.excel.util.mapper.ColumnName;
 import uk.gov.hmcts.ccd.definition.store.excel.validation.SpreadsheetValidator;
 import uk.gov.hmcts.rse.ccd.lib.definitionstore.JsonDefinitionReader;
+import uk.gov.hmcts.rse.ccd.lib.JsonDefinitionImport;
 
 import java.io.ByteArrayInputStream;
 import java.nio.file.Files;
@@ -107,9 +109,9 @@ class JsonDefinitionReaderTest {
     void usesTemplateSheetNamesForJsonDirectories() {
         var jsonDirectory = Files.createDirectories(tempDir.resolve("json"));
         var dataDirectory = Files.createDirectories(tempDir.resolve("data"));
-        Files.createDirectories(jsonDirectory.resolve("EnglandWales Scrubbed"));
+        Files.createDirectories(jsonDirectory.resolve("Custom Lists"));
         Files.writeString(
-                jsonDirectory.resolve("EnglandWales Scrubbed/EnglandWales Scrubbed.json"),
+                jsonDirectory.resolve("Custom Lists/Custom Lists.json"),
                 """
                 [{"ID":"fixed-list","ListElementCode":"value","ListElement":"Value","DisplayOrder":1}]
                 """
@@ -117,12 +119,13 @@ class JsonDefinitionReaderTest {
 
         try (var workbook = new XSSFWorkbook();
              var output = Files.newOutputStream(dataDirectory.resolve("ccd-template.xlsx"))) {
-            var sheet = workbook.createSheet("EnglandWales Scrubbed");
+            var sheet = workbook.createSheet("Custom Lists");
             sheet.createRow(0).createCell(0).setCellValue("FixedLists");
             workbook.write(output);
         }
 
-        var result = JsonDefinitionReader.toJson(jsonDirectory.toString());
+        var result = JsonDefinitionReader.toJson(new JsonDefinitionImport(jsonDirectory.toString(),
+                dataDirectory.resolve("ccd-template.xlsx").toString(), Map.of(), List.of()));
 
         assertThat(result.get("FixedLists")).hasSize(1);
         assertThat(result.get("FixedLists").get(0).get("ID")).isEqualTo("fixed-list");
@@ -150,7 +153,8 @@ class JsonDefinitionReaderTest {
             workbook.write(output);
         }
 
-        var item = JsonDefinitionReader.fromJson(jsonDirectory.toString())
+        var item = JsonDefinitionReader.fromJson(new JsonDefinitionImport(jsonDirectory.toString(),
+                dataDirectory.resolve("ccd-template.xlsx").toString(), Map.of(), List.of()))
                 .get("CaseEventToFields")
                 .getDataItems()
                 .get(0);
@@ -161,7 +165,7 @@ class JsonDefinitionReaderTest {
 
     @Test
     @SneakyThrows
-    void excludesProductionFragmentsByDefault() {
+    void onlyExcludesExplicitFilenamePatterns() {
         Files.createDirectories(tempDir.resolve("CaseEvent"));
         Files.writeString(
                 tempDir.resolve("CaseEvent/CaseEvent.json"),
@@ -184,7 +188,11 @@ class JsonDefinitionReaderTest {
 
         var result = JsonDefinitionReader.readPath(tempDir.resolve("CaseEvent").toString());
 
-        assertThat(result).extracting(row -> row.get("ID")).containsExactly("base", "nonprod");
+        assertThat(result).extracting(row -> row.get("ID")).containsExactly("base", "nonprod", "prod");
+
+        var filtered = JsonDefinitionReader.toJson(new JsonDefinitionImport(tempDir.toString(), null,
+                Map.of(), List.of("*-prod.json"))).get("CaseEvent");
+        assertThat(filtered).extracting(row -> row.get("ID")).containsExactly("base", "nonprod");
     }
 
     @Test
@@ -230,58 +238,51 @@ class JsonDefinitionReaderTest {
 
     @Test
     @SneakyThrows
-    void substitutesEtDefinitionEnvironmentProperties() {
-        Files.writeString(
-                tempDir.resolve("CaseType.json"),
+    void readsExplicitImportPayloadWithServiceDefinedSubstitutions() {
+        Files.writeString(tempDir.resolve("CaseType.json"),
                 """
-                [{"ID":"case-type","PrintableDocumentsUrl":"${ET_COS_URL}/documents"}]
-                """
-        );
-        System.setProperty("ET_COS_URL", "http://localhost:8081");
-        try {
-            var result = JsonDefinitionReader.readPath(tempDir.resolve("CaseType").toString());
+                [{"ID":"case-type","Name":"${caseField}","PrintableDocumentsUrl":"${SERVICE_URL}/documents"}]
+                """);
+        var request = new JsonDefinitionImport(tempDir.toString(), null,
+                Map.of("SERVICE_URL", "http://localhost:8081"), List.of());
+        var payload = JsonDefinitionImport.PREFIX + new ObjectMapper().writeValueAsString(request);
+        var reader = new JsonDefinitionReader(new SpreadsheetValidator());
 
-            assertThat(result.get(0).get("PrintableDocumentsUrl"))
-                    .isEqualTo("http://localhost:8081/documents");
-        } finally {
-            System.clearProperty("ET_COS_URL");
-        }
+        var result = reader.parse(new ByteArrayInputStream(payload.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+
+        assertThat(result.get("CaseType").getDataItems().get(0).findAttribute(ColumnName.NAME))
+                .isEqualTo("${caseField}");
+        assertThat(result.get("CaseType").getDataItems().get(0).findAttribute(ColumnName.PRINTABLE_DOCUMENTS_URL))
+                .isEqualTo("http://localhost:8081/documents");
     }
 
     @Test
     @SneakyThrows
-    void loadsCftlibDefinitionEnvironmentConfig() {
-        var definitionRoot = Files.createDirectories(tempDir.resolve("ccd-definitions"));
-        var jsonDirectory = Files.createDirectories(
-                definitionRoot.resolve("jurisdictions/england-wales/json")
-        );
-        var environmentDirectory = Files.createDirectories(definitionRoot.resolve("configs/environment"));
-        Files.writeString(
-                environmentDirectory.resolve("env.json"),
-                """
-                {
-                  "cftlib": {
-                    "CCD_DEF_URL": "http://localhost:4452",
-                    "CCD_DEF_AAC_URL": "http://localhost:4454"
-                  }
-                }
-                """
-        );
-        Files.writeString(
-                jsonDirectory.resolve("CaseType.json"),
-                """
-                [{"ID":"case-type","PrintableDocumentsUrl":"${CCD_DEF_URL}/documents"}]
-                """
-        );
+    void doesNotDiscoverEnvironmentFilesOrTemplates() {
+        Files.createDirectories(tempDir.resolve("configs/environment"));
+        Files.writeString(tempDir.resolve("configs/environment/env.json"), "not a configuration file");
+        Files.createDirectories(tempDir.resolve("data"));
+        Files.writeString(tempDir.resolve("data/ccd-template.xlsx"), "not a workbook");
+        var jsonDirectory = Files.createDirectories(tempDir.resolve("json"));
+        Files.writeString(jsonDirectory.resolve("CaseType.json"), "[{\"ID\":\"case-type\"}]");
 
-        System.setProperty("ET_ENV", "cftlib");
+        assertThat(JsonDefinitionReader.toJson(jsonDirectory.toString()).get("CaseType"))
+                .containsExactly(Map.of("ID", "case-type"));
+    }
+
+    @Test
+    @SneakyThrows
+    void explicitImportsDoNotReadProcessSubstitutions() {
+        Files.writeString(tempDir.resolve("CaseType.json"),
+                "[{\"ID\":\"case-type\",\"Name\":\"${CCD_DEF_IMPORT_TEST}\"}]");
+        System.setProperty("CCD_DEF_IMPORT_TEST", "implicit");
         try {
-            var result = JsonDefinitionReader.readPath(jsonDirectory.resolve("CaseType").toString());
-
-            assertThat(result.get(0).get("PrintableDocumentsUrl"))
-                    .isEqualTo("http://localhost:4452/documents");
+            assertThrows(IllegalArgumentException.class, () -> JsonDefinitionReader.toJson(
+                new JsonDefinitionImport(tempDir.toString(), null, Map.of(), List.of())));
+            assertThat(JsonDefinitionReader.toJson(tempDir.toString()).get("CaseType").get(0).get("Name"))
+                .isEqualTo("implicit");
         } finally {
-            System.clearProperty("ET_ENV");
+            System.clearProperty("CCD_DEF_IMPORT_TEST");
         }
     }
 
