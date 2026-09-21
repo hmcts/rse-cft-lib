@@ -181,17 +181,26 @@ lib.importJsonDefinition(
 ```
 
 This supports split sheet directories, the processor's `AccessControl` and `UserRoles` shorthand, and
-environment substitutions beginning with `CCD_DEF`, `ET_COS`, or `ET_ENV`. `*-prod.json` fragments are
-excluded by default for the local cftlib environment. Set `CCD_DEF_EXCLUDED_FILENAME_PATTERNS` to a
-comma-separated list of glob patterns to override this.
+process environment or system property substitutions beginning with `CCD_DEF`.
 
-If an ancestor of the JSON directory contains `configs/environment/env.json`, cftlib loads its `cftlib`
-values before applying process environment variables and system properties. Set `ET_ENV` to select a
-different entry. Imports fail when a supported environment placeholder remains unresolved.
+Consumers that need a template, additional substitutions, or filename exclusions should configure them
+explicitly:
 
-If the JSON directory has a sibling `data/ccd-template.xlsx`, its sheet names and columns are used in the
-same way as the JSON-to-XLSX processor. This supports definitions whose physical template sheet name differs
-from its CCD sheet name and ensures unknown JSON properties are ignored consistently.
+```java
+lib.importJsonDefinition(
+    new File("ccd-definitions/json"),
+    new File("ccd-definitions/data/ccd-template.xlsx"),
+    Map.of(
+        "CALLBACK_URL", "http://localhost:8080",
+        "DATA_STORE_URL", "http://localhost:4452"
+    ),
+    "*-prod.json"
+);
+```
+
+The template supplies sheet names, columns, and defaults in the same way as the JSON-to-XLSX processor.
+CFTLib does not discover environment configuration, templates, or exclusions for the explicit API; these
+remain under the consuming project's control. Imports fail when a placeholder remains unresolved.
 
 ### 3. Launch your application + CCD
 ```gradle
