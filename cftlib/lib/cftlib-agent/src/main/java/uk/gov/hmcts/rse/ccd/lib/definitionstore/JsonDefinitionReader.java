@@ -105,12 +105,30 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         }
         try (var input = Files.newInputStream(Path.of(request.template()))) {
             Map<String, DefinitionSheet> definition = super.parse(input);
-            jsonDefinition.forEach((sheetName, sheet) -> {
-                if (!sheet.getDataItems().isEmpty() || !definition.containsKey(sheetName)) {
-                    definition.put(sheetName, sheet);
-                }
-            });
+            jsonDefinition.forEach((sheetName, sheet) -> mergeJsonRows(definition, sheetName, sheet));
             return definition;
+        }
+    }
+
+    private static void mergeJsonRows(
+            Map<String, DefinitionSheet> definition,
+            String sheetName,
+            DefinitionSheet jsonSheet
+    ) {
+        var templateSheet = definition.get(sheetName);
+        if (templateSheet == null) {
+            definition.put(sheetName, jsonSheet);
+            return;
+        }
+
+        var templateRows = templateSheet.getDataItems();
+        var jsonRows = jsonSheet.getDataItems();
+        for (var rowIndex = 0; rowIndex < jsonRows.size(); rowIndex++) {
+            if (rowIndex < templateRows.size()) {
+                templateRows.set(rowIndex, jsonRows.get(rowIndex));
+            } else {
+                templateRows.add(jsonRows.get(rowIndex));
+            }
         }
     }
 
@@ -369,7 +387,7 @@ public class JsonDefinitionReader extends SpreadsheetParser {
             defSheet.setName(s);
             result.put(s, defSheet);
             for (var rowIndex = 0; rowIndex < sheet.size(); rowIndex++) {
-                Map<String, Object> row = sheet.get(rowIndex);
+                Map<String, Object> row = normalizeRoleColumn(sheet.get(rowIndex), templateHeaders.get(s));
                 var item = new DefinitionDataItem(s);
                 defSheet.getDataItems().add(item);
                 for (String s1 : row.keySet()) {
@@ -402,5 +420,19 @@ public class JsonDefinitionReader extends SpreadsheetParser {
             }
         }
         return result;
+    }
+
+    private static Map<String, Object> normalizeRoleColumn(Map<String, Object> row, Set<String> templateHeaders) {
+        if (templateHeaders == null
+                || !templateHeaders.contains("AccessProfile")
+                || templateHeaders.contains("UserRole")
+                || !row.containsKey("UserRole")) {
+            return row;
+        }
+
+        var normalized = new LinkedHashMap<>(row);
+        var userRole = normalized.remove("UserRole");
+        normalized.putIfAbsent("AccessProfile", userRole);
+        return normalized;
     }
 }

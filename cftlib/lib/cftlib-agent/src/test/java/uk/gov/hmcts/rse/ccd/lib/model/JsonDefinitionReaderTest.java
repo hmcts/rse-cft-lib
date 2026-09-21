@@ -238,6 +238,34 @@ class JsonDefinitionReaderTest {
 
     @Test
     @SneakyThrows
+    void mapsExpandedUserRolesToAccessProfileTemplateColumns() {
+        var template = tempDir.resolve("ccd-template.xlsx");
+        Files.writeString(
+                tempDir.resolve("AuthorisationCaseType.json"),
+                """
+                [{"CaseTypeID":"case-type","UserRoles":["role-a"],"CRUD":"CRUD"}]
+                """
+        );
+        try (var workbook = new XSSFWorkbook();
+             var output = Files.newOutputStream(template)) {
+            var sheet = workbook.createSheet("AuthorisationCaseType");
+            sheet.createRow(0).createCell(0).setCellValue("AuthorisationCaseType");
+            var headers = sheet.createRow(2);
+            headers.createCell(0).setCellValue("CaseTypeID");
+            headers.createCell(1).setCellValue("AccessProfile");
+            headers.createCell(2).setCellValue("CRUD");
+            workbook.write(output);
+        }
+
+        var item = JsonDefinitionReader.fromJson(new JsonDefinitionImport(
+                tempDir.toString(), template.toString(), Map.of(), List.of()
+        )).get("AuthorisationCaseType").getDataItems().get(0);
+
+        assertThat(item.findAttribute(ColumnName.ACCESS_PROFILE)).isEqualTo("role-a");
+    }
+
+    @Test
+    @SneakyThrows
     void importsConfiguredJsonPayloadWithTemplateSubstitutionsAndExclusions() {
         var jsonDirectory = Files.createDirectories(tempDir.resolve("json"));
         var template = tempDir.resolve("ccd-template.xlsx");
@@ -275,6 +303,43 @@ class JsonDefinitionReaderTest {
         assertThat(items.get(0).findAttribute(ColumnName.NAME)).isEqualTo("Example case");
         assertThat(items.get(0).findAttribute(ColumnName.PRINTABLE_DOCUMENTS_URL))
                 .isEqualTo("http://localhost:8081/documents");
+    }
+
+    @Test
+    @SneakyThrows
+    void preservesTrailingTemplateRowsWhenJsonReplacesEarlierRows() {
+        var jsonDirectory = Files.createDirectories(tempDir.resolve("json"));
+        var template = tempDir.resolve("ccd-template.xlsx");
+        Files.writeString(jsonDirectory.resolve("CaseType.json"),
+                "[{\"ID\":\"json-case-type\",\"Name\":\"JSON case type\"}]");
+        try (var workbook = new XSSFWorkbook();
+             var output = Files.newOutputStream(template)) {
+            var sheet = workbook.createSheet("CaseType");
+            sheet.createRow(0).createCell(0).setCellValue("CaseType");
+            var headers = sheet.createRow(2);
+            headers.createCell(0).setCellValue("ID");
+            headers.createCell(1).setCellValue("Name");
+            var firstDefault = sheet.createRow(3);
+            firstDefault.createCell(0).setCellValue("first-default");
+            firstDefault.createCell(1).setCellValue("First default");
+            var trailingDefault = sheet.createRow(4);
+            trailingDefault.createCell(0).setCellValue("trailing-default");
+            trailingDefault.createCell(1).setCellValue("Trailing default");
+            workbook.write(output);
+        }
+        var request = new JsonDefinitionImport(
+                jsonDirectory.toString(), template.toString(), Map.of(), List.of()
+        );
+        var payload = JsonDefinitionImport.PREFIX + new ObjectMapper().writeValueAsString(request);
+        var reader = new JsonDefinitionReader(new SpreadsheetValidator());
+
+        var items = reader.parse(new ByteArrayInputStream(
+                payload.getBytes(java.nio.charset.StandardCharsets.UTF_8)
+        )).get("CaseType").getDataItems();
+
+        assertThat(items).hasSize(2);
+        assertThat(items).extracting(item -> item.findAttribute(ColumnName.NAME))
+                .containsExactly("JSON case type", "Trailing default");
     }
 
     @Test
