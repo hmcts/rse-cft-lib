@@ -200,7 +200,8 @@ lib.importJsonDefinition(
 
 The template supplies sheet names, columns, and defaults in the same way as the JSON-to-XLSX processor.
 CFTLib does not discover environment configuration, templates, or exclusions for the explicit API; these
-remain under the consuming project's control. Imports fail when a placeholder remains unresolved.
+remain under the consuming project's control. Imports fail when an uppercase configuration placeholder such
+as `${CALLBACK_URL}` remains unresolved; CCD runtime expressions such as `${caseReference}` are preserved.
 
 ### 3. Launch your application + CCD
 ```gradle

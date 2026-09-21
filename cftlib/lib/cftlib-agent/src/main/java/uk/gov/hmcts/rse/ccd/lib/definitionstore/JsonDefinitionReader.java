@@ -57,7 +57,7 @@ public class JsonDefinitionReader extends SpreadsheetParser {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    private static final Pattern UNRESOLVED_ENVIRONMENT_VARIABLE = Pattern.compile("\\$\\{CCD_DEF[^}]*}");
+    private static final Pattern UNRESOLVED_SUBSTITUTION = Pattern.compile("\\$\\{[A-Z][A-Z0-9_]*}");
 
     private final SpreadsheetValidator spreadsheetValidator;
 
@@ -171,7 +171,7 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         for (var entry : environmentVariables.entrySet()) {
             s = s.replace("${" + entry.getKey() + "}", entry.getValue());
         }
-        var unresolvedVariable = UNRESOLVED_ENVIRONMENT_VARIABLE.matcher(s);
+        var unresolvedVariable = UNRESOLVED_SUBSTITUTION.matcher(s);
         if (unresolvedVariable.find()) {
             throw new IllegalArgumentException(
                     "Unresolved definition environment variable " + unresolvedVariable.group() + " in " + file
@@ -259,7 +259,10 @@ public class JsonDefinitionReader extends SpreadsheetParser {
 
     public static Map<String, List<Map<String, Object>>> toJson(JsonDefinitionImport request) {
         var templateSheetPaths = templateSheetPaths(request.template());
-        return FILES.stream()
+        var sheets = request.template() == null
+                ? FILES
+                : FILES.stream().filter(templateSheetPaths::containsKey).toList();
+        return sheets.stream()
                 .map(file -> new AbstractMap.SimpleEntry<>(
                         file,
                         JsonDefinitionReader.readPath(

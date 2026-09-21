@@ -309,6 +309,46 @@ class JsonDefinitionReaderTest {
 
     @Test
     @SneakyThrows
+    void rejectsUnresolvedCustomSubstitutions() {
+        Files.writeString(tempDir.resolve("CaseType.json"),
+                "[{\"ID\":\"case-type\",\"Name\":\"${CASE_NAME}\"}]");
+        var request = new JsonDefinitionImport(tempDir.toString(), null, Map.of(), List.of());
+
+        assertThat(assertThrows(IllegalArgumentException.class, () -> JsonDefinitionReader.toJson(request)))
+                .hasMessageContaining("${CASE_NAME}");
+    }
+
+    @Test
+    @SneakyThrows
+    void onlyImportsSheetsPresentInConfiguredTemplate() {
+        var jsonDirectory = Files.createDirectories(tempDir.resolve("json"));
+        var template = tempDir.resolve("ccd-template.xlsx");
+        Files.writeString(jsonDirectory.resolve("CaseType.json"), "[{\"ID\":\"case-type\"}]");
+        Files.writeString(jsonDirectory.resolve("FixedLists.json"),
+                "[{\"ID\":\"list\",\"ListElementCode\":\"item\"}]");
+        try (var workbook = new XSSFWorkbook();
+             var output = Files.newOutputStream(template)) {
+            var sheet = workbook.createSheet("FixedLists");
+            sheet.createRow(0).createCell(0).setCellValue("FixedLists");
+            var headers = sheet.createRow(2);
+            headers.createCell(0).setCellValue("ID");
+            headers.createCell(1).setCellValue("ListElementCode");
+            workbook.write(output);
+        }
+        var request = new JsonDefinitionImport(
+                jsonDirectory.toString(), template.toString(), Map.of(), List.of()
+        );
+        var payload = JsonDefinitionImport.PREFIX + new ObjectMapper().writeValueAsString(request);
+        var reader = new JsonDefinitionReader(new SpreadsheetValidator());
+
+        var result = reader.parse(new ByteArrayInputStream(payload.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+
+        assertThat(result).containsOnlyKeys("FixedLists");
+        assertThat(result.get("FixedLists").getDataItems()).hasSize(1);
+    }
+
+    @Test
+    @SneakyThrows
     void rejectsUnresolvedDefinitionEnvironmentVariables() {
         Files.writeString(
                 tempDir.resolve("CaseType.json"),
