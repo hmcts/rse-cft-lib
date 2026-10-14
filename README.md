@@ -288,6 +288,10 @@ bootWithCCD {
 }
 ```
 
+XUI redirects the browser to the IDAM simulator at `http://localhost:5062` for login. When the browser is not on the same
+machine as cftlib, set `IDAM_SIMULATOR_BASE_URL_OUTSIDE_NETWORK` (or `XUI_IDAM_LOGIN_URL` to override XUI alone) to a URL
+the browser can reach.
+
 ##### AAT (VPN required)
 
 ```groovy

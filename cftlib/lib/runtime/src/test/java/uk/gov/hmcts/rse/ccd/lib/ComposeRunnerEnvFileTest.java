@@ -45,4 +45,26 @@ class ComposeRunnerEnvFileTest {
         assertThat(contents).contains("DECENTRALISED_EVENT_BASE_URLS={\"E2E\":\"https://example.com\"}");
         assertThat(contents).contains("FOO=abc$$BAR");
     }
+
+    @Test
+    void xuiIdamLoginUrlDefaultsToLocalhost() {
+        assertThat(ComposeRunner.xuiIdamLoginUrl(Map.of())).isEqualTo("http://localhost:5062");
+    }
+
+    @Test
+    void xuiIdamLoginUrlFollowsSimulatorOutsideNetworkUrl() {
+        var env = Map.of("IDAM_SIMULATOR_BASE_URL_OUTSIDE_NETWORK", "https://idam.example.com");
+
+        assertThat(ComposeRunner.xuiIdamLoginUrl(env)).isEqualTo("https://idam.example.com");
+    }
+
+    @Test
+    void xuiIdamLoginUrlCanBeOverridden() {
+        var env = Map.of(
+            "IDAM_SIMULATOR_BASE_URL_OUTSIDE_NETWORK", "https://idam.example.com",
+            "XUI_IDAM_LOGIN_URL", "https://login.example.com"
+        );
+
+        assertThat(ComposeRunner.xuiIdamLoginUrl(env)).isEqualTo("https://login.example.com");
+    }
 }

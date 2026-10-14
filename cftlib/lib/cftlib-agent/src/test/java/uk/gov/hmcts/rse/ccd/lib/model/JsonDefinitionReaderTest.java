@@ -6,6 +6,8 @@ import lombok.SneakyThrows;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.opentest4j.AssertionFailedError;
 import uk.gov.hmcts.ccd.definition.store.excel.endpoint.exception.InvalidImportException;
 import uk.gov.hmcts.ccd.definition.store.excel.endpoint.exception.MapperException;
@@ -33,6 +35,25 @@ class JsonDefinitionReaderTest {
 
     @TempDir
     Path tempDir;
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "${OrganisationField.OrganisationID}:[CLAIMANT]",
+        "${OrganisationField.OrganisationID}:defendant-solicitor",
+        "${OrganisationField.OrganisationID}:[CLAIMANT],${OrganisationField.OrganisationID}:defendant-solicitor",
+        "${OrganisationField.OrganisationName}|${OrganisationField.OrganisationID}:defendant-solicitor"
+    })
+    @SneakyThrows
+    void preservesChallengeQuestionAnswersDuringJsonImport(String answer) {
+        Files.writeString(tempDir.resolve("ChallengeQuestion.json"),
+                new ObjectMapper().writeValueAsString(List.of(Map.of("Answer", answer))));
+
+        var item = JsonDefinitionReader.fromJson(new JsonDefinitionImport(
+                tempDir.toString(), null, Map.of(), List.of()))
+                .get("ChallengeQuestion").getDataItems().get(0);
+
+        assertThat(item.getString(ColumnName.CHALLENGE_QUESTION_ANSWER_FIELD)).isEqualTo(answer);
+    }
 
     @Test
     public void readsFileAndDirectory() {

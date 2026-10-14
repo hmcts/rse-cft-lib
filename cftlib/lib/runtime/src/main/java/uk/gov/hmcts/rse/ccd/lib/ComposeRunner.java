@@ -188,7 +188,7 @@ public class ComposeRunner {
             builder.putAll(Map.of(
                 "XUI_S2S_URL", host + ":" + ControlPlane.getEnvVar("RSE_LIB_S2S_PORT", 8489),
                 "XUI_IDAM_API_URL", runtime,
-                "XUI_IDAM_LOGIN_URL", "http://localhost:5062",
+                "XUI_IDAM_LOGIN_URL", xuiIdamLoginUrl(System.getenv()),
                 "SERVICES_WORK_ALLOCATION_TASK_API", waTaskApi,
                 "HEALTH_WORK_ALLOCATION_TASK_API", waTaskApi + "/health",
                 // TODO: placeholder to pass health checks
@@ -198,6 +198,13 @@ public class ComposeRunner {
             ));
         }
         return builder.build();
+    }
+
+    // The URL XUI redirects the browser to for login, which must be reachable from the browser
+    // rather than from within the docker network.
+    static String xuiIdamLoginUrl(Map<String, String> env) {
+        return env.getOrDefault("XUI_IDAM_LOGIN_URL",
+            env.getOrDefault("IDAM_SIMULATOR_BASE_URL_OUTSIDE_NETWORK", "http://localhost:5062"));
     }
 
     @SneakyThrows
