@@ -1,5 +1,6 @@
 package uk.gov.hmcts.rse.ccd.lib.definitionstore;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.SneakyThrows;
@@ -217,10 +218,48 @@ public class JsonDefinitionReader extends SpreadsheetParser {
                 .collect(Collectors.toList());
     }
 
-    private static int compareJsonFiles(File first, File second) {
+    // ccd-definition-processor reads files in glob's order, a.localeCompare(b, 'en'), and the definition store needs
+    // that order: a complex type must come after the complex types it uses.
+    public static int compareJsonFiles(File first, File second) {
         var firstPath = first.getPath().replaceFirst("\\.json$", "");
         var secondPath = second.getPath().replaceFirst("\\.json$", "");
-        return firstPath.compareTo(secondPath);
+        int primary = compareIgnoringCase(firstPath, secondPath);
+        return primary != 0 ? primary : compareCase(firstPath, secondPath);
+    }
+
+    private static int compareIgnoringCase(String first, String second) {
+        for (int i = 0; i < Math.min(first.length(), second.length()); i++) {
+            int difference = Integer.compare(collationKey(first.charAt(i)), collationKey(second.charAt(i)));
+            if (difference != 0) {
+                return difference;
+            }
+        }
+        return Integer.compare(first.length(), second.length());
+    }
+
+    // English collation for the characters in definition paths: punctuation, then digits, then letters.
+    private static int collationKey(char c) {
+        return switch (c) {
+            case '_' -> 1;
+            case '-' -> 2;
+            case '.' -> 3;
+            case '/', '\\' -> 4;
+            default -> Character.isDigit(c) ? 100 + c
+                : Character.isLetter(c) ? 1000 + Character.toLowerCase(c)
+                : 10 + c;
+        };
+    }
+
+    // Equal but for case: lower case first, as ICU orders it.
+    private static int compareCase(String first, String second) {
+        for (int i = 0; i < Math.min(first.length(), second.length()); i++) {
+            char a = first.charAt(i);
+            char b = second.charAt(i);
+            if (a != b) {
+                return Character.isLowerCase(a) ? -1 : 1;
+            }
+        }
+        return 0;
     }
 
     private static boolean isExcluded(File file, List<String> patterns) {
@@ -242,10 +281,10 @@ public class JsonDefinitionReader extends SpreadsheetParser {
             );
         }
 
-        List<Map<String, Object>> entries = mapper.readValue(
-                s,
-                new TypeReference<List<Map<String, Object>>>() { }
-        );
+        // A file holds an array of rows, or a single row object as ccd-definition-processor also accepts.
+        List<Map<String, Object>> entries = mapper.readerFor(new TypeReference<List<Map<String, Object>>>() { })
+                .with(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                .readValue(s);
 
         return entries.stream().flatMap(JsonDefinitionReader::expandAccessControl);
     }
