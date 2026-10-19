@@ -45,6 +45,18 @@ class JsonDefinitionReaderTest {
         assertEquals("caseworker-divorce-solicitor", result.get(4).get("UserRole"));
     }
 
+    @Test
+    @SneakyThrows
+    void readsAFileHoldingASingleRow() {
+        var folder = Files.createDirectories(tempDir.resolve("AuthorisationCaseType"));
+        Files.writeString(folder.resolve("single.json"), "{\"UserRole\": \"caseworker-civil\"}");
+
+        var result = JsonDefinitionReader.readPath(folder.toString());
+
+        assertEquals(1, result.size());
+        assertEquals("caseworker-civil", result.get(0).get("UserRole"));
+    }
+
     @SneakyThrows
     Map<String, DefinitionSheet> loadReferenceXlsx() {
         var parser = new SpreadsheetParser(new SpreadsheetValidator());
