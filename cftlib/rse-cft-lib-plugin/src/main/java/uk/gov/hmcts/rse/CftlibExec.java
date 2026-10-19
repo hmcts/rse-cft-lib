@@ -64,9 +64,10 @@ public class CftlibExec extends JavaExec {
         if (authMode == AuthMode.Local) {
             profiles.add("localAuth");
         }
-        var requested = System.getenv("RSE_LIB_COMPOSE_PROFILES");
+        // The task's environment: the shell's, plus anything the build script sets on the task.
+        var requested = getEnvironment().get("RSE_LIB_COMPOSE_PROFILES");
         if (requested != null) {
-            Arrays.stream(requested.split(","))
+            Arrays.stream(requested.toString().split(","))
                 .map(String::trim)
                 .filter(profile -> !profile.isEmpty() && !profiles.contains(profile))
                 .forEach(profiles::add);
