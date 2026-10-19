@@ -18,6 +18,7 @@ import uk.gov.hmcts.rse.ccd.lib.definitionstore.JsonDefinitionReader;
 import uk.gov.hmcts.rse.ccd.lib.JsonDefinitionImport;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -55,6 +56,24 @@ class JsonDefinitionReaderTest {
 
         assertEquals(1, result.size());
         assertEquals("caseworker-civil", result.get(0).get("UserRole"));
+    }
+
+    @Test
+    void ordersFilesAsDefinitionProcessorDoes() {
+        // glob's localeCompare(b, 'en'): case is ignored, so a complex type's own file comes before the types using it.
+        var files = new ArrayList<>(List.of(
+            new File("ComplexTypes/TaskManagementLocationTypes-MINTI.json"),
+            new File("ComplexTypes/TaskManagementLocationsModel-MINTI.json"),
+            new File("ComplexTypes/Address.json"),
+            new File("ComplexTypes/address-nonprod.json"),
+            new File("ComplexTypes/1_Debt.json")
+        ));
+
+        files.sort(JsonDefinitionReader::compareJsonFiles);
+
+        assertThat(files).extracting(File::getName).containsExactly(
+            "1_Debt.json", "Address.json", "address-nonprod.json", "TaskManagementLocationsModel-MINTI.json",
+            "TaskManagementLocationTypes-MINTI.json");
     }
 
     @SneakyThrows
