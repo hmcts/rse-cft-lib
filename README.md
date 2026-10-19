@@ -392,8 +392,8 @@ The cftlib maintains a log file per service in your build directory; `build/cftl
 
 ## Building the cftlib
 
-The Cftlib build requires JDK 21. Running the bundled services requires JDK 25,
-because docassembly is compiled for Java 25 and all services share one JVM.
+The Cftlib build requires JDK 21 and JDK 25. Docassembly builds with JDK 25,
+but its CFTLib artifact targets Java 21. The bundled services run together on JDK 21.
 
 ## How the cftlib works
 

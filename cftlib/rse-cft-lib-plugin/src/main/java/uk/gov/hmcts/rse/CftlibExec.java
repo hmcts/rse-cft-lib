@@ -56,11 +56,11 @@ public class CftlibExec extends JavaExec {
         }
     }
 
-    // All services share this JVM; docassembly now requires Java 25.
+    // All services share a Java 21 JVM.
     private void setJavaToolChain() {
         var launcher = getProject().getExtensions().getByType(JavaToolchainService.class)
             .launcherFor(x -> {
-                x.getLanguageVersion().set(JavaLanguageVersion.of("25"));
+                x.getLanguageVersion().set(JavaLanguageVersion.of("21"));
             });
         this.getJavaLauncher().set(launcher);
     }
