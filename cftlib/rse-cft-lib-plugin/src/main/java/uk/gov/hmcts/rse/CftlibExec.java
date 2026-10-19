@@ -12,6 +12,8 @@ import org.gradle.jvm.toolchain.JavaToolchainService;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CftlibExec extends JavaExec {
@@ -30,10 +32,9 @@ public class CftlibExec extends JavaExec {
     private void configure() {
         setRequiredJvmArgs();
         setStandardEnvVars();
+        setComposeProfiles();
         if (authMode == AuthMode.Local) {
             environment("RSE_LIB_AUTH-MODE", "localAuth");
-            // Enable idam simulator
-            environment("COMPOSE_PROFILES", "localAuth");
 
             // S2S simulator
             environment("IDAM_S2S-AUTH_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
@@ -53,6 +54,25 @@ public class CftlibExec extends JavaExec {
             fetchAndSetAATSecrets();
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
                 "https://idam-web-public.aat.platform.hmcts.net/o");
+        }
+    }
+
+    // Optional docker services: the idam simulator in local auth mode, plus any listed in RSE_LIB_COMPOSE_PROFILES,
+    // such as camunda.
+    private void setComposeProfiles() {
+        var profiles = new ArrayList<String>();
+        if (authMode == AuthMode.Local) {
+            profiles.add("localAuth");
+        }
+        var requested = System.getenv("RSE_LIB_COMPOSE_PROFILES");
+        if (requested != null) {
+            Arrays.stream(requested.split(","))
+                .map(String::trim)
+                .filter(profile -> !profile.isEmpty() && !profiles.contains(profile))
+                .forEach(profiles::add);
+        }
+        if (!profiles.isEmpty()) {
+            environment("COMPOSE_PROFILES", String.join(",", profiles));
         }
     }
 

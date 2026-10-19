@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -225,6 +226,11 @@ public class ComposeRunner {
         return true;
     }
 
+    static List<String> composeProfiles(Map<String, String> env) {
+        var profiles = env.getOrDefault("COMPOSE_PROFILES", "");
+        return Arrays.stream(profiles.split(",")).map(String::trim).filter(p -> !p.isEmpty()).toList();
+    }
+
     @SneakyThrows
     boolean dbReady() {
         try (var c = DriverManager.getConnection(
@@ -236,6 +242,9 @@ public class ComposeRunner {
                 .collect(Collectors.toCollection(ArrayList::new));
 
             dbs.add("cft_task_db");
+            if (composeProfiles(System.getenv()).contains("camunda")) {
+                dbs.add("camunda");
+            }
 
             var additionalDbs = System.getenv("RSE_LIB_ADDITIONAL_DATABASES");
             if (additionalDbs != null) {
