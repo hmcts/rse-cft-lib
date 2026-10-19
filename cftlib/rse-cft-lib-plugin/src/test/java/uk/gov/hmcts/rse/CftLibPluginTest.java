@@ -10,6 +10,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CftLibPluginTest {
 
     @Test
+    public void launchesSharedServicesOnJava21() {
+        Project project = ProjectBuilder.builder().build();
+        project.getPlugins().apply("java");
+
+        CftlibExec task = project.getTasks().create("runServices", CftlibExec.class);
+
+        assertThat(task.getJavaLauncher().get().getMetadata().getLanguageVersion().asInt()).isEqualTo(21);
+    }
+
+    @Test
     public void configuresLocalServiceBeforeItsJavaPluginIsApplied() {
         Project root = ProjectBuilder.builder().build();
         Project service = ProjectBuilder.builder().withName("wa-task-management-api").withParent(root).build();
