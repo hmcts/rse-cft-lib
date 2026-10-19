@@ -1,5 +1,6 @@
 package uk.gov.hmcts.rse.ccd.lib.definitionstore;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.SneakyThrows;
@@ -242,10 +243,10 @@ public class JsonDefinitionReader extends SpreadsheetParser {
             );
         }
 
-        List<Map<String, Object>> entries = mapper.readValue(
-                s,
-                new TypeReference<List<Map<String, Object>>>() { }
-        );
+        // A file holds an array of rows, or a single row object as ccd-definition-processor also accepts.
+        List<Map<String, Object>> entries = mapper.readerFor(new TypeReference<List<Map<String, Object>>>() { })
+                .with(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                .readValue(s);
 
         return entries.stream().flatMap(JsonDefinitionReader::expandAccessControl);
     }
