@@ -1,6 +1,10 @@
-
 dependencies {
-    // Dependency free to avoid polluting the system classloader.
+    // Production code is dependency free: service classloaders share only bootstrapper types.
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.2'
+    testImplementation 'org.springframework:spring-core:6.2.19'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.2'
 }
 
-
+test {
+    useJUnitPlatform()
+}

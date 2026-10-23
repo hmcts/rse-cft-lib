@@ -259,7 +259,8 @@ public class TestWithCCD extends CftlibTest {
 }
 ```
 
-Tests must be placed in the `cftlibTest` sourceset.
+The native runner requires JUnit Jupiter 5.9 or later. Tests must be placed in the `cftlibTest` sourceset. Use `@TestInstance(PER_CLASS)` as shown above;
+the base class waits for the consumer application in a non-static `@BeforeAll` method.
 
 Run a single test class with `--tests`:
 
@@ -274,21 +275,34 @@ Simple class names and `*` wildcards are also supported. Quote wildcard patterns
 ./gradlew cftlibTest --tests '*CaseTest' --tests 'uk.gov.hmcts.example.OtherTest'
 ```
 
-Filters select classes within `uk.gov.hmcts`, not individual methods. A filtered run fails if no tests match.
-Without `--tests`, the existing package selection is unchanged.
+`cftlibTest` is a native Gradle `Test` task, so method selection and standard test reports work too:
+
+```bash
+./gradlew cftlibTest --tests 'MyTest.myTestMethod'
+```
+
+Reports are written to `build/reports/tests/cftlibTest` and `build/test-results/cftlibTest`.
+The task uses one worker JVM with `forkEvery = 0` because the services share ports and in-memory state.
+JUnit parallel execution must remain disabled for the same reason.
 
 ### 6. Configuration
 
 #### Configuring the Cftlib tasks
 
-`bootWithCCD` and `cftlibTest` can be configured individually or common configuration can be applied to the `CftlibExec` task type:
+`bootWithCCD` uses `CftlibExec`; `cftlibTest` uses `CftlibTestTask`, which extends Gradle's `Test`.
+Both support `authMode`, `environment`, `jvmArgs` and `systemProperty`. To configure both tasks:
 
 ```groovy
-tasks.withType(uk.gov.hmcts.rse.CftlibExec) {
-    // Configure all Cftlib tasks
-    environment ...
+['bootWithCCD', 'cftlibTest'].each { name ->
+    tasks.named(name) {
+        environment 'MY_SETTING', 'value'
+    }
 }
 ```
+
+Existing `tasks.withType(CftlibExec)` blocks apply only to the execution tasks; move any shared
+configuration to the named tasks as above. `CftlibTestTask` uses Gradle's `debugOptions`/`--debug-jvm`
+instead of JavaExec-specific options.
 
 #### IDAM & S2S
 
@@ -405,6 +419,8 @@ With spring devtools on the classpath your application will automatically reload
 ### Logging
 
 The cftlib maintains a log file per service in your build directory; `build/cftlib/logs`.
+The native test consumer uses its normal Spring Boot logging, defaulting to `build/cftlib/logs/libTest.log`.
+Override that default with `cftlibTest { systemProperty 'logging.file.name', '/path/to/consumer.log' }`.
 
 ## Building the cftlib
 
@@ -439,11 +455,12 @@ The lib folder contains libraries that are published to the azure artifacts and 
 
 An application that creates each of the necessary classloaders to run our spring applications and defines the [Cftlib API](lib/bootstrapper/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) (but not its implementation). 
 
-This project runs on the system classloader (meaning it is on the classpath to the JVM upon launch). Since the system classloader is parent to the isolated classloaders that run our applications, classes in this project are accessible to all running services.
+This project is on the JVM classpath. Service classloaders share its API and coordination classes through a
+filtered parent, while keeping the consumer application’s dependencies isolated from each service.
 
 This project contains the 'control plane'; a coordination class invoked by the cftlib-agent (see next project).
 
-A consequence of being on the system classloader is that this project should be dependency free; any dependencies present on the system classloader would override those in the isolated classloaders leading to potential conflicts.
+This project must remain dependency free: its types are shared by the consumer and all service classloaders.
 
 ##### lib/cftlib-agent
 
@@ -466,7 +483,7 @@ A minimal spring boot application that provides the s2s simulator and [CftLibApi
 
 ##### lib/test-runner
 
-Provides integration testing support using a junit runner. 
+Provides integration testing support using a JUnit Jupiter extension.
 
 #### projects/
 

@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.lang.System.getenv;
@@ -19,16 +20,30 @@ public class LibRunner {
     public static void main(String[] args) throws Exception {
         Thread.currentThread().setName("**** cftlib bootstrap");
         Thread.currentThread().setUncaughtExceptionHandler(ControlPlane.failFast);
-        doRun(args);
+        for (Thread thread : start(args, new BootstrapClassLoader())) {
+            thread.join();
+        }
+    }
+
+    private static boolean started;
+
+    /**
+     * Start dependencies once in a test worker. Spring's test support starts the consumer afterwards.
+     */
+    public static synchronized void startServices(String... manifests) {
+        if (!started) {
+            start(manifests, new BootstrapClassLoader());
+            started = true;
+        }
     }
 
     @SneakyThrows
-    private static void doRun(String[] args) {
+    private static List<Thread> start(String[] args, ClassLoader parent) {
         setConfigProperties();
         var threads = new ArrayList<Thread>();
         {
             var runtime = args[0];
-            var t = new Thread(() -> launchAppOrFailFast(new File(runtime)));
+            var t = new Thread(() -> launchAppOrFailFast(new File(runtime), parent));
             t.setName("runtime");
             t.start();
             threads.add(t);
@@ -39,13 +54,11 @@ public class LibRunner {
 
         var rest = Arrays.copyOfRange(args, 1, args.length);
         Arrays.stream(rest).forEach(f -> {
-            var t = new Thread(() -> launchAppOrFailFast(new File(f)));
+            var t = new Thread(() -> launchAppOrFailFast(new File(f), parent));
             t.start();
             threads.add(t);
         });
-        for (Thread thread : threads) {
-            thread.join();
-        }
+        return threads;
     }
 
     private static void setConfigProperties() {
@@ -110,10 +123,10 @@ public class LibRunner {
         System.setProperty("WELSH_TRANSLATION_ENABLED", "false");
     }
 
-    private static void launchAppOrFailFast(File classpathFile) {
+    private static void launchAppOrFailFast(File classpathFile, ClassLoader parent) {
         Thread.currentThread().setUncaughtExceptionHandler(ControlPlane.failFast);
         try {
-            launchApp(classpathFile);
+            launchApp(classpathFile, parent);
         } catch (Throwable e) {
             // Spring boot devtools throws a SilentExitException which we should tolerate
             if (e.getCause() != null && e.getCause().getClass().getSimpleName().equals("SilentExitException")) {
@@ -124,7 +137,7 @@ public class LibRunner {
     }
 
     @SneakyThrows
-    private static void launchApp(File classpathFile) {
+    private static void launchApp(File classpathFile, ClassLoader parent) {
         // We must initially use a thread name of 'main' for spring boot devtools to work.
         Thread.currentThread().setName("main");
 
@@ -137,7 +150,7 @@ public class LibRunner {
         jars.add(createPropertiesFolder(classpathFile).toURI().toURL());
 
         var urls = jars.stream().toArray(URL[]::new);
-        ClassLoader classLoader = new URLClassLoader(classpathFile.getName(), urls, ClassLoader.getSystemClassLoader());
+        ClassLoader classLoader = new URLClassLoader(classpathFile.getName(), urls, parent);
         Thread.currentThread().setContextClassLoader(classLoader);
 
         fixTomcat(classLoader);

@@ -20,14 +20,12 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.artifacts.repositories.MavenRepositoryContentDescriptor;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.ClasspathNormalizer;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.jvm.tasks.Jar;
 import org.gradle.testing.jacoco.plugins.JacocoTaskExtension;
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
-import org.gradle.testing.jacoco.plugins.JacocoPluginExtension;
 
 public class CftLibPlugin implements Plugin<Project> {
 
@@ -66,16 +64,14 @@ public class CftLibPlugin implements Plugin<Project> {
     /**
      * Apply Jacoco to the task if jacoco plugin is applied to the project.
      */
-    private void configureJacoco(Project p, CftlibExec task) {
-        if (p.getPlugins().hasPlugin(JacocoPlugin.class)) {
-            var e = p.getExtensions().getByType(JacocoPluginExtension.class);
-            e.applyTo(task);
+    private void configureJacoco(Project p, CftlibTestTask task) {
+        p.getPlugins().withType(JacocoPlugin.class, plugin -> {
             var jacoco = task.getExtensions().findByType(JacocoTaskExtension.class);
             if (jacoco != null) {
                 // Drools' generated lexer has a method too large for JaCoCo to instrument reliably and can crash CI.
                 jacoco.setExcludes(List.of("org/drools/**"));
             }
-        }
+        });
     }
 
     static Directory cftlibBuildDir(Project project) {
@@ -206,22 +202,20 @@ public class CftLibPlugin implements Plugin<Project> {
         return manifestTask;
     }
 
-    private CftlibExec createTestTask(Project project) {
+    private CftlibTestTask createTestTask(Project project) {
         SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
         var lib = s.getByName("cftlibTest");
-
-        var exec = createRunTask(project, "cftlibTest", CftlibTestExec.class);
-        var file = cftlibBuildDir(project).file("libTest").getAsFile();
-        var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(),
-                "org.junit.platform.console.ConsoleLauncher", file, project.provider(exec::getTestArguments));
-
-        exec.dependsOn(app);
-        exec.dependsOn("cftlibClasses");
-        exec.dependsOn("cftlibTestClasses");
-        exec.args(file);
-        exec.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
-        exec.getOutputs().upToDateWhen(x -> false);
-        return exec;
+        var test = project.getTasks().create("cftlibTest", CftlibTestTask.class);
+        test.setTestClassesDirs(lib.getOutput().getClassesDirs());
+        test.setClasspath(lib.getRuntimeClasspath());
+        test.dependsOn(manifestTasks);
+        test.dependsOn("cftlibClasses", "cftlibTestClasses");
+        // Each entry is a complete path; do not split on spaces (project paths may contain them).
+        test.systemProperty("rse.lib.manifests", manifests.stream()
+            .map(File::getAbsolutePath).collect(java.util.stream.Collectors.joining(File.pathSeparator)));
+        test.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
+        test.getOutputs().upToDateWhen(x -> false);
+        return test;
     }
 
     private void createManifestTasks(Project project) {
@@ -252,21 +246,15 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private ManifestTask createManifestTask(Project project, String name, FileCollection configuration,
                                             String mainClass, File file, String... args) {
-        return createManifestTask(project, name, configuration, mainClass, file,
-            project.provider(() -> Arrays.asList(args)));
-    }
-
-    private ManifestTask createManifestTask(Project project, String name, FileCollection configuration,
-                                            String mainClass, File file, Provider<List<String>> args) {
         var result = project.getTasks().create(name, ManifestTask.class);
         result.classpath = configuration;
         result.getInputs().files(configuration)
             .withPropertyName("classpath")
             .withNormalizer(ClasspathNormalizer.class);
         result.getInputs().property("mainClass", mainClass);
-        result.getInputs().property("args", args);
+        result.getInputs().property("args", Arrays.asList(args));
         result.doFirst(x -> {
-            writeManifests(project, configuration, mainClass, file, args.get().toArray(String[]::new));
+            writeManifests(project, configuration, mainClass, file, args);
         });
         result.getOutputs().file(file);
         return result;
@@ -303,11 +291,7 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
     private CftlibExec createRunTask(Project project, String name) {
-        return createRunTask(project, name, CftlibExec.class);
-    }
-
-    private <T extends CftlibExec> T createRunTask(Project project, String name, Class<T> taskType) {
-        T j = project.getTasks().create(name, taskType);
+        CftlibExec j = project.getTasks().create(name, CftlibExec.class);
         j.getMainClass().set("uk.gov.hmcts.rse.ccd.lib.LibRunner");
         // TODO: Wire inputs and outputs
         j.getOutputs().upToDateWhen(x -> false);
