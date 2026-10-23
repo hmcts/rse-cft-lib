@@ -5,7 +5,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.rse.ccd.lib.ControlPlane;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
@@ -16,7 +15,6 @@ import java.util.Date;
 /**
  * Base class for Junit tests that test against the cftlib.
  */
-@ExtendWith(CftlibExtension.class)
 public class CftlibTest {
     private static CFTLib cftlib;
 

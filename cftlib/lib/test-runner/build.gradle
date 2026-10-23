@@ -7,21 +7,7 @@ dependencies {
     compileOnly project(':lib:bootstrapper')
 
     implementation 'org.junit.jupiter:junit-jupiter-api:5.12.2'
+    // Do not use the standalone jar: its embedded Platform classes cannot be aligned by consuming builds.
     implementation 'org.junit.platform:junit-platform-console:1.12.2'
-    runtimeOnly 'org.junit.platform:junit-platform-launcher:1.12.2'
-    runtimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.12.2'
     implementation 'com.auth0:java-jwt:3.18.3'
-
-    testImplementation project(':lib:bootstrapper')
-    testImplementation 'org.junit.platform:junit-platform-launcher:1.12.2'
-    testImplementation 'org.springframework:spring-test:6.2.19'
-    testImplementation 'org.springframework:spring-context:6.2.19'
-    testImplementation 'org.springframework.boot:spring-boot-test:3.4.1'
-    testImplementation 'org.springframework.boot:spring-boot-starter:3.4.1'
-}
-
-test {
-    useJUnitPlatform()
-    // Fixtures are selected explicitly by CftlibExtensionTest, after supplying their service manifest.
-    exclude '**/*Fixture.class'
 }

@@ -1,8 +1,5 @@
 # RSE CFT lib ![Build](https://github.com/hmcts/rse-cft-lib/actions/workflows/build.yml/badge.svg) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hmcts/rse-cft-lib?label=release)
 
-The existing `cftlibTest` runner remains the default. A native Gradle test runner is available
-[as an opt-in](#opting-into-the-native-runner), with standard `--tests` filtering and reports.
-
 ## A reform common component SDK
 
 ### Rationale
@@ -262,90 +259,37 @@ public class TestWithCCD extends CftlibTest {
 }
 ```
 
-Tests must be placed in the `cftlibTest` sourceset. Use `@TestInstance(PER_CLASS)` as shown above;
-the base class waits for the consumer application in a non-static `@BeforeAll` method.
+Tests must be placed in the `cftlibTest` sourceset.
 
-Opt into the native runner to run a single test class with `--tests`:
-
-```bash
-./gradlew -Pcftlib.nativeTests=true cftlibTest --tests uk.gov.hmcts.example.MyTest
-```
-
-Simple class names and `*` wildcards are also supported. Quote wildcard patterns to prevent shell expansion:
+Run a single class using a simple or fully qualified class name:
 
 ```bash
-./gradlew -Pcftlib.nativeTests=true cftlibTest --tests 'MyTest'
-./gradlew -Pcftlib.nativeTests=true cftlibTest --tests '*CaseTest' --tests 'uk.gov.hmcts.example.OtherTest'
+./gradlew cftlibTest --tests MyTest
+./gradlew cftlibTest --tests uk.gov.hmcts.example.MyTest
 ```
 
-In native mode, `cftlibTest` is a Gradle `Test` task, so method selection and standard test reports work too:
+Quote `*` wildcards to prevent shell expansion. Repeat `--tests` to include several class patterns:
 
 ```bash
-./gradlew -Pcftlib.nativeTests=true cftlibTest --tests 'MyTest.myTestMethod'
+./gradlew cftlibTest --tests '*CaseTest' --tests 'uk.gov.hmcts.example.OtherTest'
 ```
 
-Native reports are written to `build/reports/tests/cftlibTest` and `build/test-results/cftlibTest`.
-The native task uses one worker JVM with `forkEvery = 0` because the services share ports and in-memory state.
-Broader `Test` configuration that requests more forks or worker recycling is clamped with a warning;
-other test tasks retain their settings. JUnit is sequential by default. Explicit Jupiter parallel-execution
-settings are preserved, so those tests must be safe to share the same environment.
+Filters select classes within `uk.gov.hmcts`, not individual methods. Filtered runs fail if no tests match.
+Without `--tests`, the existing package selection is unchanged. The task remains `CftlibExec` and uses
+JUnit's ConsoleLauncher, so existing task selectors, configuration and `manifestTest` hooks still apply.
 
 ### 6. Configuration
 
-#### Opting into the native runner
-
-With no new property, `cftlibTest` remains a `CftlibExec`/`JavaExec` task. Existing
-`tasks.withType(CftlibExec)` blocks, SDK hooks, per-task settings and the real `manifestTest` task
-continue to work. Broad `tasks.withType(Test)` settings do not affect this legacy runner.
-
-To try the native runner, first migrate shared configuration as described below, then enable it:
-
-```properties
-# gradle.properties, or pass -Pcftlib.nativeTests=true on the command line
-cftlib.nativeTests=true
-```
-
-Native mode deliberately changes the task type, so opt-in projects must:
-
-- Change shared `tasks.withType(CftlibExec)` selectors and imports to `CftlibTask`. Keep the block's
-  environment, authentication, classpath, `doFirst` actions and JVM configuration intact. This selector
-  also works in legacy mode, so migration can happen before enabling the native runner.
-- Audit SDK hooks and `tasks.withType(JavaExec)` blocks. Hooks matching the concrete `CftlibExec`
-  type must include native tests too, especially the CCD SDK hook that injects `CCD_SDK_DECENTRALISED`.
-- Review broad `tasks.withType(Test)` configuration: it now reaches `cftlibTest`. Process forks and
-  recycling are clamped to one worker with a warning; explicit Jupiter concurrency is preserved.
-- Remove ConsoleLauncher rewrites in `tasks.named('manifestTest')`. In native mode only, this task
-  is a disabled compatibility shim and produces no manifest. Use native test options instead.
-- Use JUnit Jupiter 5.9 or later for the native startup extension.
-
-The audited PCS, e2e and sptribs builds inherit significant settings from `CftlibExec`; leave native mode
-disabled until their selectors and SDK hooks are migrated. nfdiv, sptribs and e2e also configure `Test`
-forks broadly. Existing builds do not need to make these changes to keep using the default runner.
-
 #### Configuring the Cftlib tasks
 
-All CFTLib execution and test tasks implement `CftlibTask`. Use it to configure `bootWithCCD`,
-`cftlibTest`, `dumpCCDDefinitions` and any additional CFTLib tasks together:
+`bootWithCCD` and `cftlibTest` can be configured individually or common configuration can be applied to the `CftlibExec` task type:
 
 ```groovy
-tasks.withType(uk.gov.hmcts.rse.CftlibTask).configureEach {
-    authMode = uk.gov.hmcts.rse.AuthMode.Local
-    environment 'MY_SETTING', 'value'
-    jvmArgs '-XX:TieredStopAtLevel=1'
-    systemProperty 'my.setting', 'value'
-}
-
-cftlibTest {
-    environment 'MY_SETTING', 'test-value'
+tasks.withType(uk.gov.hmcts.rse.CftlibExec) {
+    // Configure all Cftlib tasks
+    environment ...
 }
 ```
-
-Existing per-task configuration blocks remain supported. The old `CftlibExec` selector still includes
-`cftlibTest` in default legacy mode. Change it to `CftlibTask` before opting into the native runner.
-Gradle applies configuration in declaration order, so place per-task overrides after the shared block.
-
-In native mode, `cftlibTest` extends Gradle's `Test`, so use its `debugOptions`/`--debug-jvm`
-instead of JavaExec-specific options.
 
 #### IDAM & S2S
 
@@ -462,8 +406,6 @@ With spring devtools on the classpath your application will automatically reload
 ### Logging
 
 The cftlib maintains a log file per service in your build directory; `build/cftlib/logs`.
-The native test consumer uses its normal Spring Boot logging, defaulting to `build/cftlib/logs/libTest.log`.
-Override that default with `cftlibTest { systemProperty 'logging.file.name', '/path/to/consumer.log' }`.
 
 ## Building the cftlib
 
@@ -498,12 +440,11 @@ The lib folder contains libraries that are published to the azure artifacts and 
 
 An application that creates each of the necessary classloaders to run our spring applications and defines the [Cftlib API](lib/bootstrapper/src/main/java/uk/gov/hmcts/rse/ccd/lib/api/CFTLib.java) (but not its implementation). 
 
-This project is on the JVM classpath. Service classloaders share its API and coordination classes through a
-filtered parent, while keeping the consumer application’s dependencies isolated from each service.
+This project runs on the system classloader (meaning it is on the classpath to the JVM upon launch). Since the system classloader is parent to the isolated classloaders that run our applications, classes in this project are accessible to all running services.
 
 This project contains the 'control plane'; a coordination class invoked by the cftlib-agent (see next project).
 
-This project must remain dependency free: its types are shared by the consumer and all service classloaders.
+A consequence of being on the system classloader is that this project should be dependency free; any dependencies present on the system classloader would override those in the isolated classloaders leading to potential conflicts.
 
 ##### lib/cftlib-agent
 
@@ -526,7 +467,7 @@ A minimal spring boot application that provides the s2s simulator and [CftLibApi
 
 ##### lib/test-runner
 
-Provides integration testing support using a JUnit Jupiter extension.
+Provides integration testing support using a junit runner. 
 
 #### projects/
 

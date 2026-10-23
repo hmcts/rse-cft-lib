@@ -14,13 +14,13 @@ import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.artifacts.repositories.MavenRepositoryContentDescriptor;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.ClasspathNormalizer;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSetContainer;
@@ -59,25 +59,23 @@ public class CftLibPlugin implements Plugin<Project> {
         dumpDefinitions.authMode = AuthMode.Local;
         dumpDefinitions.getOutputs().upToDateWhen(x -> false);
 
-        boolean nativeTests = Boolean.parseBoolean(String.valueOf(project.findProperty("cftlib.nativeTests")));
-        configureJacoco(project, nativeTests ? createNativeTestTask(project) : createLegacyTestTask(project));
+        configureJacoco(project, createTestTask(project));
         createCftlibJarTask(project);
     }
 
     /**
      * Apply Jacoco to the task if jacoco plugin is applied to the project.
      */
-    private void configureJacoco(Project p, Task task) {
-        p.getPlugins().withType(JacocoPlugin.class, plugin -> {
-            if (task instanceof JavaExec) {
-                p.getExtensions().getByType(JacocoPluginExtension.class).applyTo((JavaExec) task);
-            }
+    private void configureJacoco(Project p, CftlibExec task) {
+        if (p.getPlugins().hasPlugin(JacocoPlugin.class)) {
+            var e = p.getExtensions().getByType(JacocoPluginExtension.class);
+            e.applyTo(task);
             var jacoco = task.getExtensions().findByType(JacocoTaskExtension.class);
             if (jacoco != null) {
                 // Drools' generated lexer has a method too large for JaCoCo to instrument reliably and can crash CI.
                 jacoco.setExcludes(List.of("org/drools/**"));
             }
-        });
+        }
     }
 
     static Directory cftlibBuildDir(Project project) {
@@ -208,14 +206,14 @@ public class CftLibPlugin implements Plugin<Project> {
         return manifestTask;
     }
 
-    private CftlibExec createLegacyTestTask(Project project) {
+    private CftlibExec createTestTask(Project project) {
         SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
         var lib = s.getByName("cftlibTest");
 
         var exec = createRunTask(project, "cftlibTest");
         var file = cftlibBuildDir(project).file("libTest").getAsFile();
         var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(),
-                "org.junit.platform.console.ConsoleLauncher", file, "execute --select-package=uk.gov.hmcts");
+                "org.junit.platform.console.ConsoleLauncher", file, project.provider(exec::getTestArguments));
 
         exec.dependsOn(app);
         exec.dependsOn("cftlibClasses");
@@ -224,33 +222,6 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
         exec.getOutputs().upToDateWhen(x -> false);
         return exec;
-    }
-
-    private CftlibTestTask createNativeTestTask(Project project) {
-        project.getTasks().register("manifestTest", task -> {
-            task.setDescription("Deprecated compatibility task; native tests do not use a ConsoleLauncher manifest.");
-            // Keep tasks.named hooks valid, but never execute obsolete manifest-rewriting actions.
-            task.setEnabled(false);
-            task.getLogger().warn("manifestTest is deprecated and disabled; remove ConsoleLauncher manifest hooks "
-                + "and configure cftlibTest directly.");
-        });
-        SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
-        var lib = s.getByName("cftlibTest");
-        var test = project.getTasks().create("cftlibTest", CftlibTestTask.class);
-        test.setTestClassesDirs(lib.getOutput().getClassesDirs());
-        // Docker Compose integrations may inspect task dependencies during configuration.
-        // Attach the runtime classpath after SDK plugins have finished declaring dependencies.
-        var runtimeClasspath = project.files();
-        test.setClasspath(runtimeClasspath);
-        project.afterEvaluate(p -> runtimeClasspath.from(lib.getRuntimeClasspath()));
-        test.dependsOn(manifestTasks);
-        test.dependsOn("cftlibClasses", "cftlibTestClasses");
-        // Each entry is a complete path; do not split on spaces (project paths may contain them).
-        test.systemProperty("rse.lib.manifests", manifests.stream()
-            .map(File::getAbsolutePath).collect(java.util.stream.Collectors.joining(File.pathSeparator)));
-        test.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
-        test.getOutputs().upToDateWhen(x -> false);
-        return test;
     }
 
     private void createManifestTasks(Project project) {
@@ -281,15 +252,21 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private ManifestTask createManifestTask(Project project, String name, FileCollection configuration,
                                             String mainClass, File file, String... args) {
+        return createManifestTask(project, name, configuration, mainClass, file,
+            project.provider(() -> Arrays.asList(args)));
+    }
+
+    private ManifestTask createManifestTask(Project project, String name, FileCollection configuration,
+                                            String mainClass, File file, Provider<List<String>> args) {
         var result = project.getTasks().create(name, ManifestTask.class);
         result.classpath = configuration;
         result.getInputs().files(configuration)
             .withPropertyName("classpath")
             .withNormalizer(ClasspathNormalizer.class);
         result.getInputs().property("mainClass", mainClass);
-        result.getInputs().property("args", Arrays.asList(args));
+        result.getInputs().property("args", args);
         result.doFirst(x -> {
-            writeManifests(project, configuration, mainClass, file, args);
+            writeManifests(project, configuration, mainClass, file, args.get().toArray(String[]::new));
         });
         result.getOutputs().file(file);
         return result;
