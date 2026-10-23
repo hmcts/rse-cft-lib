@@ -38,6 +38,12 @@ class CftlibExtensionTest {
             assertEquals(2, summary.getSummary().getTestsSucceededCount(),
                 () -> summary.getSummary().getFailures().toString());
             assertEquals(0, summary.getSummary().getTotalFailureCount());
+            // Legacy ConsoleLauncher executes tests in an already-started JVM without the native property.
+            System.clearProperty("rse.lib.manifests");
+            var legacySummary = new SummaryGeneratingListener();
+            LauncherFactory.create().execute(LauncherDiscoveryRequestBuilder.request()
+                .selectors(selectClass(FirstFixture.class)).build(), legacySummary);
+            assertEquals(1, legacySummary.getSummary().getTestsSucceededCount());
             assertEquals("1", System.getProperty("fixture.starts"));
             assertTrue(Files.readString(directory.resolve("consumer.log")).contains("consumer logging is configured"));
         } finally {

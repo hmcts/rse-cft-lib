@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
@@ -26,6 +27,7 @@ import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.jvm.tasks.Jar;
 import org.gradle.testing.jacoco.plugins.JacocoTaskExtension;
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
+import org.gradle.testing.jacoco.plugins.JacocoPluginExtension;
 
 public class CftLibPlugin implements Plugin<Project> {
 
@@ -57,15 +59,19 @@ public class CftLibPlugin implements Plugin<Project> {
         dumpDefinitions.authMode = AuthMode.Local;
         dumpDefinitions.getOutputs().upToDateWhen(x -> false);
 
-        configureJacoco(project, createTestTask(project));
+        boolean nativeTests = Boolean.parseBoolean(String.valueOf(project.findProperty("cftlib.nativeTests")));
+        configureJacoco(project, nativeTests ? createNativeTestTask(project) : createLegacyTestTask(project));
         createCftlibJarTask(project);
     }
 
     /**
      * Apply Jacoco to the task if jacoco plugin is applied to the project.
      */
-    private void configureJacoco(Project p, CftlibTestTask task) {
+    private void configureJacoco(Project p, Task task) {
         p.getPlugins().withType(JacocoPlugin.class, plugin -> {
+            if (task instanceof JavaExec) {
+                p.getExtensions().getByType(JacocoPluginExtension.class).applyTo((JavaExec) task);
+            }
             var jacoco = task.getExtensions().findByType(JacocoTaskExtension.class);
             if (jacoco != null) {
                 // Drools' generated lexer has a method too large for JaCoCo to instrument reliably and can crash CI.
@@ -202,7 +208,25 @@ public class CftLibPlugin implements Plugin<Project> {
         return manifestTask;
     }
 
-    private CftlibTestTask createTestTask(Project project) {
+    private CftlibExec createLegacyTestTask(Project project) {
+        SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
+        var lib = s.getByName("cftlibTest");
+
+        var exec = createRunTask(project, "cftlibTest");
+        var file = cftlibBuildDir(project).file("libTest").getAsFile();
+        var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(),
+                "org.junit.platform.console.ConsoleLauncher", file, "execute --select-package=uk.gov.hmcts");
+
+        exec.dependsOn(app);
+        exec.dependsOn("cftlibClasses");
+        exec.dependsOn("cftlibTestClasses");
+        exec.args(file);
+        exec.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
+        exec.getOutputs().upToDateWhen(x -> false);
+        return exec;
+    }
+
+    private CftlibTestTask createNativeTestTask(Project project) {
         project.getTasks().register("manifestTest", task -> {
             task.setDescription("Deprecated compatibility task; native tests do not use a ConsoleLauncher manifest.");
             // Keep tasks.named hooks valid, but never execute obsolete manifest-rewriting actions.

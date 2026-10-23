@@ -7,6 +7,7 @@ dependencies {
     compileOnly project(':lib:bootstrapper')
 
     implementation 'org.junit.jupiter:junit-jupiter-api:5.12.2'
+    implementation 'org.junit.platform:junit-platform-console:1.12.2'
     runtimeOnly 'org.junit.platform:junit-platform-launcher:1.12.2'
     runtimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.12.2'
     implementation 'com.auth0:java-jwt:3.18.3'

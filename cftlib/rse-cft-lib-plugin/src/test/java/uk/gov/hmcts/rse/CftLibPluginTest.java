@@ -36,6 +36,7 @@ public class CftLibPluginTest {
     @Test
     public void configuresAllCftlibTaskTypesIncludingLaterRegistrations() {
         Project project = ProjectBuilder.builder().build();
+        project.getExtensions().getExtraProperties().set("cftlib.nativeTests", true);
         project.getPlugins().apply(CftLibPlugin.class);
         project.getTasks().withType(CftlibTask.class).configureEach(task -> {
             task.setAuthMode(AuthMode.Local);
@@ -59,6 +60,24 @@ public class CftLibPluginTest {
         assertThat(project.getTasks().withType(CftlibExec.class)).extracting(Task::getName)
             .contains(later.getName()).doesNotContain(test.getName());
         assertThat(later.authMode).isEqualTo(AuthMode.Local);
+    }
+
+    @Test
+    public void keepsLegacyRunnerSelectorsAndManifestEnabledByDefault() {
+        Project project = ProjectBuilder.builder().build();
+        project.getPlugins().apply(CftLibPlugin.class);
+        project.getTasks().withType(CftlibExec.class).configureEach(task -> {
+            task.authMode = AuthMode.Local;
+            task.environment("LEGACY_SETTING", "preserved");
+        });
+        var task = project.getTasks().getByName("cftlibTest");
+        assertThat(task).isInstanceOf(CftlibExec.class);
+        assertThat(((CftlibExec) task).authMode).isEqualTo(AuthMode.Local);
+        assertThat(((CftlibExec) task).getEnvironment()).containsEntry("LEGACY_SETTING", "preserved");
+        var manifest = project.getTasks().getByName("manifestTest");
+        assertThat(manifest).isInstanceOf(ManifestTask.class);
+        assertThat(manifest.getEnabled()).isTrue();
+        assertThat(manifest.getOutputs().getFiles().getSingleFile().getName()).isEqualTo("libTest");
     }
 
 }

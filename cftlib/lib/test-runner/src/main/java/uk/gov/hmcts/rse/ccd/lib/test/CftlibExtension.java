@@ -9,15 +9,15 @@ import java.io.File;
 import java.util.regex.Pattern;
 
 /**
- * Start before Spring prepares a PER_CLASS test instance, which happens before BeforeAll callbacks.
+ * Start native services before Spring prepares a PER_CLASS test instance.
  */
 public class CftlibExtension implements TestInstancePreConstructCallback {
     @Override
     public void preConstructTestInstance(TestInstanceFactoryContext factoryContext, ExtensionContext context) {
         String manifests = System.getProperty("rse.lib.manifests");
         if (manifests == null || manifests.isBlank()) {
-            throw new IllegalStateException(
-                "CFTLib service manifests are missing. Run tests with the cftlibTest task.");
+            // Legacy ConsoleLauncher runs inside the already-started CFTLib JVM.
+            return;
         }
         LibRunner.startServices(manifests.split(Pattern.quote(File.pathSeparator)));
     }

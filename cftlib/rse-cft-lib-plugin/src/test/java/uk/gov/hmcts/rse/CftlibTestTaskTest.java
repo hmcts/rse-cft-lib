@@ -20,6 +20,7 @@ public class CftlibTestTaskTest {
     @Test
     public void wiresANativeTestTaskAndPreservesAuthConfiguration() {
         Project project = ProjectBuilder.builder().build();
+        project.getExtensions().getExtraProperties().set("cftlib.nativeTests", true);
         project.getPlugins().apply(CftLibPlugin.class);
         var task = (CftlibTestTask) project.getTasks().getByName("cftlibTest");
         var source = project.getExtensions().getByType(SourceSetContainer.class).getByName("cftlibTest");
@@ -37,6 +38,7 @@ public class CftlibTestTaskTest {
     @Test
     public void supportsConsumerConfigurationAndRunsSelectedMethods() throws Exception {
         var directory = temporaryFolder.getRoot().toPath();
+        Files.writeString(directory.resolve("gradle.properties"), "cftlib.nativeTests=true\n");
         Files.writeString(directory.resolve("settings.gradle"), """
             rootProject.name = 'native-runner-test'
             includeBuild 'sdk-fixture'

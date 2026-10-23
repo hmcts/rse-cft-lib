@@ -1,9 +1,7 @@
 # RSE CFT lib ![Build](https://github.com/hmcts/rse-cft-lib/actions/workflows/build.yml/badge.svg) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hmcts/rse-cft-lib?label=release)
 
-> **Breaking change for 0.20.0:** `cftlibTest` now uses Gradle's native `Test` runner.
-> Existing `withType(CftlibExec)` configuration does **not** reach it. Migrate shared configuration
-> and SDK hooks before upgrading; see [Upgrading to 0.20](#upgrading-to-020).
-> This change must not be published as a 0.19.x patch.
+The existing `cftlibTest` runner remains the default. A native Gradle test runner is available
+[as an opt-in](#opting-into-the-native-runner), with standard `--tests` filtering and reports.
 
 ## A reform common component SDK
 
@@ -264,67 +262,65 @@ public class TestWithCCD extends CftlibTest {
 }
 ```
 
-The native runner requires JUnit Jupiter 5.9 or later. Tests must be placed in the `cftlibTest` sourceset. Use `@TestInstance(PER_CLASS)` as shown above;
+Tests must be placed in the `cftlibTest` sourceset. Use `@TestInstance(PER_CLASS)` as shown above;
 the base class waits for the consumer application in a non-static `@BeforeAll` method.
 
-Run a single test class with `--tests`:
+Opt into the native runner to run a single test class with `--tests`:
 
 ```bash
-./gradlew cftlibTest --tests uk.gov.hmcts.example.MyTest
+./gradlew -Pcftlib.nativeTests=true cftlibTest --tests uk.gov.hmcts.example.MyTest
 ```
 
 Simple class names and `*` wildcards are also supported. Quote wildcard patterns to prevent shell expansion:
 
 ```bash
-./gradlew cftlibTest --tests 'MyTest'
-./gradlew cftlibTest --tests '*CaseTest' --tests 'uk.gov.hmcts.example.OtherTest'
+./gradlew -Pcftlib.nativeTests=true cftlibTest --tests 'MyTest'
+./gradlew -Pcftlib.nativeTests=true cftlibTest --tests '*CaseTest' --tests 'uk.gov.hmcts.example.OtherTest'
 ```
 
-`cftlibTest` is a native Gradle `Test` task, so method selection and standard test reports work too:
+In native mode, `cftlibTest` is a Gradle `Test` task, so method selection and standard test reports work too:
 
 ```bash
-./gradlew cftlibTest --tests 'MyTest.myTestMethod'
+./gradlew -Pcftlib.nativeTests=true cftlibTest --tests 'MyTest.myTestMethod'
 ```
 
-Reports are written to `build/reports/tests/cftlibTest` and `build/test-results/cftlibTest`.
-The task uses one worker JVM with `forkEvery = 0` because the services share ports and in-memory state.
+Native reports are written to `build/reports/tests/cftlibTest` and `build/test-results/cftlibTest`.
+The native task uses one worker JVM with `forkEvery = 0` because the services share ports and in-memory state.
 Broader `Test` configuration that requests more forks or worker recycling is clamped with a warning;
 other test tasks retain their settings. JUnit is sequential by default. Explicit Jupiter parallel-execution
 settings are preserved, so those tests must be safe to share the same environment.
 
 ### 6. Configuration
 
-#### Upgrading to 0.20
+#### Opting into the native runner
 
-This is a breaking release, not a drop-in 0.19.x patch. The native `Test` task cannot inherit from
-`CftlibExec`/`JavaExec`, so the old selectors cannot transparently include it.
+With no new property, `cftlibTest` remains a `CftlibExec`/`JavaExec` task. Existing
+`tasks.withType(CftlibExec)` blocks, SDK hooks, per-task settings and the real `manifestTest` task
+continue to work. Broad `tasks.withType(Test)` settings do not affect this legacy runner.
 
-Before upgrading:
+To try the native runner, first migrate shared configuration as described below, then enable it:
+
+```properties
+# gradle.properties, or pass -Pcftlib.nativeTests=true on the command line
+cftlib.nativeTests=true
+```
+
+Native mode deliberately changes the task type, so opt-in projects must:
 
 - Change shared `tasks.withType(CftlibExec)` selectors and imports to `CftlibTask`. Keep the block's
-  environment, authentication, classpath, `doFirst` actions and JVM configuration intact. Per-task
-  `cftlibTest { ... }` blocks still work; they do not replace settings previously inherited from a selector.
-- Audit SDK hooks and `tasks.withType(JavaExec)` blocks too. Hooks that match `CftlibExec` by its type
-  name must include the native test task. In particular, the CCD SDK's decentralised-runtime hook must
-  still inject `CCD_SDK_DECENTRALISED` into `cftlibTest`.
-- Review broad `tasks.withType(Test)` configuration: it now also reaches `cftlibTest`, including filters,
-  agents, JVM arguments and environment settings. Process forks are clamped to one with a warning;
-  explicit Jupiter concurrency settings within that JVM remain supported.
-- Remove `tasks.named('manifestTest')` actions that rewrite ConsoleLauncher arguments. A deprecated,
-  disabled `manifestTest` task keeps these configuration hooks valid, but neither the task nor its actions
-  run, even when requested explicitly. It produces no manifest. Use native `cftlibTest` options instead.
-- Use JUnit Jupiter 5.9 or later and check the runner-specific configuration below.
+  environment, authentication, classpath, `doFirst` actions and JVM configuration intact. This selector
+  also works in legacy mode, so migration can happen before enabling the native runner.
+- Audit SDK hooks and `tasks.withType(JavaExec)` blocks. Hooks matching the concrete `CftlibExec`
+  type must include native tests too, especially the CCD SDK hook that injects `CCD_SDK_DECENTRALISED`.
+- Review broad `tasks.withType(Test)` configuration: it now reaches `cftlibTest`. Process forks and
+  recycling are clamped to one worker with a warning; explicit Jupiter concurrency is preserved.
+- Remove ConsoleLauncher rewrites in `tasks.named('manifestTest')`. In native mode only, this task
+  is a disabled compatibility shim and produces no manifest. Use native test options instead.
+- Use JUnit Jupiter 5.9 or later for the native startup extension.
 
-Consumer audit examples: PCS and e2e inherit substantial environment/authentication configuration from
-`CftlibExec`; sptribs also inherits its database and decentralised URL settings there. nfdiv, sptribs and
-e2e apply broad `Test` fork settings. The CCD SDK's JavaExec/type-name hook needs its own migration
-in addition to changing application build scripts.
-
-The auto-publish workflow targets the 0.20 series and pauses until its first stable tag is created
-explicitly after migration review. Release owners must publish the breaking 0.20.0 release deliberately;
-subsequent 0.20.x patches can publish automatically. Prerelease tags do not unlock automatic publishing.
-Review consumer Renovate policies before accepting a 0.19-to-0.20 update: the upstream publication gate
-does not disable a consumer's minor-version automerge policy.
+The audited PCS, e2e and sptribs builds inherit significant settings from `CftlibExec`; leave native mode
+disabled until their selectors and SDK hooks are migrated. nfdiv, sptribs and e2e also configure `Test`
+forks broadly. Existing builds do not need to make these changes to keep using the default runner.
 
 #### Configuring the Cftlib tasks
 
@@ -344,13 +340,12 @@ cftlibTest {
 }
 ```
 
-Existing per-task configuration blocks remain supported. To include native tests in a shared
-`tasks.withType(CftlibExec)` block, change the selector to `CftlibTask` as above. The old selector
-continues to match execution tasks. Gradle applies configuration in declaration order, so place
-per-task overrides after the shared block.
+Existing per-task configuration blocks remain supported. The old `CftlibExec` selector still includes
+`cftlibTest` in default legacy mode. Change it to `CftlibTask` before opting into the native runner.
+Gradle applies configuration in declaration order, so place per-task overrides after the shared block.
 
-`cftlibTest` extends Gradle's `Test`, so use its `debugOptions`/`--debug-jvm` instead of
-JavaExec-specific options.
+In native mode, `cftlibTest` extends Gradle's `Test`, so use its `debugOptions`/`--debug-jvm`
+instead of JavaExec-specific options.
 
 #### IDAM & S2S
 
