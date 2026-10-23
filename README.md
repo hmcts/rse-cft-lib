@@ -1,5 +1,10 @@
 # RSE CFT lib ![Build](https://github.com/hmcts/rse-cft-lib/actions/workflows/build.yml/badge.svg) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hmcts/rse-cft-lib?label=release)
 
+> **Breaking change for 0.20.0:** `cftlibTest` now uses Gradle's native `Test` runner.
+> Existing `withType(CftlibExec)` configuration does **not** reach it. Migrate shared configuration
+> and SDK hooks before upgrading; see [Upgrading to 0.20](#upgrading-to-020).
+> This change must not be published as a 0.19.x patch.
+
 ## A reform common component SDK
 
 ### Rationale
@@ -283,9 +288,43 @@ Simple class names and `*` wildcards are also supported. Quote wildcard patterns
 
 Reports are written to `build/reports/tests/cftlibTest` and `build/test-results/cftlibTest`.
 The task uses one worker JVM with `forkEvery = 0` because the services share ports and in-memory state.
-JUnit parallel execution must remain disabled for the same reason.
+Broader `Test` configuration that requests more forks or worker recycling is clamped with a warning;
+other test tasks retain their settings. JUnit is sequential by default. Explicit Jupiter parallel-execution
+settings are preserved, so those tests must be safe to share the same environment.
 
 ### 6. Configuration
+
+#### Upgrading to 0.20
+
+This is a breaking release, not a drop-in 0.19.x patch. The native `Test` task cannot inherit from
+`CftlibExec`/`JavaExec`, so the old selectors cannot transparently include it.
+
+Before upgrading:
+
+- Change shared `tasks.withType(CftlibExec)` selectors and imports to `CftlibTask`. Keep the block's
+  environment, authentication, classpath, `doFirst` actions and JVM configuration intact. Per-task
+  `cftlibTest { ... }` blocks still work; they do not replace settings previously inherited from a selector.
+- Audit SDK hooks and `tasks.withType(JavaExec)` blocks too. Hooks that match `CftlibExec` by its type
+  name must include the native test task. In particular, the CCD SDK's decentralised-runtime hook must
+  still inject `CCD_SDK_DECENTRALISED` into `cftlibTest`.
+- Review broad `tasks.withType(Test)` configuration: it now also reaches `cftlibTest`, including filters,
+  agents, JVM arguments and environment settings. Process forks are clamped to one with a warning;
+  explicit Jupiter concurrency settings within that JVM remain supported.
+- Remove `tasks.named('manifestTest')` actions that rewrite ConsoleLauncher arguments. A deprecated,
+  disabled `manifestTest` task keeps these configuration hooks valid, but neither the task nor its actions
+  run, even when requested explicitly. It produces no manifest. Use native `cftlibTest` options instead.
+- Use JUnit Jupiter 5.9 or later and check the runner-specific configuration below.
+
+Consumer audit examples: PCS and e2e inherit substantial environment/authentication configuration from
+`CftlibExec`; sptribs also inherits its database and decentralised URL settings there. nfdiv, sptribs and
+e2e apply broad `Test` fork settings. The CCD SDK's JavaExec/type-name hook needs its own migration
+in addition to changing application build scripts.
+
+The auto-publish workflow targets the 0.20 series and pauses until its first stable tag is created
+explicitly after migration review. Release owners must publish the breaking 0.20.0 release deliberately;
+subsequent 0.20.x patches can publish automatically. Prerelease tags do not unlock automatic publishing.
+Review consumer Renovate policies before accepting a 0.19-to-0.20 update: the upstream publication gate
+does not disable a consumer's minor-version automerge policy.
 
 #### Configuring the Cftlib tasks
 

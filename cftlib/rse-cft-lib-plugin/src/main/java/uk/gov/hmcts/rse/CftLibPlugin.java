@@ -203,11 +203,22 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
     private CftlibTestTask createTestTask(Project project) {
+        project.getTasks().register("manifestTest", task -> {
+            task.setDescription("Deprecated compatibility task; native tests do not use a ConsoleLauncher manifest.");
+            // Keep tasks.named hooks valid, but never execute obsolete manifest-rewriting actions.
+            task.setEnabled(false);
+            task.getLogger().warn("manifestTest is deprecated and disabled; remove ConsoleLauncher manifest hooks "
+                + "and configure cftlibTest directly.");
+        });
         SourceSetContainer s = project.getExtensions().getByType(SourceSetContainer.class);
         var lib = s.getByName("cftlibTest");
         var test = project.getTasks().create("cftlibTest", CftlibTestTask.class);
         test.setTestClassesDirs(lib.getOutput().getClassesDirs());
-        test.setClasspath(lib.getRuntimeClasspath());
+        // Docker Compose integrations may inspect task dependencies during configuration.
+        // Attach the runtime classpath after SDK plugins have finished declaring dependencies.
+        var runtimeClasspath = project.files();
+        test.setClasspath(runtimeClasspath);
+        project.afterEvaluate(p -> runtimeClasspath.from(lib.getRuntimeClasspath()));
         test.dependsOn(manifestTasks);
         test.dependsOn("cftlibClasses", "cftlibTestClasses");
         // Each entry is a complete path; do not split on spaces (project paths may contain them).
