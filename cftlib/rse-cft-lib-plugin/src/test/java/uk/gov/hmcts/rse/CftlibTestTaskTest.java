@@ -45,8 +45,12 @@ public class CftlibTestTaskTest {
                 cftlibTestImplementation 'org.junit.jupiter:junit-jupiter:5.12.2'
                 cftlibTestRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.2'
             }
-            tasks.named('cftlibTest') {
+            tasks.withType(uk.gov.hmcts.rse.CftlibTask).configureEach {
                 authMode = uk.gov.hmcts.rse.AuthMode.Local
+                environment 'SHARED_SETTING', 'shared'
+                systemProperty 'shared.setting', 'shared'
+            }
+            tasks.named('cftlibTest') {
                 setDependsOn([tasks.named('cftlibTestClasses')])
             }
             """);
@@ -57,6 +61,10 @@ public class CftlibTestTaskTest {
             import org.junit.jupiter.api.Test;
             public class SampleTest {
                 @Test void passes() {
+                    if (!"shared".equals(System.getenv("SHARED_SETTING"))
+                        || !"shared".equals(System.getProperty("shared.setting"))) {
+                        throw new AssertionError("Shared CFTLib configuration was not applied");
+                    }
                     if (!"localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
                         throw new AssertionError("Local authentication was not configured");
                     }

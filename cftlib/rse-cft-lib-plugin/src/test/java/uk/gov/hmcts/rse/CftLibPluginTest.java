@@ -32,4 +32,33 @@ public class CftLibPluginTest {
         assertThat(manifest.getTaskDependencies().getDependencies(manifest)
             .contains(service.getTasks().getByName("classes"))).isTrue();
     }
+
+    @Test
+    public void configuresAllCftlibTaskTypesIncludingLaterRegistrations() {
+        Project project = ProjectBuilder.builder().build();
+        project.getPlugins().apply(CftLibPlugin.class);
+        project.getTasks().withType(CftlibTask.class).configureEach(task -> {
+            task.setAuthMode(AuthMode.Local);
+            task.environment("SHARED_SETTING", "shared");
+            task.jvmArgs("-XX:TieredStopAtLevel=1");
+            task.systemProperty("shared.setting", "shared");
+        });
+        var later = project.getTasks().register("customCftlib", CftlibExec.class).get();
+        for (String name : java.util.List.of("bootWithCCD", "cftlibTest", "dumpCCDDefinitions", later.getName())) {
+            CftlibTask task = (CftlibTask) project.getTasks().getByName(name);
+            assertThat(task.getAuthMode()).isEqualTo(AuthMode.Local);
+            assertThat(task.getEnvironment()).containsEntry("SHARED_SETTING", "shared");
+            assertThat(task.getJvmArgs()).contains("-XX:TieredStopAtLevel=1");
+            assertThat(task.getSystemProperties()).containsEntry("shared.setting", "shared");
+        }
+        var test = (CftlibTestTask) project.getTasks().getByName("cftlibTest");
+        test.environment("SHARED_SETTING", "test-specific");
+        assertThat(test.getEnvironment()).containsEntry("SHARED_SETTING", "test-specific");
+        assertThat(later.getEnvironment()).containsEntry("SHARED_SETTING", "shared");
+        // Existing selectors and direct field access remain compatible for execution tasks.
+        assertThat(project.getTasks().withType(CftlibExec.class)).extracting(Task::getName)
+            .contains(later.getName()).doesNotContain(test.getName());
+        assertThat(later.authMode).isEqualTo(AuthMode.Local);
+    }
+
 }

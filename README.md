@@ -289,20 +289,29 @@ JUnit parallel execution must remain disabled for the same reason.
 
 #### Configuring the Cftlib tasks
 
-`bootWithCCD` uses `CftlibExec`; `cftlibTest` uses `CftlibTestTask`, which extends Gradle's `Test`.
-Both support `authMode`, `environment`, `jvmArgs` and `systemProperty`. To configure both tasks:
+All CFTLib execution and test tasks implement `CftlibTask`. Use it to configure `bootWithCCD`,
+`cftlibTest`, `dumpCCDDefinitions` and any additional CFTLib tasks together:
 
 ```groovy
-['bootWithCCD', 'cftlibTest'].each { name ->
-    tasks.named(name) {
-        environment 'MY_SETTING', 'value'
-    }
+tasks.withType(uk.gov.hmcts.rse.CftlibTask).configureEach {
+    authMode = uk.gov.hmcts.rse.AuthMode.Local
+    environment 'MY_SETTING', 'value'
+    jvmArgs '-XX:TieredStopAtLevel=1'
+    systemProperty 'my.setting', 'value'
+}
+
+cftlibTest {
+    environment 'MY_SETTING', 'test-value'
 }
 ```
 
-Existing `tasks.withType(CftlibExec)` blocks apply only to the execution tasks; move any shared
-configuration to the named tasks as above. `CftlibTestTask` uses Gradle's `debugOptions`/`--debug-jvm`
-instead of JavaExec-specific options.
+Existing per-task configuration blocks remain supported. To include native tests in a shared
+`tasks.withType(CftlibExec)` block, change the selector to `CftlibTask` as above. The old selector
+continues to match execution tasks. Gradle applies configuration in declaration order, so place
+per-task overrides after the shared block.
+
+`cftlibTest` extends Gradle's `Test`, so use its `debugOptions`/`--debug-jvm` instead of
+JavaExec-specific options.
 
 #### IDAM & S2S
 

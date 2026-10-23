@@ -7,7 +7,7 @@ import org.gradle.jvm.toolchain.JavaToolchainService;
 
 import java.io.File;
 
-public abstract class CftlibTestTask extends Test {
+public abstract class CftlibTestTask extends Test implements CftlibTask {
     public AuthMode authMode = AuthMode.AAT;
 
     public CftlibTestTask() {
@@ -15,6 +15,16 @@ public abstract class CftlibTestTask extends Test {
             .launcherFor(spec -> spec.getLanguageVersion().set(JavaLanguageVersion.of(21))));
         useJUnitPlatform();
         setMaxHeapSize("3g");
+    }
+
+    @Override
+    public AuthMode getAuthMode() {
+        return authMode;
+    }
+
+    @Override
+    public void setAuthMode(AuthMode authMode) {
+        this.authMode = authMode;
     }
 
     @Override
