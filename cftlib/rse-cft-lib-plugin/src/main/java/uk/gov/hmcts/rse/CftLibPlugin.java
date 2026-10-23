@@ -20,6 +20,7 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.artifacts.repositories.MavenRepositoryContentDescriptor;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.ClasspathNormalizer;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSetContainer;
@@ -212,7 +213,7 @@ public class CftLibPlugin implements Plugin<Project> {
         var exec = createRunTask(project, "cftlibTest");
         var file = cftlibBuildDir(project).file("libTest").getAsFile();
         var app = createManifestTask(project, "manifestTest", lib.getRuntimeClasspath(),
-                "org.junit.platform.console.ConsoleLauncher", file, "execute --select-package=uk.gov.hmcts");
+                "org.junit.platform.console.ConsoleLauncher", file, project.provider(exec::getTestArguments));
 
         exec.dependsOn(app);
         exec.dependsOn("cftlibClasses");
@@ -251,15 +252,21 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private ManifestTask createManifestTask(Project project, String name, FileCollection configuration,
                                             String mainClass, File file, String... args) {
+        return createManifestTask(project, name, configuration, mainClass, file,
+            project.provider(() -> Arrays.asList(args)));
+    }
+
+    private ManifestTask createManifestTask(Project project, String name, FileCollection configuration,
+                                            String mainClass, File file, Provider<List<String>> args) {
         var result = project.getTasks().create(name, ManifestTask.class);
         result.classpath = configuration;
         result.getInputs().files(configuration)
             .withPropertyName("classpath")
             .withNormalizer(ClasspathNormalizer.class);
         result.getInputs().property("mainClass", mainClass);
-        result.getInputs().property("args", Arrays.asList(args));
+        result.getInputs().property("args", args);
         result.doFirst(x -> {
-            writeManifests(project, configuration, mainClass, file, args);
+            writeManifests(project, configuration, mainClass, file, args.get().toArray(String[]::new));
         });
         result.getOutputs().file(file);
         return result;

@@ -261,6 +261,23 @@ public class TestWithCCD extends CftlibTest {
 
 Tests must be placed in the `cftlibTest` sourceset.
 
+Run a single class using a simple or fully qualified class name:
+
+```bash
+./gradlew cftlibTest --tests MyTest
+./gradlew cftlibTest --tests uk.gov.hmcts.example.MyTest
+```
+
+Quote `*` wildcards to prevent shell expansion. Repeat `--tests` to include several class patterns:
+
+```bash
+./gradlew cftlibTest --tests '*CaseTest' --tests 'uk.gov.hmcts.example.OtherTest'
+```
+
+Filters select classes within `uk.gov.hmcts`, not individual methods. Filtered runs fail if no tests match.
+Without `--tests`, the existing package selection is unchanged. The task remains `CftlibExec` and uses
+JUnit's ConsoleLauncher, so existing task selectors, configuration and `manifestTest` hooks still apply.
+
 ### 6. Configuration
 
 #### Configuring the Cftlib tasks
