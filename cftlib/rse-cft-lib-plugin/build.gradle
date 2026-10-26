@@ -30,6 +30,7 @@ dependencies {
     implementation group: 'com.azure', name: 'azure-security-keyvault-secrets'
     implementation group: 'com.azure', name: 'azure-identity'
 
+    testImplementation 'org.junit.platform:junit-platform-console-standalone:1.12.2'
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     testImplementation group: 'commons-io', name: 'commons-io', version: '2.20.0'
     testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
@@ -62,4 +63,9 @@ publishing {
 
 compileJava {
     options.compilerArgs += ["-Werror"]
+}
+
+test {
+    // Fixtures are selected explicitly by CftlibTestFilteringTest's ConsoleLauncher checks.
+    exclude 'uk/gov/hmcts/filterfixtures/**'
 }

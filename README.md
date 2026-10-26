@@ -261,6 +261,23 @@ public class TestWithCCD extends CftlibTest {
 
 Tests must be placed in the `cftlibTest` sourceset.
 
+Run a single class using a simple or fully qualified class name:
+
+```bash
+./gradlew cftlibTest --tests MyTest
+./gradlew cftlibTest --tests uk.gov.hmcts.example.MyTest
+```
+
+Quote `*` wildcards to prevent shell expansion. Repeat `--tests` to include several class patterns:
+
+```bash
+./gradlew cftlibTest --tests '*CaseTest' --tests 'uk.gov.hmcts.example.OtherTest'
+```
+
+Filters select classes within `uk.gov.hmcts`, not individual methods. Filtered runs fail if no tests match.
+Without `--tests`, the existing package selection is unchanged. The task remains `CftlibExec` and uses
+JUnit's ConsoleLauncher, so existing task selectors, configuration and `manifestTest` hooks still apply.
+
 ### 6. Configuration
 
 #### Configuring the Cftlib tasks
@@ -392,7 +409,8 @@ The cftlib maintains a log file per service in your build directory; `build/cftl
 
 ## Building the cftlib
 
-The Cftlib build requires JDK 21.
+The Cftlib build requires JDK 21 and JDK 25. Docassembly builds with JDK 25,
+but its CFTLib artifact targets Java 21. The bundled services run together on JDK 21.
 
 ## How the cftlib works
 

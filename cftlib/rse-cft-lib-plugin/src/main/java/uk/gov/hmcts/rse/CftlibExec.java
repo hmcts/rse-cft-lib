@@ -5,7 +5,10 @@ import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import lombok.SneakyThrows;
+import org.gradle.api.InvalidUserDataException;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.JavaExec;
+import org.gradle.api.tasks.options.Option;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
 
@@ -15,12 +18,36 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class CftlibExec extends JavaExec {
     public AuthMode authMode = AuthMode.AAT;
+    private List<String> testPatterns = List.of();
 
     public CftlibExec() {
         setJavaToolChain();
+    }
+
+    @Option(option = "tests", description = "Run matching cftlibTest classes; supports simple names, full names and *.")
+    public void setTests(List<String> patterns) {
+        if (!"cftlibTest".equals(getName())) {
+            throw new InvalidUserDataException("--tests is supported by cftlibTest only.");
+        }
+        testPatterns = List.copyOf(patterns);
+    }
+
+    @Internal
+    public List<String> getTestArguments() {
+        if (testPatterns.isEmpty()) {
+            return List.of("execute", "--select-package=uk.gov.hmcts");
+        }
+        String expression = testPatterns.stream().map(pattern -> {
+            String regex = Pattern.quote(pattern).replace("*", "\\E.*\\Q");
+            return pattern.contains(".") ? regex : "(?:.*[.$])?" + regex;
+        }).collect(Collectors.joining("|"));
+        return List.of("execute", "--select-package=uk.gov.hmcts",
+            "--include-classname=" + expression, "--fail-if-no-tests");
     }
 
     @Override
@@ -77,7 +104,7 @@ public class CftlibExec extends JavaExec {
         }
     }
 
-    // Java 21 is now required since cft projects are using java 21 features.
+    // All services share a Java 21 JVM.
     private void setJavaToolChain() {
         var launcher = getProject().getExtensions().getByType(JavaToolchainService.class)
             .launcherFor(x -> {
