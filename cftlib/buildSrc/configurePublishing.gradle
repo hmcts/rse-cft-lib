@@ -7,6 +7,13 @@ def configurePublishing(p) {
             project.group 'com.github.hmcts.rse-cft-lib'
             version = System.getenv('RELEASE_VERSION') ?: 'DEV-SNAPSHOT'
 
+            // Keep docassembly's JDK 25 build, but publish classes for CFTLib's Java 21 JVM.
+            if (project.name == 'rpa-dg-docassembly') {
+                tasks.withType(JavaCompile).configureEach {
+                    options.release.set(21)
+                }
+            }
+
             // Configure publishing
             if (components.hasProperty('java')) {
                 configure(project) {
