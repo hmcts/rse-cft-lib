@@ -61,6 +61,8 @@ bootWithCCD {
 
 cftlibTest {
     authMode = AuthMode.Local
+    // CamundaTests: the optional Camunda engine, requested on the task rather than in the shell.
+    environment 'RSE_LIB_COMPOSE_PROFILES', 'camunda'
     environment("RSE_LIB_ADDITIONAL_DATABASES", "mydb")
     // Check that we are able to override the default port.
     environment 'RSE_LIB_S2S_PORT', '7431'
