@@ -101,6 +101,10 @@ public class EsStub implements ManagedDependency {
                 search(exchange, indexOf(path, "/_search"));
             } else if ("GET".equals(method) && path.contains("/_doc/")) {
                 var parts = path.substring(1).split("/_doc/", 2);
+                if (parts.length != 2) {
+                    throw EsStubException.badRequest("a document fetch must name an index, as in "
+                        + "'/{index}/_doc/{id}'");
+                }
                 document(exchange, parts[0], parts[1]);
             } else {
                 // The status in the body has to agree with the transport's: elasticsearch clients

@@ -50,6 +50,18 @@ public class ProcessProvider implements DependencyProvider {
             }
         }
         if (!failures.isEmpty()) {
+            // The boot is over, so stop the dependencies still starting rather than leaving a
+            // yarn install running unparented once the JVM halts.
+            for (var t : threads) {
+                t.interrupt();
+            }
+            for (var dependency : dependencies) {
+                try {
+                    dependency.stop();
+                } catch (Exception e) {
+                    System.out.println("**** Cftlib failed to stop " + dependency.name() + ": " + e.getMessage());
+                }
+            }
             throw failures.get(0);
         }
     }

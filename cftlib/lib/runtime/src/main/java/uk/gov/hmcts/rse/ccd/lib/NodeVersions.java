@@ -56,13 +56,29 @@ final class NodeVersions {
         return matcher.group(1).trim();
     }
 
+    /**
+     * The version that ends the range a partial version admits: 24 is bounded by 25, 24.22 by
+     * 24.23.
+     */
+    private static List<Integer> nextOf(List<Integer> declared) {
+        var next = new ArrayList<>(declared);
+        next.set(next.size() - 1, next.get(next.size() - 1) + 1);
+        return next;
+    }
+
     private static boolean satisfiesClause(List<Integer> found, String clause) {
         var matcher = CLAUSE.matcher(clause.trim());
         if (!matcher.matches()) {
             throw new IllegalArgumentException("Unsupported node version range clause: " + clause);
         }
+        var declared = parse(matcher.group(2));
+        if (matcher.group(1) == null && declared.size() < 3) {
+            // npm reads a bare partial version as a range: '24' admits every 24.x, and treating
+            // it as an equality would reject the versions it is meant to allow.
+            return compare(found, declared) >= 0 && compare(found, nextOf(declared)) < 0;
+        }
         var operator = matcher.group(1) == null ? "=" : matcher.group(1);
-        var comparison = compare(found, parse(matcher.group(2)));
+        var comparison = compare(found, declared);
         return switch (operator) {
             case ">=" -> comparison >= 0;
             case ">" -> comparison > 0;

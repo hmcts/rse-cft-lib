@@ -9,7 +9,8 @@ public class LibConsumerApplication {
     public static void main(String[] args) {
         SpringApplication.run(LibConsumerApplication.class, args);
         System.out.println("Lib consumer test app running!");
-        // Shut down so we can run in automated test.
-        Runtime.getRuntime().halt(0);
+        // Shut down so we can run in automated test. Exiting rather than halting so that the
+        // hooks which stop cftlib's own dependencies run.
+        System.exit(0);
     }
 }

@@ -108,6 +108,20 @@ public class ControlPlane {
         shutdownTask = task;
     }
 
+    /**
+     * Halts the JVM, having shut down the dependencies cftlib started outside it. Halting is how a
+     * cftlib run ends, deliberately on the build-time paths and via {@link #failFast} on an error,
+     * and it runs no shutdown hooks.
+     */
+    public static void shutdown(int status) {
+        try {
+            shutdownTask.run();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        Runtime.getRuntime().halt(status);
+    }
+
     // Immediately terminate upon an unhandled error that has caused a service to terminate.
     // This will ensure the JVM terminates even if we've started other threads.
     public static final Thread.UncaughtExceptionHandler failFast = (thread, exception) -> {

@@ -291,7 +291,7 @@ public class Xui implements ManagedDependency {
     }
 
     /**
-     * A digest of the checkout.s uncommitted changes, so that editing a checkout cftlib was
+     * A digest of the checkout's uncommitted changes, so that editing a checkout cftlib was
      * pointed at invalidates its build while a stable working tree keeps reusing it.
      */
     private String workingTreeState(Path checkout) throws Exception {
@@ -332,6 +332,9 @@ public class Xui implements ManagedDependency {
                         .redirectOutput(log)
                         .redirectError(log)
                         .exitValueNormal()
+                        // An install interrupted because another dependency failed must take its
+                        // child with it, or it keeps building after the JVM has gone.
+                        .destroyOnExit()
                         .timeout(INSTALL_TIMEOUT_MINUTES, TimeUnit.MINUTES)
                         .execute();
                 } catch (Exception e) {

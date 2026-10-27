@@ -45,4 +45,6 @@ test {
     // The logback config in lib:bootstrapper appends to ${cftlib_log_file}, which without this
     // lands in the project directory as cftlib_log_file_IS_UNDEFINED.
     systemProperty 'cftlib_log_file', layout.buildDirectory.file('test-logs/runtime.log').get().asFile
+    // Keep the postgres binaries the tests download inside the build rather than in ~/.cftlib.
+    systemProperty 'cftlib.cacheDir', layout.buildDirectory.dir('test-cache').get().asFile
 }

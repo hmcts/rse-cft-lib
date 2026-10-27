@@ -97,7 +97,11 @@ class PostgresBinaries implements PgBinaryResolver {
     }
 
     private static Path home() {
-        return Path.of(System.getProperty("user.home"), ".cftlib");
+        // Overridable so that a test run caches outside the engineer's own ~/.cftlib.
+        var configured = System.getProperty("cftlib.cacheDir", System.getenv("RSE_LIB_CACHE_DIR"));
+        return configured != null && !configured.isBlank()
+            ? Path.of(configured.trim()).toAbsolutePath().normalize()
+            : Path.of(System.getProperty("user.home"), ".cftlib");
     }
 
     private static Path download(Platform platform) throws IOException {
