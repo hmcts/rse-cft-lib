@@ -138,7 +138,22 @@ final class XuiEnvironment {
             "http://am-judicial-booking-service-aat.service.core-compute-aat.internal"));
 
         env.putAll(overrides(rawSource));
-        return env;
+        return forNetwork(env, network);
+    }
+
+    /**
+     * Consuming builds set XUI variables of their own pointing at the docker host alias, which
+     * means nothing to a process on that host, so the alias is rewritten wherever it appears
+     * rather than only in the values computed here.
+     */
+    private static Map<String, String> forNetwork(Map<String, String> env, Network network) {
+        if (network != Network.HOST) {
+            return env;
+        }
+        var rewritten = new LinkedHashMap<String, String>();
+        env.forEach((key, value) -> rewritten.put(key,
+            value == null ? null : value.replace(DOCKER_JVM_HOST, "localhost")));
+        return rewritten;
     }
 
     static Map<String, String> manageOrg(Map<String, String> rawSource, Network network, int port) {
@@ -194,7 +209,7 @@ final class XuiEnvironment {
         passThrough(env, rawSource, "MANAGE_CASE_LINK");
         passThrough(env, rawSource, "MANAGE_ORG_LINK");
 
-        return env;
+        return forNetwork(env, network);
     }
 
     /**

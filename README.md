@@ -443,9 +443,11 @@ RSE_LIB_XUI_DIR=~/code/rpx-xui-webapp ./gradlew bootWithCCD
 
 The host's node must satisfy the app's own `engines.node` range, which cftlib checks before cloning or building. `RSE_LIB_NODE` selects a particular node binary, `RSE_LIB_XUI_REF` and `RSE_LIB_XUI_REPO` override the pin, and `RSE_LIB_XUI_REBUILD` forces a rebuild.
 
-### Processes left running
+### Lifetime of the dependencies
 
-Docker leaves its containers up between runs so the next boot is fast, and process mode does the same with postgres: it stays running and the next boot adopts it. `RSE_LIB_CLEAN_BOOT` stops it and recreates the data directory, and cftlib prints the `kill` command when it leaves one behind. XUI is stopped with the JVM, but its clone, dependencies and build output are cached, so a restart only repeats the node startup.
+Unlike the containers, which are left up between runs, the postgres and XUI processes are shut down with the JVM. What makes a restart fast is the state they leave on disk rather than the processes themselves: the postgres data directory persists, so the server comes back in about a second with its databases intact, and XUI's clone, dependencies and build output are cached, so only the node startup is repeated. `RSE_LIB_CLEAN_BOOT` recreates both.
+
+A JVM killed outright — `kill -9`, or an application that calls `Runtime.halt` — gets no chance to shut them down. Cftlib adopts a postgres it finds on its own port with its own data directory, so the next boot in process mode simply reuses it, but the port stays occupied until it exits, which will stop the containers binding if you switch back to docker mode.
 
 ### Live reload
 

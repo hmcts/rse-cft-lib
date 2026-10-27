@@ -32,6 +32,11 @@ public class EmbeddedPostgres implements ManagedDependency {
         this(CftlibConfig.dbPort());
     }
 
+    /**
+     * The server is shut down with the JVM rather than left running as the container is. The data
+     * directory persists either way, so a restart costs a second, whereas a server outliving the
+     * JVM holds its port against a switch back to docker and has no 'compose down' to reclaim it.
+     */
     private EmbeddedPostgres(int port) {
         this(
             // Per port, since bootWithCCD and cftlibTest are commonly configured with different
@@ -41,7 +46,7 @@ public class EmbeddedPostgres implements ManagedDependency {
             logFolder(System.getenv("RSE_LIB_LOG_FOLDER")).resolve("postgres.log"),
             port,
             System.getenv("RSE_LIB_CLEAN_BOOT") != null,
-            System.getenv("RSE_LIB_CLEAN_BOOT") == null && System.getenv("CI") == null);
+            false);
     }
 
     EmbeddedPostgres(Path dataDirectory, Path logFile, int port, boolean cleanBoot, boolean leaveRunning) {
