@@ -101,8 +101,14 @@ public class LibRunner {
 
         System.setProperty("SEARCH_ELASTIC_HOSTS", esHost);
         System.setProperty("SEARCH_ELASTIC_DATA_HOSTS", esHost);
-        System.setProperty("elasticsearch.enabled", "true");
+        // The elasticsearch stub reads the case tables directly, so nothing needs to maintain an
+        // index and the definition store has no index to create on import.
+        var esStub = esStubMode();
+        System.setProperty("elasticsearch.enabled", esStub ? "false" : "true");
         System.setProperty("elasticsearch.failimportiferror", "true");
+        if (esStub) {
+            System.setProperty("ccd.sdk.decentralised.es-indexer.enabled", "false");
+        }
 
         // Allow more time for definitions to import to reduce test flakeyness
         // These timeouts are large since definition imports can start before elastic search is ready,
@@ -123,6 +129,20 @@ public class LibRunner {
 
         // Prevent definition store generating errors trying to translate welsh
         System.setProperty("WELSH_TRANSLATION_ENABLED", "false");
+    }
+
+    /**
+     * Mirrors CftlibConfig's resolution of RSE_LIB_ES. The bootstrapper is deliberately dependency
+     * free so that it does not pollute the system classloader, and so cannot read CftlibConfig,
+     * which lives in the runtime.
+     */
+    private static boolean esStubMode() {
+        var es = getenv("RSE_LIB_ES");
+        if (es != null && !es.isBlank()) {
+            return es.trim().equalsIgnoreCase("stub");
+        }
+        var mode = getenv("RSE_LIB_DEPENDENCY_MODE");
+        return mode != null && mode.trim().equalsIgnoreCase("process");
     }
 
     private static void launchAppOrFailFast(File classpathFile) {
