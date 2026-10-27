@@ -1,6 +1,7 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -62,20 +63,39 @@ class EmbeddedPostgresTest {
         var port = freePort();
         var log = dir.resolve("logs/postgres.log");
 
-        var running = new EmbeddedPostgres(dir.resolve("running"), log, port, false, false);
+        var data = dir.resolve("running");
+        var running = new EmbeddedPostgres(data, log, port, false, false);
         running.start();
         try {
-            var unused = dir.resolve("unused");
-            var adopter = new EmbeddedPostgres(unused, log, port, false, false);
+            var adopter = new EmbeddedPostgres(data, log, port, false, false);
             adopter.start();
-
-            assertThat(unused).doesNotExist();
 
             // Stopping an adopted instance must leave the database alone.
             adopter.stop();
             try (var c = connect(port, "postgres")) {
                 assertThat(queryString(c, "select 'up'")).isEqualTo("up");
             }
+        } finally {
+            running.stop();
+        }
+    }
+
+    @Test
+    void refusesToAdoptAPortHeldBySomethingElse(@TempDir Path dir) throws Exception {
+        var port = freePort();
+        var log = dir.resolve("logs/postgres.log");
+
+        var running = new EmbeddedPostgres(dir.resolve("running"), log, port, false, false);
+        running.start();
+        try {
+            // A leftover cftlib container is the usual occupant, and adopting it would quietly
+            // put docker back in the mix.
+            var other = new EmbeddedPostgres(dir.resolve("elsewhere"), log, port, false, false);
+            assertThatThrownBy(other::start)
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("Port " + port + " is already in use")
+                .hasMessageContaining("RSE_LIB_DB=external");
+            assertThat(dir.resolve("elsewhere")).doesNotExist();
         } finally {
             running.stop();
         }

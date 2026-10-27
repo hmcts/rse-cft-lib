@@ -78,8 +78,17 @@ public class EmbeddedPostgres implements ManagedDependency {
         }
 
         if (Ports.isListening(CftlibConfig.dbHost(), port)) {
-            System.out.println("**** Cftlib is using the postgres already listening on port " + port);
-            return;
+            // Only adopt a server from one of our own previous boots. Anything else on the port is
+            // most often a leftover cftlib container, which would quietly put docker back in the mix.
+            if (ownPostgresIsRunning()) {
+                System.out.println("**** Cftlib is using the postgres it left running on port " + port);
+                return;
+            }
+            throw new IOException("Port " + port + " is already in use, but not by a postgres cftlib "
+                + "started: its data directory " + dataDirectory + " holds no matching postmaster. "
+                + "A leftover cftlib container is the usual cause, and 'docker rm -f "
+                + "cftlib-shared-database-pg-1' clears it. Set RSE_LIB_DB_PORT to use a different "
+                + "port, or RSE_LIB_DB=external to have cftlib use the database already there.");
         }
 
         Files.createDirectories(logFile.getParent());
@@ -146,6 +155,13 @@ public class EmbeddedPostgres implements ManagedDependency {
             System.out.println("**** Cftlib could not free port " + port + ", so the database already "
                 + "listening there will be used as it is rather than being recreated");
         }
+    }
+
+    private boolean ownPostgresIsRunning() {
+        return postmasterPid()
+            .flatMap(ProcessHandle::of)
+            .filter(ProcessHandle::isAlive)
+            .isPresent();
     }
 
     private Optional<Long> postmasterPid() {
