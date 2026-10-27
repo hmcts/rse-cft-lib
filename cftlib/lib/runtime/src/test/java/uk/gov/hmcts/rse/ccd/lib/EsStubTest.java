@@ -149,6 +149,15 @@ class EsStubTest {
     }
 
     @Test
+    void reportsTheTotalForACountOnlySearch() throws Exception {
+        var response = post("/" + CASES_INDEX + "/_search", "{\"size\":0,\"query\":{\"match_all\":{}}}");
+
+        var result = mapper.readTree(response.body());
+        assertThat(result.at("/hits/hits")).isEmpty();
+        assertThat(result.at("/hits/total/value").asLong()).isEqualTo(3);
+    }
+
+    @Test
     void returnsNoDocumentWhenTheSourceIsTurnedOff() throws Exception {
         var response = post("/" + CASES_INDEX + "/_search", "{\"_source\":false,\"query\":{\"match_all\":{}}}");
 

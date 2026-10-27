@@ -304,11 +304,13 @@ public class EsStub implements ManagedDependency {
         for (var sort : search.sorts()) {
             order.add(sort.expression() + (sort.ascending() ? " asc" : " desc") + " nulls last");
         }
+        // At least one row even when none is wanted: 'size': 0 is how a caller asks for the
+        // count alone, and the count is carried by the rows.
         var sql = "select u.id, u.document, count(*) over () as total from (\n"
             + sources.documentView(source, index)
             + ") u where u.index_id = ? and (" + search.where() + ")"
             + (order.isEmpty() ? "" : " order by " + String.join(", ", order))
-            + " limit " + limit;
+            + " limit " + Math.max(limit, 1);
 
         try (var s = c.prepareStatement(sql)) {
             var parameter = 1;

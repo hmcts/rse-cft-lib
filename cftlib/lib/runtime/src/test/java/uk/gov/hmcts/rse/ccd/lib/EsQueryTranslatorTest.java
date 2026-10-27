@@ -415,9 +415,18 @@ class EsQueryTranslatorTest {
 
     @Test
     void nestedInsideNestedIsRejected() {
-        assertThat(catchIt("{\"query\":{\"nested\":{\"path\":\"data.a\",\"query\":"
-            + "{\"nested\":{\"path\":\"data.a.b\",\"query\":{\"match_all\":{}}}}}}}"))
+        assertThat(catchIt("{\"query\":{\"nested\":{\"path\":\"data.a.value\",\"query\":"
+            + "{\"nested\":{\"path\":\"data.a.value.b.value\",\"query\":{\"match_all\":{}}}}}}}"))
             .hasMessageContaining("nested inside nested");
+    }
+
+    @Test
+    void nestedOnACollectionRatherThanItsElementIsRejected() {
+        // Addressing the collection would let separate fields match in separate elements, which
+        // is the opposite of what nesting means.
+        assertThat(catchIt("{\"query\":{\"nested\":{\"path\":\"data.SearchCriteria.SearchParties\","
+            + "\"query\":{\"match_all\":{}}}}}"))
+            .hasMessageContaining("ending in '.value'");
     }
 
     @Test

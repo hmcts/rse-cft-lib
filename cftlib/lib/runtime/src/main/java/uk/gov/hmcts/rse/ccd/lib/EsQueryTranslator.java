@@ -306,6 +306,14 @@ class EsQueryTranslator {
             throw EsStubException.unsupported("nested on '" + path.asText() + "'",
                 "A nested path must address case data, not a metadata column.");
         }
+        if (!path.asText().endsWith(".value")) {
+            // A path addressing the collection itself yields one item, the array, and the inner
+            // predicates then unwrap it again: fields could match in different elements, which
+            // is what nesting exists to prevent. CCD addresses the element, as in
+            // 'data.SearchCriteria.SearchParties.value'.
+            throw EsStubException.unsupported("nested on '" + path.asText() + "'",
+                "A nested path must address a collection's element, ending in '.value'.");
+        }
 
         var alias = "n" + nestedAliases++;
         var pathParam = params.bind(pathField.jsonPath());

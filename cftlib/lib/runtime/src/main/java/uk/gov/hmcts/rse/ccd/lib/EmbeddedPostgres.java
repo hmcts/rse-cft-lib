@@ -26,7 +26,8 @@ public class EmbeddedPostgres implements ManagedDependency {
     private final boolean cleanBoot;
     private final boolean leaveRunning;
 
-    private io.zonky.test.db.postgres.embedded.EmbeddedPostgres instance;
+    private volatile io.zonky.test.db.postgres.embedded.EmbeddedPostgres instance;
+    private volatile boolean stopped;
 
     public EmbeddedPostgres() {
         this(CftlibConfig.dbPort());
@@ -119,11 +120,17 @@ public class EmbeddedPostgres implements ManagedDependency {
         } finally {
             PostgresBinaries.restrictExtractionDirectory();
         }
+        if (stopped) {
+            // Asked to stop while this was starting, so do not leave it behind.
+            stop();
+            throw new IOException("Postgres was stopped while it was starting");
+        }
     }
 
     @Override
     @SneakyThrows
     public void stop() {
+        stopped = true;
         if (instance == null) {
             return;
         }

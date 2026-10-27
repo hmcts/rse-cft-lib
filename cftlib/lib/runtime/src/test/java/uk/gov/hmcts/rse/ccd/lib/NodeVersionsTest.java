@@ -8,6 +8,31 @@ import org.junit.jupiter.api.Test;
 class NodeVersionsTest {
 
     @Test
+    void readsAPartialVersionAsTheRangeItStandsFor() {
+        // npm: '24' admits every 24.x, and does not admit 25.
+        assertThat(NodeVersions.satisfies("v24.22.1", "24")).isTrue();
+        assertThat(NodeVersions.satisfies("v24.0.0", "24")).isTrue();
+        assertThat(NodeVersions.satisfies("v25.0.0", "24")).isFalse();
+        assertThat(NodeVersions.satisfies("v23.9.9", "24")).isFalse();
+
+        assertThat(NodeVersions.satisfies("v24.22.5", "24.22")).isTrue();
+        assertThat(NodeVersions.satisfies("v24.23.0", "24.22")).isFalse();
+    }
+
+    @Test
+    void boundsAPartialVersionAtTheEndOfItsRange() {
+        // '>24' means after every 24.x, '<=24' through all of them.
+        assertThat(NodeVersions.satisfies("v24.22.1", ">24")).isFalse();
+        assertThat(NodeVersions.satisfies("v25.0.0", ">24")).isTrue();
+
+        assertThat(NodeVersions.satisfies("v24.99.0", "<=24")).isTrue();
+        assertThat(NodeVersions.satisfies("v25.0.0", "<=24")).isFalse();
+
+        assertThat(NodeVersions.satisfies("v24.0.0", ">=24")).isTrue();
+        assertThat(NodeVersions.satisfies("v24.0.0", "<24")).isFalse();
+    }
+
+    @Test
     void acceptsAVersionAtOrAboveTheFloor() {
         assertThat(NodeVersions.satisfies("v24.22.1", ">=24.22.1")).isTrue();
         assertThat(NodeVersions.satisfies("v24.22.2", ">=24.22.1")).isTrue();

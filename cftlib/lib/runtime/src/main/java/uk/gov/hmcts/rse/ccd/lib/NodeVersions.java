@@ -60,9 +60,12 @@ final class NodeVersions {
      * The version that ends the range a partial version admits: 24 is bounded by 25, 24.22 by
      * 24.23.
      */
-    private static List<Integer> nextOf(List<Integer> declared) {
+    private static List<Integer> nextOf(List<Integer> declared, int precision) {
         var next = new ArrayList<>(declared);
-        next.set(next.size() - 1, next.get(next.size() - 1) + 1);
+        next.set(precision - 1, next.get(precision - 1) + 1);
+        for (var i = precision; i < next.size(); i++) {
+            next.set(i, 0);
+        }
         return next;
     }
 
@@ -73,15 +76,19 @@ final class NodeVersions {
         }
         var declared = parse(matcher.group(2));
         var operator = matcher.group(1) == null ? "=" : matcher.group(1);
-        if (declared.size() < 3) {
+        // How precisely the range was written, which parse() cannot report: it pads every
+        // version to three components, so '24' and '24.0.0' are indistinguishable afterwards.
+        var precision = matcher.group(2).trim().split("\\.").length;
+        if (precision < 3) {
             // A partial version stands for a range, so npm moves the bound to the end of it:
             // '24' admits every 24.x, '>24' means after all of them, '<=24' through all of them.
             return switch (operator) {
                 case ">=" -> compare(found, declared) >= 0;
-                case ">" -> compare(found, nextOf(declared)) >= 0;
-                case "<=" -> compare(found, nextOf(declared)) < 0;
+                case ">" -> compare(found, nextOf(declared, precision)) >= 0;
+                case "<=" -> compare(found, nextOf(declared, precision)) < 0;
                 case "<" -> compare(found, declared) < 0;
-                default -> compare(found, declared) >= 0 && compare(found, nextOf(declared)) < 0;
+                default -> compare(found, declared) >= 0
+                    && compare(found, nextOf(declared, precision)) < 0;
             };
         }
         var comparison = compare(found, declared);

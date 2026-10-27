@@ -32,7 +32,8 @@ public class Xui implements ManagedDependency {
 
     private final XuiApp app;
 
-    private Process process;
+    private volatile Process process;
+    private volatile boolean stopped;
     private Thread shutdownHook;
 
     private Xui(XuiApp app) {
@@ -91,6 +92,10 @@ public class Xui implements ManagedDependency {
      */
     @Override
     public void stop() {
+        // Recorded because stop can arrive while launch is still starting the process, when
+        // another dependency has failed: without this the launch would complete unobserved and
+        // outlive a JVM that halts without running shutdown hooks.
+        stopped = true;
         var running = process;
         process = null;
         if (shutdownHook != null) {
@@ -203,6 +208,11 @@ public class Xui implements ManagedDependency {
         builder.environment().putAll(XuiCommands.processEnvironment(System.getenv(), computed));
 
         process = builder.start();
+        if (stopped) {
+            // Asked to stop while this was starting, so do not leave it behind.
+            stop();
+            throw new IllegalStateException(name() + " was stopped while it was starting");
+        }
         recordPid(source, port);
         shutdownHook = new Thread(this::stop, "cftlib-stop-" + name());
         Runtime.getRuntime().addShutdownHook(shutdownHook);
