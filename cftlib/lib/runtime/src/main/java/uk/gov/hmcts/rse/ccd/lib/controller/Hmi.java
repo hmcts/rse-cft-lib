@@ -37,15 +37,15 @@ public class Hmi {
     }
 
     @PutMapping("/hearings/{caseListingRequestId}")
-    public ResponseEntity<Map<String, Object>> amendHearing(@PathVariable String caseListingRequestId,
+    public ResponseEntity<Map<String, Object>> amendHearing(@PathVariable("caseListingRequestId") String id,
                                                             @RequestBody String body) {
-        return respond(Hearings.receive("PUT", caseListingRequestId, body));
+        return respond(Hearings.receive("PUT", id, body));
     }
 
     @DeleteMapping("/hearings/{caseListingRequestId}")
-    public ResponseEntity<Map<String, Object>> deleteHearing(@PathVariable String caseListingRequestId,
+    public ResponseEntity<Map<String, Object>> deleteHearing(@PathVariable("caseListingRequestId") String id,
                                                              @RequestBody(required = false) String body) {
-        return respond(Hearings.receive("DELETE", caseListingRequestId, body));
+        return respond(Hearings.receive("DELETE", id, body));
     }
 
     private ResponseEntity<Map<String, Object>> respond(Hearings.Rejection rejection) {

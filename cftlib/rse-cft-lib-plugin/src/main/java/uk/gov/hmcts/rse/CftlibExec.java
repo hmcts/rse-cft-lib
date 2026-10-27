@@ -176,6 +176,9 @@ public class CftlibExec extends JavaExec {
         environment("CORE_CASE_DATA_API_URL", "http://localhost:4452");
         environment("RSE_LIB_LOG_FOLDER", getProject().getLayout()
                 .getBuildDirectory().dir("cftlib/logs").get().getAsFile().getCanonicalPath());
+        // Documents stored by the runtime's dm-store stand-in.
+        environment("RSE_LIB_DM_STORE_DIR", getProject().getLayout()
+                .getBuildDirectory().dir("cftlib/dm-store").get().getAsFile().getCanonicalPath());
     }
 
     private void setRequiredJvmArgs() {

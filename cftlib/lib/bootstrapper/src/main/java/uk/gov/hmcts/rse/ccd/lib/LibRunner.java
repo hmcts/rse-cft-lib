@@ -55,11 +55,18 @@ public class LibRunner {
             System.setProperty("IDAM_API_URL", "https://idam-api.aat.platform.hmcts.net");
             System.setProperty("DM_STORE_BASE_URL", "http://dm-store-aat.service.core-compute-aat.internal");
         }
-        if ("localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))
-            && System.getenv("IDAM_DATA_STORE_SYSTEM_USER_USERNAME") == null) {
+        if ("localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
             // The runtime creates this user in the IDAM simulator, whose users have this password.
-            System.setProperty("IDAM_DATA_STORE_SYSTEM_USER_USERNAME", "data-store-system-user@cftlib.local");
-            System.setProperty("IDAM_DATA_STORE_SYSTEM_USER_PASSWORD", "password");
+            setUnlessConfigured("IDAM_DATA_STORE_SYSTEM_USER_USERNAME", "data-store-system-user@cftlib.local");
+            setUnlessConfigured("IDAM_DATA_STORE_SYSTEM_USER_PASSWORD", "password");
+            // The runtime's dm-store stand-in, and the document links it returns, for CDAM and data store.
+            setUnlessConfigured("DM_STORE_BASE_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}/dm-store");
+            // Data store's own pattern, plus the stand-in's links.
+            setUnlessConfigured("CCD_DOCUMENT_URL_PATTERN",
+                "https?://((localhost:\\d+/dm-store/documents/[A-Za-z0-9-]+(?:/binary)?)"
+                    + "|(dm-store:8080/documents/[A-Za-z0-9-]+(?:/binary)?)"
+                    + "|(localhost:8080/hearing-recordings/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}"
+                    + "-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/segments/[0-9]+))");
         }
         var dbHost = "${RSE_LIB_DB_HOST:localhost}";
         var dbPort = "${RSE_LIB_DB_PORT:6432}";
@@ -123,6 +130,13 @@ public class LibRunner {
 
         // Prevent definition store generating errors trying to translate welsh
         System.setProperty("WELSH_TRANSLATION_ENABLED", "false");
+    }
+
+    // A system property overrides the environment in Spring, so only set one the build has not.
+    private static void setUnlessConfigured(String name, String value) {
+        if (System.getenv(name) == null) {
+            System.setProperty(name, value);
+        }
     }
 
     private static void launchAppOrFailFast(File classpathFile) {
