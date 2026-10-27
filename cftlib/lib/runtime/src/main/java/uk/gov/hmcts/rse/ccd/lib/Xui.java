@@ -27,6 +27,7 @@ public class Xui implements ManagedDependency {
 
     private static final long INSTALL_TIMEOUT_MINUTES = 60;
     private static final long START_TIMEOUT_SECONDS = 300;
+    private static final long AUTH_TIMEOUT_SECONDS = 300;
     private static final long STOP_TIMEOUT_SECONDS = 10;
 
     private final XuiApp app;
@@ -71,6 +72,8 @@ public class Xui implements ManagedDependency {
         var checkout = checkout(source);
         requireDeclaredNode(checkout, nodeVersion);
         build(checkout, node, source);
+
+        awaitAuthServer();
         launch(checkout, node, source, port);
     }
 
@@ -185,6 +188,43 @@ public class Xui implements ManagedDependency {
         Runtime.getRuntime().addShutdownHook(shutdownHook);
         log("starting on port " + port + "; logs in " + logFile());
         awaitPort(port);
+        watch(process);
+    }
+
+    /**
+     * Reports a process that dies once it is up, which otherwise leaves a boot that looks
+     * complete with nothing serving the port.
+     */
+    private void watch(Process started) {
+        var watchdog = new Thread(() -> {
+            try {
+                var status = started.waitFor();
+                if (started == process) {
+                    log("exited with status " + status + ". See " + logFile());
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }, "cftlib-watch-" + name());
+        watchdog.setDaemon(true);
+        watchdog.start();
+    }
+
+    /**
+     * XUI exits at boot if idam's discovery document does not answer, so it cannot be launched
+     * until the auth server is serving. Returns immediately when auth is not cftlib's simulator.
+     */
+    private void awaitAuthServer() throws Exception {
+        var readiness = new Readiness();
+        var deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(AUTH_TIMEOUT_SECONDS);
+        while (System.nanoTime() < deadline) {
+            if (readiness.authReady()) {
+                return;
+            }
+            Thread.sleep(250);
+        }
+        throw new IllegalStateException(name() + " was not started because the auth server did not "
+            + "answer within " + AUTH_TIMEOUT_SECONDS + " seconds; XUI exits at boot without it.");
     }
 
     private void awaitPort(int port) throws Exception {
