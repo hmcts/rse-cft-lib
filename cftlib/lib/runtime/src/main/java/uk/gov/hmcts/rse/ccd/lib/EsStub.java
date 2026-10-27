@@ -127,7 +127,7 @@ public class EsStub implements ManagedDependency {
         if (index == null) {
             throw EsStubException.badRequest("a search must name an index");
         }
-        respond(exchange, 200, execute(index, parse(body(exchange))));
+        respond(exchange, 200, execute(single(index), parse(body(exchange))));
     }
 
     private JsonNode parse(String json) {
@@ -188,13 +188,26 @@ public class EsStub implements ManagedDependency {
         if (header != null && header.isObject() && header.has("index")) {
             var index = header.get("index");
             if (index.isArray() && !index.isEmpty()) {
-                return index.get(0).asText();
+                // Answering from the first alone would drop the rest and report 200 with no hits.
+                if (index.size() > 1) {
+                    throw EsStubException.unsupported("a search over several indices",
+                        "CCD searches one index per multi search line.");
+                }
+                return single(index.get(0).asText());
             }
             if (index.isTextual()) {
-                return index.asText();
+                return single(index.asText());
             }
         }
-        return fallback;
+        return fallback == null ? null : single(fallback);
+    }
+
+    private String single(String index) {
+        if (index.contains(",")) {
+            throw EsStubException.unsupported("a search over several indices",
+                "'" + index + "' names more than one, and CCD searches one index per request.");
+        }
+        return index;
     }
 
     /**
@@ -257,13 +270,10 @@ public class EsStub implements ManagedDependency {
         var answering = 0;
         for (var source : matching) {
             try (var c = connect(source)) {
-                total += count(c, source, index, search);
-                if (hits.size() < wanted) {
-                    var before = hits.size();
-                    collect(c, source, index, search, wanted, hits);
-                    if (hits.size() > before) {
-                        answering++;
-                    }
+                var before = hits.size();
+                total += collect(c, source, index, search, wanted, hits);
+                if (hits.size() > before) {
+                    answering++;
                 }
             }
         }
@@ -283,32 +293,19 @@ public class EsStub implements ManagedDependency {
         return page;
     }
 
-    private long count(Connection c, EsStubSources.Source source, String index,
-                       EsQueryTranslator.Search search) {
-        var sql = "select count(*) from (\n" + sources.documentView(source, index) + ") u where u.index_id = ? and ("
-            + search.where() + ")";
-        try (var s = c.prepareStatement(sql)) {
-            var parameter = 1;
-            s.setString(parameter++, index);
-            for (var value : search.whereParams()) {
-                s.setObject(parameter++, value);
-            }
-            try (var rs = s.executeQuery()) {
-                rs.next();
-                return rs.getLong(1);
-            }
-        } catch (SQLException e) {
-            throw queryError(e, sql);
-        }
-    }
-
-    private void collect(Connection c, EsStubSources.Source source, String index,
+    /**
+     * Appends this source's hits and returns how many it matched in total. The count comes from a
+     * window over the same scan, which postgres evaluates before the limit, so one pass answers
+     * both rather than scanning the case tables twice per search.
+     */
+    private long collect(Connection c, EsStubSources.Source source, String index,
                          EsQueryTranslator.Search search, int limit, ArrayNode hits) {
         var order = new ArrayList<String>();
         for (var sort : search.sorts()) {
             order.add(sort.expression() + (sort.ascending() ? " asc" : " desc") + " nulls last");
         }
-        var sql = "select u.id, u.document from (\n" + sources.documentView(source, index)
+        var sql = "select u.id, u.document, count(*) over () as total from (\n"
+            + sources.documentView(source, index)
             + ") u where u.index_id = ? and (" + search.where() + ")"
             + (order.isEmpty() ? "" : " order by " + String.join(", ", order))
             + " limit " + limit;
@@ -325,9 +322,14 @@ public class EsStub implements ManagedDependency {
                 }
             }
             try (var rs = s.executeQuery()) {
+                long total = 0;
                 while (rs.next()) {
-                    hits.add(hit(index, rs.getString("id"), rs.getString("document"), search.sourceIncludes()));
+                    total = rs.getLong("total");
+                    if (hits.size() < limit) {
+                        hits.add(hit(index, rs.getString("id"), rs.getString("document"), search));
+                    }
                 }
+                return total;
             }
         } catch (SQLException e) {
             throw queryError(e, sql);
@@ -340,13 +342,15 @@ public class EsStub implements ManagedDependency {
             "The cftlib elasticsearch stub could not run the translated search: " + e.getMessage());
     }
 
-    private ObjectNode hit(String index, String id, String document, List<String> includes) {
+    private ObjectNode hit(String index, String id, String document, EsQueryTranslator.Search search) {
         try {
             var node = mapper.createObjectNode();
             node.put("_index", index);
             node.put("_id", id);
             node.put("_score", 1.0);
-            node.set("_source", EsSourceFilter.apply(mapper.readTree(document), includes));
+            if (search.sourceEnabled()) {
+                node.set("_source", EsSourceFilter.apply(mapper.readTree(document), search.sourceIncludes()));
+            }
             return node;
         } catch (IOException e) {
             throw new EsStubException(EsStubException.QUERY_ERROR, 500,

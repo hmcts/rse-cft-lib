@@ -295,9 +295,21 @@ public class Xui implements ManagedDependency {
      * pointed at invalidates its build while a stable working tree keeps reusing it.
      */
     private String workingTreeState(Path checkout) throws Exception {
-        var status = capture(List.of("git", "-C", checkout.toString(), "status", "--porcelain"));
-        return status.isBlank() ? "clean"
-            : Integer.toHexString(status.hashCode()) + ":" + status.length();
+        // The diff rather than the status: a status lists the paths that changed, so editing an
+        // already modified file again would leave it identical and the stale build in place.
+        var tracked = capture(List.of("git", "-C", checkout.toString(), "diff", "HEAD"));
+        var untracked = capture(List.of("git", "-C", checkout.toString(),
+            "ls-files", "--others", "--exclude-standard"));
+        var digest = new StringBuilder(tracked);
+        for (var path : untracked.split("\n")) {
+            if (!path.isBlank()) {
+                var file = checkout.resolve(path.trim());
+                digest.append(path).append(':')
+                    .append(Files.isReadable(file) ? Files.size(file) + "@" + Files.getLastModifiedTime(file) : "?");
+            }
+        }
+        return digest.isEmpty() ? "clean"
+            : Integer.toHexString(digest.toString().hashCode()) + ":" + digest.length();
     }
 
     private String head(Path checkout) throws Exception {

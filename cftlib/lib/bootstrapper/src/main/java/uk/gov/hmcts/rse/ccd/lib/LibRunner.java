@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static java.lang.System.getenv;
@@ -19,6 +20,8 @@ public class LibRunner {
     // The idam simulator provides the auth server the CFT services wait for, so it is started
     // alongside the runtime rather than behind the auth gate.
     private static final String AUTH_SERVER_MANIFEST = "rse-idam-simulator";
+    private static final int AUTH_SERVER_PORT = 5062;
+    private static final int AUTH_SERVER_PORT_WAIT_SECONDS = 60;
 
     public static void main(String[] args) throws Exception {
         Thread.currentThread().setName("**** cftlib bootstrap");
@@ -41,7 +44,10 @@ public class LibRunner {
         var rest = new ArrayList<String>();
         for (var f : Arrays.asList(args).subList(1, args.length)) {
             if (new File(f).getName().equals(AUTH_SERVER_MANIFEST)) {
-                var t = new Thread(() -> launchAppOrFailFast(new File(f)));
+                var t = new Thread(() -> {
+                    awaitAuthServerPort();
+                    launchAppOrFailFast(new File(f));
+                });
                 t.setName(AUTH_SERVER_MANIFEST);
                 t.start();
                 threads.add(t);
@@ -60,6 +66,39 @@ public class LibRunner {
         });
         for (Thread thread : threads) {
             thread.join();
+        }
+    }
+
+    /**
+     * Waits for the simulator's port, which a container from a cftlib that ran the simulator in
+     * docker still holds. In docker mode compose removes that orphan, but it does so while this
+     * is starting, so the bind would otherwise lose a race it can simply wait out.
+     */
+    private static void awaitAuthServerPort() {
+        var deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(AUTH_SERVER_PORT_WAIT_SECONDS);
+        var reported = false;
+        while (portInUse() && System.nanoTime() < deadline) {
+            if (!reported) {
+                System.out.println("**** Cftlib is waiting for port " + AUTH_SERVER_PORT + ", which something "
+                    + "else is holding. An idam simulator container from an older cftlib is the usual cause: "
+                    + "'docker rm -f cftlib-rse-idam-simulator-1' removes it.");
+                reported = true;
+            }
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+    }
+
+    private static boolean portInUse() {
+        try (var socket = new java.net.Socket()) {
+            socket.connect(new java.net.InetSocketAddress("localhost", AUTH_SERVER_PORT), 500);
+            return true;
+        } catch (java.io.IOException e) {
+            return false;
         }
     }
 

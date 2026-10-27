@@ -149,6 +149,24 @@ class EsStubTest {
     }
 
     @Test
+    void returnsNoDocumentWhenTheSourceIsTurnedOff() throws Exception {
+        var response = post("/" + CASES_INDEX + "/_search", "{\"_source\":false,\"query\":{\"match_all\":{}}}");
+
+        var hits = mapper.readTree(response.body()).at("/hits/hits");
+        assertThat(hits).isNotEmpty();
+        hits.forEach(hit -> assertThat(hit.has("_source")).isFalse());
+    }
+
+    @Test
+    void rejectsASearchOverSeveralIndices() throws Exception {
+        var response = post("/" + CASES_INDEX + "," + CASES_INDEX + "/_search",
+            "{\"query\":{\"match_all\":{}}}");
+
+        assertThat(response.statusCode()).isEqualTo(400);
+        assertThat(response.body()).contains("several indices");
+    }
+
+    @Test
     void refusesAPortHeldBySomethingElseRatherThanAnsweringFromIt() throws Exception {
         try (var occupied = new java.net.ServerSocket(0)) {
             var port = occupied.getLocalPort();

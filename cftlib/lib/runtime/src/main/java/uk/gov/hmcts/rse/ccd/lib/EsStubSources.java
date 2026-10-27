@@ -45,7 +45,6 @@ class EsStubSources {
     }
 
     private final Map<String, Source> probed = new LinkedHashMap<>();
-    private final Set<String> skipped = new LinkedHashSet<>();
     private final Set<String> caseTypeOwners = ConcurrentHashMap.newKeySet();
     private final List<String> configured;
     private final Connections connections;
@@ -168,9 +167,6 @@ class EsStubSources {
     }
 
     private synchronized Source source(String entry) throws SQLException {
-        if (skipped.contains(entry)) {
-            return null;
-        }
         var cached = probed.get(entry);
         if (cached != null) {
             return cached;
@@ -191,7 +187,9 @@ class EsStubSources {
             if (!optional.contains(entry)) {
                 throw e;
             }
-            skipped.add(entry);
+            // Not remembered: flyway may not have created the case tables yet, or postgres may have
+            // been out of connections, and a database skipped for good would silently answer no
+            // hits for its service for the rest of the run.
             return null;
         }
     }

@@ -175,7 +175,14 @@ public class EmbeddedPostgres implements ManagedDependency {
         return postmasterPid()
             .flatMap(ProcessHandle::of)
             .filter(ProcessHandle::isAlive)
+            // A pid outlives the process that wrote it, and after a reboot it can belong to
+            // something else entirely, so the process has to look like the server we left.
+            .filter(EmbeddedPostgres::isPostgres)
             .isPresent();
+    }
+
+    private static boolean isPostgres(ProcessHandle process) {
+        return process.info().command().filter(command -> command.endsWith("postgres")).isPresent();
     }
 
     private Optional<Long> postmasterPid() {

@@ -431,6 +431,8 @@ The stub reads the case tables directly rather than maintaining an index, so the
 
 It supports the clauses CCD and XUI generate, and **rejects anything else with a 400 naming the clause** rather than returning no hits, so a query it cannot answer fails loudly instead of passing locally and failing in AAT. It does not score, and its text matching approximates elasticsearch's analysis, so it is not the place to validate a search feature — use `RSE_LIB_ES=docker` or point `SEARCH_ELASTIC_HOSTS` at a real cluster for that.
 
+The stub reads no mappings, so it is more permissive than elasticsearch in one direction: sorting on an analysed text field, and a `nested` query on a path that is not mapped as nested, both answer here and are errors against a real cluster. A search feature that relies on either will pass locally and fail in AAT.
+
 Set `RSE_LIB_ES_STUB_SOURCES` to a comma separated list of `database[:schema]` if case data lives somewhere other than the `datastore` database.
 
 ### XUI without docker

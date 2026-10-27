@@ -72,12 +72,18 @@ final class NodeVersions {
             throw new IllegalArgumentException("Unsupported node version range clause: " + clause);
         }
         var declared = parse(matcher.group(2));
-        if (matcher.group(1) == null && declared.size() < 3) {
-            // npm reads a bare partial version as a range: '24' admits every 24.x, and treating
-            // it as an equality would reject the versions it is meant to allow.
-            return compare(found, declared) >= 0 && compare(found, nextOf(declared)) < 0;
-        }
         var operator = matcher.group(1) == null ? "=" : matcher.group(1);
+        if (declared.size() < 3) {
+            // A partial version stands for a range, so npm moves the bound to the end of it:
+            // '24' admits every 24.x, '>24' means after all of them, '<=24' through all of them.
+            return switch (operator) {
+                case ">=" -> compare(found, declared) >= 0;
+                case ">" -> compare(found, nextOf(declared)) >= 0;
+                case "<=" -> compare(found, nextOf(declared)) < 0;
+                case "<" -> compare(found, declared) < 0;
+                default -> compare(found, declared) >= 0 && compare(found, nextOf(declared)) < 0;
+            };
+        }
         var comparison = compare(found, declared);
         return switch (operator) {
             case ">=" -> comparison >= 0;

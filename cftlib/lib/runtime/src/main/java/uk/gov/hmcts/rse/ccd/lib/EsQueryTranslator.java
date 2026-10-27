@@ -119,7 +119,8 @@ class EsQueryTranslator {
                   List<Sort> sorts,
                   int from,
                   int size,
-                  List<String> sourceIncludes) {
+                  List<String> sourceIncludes,
+                  boolean sourceEnabled) {
     }
 
     private static final class Params {
@@ -155,7 +156,10 @@ class EsQueryTranslator {
         var from = intValue(body.get("from"), 0, "from");
         var size = intValue(body.get("size"), 10, "size");
 
-        return new Search(where, params.values(), sorts, from, size, sourceIncludes(body.get("_source")));
+        var source = body.get("_source");
+        // _source: false means a hit carries no document at all, not every field of one.
+        var sourceEnabled = source == null || !source.isBoolean() || source.asBoolean();
+        return new Search(where, params.values(), sorts, from, size, sourceIncludes(source), sourceEnabled);
     }
 
     private String query(JsonNode node, Scope scope, Params params) {
