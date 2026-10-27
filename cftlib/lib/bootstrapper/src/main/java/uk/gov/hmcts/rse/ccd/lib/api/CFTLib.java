@@ -72,6 +72,25 @@ public interface CFTLib {
      */
     void createGlobalSearchIndex();
 
+    /**
+     * Deploy BPMN and DMN files to the Camunda engine of the camunda feature, waiting for it to start.
+     *
+     * @param tenantId the Camunda tenant, such as a service's jurisdiction in lower case, or null for none
+     */
+    void importCamundaDefinitions(String tenantId, File... files);
+
+    /**
+     * With the wa feature, deliver every new CCD case event to work allocation now, rather than within the next
+     * second, and return once wa-case-event-handler has handled them.
+     */
+    void deliverCaseEvents();
+
+    /**
+     * With the wa feature, run one of wa-task-monitor's jobs, such as TERMINATION, which in an environment run on a
+     * schedule.
+     */
+    void runWaTaskMonitorJob(String jobName);
+
     String generateDummyS2SToken(String serviceName);
 
     String buildJwt();

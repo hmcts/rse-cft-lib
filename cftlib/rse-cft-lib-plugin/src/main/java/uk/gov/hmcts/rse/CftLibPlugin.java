@@ -3,8 +3,10 @@ package uk.gov.hmcts.rse;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.concurrent.Callable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,18 +33,24 @@ import org.gradle.testing.jacoco.plugins.JacocoPluginExtension;
 
 public class CftLibPlugin implements Plugin<Project> {
 
-    final Map<Service, String> projects = Map.of(
-            Service.amRoleAssignmentService, "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication",
-            Service.ccdDataStoreApi, "uk.gov.hmcts.ccd.CoreCaseDataApplication",
-            Service.ccdDefinitionStoreApi, "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication",
-            Service.ccdUserProfileApi, "uk.gov.hmcts.ccd.UserProfileApplication",
-            Service.aacManageCaseAssignment, "uk.gov.hmcts.reform.managecase.Application",
-            Service.ccdCaseDocumentAmApi, "uk.gov.hmcts.reform.ccd.documentam.Application",
-            Service.dgDocassemblyApi, "uk.gov.hmcts.reform.dg.docassembly.Application",
-            Service.waTaskManagementApi, "uk.gov.hmcts.reform.wataskmanagementapi.Application"
+    final Map<Service, String> projects = Map.ofEntries(
+            Map.entry(Service.amRoleAssignmentService, "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication"),
+            Map.entry(Service.ccdDataStoreApi, "uk.gov.hmcts.ccd.CoreCaseDataApplication"),
+            Map.entry(Service.ccdDefinitionStoreApi, "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication"),
+            Map.entry(Service.ccdUserProfileApi, "uk.gov.hmcts.ccd.UserProfileApplication"),
+            Map.entry(Service.aacManageCaseAssignment, "uk.gov.hmcts.reform.managecase.Application"),
+            Map.entry(Service.ccdCaseDocumentAmApi, "uk.gov.hmcts.reform.ccd.documentam.Application"),
+            Map.entry(Service.dgDocassemblyApi, "uk.gov.hmcts.reform.dg.docassembly.Application"),
+            Map.entry(Service.waTaskManagementApi, "uk.gov.hmcts.reform.wataskmanagementapi.Application"),
+            Map.entry(Service.waCaseEventHandler, "uk.gov.hmcts.reform.wacaseeventhandler.Application"),
+            Map.entry(Service.waWorkflowApi, "uk.gov.hmcts.reform.waworkflowapi.Application"),
+            Map.entry(Service.waTaskMonitor, "uk.gov.hmcts.reform.wataskmonitor.Application")
     );
     private final List<File> manifests = new ArrayList<>();
     private final List<ManifestTask> manifestTasks = Lists.newArrayList();
+    // Services that only run with their feature, so their manifests are only written when a task needs them.
+    private final Map<Service, File> optionalManifests = new LinkedHashMap<>();
+    private final Map<Service, ManifestTask> optionalManifestTasks = new LinkedHashMap<>();
 
     public void apply(Project project) {
         project.getPlugins().apply("java");
@@ -244,9 +252,14 @@ public class CftLibPlugin implements Plugin<Project> {
                 "--rse.lib.service_name=" + service);
 
             args.addAll(service.args);
-            manifestTasks.add(
-                createServiceManifestTask(project, service, e.getValue(), file, args.toArray(String[]::new)));
-            manifests.add(file);
+            var task = createServiceManifestTask(project, service, e.getValue(), file, args.toArray(String[]::new));
+            if (service.feature == null) {
+                manifestTasks.add(task);
+                manifests.add(file);
+            } else {
+                optionalManifestTasks.put(service, task);
+                optionalManifests.put(service, file);
+            }
         }
     }
 
@@ -317,9 +330,19 @@ public class CftLibPlugin implements Plugin<Project> {
 
         j.args(manifests);
         j.dependsOn(manifestTasks);
+        // The services of the task's features, decided once the build script has configured the task.
+        j.dependsOn((Callable<List<ManifestTask>>) () -> enabledServices(j).stream()
+            .map(optionalManifestTasks::get).toList());
+        j.getArgumentProviders().add(() -> enabledServices(j).stream()
+            .map(service -> optionalManifests.get(service).getAbsolutePath()).toList());
         return j;
     }
 
+
+    private List<Service> enabledServices(CftlibExec task) {
+        var features = task.getResolvedFeatures();
+        return optionalManifestTasks.keySet().stream().filter(s -> features.contains(s.feature)).toList();
+    }
 
     Dependency[] libDependencies(Project project, String... libDeps) {
         return Arrays.stream(libDeps)

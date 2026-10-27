@@ -32,6 +32,11 @@ task zipCompose(type: Zip) {
 
 processResources {
     from zipCompose
+    // WA's task process, which cftlib deploys to Camunda with the wa feature.
+    from(rootProject.file('../resources/wa-standalone-task-bpmn/src/main/resources')) {
+        include '*.bpmn'
+        into 'wa'
+    }
 }
 
 test {

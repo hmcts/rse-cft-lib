@@ -17,7 +17,9 @@ public enum Feature {
     // Camunda engine in docker.
     camunda(List.of("camunda"), List.of()),
     // Azure Service Bus emulator in docker.
-    servicebus(List.of("servicebus"), List.of());
+    servicebus(List.of("servicebus"), List.of()),
+    // Work allocation: wa-case-event-handler, wa-workflow-api and wa-task-monitor in-process, on Camunda.
+    wa(List.of(), List.of(camunda));
 
     // The docker compose profiles the feature starts.
     public final List<String> composeProfiles;

@@ -164,6 +164,9 @@ services:
       CAMUNDA_API_AUTH_ENABLED: "false"
       S2S_URL: http://${JVM_HOST:-host.docker.internal}:${RSE_LIB_S2S_PORT:-8489}
       TASK_MANAGEMENT_API_URL: http://${JVM_HOST:-host.docker.internal}:8087
+      # Camunda asks task management to initiate each WA task as it is created, rather than wa-task-monitor
+      # looking for new tasks on a schedule.
+      WA_INITIATE_TASKS_ON_CREATE_ENABLED: "true"
     depends_on:
       - shared-database-pg
     # Starts before cftlib has created its database, so retry until it has.

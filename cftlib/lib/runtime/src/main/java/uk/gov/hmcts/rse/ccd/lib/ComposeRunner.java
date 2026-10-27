@@ -35,7 +35,9 @@ public class ComposeRunner {
             // Start our monitoring of the dependencies before we run docker-compose up,
             // since docker-compose up can take a few seconds and we don't want to block
             // boot if the dependencies are already running.
-            ControlPlane.setApi(new CFTLibApiImpl());
+            var api = new CFTLibApiImpl();
+            ControlPlane.setApi(api);
+            WorkAllocation.startWhenBooted(api);
             if (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT")) {
                 // On CNP jenkins it is possible for daemonised containers to be left running
                 // in between builds.
@@ -259,6 +261,10 @@ public class ComposeRunner {
             dbs.add("cft_task_db");
             if (composeProfiles(System.getenv()).contains("camunda")) {
                 dbs.add("camunda");
+            }
+            if (WorkAllocation.enabled(System.getenv())) {
+                dbs.add("wa_case_event_messages_db");
+                dbs.add("wa_workflow_api");
             }
 
             var additionalDbs = System.getenv("RSE_LIB_ADDITIONAL_DATABASES");

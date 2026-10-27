@@ -25,3 +25,15 @@
 [submodule "projects/wa-task-management-api"]
 	path = projects/wa-task-management-api
 	url = https://github.com/hmcts/wa-task-management-api.git
+[submodule "projects/wa-case-event-handler"]
+	path = projects/wa-case-event-handler
+	url = https://github.com/hmcts/wa-case-event-handler.git
+[submodule "projects/wa-workflow-api"]
+	path = projects/wa-workflow-api
+	url = https://github.com/hmcts/wa-workflow-api.git
+[submodule "projects/wa-task-monitor"]
+	path = projects/wa-task-monitor
+	url = https://github.com/hmcts/wa-task-monitor.git
+[submodule "resources/wa-standalone-task-bpmn"]
+	path = resources/wa-standalone-task-bpmn
+	url = https://github.com/hmcts/wa-standalone-task-bpmn.git

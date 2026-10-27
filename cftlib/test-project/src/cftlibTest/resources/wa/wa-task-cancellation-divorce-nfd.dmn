@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- No event cancels a task. wa-case-event-handler evaluates this table for every event. -->
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:camunda="http://camunda.org/schema/1.0/dmn"
+             id="cftlib-cancellation" name="cftlib cancellation" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="wa-task-cancellation-divorce-nfd" name="cftlib task cancellation">
+    <decisionTable id="cancellation" hitPolicy="COLLECT">
+      <input id="event" label="Event" camunda:inputVariable="event">
+        <inputExpression id="eventExpression" typeRef="string"><text>event</text></inputExpression>
+      </input>
+      <output id="action" label="Action" name="action" typeRef="string"/>
+      <output id="processCategories" label="Process Categories Identifiers" name="processCategories" typeRef="string"/>
+    </decisionTable>
+  </decision>
+</definitions>
