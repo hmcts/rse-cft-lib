@@ -61,6 +61,9 @@ bootWithCCD {
 
 cftlibTest {
     authMode = AuthMode.Local
+    // Consumers' tests do not start XUI, but xuiContainerReceivesPrefixedEnvVars covers
+    // the RSE_LIB_XUI_ENV_ plumbing and so needs it.
+    environment 'RSE_LIB_XUI', 'docker'
     environment("RSE_LIB_ADDITIONAL_DATABASES", "mydb")
     // Check that we are able to override the default port.
     environment 'RSE_LIB_S2S_PORT', '7431'

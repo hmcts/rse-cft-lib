@@ -58,7 +58,11 @@ public class CftlibExec extends JavaExec {
     private void configure() {
         setRequiredJvmArgs();
         setStandardEnvVars();
-        environment("RSE_LIB_DEPENDENCY_MODE", dependencyMode.name().toLowerCase());
+        // An inherited or explicitly configured value wins, so the mode can be flipped
+        // from the environment without editing the build script.
+        if (getEnvironment().get("RSE_LIB_DEPENDENCY_MODE") == null) {
+            environment("RSE_LIB_DEPENDENCY_MODE", dependencyMode.name().toLowerCase());
+        }
         if (authMode == AuthMode.Local) {
             environment("RSE_LIB_AUTH-MODE", "localAuth");
             // Enable idam simulator
