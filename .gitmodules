@@ -25,3 +25,6 @@
 [submodule "projects/wa-task-management-api"]
 	path = projects/wa-task-management-api
 	url = https://github.com/hmcts/wa-task-management-api.git
+[submodule "projects/rse-idam-simulator"]
+	path = projects/rse-idam-simulator
+	url = https://github.com/hmcts/rse-idam-simulator.git

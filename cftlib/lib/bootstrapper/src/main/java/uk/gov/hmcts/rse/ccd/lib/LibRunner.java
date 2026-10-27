@@ -16,6 +16,10 @@ import static java.lang.System.getenv;
 import lombok.SneakyThrows;
 
 public class LibRunner {
+    // The idam simulator provides the auth server the CFT services wait for, so it is started
+    // alongside the runtime rather than behind the auth gate.
+    private static final String AUTH_SERVER_MANIFEST = "rse-idam-simulator";
+
     public static void main(String[] args) throws Exception {
         Thread.currentThread().setName("**** cftlib bootstrap");
         Thread.currentThread().setUncaughtExceptionHandler(ControlPlane.failFast);
@@ -34,11 +38,22 @@ public class LibRunner {
             threads.add(t);
         }
 
+        var rest = new ArrayList<String>();
+        for (var f : Arrays.asList(args).subList(1, args.length)) {
+            if (new File(f).getName().equals(AUTH_SERVER_MANIFEST)) {
+                var t = new Thread(() -> launchAppOrFailFast(new File(f)));
+                t.setName(AUTH_SERVER_MANIFEST);
+                t.start();
+                threads.add(t);
+            } else {
+                rest.add(f);
+            }
+        }
+
         // Cannot start spring boot apps until Oauth server ready.
         ControlPlane.waitForAuthServer();
 
-        var rest = Arrays.copyOfRange(args, 1, args.length);
-        Arrays.stream(rest).forEach(f -> {
+        rest.forEach(f -> {
             var t = new Thread(() -> launchAppOrFailFast(new File(f)));
             t.start();
             threads.add(t);

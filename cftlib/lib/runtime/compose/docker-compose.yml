@@ -28,6 +28,7 @@ services:
 
   xui-manage-cases:
     image: "${XUI_MANAGE_CASES_USE_LOCAL-hmctsprod.azurecr.io/}xui/webapp:${XUI_MANAGE_CASES_TAG:-latest}"
+    profiles: ["xui"]
     env_file:
       - ./xui.env
     environment:
@@ -91,6 +92,7 @@ services:
 
   xui-manage-org:
     image: hmctsprod.azurecr.io/xui/mo-webapp:latest
+    profiles: ["xui"]
     environment:
       DEBUG: '*:*'
       IDAM_API_SERVICE: "${XUI_IDAM_API_URL:-https://idam-api.aat.platform.hmcts.net}"
@@ -133,15 +135,3 @@ services:
       PORT: 3001
     ports:
       - ${XUI_MO_PORT:-3001}:3001
-
-  rse-idam-simulator:
-    image: "hmctsprod.azurecr.io/hmcts/rse/rse-idam-simulator:latest"
-    profiles: ["localAuth"]
-    ports:
-      - 5062:5062
-    environment:
-      SIMULATOR_JWT_ISSUER: "${IDAM_SIMULATOR_BASE_URL:-http://localhost:5062}/o"
-      SIMULATOR_OPENID_BASE-URL: "${IDAM_SIMULATOR_BASE_URL:-http://localhost:5062}"
-      SIMULATOR_OPENID_BASE-URL-OUTSIDE-NETWORK: "${IDAM_SIMULATOR_BASE_URL_OUTSIDE_NETWORK:-http://localhost:5062}"
-      SERVER_PORT: 5062
-      JAVA_TOOL_OPTIONS:

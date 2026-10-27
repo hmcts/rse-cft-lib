@@ -25,6 +25,13 @@ public enum Service {
         "--REPLICATION_PASSWORD=postgres",
         "--POSTGRES_CLUSTER_HOST=${RSE_LIB_DB_HOST:localhost}",
         "--CCD_URL=http://localhost:4452"
+    ),
+    rseIdamSimulator(
+        "--server.port=5062",
+        "--simulator.jwt.issuer=${IDAM_SIMULATOR_BASE_URL:http://localhost:5062}/o",
+        "--simulator.openid.base-url=${IDAM_SIMULATOR_BASE_URL:http://localhost:5062}",
+        "--simulator.openid.base-url-outside-network="
+            + "${IDAM_SIMULATOR_BASE_URL_OUTSIDE_NETWORK:http://localhost:5062}"
     );
 
     public final List<String> args;
