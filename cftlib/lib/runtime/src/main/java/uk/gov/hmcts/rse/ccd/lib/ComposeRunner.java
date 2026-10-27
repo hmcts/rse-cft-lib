@@ -7,11 +7,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.LinkedHashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -21,7 +19,6 @@ import net.lingala.zip4j.ZipFile;
 import org.zeroturnaround.exec.ProcessExecutor;
 
 public class ComposeRunner implements DependencyProvider {
-    static final String XUI_ENV_PREFIX = "RSE_LIB_XUI_ENV_";
 
     @Override
     public void start() {
@@ -38,8 +35,7 @@ public class ComposeRunner implements DependencyProvider {
         }
         var dir = Files.createTempDirectory("cftlib");
         new ZipFile(f).extractAll(dir.toString());
-        writeEnvFile(dir.resolve("xui.env"), buildPrefixedEnvOverrides(System.getenv(), System.getProperties(),
-            XUI_ENV_PREFIX));
+        writeXuiEnvFiles(dir);
         var args = new ArrayList<String>(List.of("docker", "compose", "-p", "cftlib", "up", "-d", "--remove-orphans"));
         // When running on a CI server ensure clean container builds.
         if (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT")) {
@@ -58,39 +54,17 @@ public class ComposeRunner implements DependencyProvider {
 
     }
 
-    static Map<String, String> buildPrefixedEnvOverrides(
-        Map<String, String> env,
-        Properties properties,
-        String prefix
-    ) {
-        var output = new LinkedHashMap<String, String>();
-
-        if (env != null) {
-            for (var entry : env.entrySet()) {
-                var key = entry.getKey();
-                if (key != null && key.startsWith(prefix)) {
-                    var value = entry.getValue();
-                    var stripped = key.substring(prefix.length());
-                    if (!stripped.isBlank() && value != null && !value.isBlank()) {
-                        output.put(stripped, value);
-                    }
-                }
-            }
-        }
-
-        if (properties != null) {
-            for (var key : properties.stringPropertyNames()) {
-                if (key.startsWith(prefix)) {
-                    var value = properties.getProperty(key);
-                    var stripped = key.substring(prefix.length());
-                    if (!stripped.isBlank() && value != null && !value.isBlank()) {
-                        output.put(stripped, value);
-                    }
-                }
-            }
-        }
-
-        return output;
+    /**
+     * The XUI services take their whole environment from these files rather than from a compose
+     * environment block, so that the process launcher and compose configure XUI identically.
+     */
+    static void writeXuiEnvFiles(Path dir) throws Exception {
+        var source = XuiEnvironment.interpolationSource();
+        var network = XuiEnvironment.Network.DOCKER;
+        writeEnvFile(dir.resolve("xui.env"),
+            XuiApp.MANAGE_CASES.environment(source, network, XuiApp.MANAGE_CASES.port(source, network)));
+        writeEnvFile(dir.resolve("xui-mo.env"),
+            XuiApp.MANAGE_ORG.environment(source, network, XuiApp.MANAGE_ORG.port(source, network)));
     }
 
     static void writeEnvFile(Path file, Map<String, String> values) throws Exception {
@@ -116,35 +90,6 @@ public class ComposeRunner implements DependencyProvider {
         for (Object o : System.getProperties().keySet()) {
             builder.put(o.toString(), System.getProperty(o.toString()));
         }
-
-        if ("localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
-            var hostEnv = System.getenv("JVM_HOST");
-            var host = "http://" + (
-                hostEnv != null
-                    ? hostEnv
-                    : "host.docker.internal");
-            var runtime = host + ":5062";
-            var waTaskApi = host + ":8087";
-
-            builder.putAll(Map.of(
-                "XUI_S2S_URL", host + ":" + ControlPlane.getEnvVar("RSE_LIB_S2S_PORT", 8489),
-                "XUI_IDAM_API_URL", runtime,
-                "XUI_IDAM_LOGIN_URL", xuiIdamLoginUrl(System.getenv()),
-                "SERVICES_WORK_ALLOCATION_TASK_API", waTaskApi,
-                "HEALTH_WORK_ALLOCATION_TASK_API", waTaskApi + "/health",
-                // TODO: placeholder to pass health checks
-                "XUI_EM_DOCASSEMBLY_API", ControlPlane.getEnvVar("XUI_EM_DOCASSEMBLY_API", runtime),
-                "XUI_DOCUMENTS_API", ControlPlane.getEnvVar("XUI_DOCUMENTS_API", runtime),
-                "XUI_DOCUMENTS_API_V2", ControlPlane.getEnvVar("XUI_DOCUMENTS_API_V2", runtime)
-            ));
-        }
         return builder.build();
-    }
-
-    // The URL XUI redirects the browser to for login, which must be reachable from the browser
-    // rather than from within the docker network.
-    static String xuiIdamLoginUrl(Map<String, String> env) {
-        return env.getOrDefault("XUI_IDAM_LOGIN_URL",
-            env.getOrDefault("IDAM_SIMULATOR_BASE_URL_OUTSIDE_NETWORK", "http://localhost:5062"));
     }
 }
