@@ -26,8 +26,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
 /**
- * The Camunda engine cftlib runs when a build sets RSE_LIB_COMPOSE_PROFILES=camunda on the task, as this project's
- * cftlibTest task does.
+ * The Camunda engine cftlib runs with the camunda feature, which this project's cftlibTest task turns on.
  */
 // The same context as LibConsumerApplicationTests, which Spring reuses rather than starting another on the same port.
 @AutoConfigureMockMvc

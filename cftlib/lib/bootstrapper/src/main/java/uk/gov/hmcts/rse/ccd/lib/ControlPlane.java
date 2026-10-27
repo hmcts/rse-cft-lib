@@ -9,8 +9,10 @@ public class ControlPlane {
     private static final CountDownLatch DB_READY = new CountDownLatch(1);
     private static final CountDownLatch ES_READY = new CountDownLatch(1);
     private static final CountDownLatch AUTH_READY = new CountDownLatch(1);
-    // Used to wait for all services to be ready
-    private static final CountDownLatch APPS_READY = new CountDownLatch(Project.values().length);
+    // Ready straight away unless the servicebus feature is on.
+    private static final CountDownLatch SERVICEBUS_READY = new CountDownLatch(1);
+    // Used to wait for all services to be ready; LibRunner sets the count to the apps it launches.
+    private static volatile CountDownLatch APPS_READY = new CountDownLatch(Project.values().length);
     // Wait for the API to be provided from the runtime
     private static final CountDownLatch API_READY = new CountDownLatch(1);
     private static volatile Throwable INIT_EXCEPTION;
@@ -30,6 +32,23 @@ public class ControlPlane {
         if (INIT_EXCEPTION != null) {
             throw INIT_EXCEPTION;
         }
+    }
+
+    @SneakyThrows
+    public static void waitForServiceBus() {
+        SERVICEBUS_READY.await();
+        if (INIT_EXCEPTION != null) {
+            throw INIT_EXCEPTION;
+        }
+    }
+
+    public static void setServiceBusReady() {
+        SERVICEBUS_READY.countDown();
+    }
+
+    public static void setServiceBusError(Throwable t) {
+        INIT_EXCEPTION = t;
+        SERVICEBUS_READY.countDown();
     }
 
     public static void setDBReady() {
@@ -55,6 +74,8 @@ public class ControlPlane {
     @SneakyThrows
     public static synchronized void waitForBoot() {
         APPS_READY.await();
+        // Services and tests that use Service Bus may send as soon as cftlib reports it is up.
+        waitForServiceBus();
         if (!booted) {
             // One-off global search index creation
             API_READY.await();
@@ -66,6 +87,11 @@ public class ControlPlane {
     @SneakyThrows
     public static void waitForAuthServer() {
         AUTH_READY.await();
+    }
+
+    // The number of applications LibRunner launches, which depends on the optional features a build turns on.
+    public static void expectApps(int count) {
+        APPS_READY = new CountDownLatch(count);
     }
 
     // Signal that an application has booted.

@@ -47,6 +47,7 @@ dependencies {
     cftlibTestImplementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.14'
     cftlibTestImplementation 'com.google.code.gson:gson'
     cftlibTestImplementation 'org.awaitility:awaitility:4.2.0'
+    cftlibTestImplementation 'com.azure:azure-messaging-servicebus:7.17.8'
 }
 
 bootWithCCD {
@@ -61,8 +62,9 @@ bootWithCCD {
 
 cftlibTest {
     authMode = AuthMode.Local
-    // CamundaTests: the optional Camunda engine, requested on the task rather than in the shell.
-    environment 'RSE_LIB_COMPOSE_PROFILES', 'camunda'
+    // CamundaTests and ServiceBusTests: the optional Camunda engine and Service Bus emulator.
+    features 'camunda', 'servicebus'
+    environment 'RSE_LIB_SERVICEBUS_CONFIG', file('src/cftlib/servicebus.json').path
     environment("RSE_LIB_ADDITIONAL_DATABASES", "mydb")
     // Check that we are able to override the default port.
     environment 'RSE_LIB_S2S_PORT', '7431'

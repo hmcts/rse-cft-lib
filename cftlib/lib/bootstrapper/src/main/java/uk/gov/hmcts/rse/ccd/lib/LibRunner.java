@@ -25,6 +25,8 @@ public class LibRunner {
     @SneakyThrows
     private static void doRun(String[] args) {
         setConfigProperties();
+        // Every manifest after the runtime is a Spring Boot application that reports when it is ready.
+        ControlPlane.expectApps(args.length - 1);
         var threads = new ArrayList<Thread>();
         {
             var runtime = args[0];
@@ -105,6 +107,13 @@ public class LibRunner {
         System.setProperty("CCD_DEFINITION_STORE_API_BASE_URL", "http://localhost:4451");
 
         System.setProperty("CASE_DOCUMENT_AM_URL", "http://localhost:4455");
+
+        if (Arrays.asList(ControlPlane.getEnvVar("RSE_LIB_FEATURES", "").split(",")).contains("servicebus")) {
+            // The emulator's development connection string, for services and tests to read as configuration.
+            System.setProperty("RSE_LIB_SERVICEBUS_CONNECTION_STRING",
+                "Endpoint=sb://localhost;SharedAccessKeyName=RootManageSharedAccessKey;"
+                    + "SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;");
+        }
 
         // Prevent definition store generating errors trying to translate welsh
         System.setProperty("WELSH_TRANSLATION_ENABLED", "false");

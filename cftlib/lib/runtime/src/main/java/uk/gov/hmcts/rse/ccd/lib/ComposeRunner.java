@@ -52,6 +52,7 @@ public class ComposeRunner {
         } catch (Exception e) {
             ControlPlane.setDBError(e);
             ControlPlane.setESError(e);
+            ControlPlane.setServiceBusError(e);
         }
     }
 
@@ -67,6 +68,8 @@ public class ComposeRunner {
         new ZipFile(f).extractAll(dir.toString());
         writeEnvFile(dir.resolve("xui.env"), buildPrefixedEnvOverrides(System.getenv(), System.getProperties(),
             XUI_ENV_PREFIX));
+        // Docker mounts the emulator's config whether or not the servicebus profile is on, so always write it.
+        ServiceBusConfig.write(dir.resolve("servicebus/Config.json"), System.getenv());
         var args = new ArrayList<String>(List.of("docker", "compose", "-p", "cftlib", "up", "-d", "--remove-orphans"));
         // When running on a CI server ensure clean container builds.
         if (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT")) {
@@ -116,6 +119,18 @@ public class ComposeRunner {
             .until(this::esReady);
 
         ControlPlane.setESReady();
+
+        if (ServiceBusConfig.enabled(System.getenv())) {
+            // The emulator waits for its SQL Server before it opens, which takes a minute or two on first boot.
+            Awaitility.await()
+                .pollInSameThread()
+                .pollInterval(Duration.ofSeconds(1))
+                .pollDelay(Duration.ZERO)
+                .ignoreExceptions()
+                .timeout(10, TimeUnit.MINUTES)
+                .until(this::serviceBusReady);
+        }
+        ControlPlane.setServiceBusReady();
     }
 
     static Map<String, String> buildPrefixedEnvOverrides(
@@ -265,6 +280,20 @@ public class ComposeRunner {
             throw s;
         }
         return true;
+    }
+
+    private boolean serviceBusReady() {
+        try {
+            var c = (HttpURLConnection) new URL("http://localhost:"
+                + ControlPlane.getEnvVar("SERVICEBUS_HTTP_PORT", 5300) + "/health").openConnection();
+            if (c.getResponseCode() == 200) {
+                return true;
+            }
+        } catch (Exception e) {
+            // Not listening yet.
+        }
+        System.out.println("Service Bus emulator not yet available...");
+        return false;
     }
 
     @SneakyThrows

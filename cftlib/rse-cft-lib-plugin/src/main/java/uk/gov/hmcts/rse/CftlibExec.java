@@ -18,11 +18,14 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class CftlibExec extends JavaExec {
     public AuthMode authMode = AuthMode.AAT;
+    // Optional parts of the stack this task runs, as Feature names. RSE_LIB_FEATURES adds more for one run.
+    public List<String> features = new ArrayList<>();
     private List<String> testPatterns = List.of();
 
     public CftlibExec() {
@@ -35,6 +38,15 @@ public class CftlibExec extends JavaExec {
             throw new InvalidUserDataException("--tests is supported by cftlibTest only.");
         }
         testPatterns = List.copyOf(patterns);
+    }
+
+    public void features(String... names) {
+        features.addAll(Arrays.asList(names));
+    }
+
+    @Internal
+    public Set<Feature> getResolvedFeatures() {
+        return Feature.resolve(features, getEnvironment());
     }
 
     @Internal
@@ -84,13 +96,19 @@ public class CftlibExec extends JavaExec {
         }
     }
 
-    // Optional docker services: the idam simulator in local auth mode, plus any listed in RSE_LIB_COMPOSE_PROFILES,
-    // such as camunda.
+    // Optional docker services: the idam simulator in local auth mode, those of the task's features, plus any listed
+    // in RSE_LIB_COMPOSE_PROFILES.
     private void setComposeProfiles() {
         var profiles = new ArrayList<String>();
         if (authMode == AuthMode.Local) {
             profiles.add("localAuth");
         }
+        var resolved = getResolvedFeatures();
+        resolved.forEach(feature -> feature.composeProfiles.stream()
+            .filter(profile -> !profiles.contains(profile))
+            .forEach(profiles::add));
+        // Read by the runtime, which prepares the features' dependencies such as their databases.
+        environment("RSE_LIB_FEATURES", resolved.stream().map(Enum::name).collect(Collectors.joining(",")));
         // The task's environment: the shell's, plus anything the build script sets on the task.
         var requested = getEnvironment().get("RSE_LIB_COMPOSE_PROFILES");
         if (requested != null) {
