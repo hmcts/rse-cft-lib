@@ -29,6 +29,9 @@ services:
   xui-manage-cases:
     image: "${XUI_MANAGE_CASES_USE_LOCAL-hmctsprod.azurecr.io/}xui/webapp:${XUI_MANAGE_CASES_TAG:-latest}"
     profiles: ["xui"]
+    # XUI exits if idam is not yet up, and the in-JVM simulator takes a few seconds
+    # longer than compose takes to start this container.
+    restart: on-failure:10
     env_file:
       - ./xui.env
     environment:
@@ -93,6 +96,7 @@ services:
   xui-manage-org:
     image: hmctsprod.azurecr.io/xui/mo-webapp:latest
     profiles: ["xui"]
+    restart: on-failure:10
     environment:
       DEBUG: '*:*'
       IDAM_API_SERVICE: "${XUI_IDAM_API_URL:-https://idam-api.aat.platform.hmcts.net}"
