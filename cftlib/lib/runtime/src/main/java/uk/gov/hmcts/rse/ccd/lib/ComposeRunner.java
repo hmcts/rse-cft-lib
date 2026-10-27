@@ -2,20 +2,15 @@ package uk.gov.hmcts.rse.ccd.lib;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -23,35 +18,14 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableMap;
 import lombok.SneakyThrows;
 import net.lingala.zip4j.ZipFile;
-import org.awaitility.Awaitility;
 import org.zeroturnaround.exec.ProcessExecutor;
 
-public class ComposeRunner {
+public class ComposeRunner implements DependencyProvider {
     static final String XUI_ENV_PREFIX = "RSE_LIB_XUI_ENV_";
 
-    void startBoot() {
-        try {
-            // Start our monitoring of the dependencies before we run docker-compose up,
-            // since docker-compose up can take a few seconds and we don't want to block
-            // boot if the dependencies are already running.
-            ControlPlane.setApi(new CFTLibApiImpl());
-            if (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT")) {
-                // On CNP jenkins it is possible for daemonised containers to be left running
-                // in between builds.
-                // If we're running in CI we therefore re-create any existing containers
-                // and cannot start monitoring them until after this restart.
-                dockerBoot();
-                new Thread(this::monitorStartingServices).start();
-            } else {
-                // If not in CI boot as fast as possible by immediately checking to
-                // see if our dependencies are already up.
-                new Thread(this::monitorStartingServices).start();
-                dockerBoot();
-            }
-        } catch (Exception e) {
-            ControlPlane.setDBError(e);
-            ControlPlane.setESError(e);
-        }
+    @Override
+    public void start() {
+        dockerBoot();
     }
 
     @SneakyThrows
@@ -82,39 +56,6 @@ public class ComposeRunner {
             .timeout(90, TimeUnit.MINUTES)
             .execute();
 
-    }
-
-    private void monitorStartingServices() {
-        Awaitility.await()
-            .pollInSameThread()
-            .pollInterval(Duration.ofMillis(100))
-            .pollDelay(Duration.ZERO)
-            .ignoreExceptions()
-            .timeout(10, TimeUnit.MINUTES)
-            .until(this::authReady);
-
-        ControlPlane.setAuthReady();
-
-        Awaitility.await()
-            .pollInSameThread()
-            .pollInterval(Duration.ofMillis(100))
-            .pollDelay(Duration.ZERO)
-            .ignoreExceptions()
-            .timeout(10, TimeUnit.MINUTES)
-            .until(this::dbReady);
-
-        ControlPlane.setDBReady();
-
-        // Wait for elasticsearch
-        Awaitility.await()
-            .pollInSameThread()
-            .pollInterval(Duration.ofMillis(250))
-            .pollDelay(Duration.ZERO)
-            .ignoreExceptions()
-            .timeout(10, TimeUnit.MINUTES)
-            .until(this::esReady);
-
-        ControlPlane.setESReady();
     }
 
     static Map<String, String> buildPrefixedEnvOverrides(
@@ -205,71 +146,5 @@ public class ComposeRunner {
     static String xuiIdamLoginUrl(Map<String, String> env) {
         return env.getOrDefault("XUI_IDAM_LOGIN_URL",
             env.getOrDefault("IDAM_SIMULATOR_BASE_URL_OUTSIDE_NETWORK", "http://localhost:5062"));
-    }
-
-    @SneakyThrows
-    private boolean authReady() {
-        if ("localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
-            try {
-                // Wait for Idam Simulator to come up.
-                var c = (HttpURLConnection) new URL("http://localhost:5062/health")
-                    .openConnection();
-                if (c.getResponseCode() != 200) {
-                    throw new RuntimeException();
-                }
-            } catch (Exception e) {
-                System.out.println("Idam not ready...");
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @SneakyThrows
-    boolean dbReady() {
-        try (var c = DriverManager.getConnection(
-            "jdbc:postgresql://localhost:" + ControlPlane.getEnvVar("RSE_LIB_DB_PORT", 6432) + "/postgres",
-            "postgres", "postgres")) {
-
-            var dbs = List.of(Project.Datastore, Project.Definitionstore, Project.Userprofile, Project.AM)
-                .stream().map(Objects::toString)
-                .collect(Collectors.toCollection(ArrayList::new));
-
-            dbs.add("cft_task_db");
-
-            var additionalDbs = System.getenv("RSE_LIB_ADDITIONAL_DATABASES");
-            if (additionalDbs != null) {
-                dbs.addAll(List.of(additionalDbs.split(",")));
-            }
-
-            // Create the databases if necessary.
-            for (var db : dbs) {
-                var s = c.prepareStatement(
-                    String.format("SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower('%s')", db));
-                s.execute();
-                if (!s.getResultSet().next()) {
-                    c.prepareStatement("create database " + db).execute();
-                }
-            }
-        } catch (SQLException s) {
-            System.out.println("DB not yet available...");
-            throw s;
-        }
-        return true;
-    }
-
-    @SneakyThrows
-    private boolean esReady() {
-        try {
-            var c = (HttpURLConnection) new URL("http://localhost:9200/_cat/health")
-                .openConnection();
-            if (c.getResponseCode() != 200) {
-                return false;
-            }
-        } catch (Exception e) {
-            System.out.println("ES not yet available...");
-            throw e;
-        }
-        return true;
     }
 }

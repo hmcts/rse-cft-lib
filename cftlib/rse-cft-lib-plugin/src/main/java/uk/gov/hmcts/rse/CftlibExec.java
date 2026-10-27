@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 public class CftlibExec extends JavaExec {
     public AuthMode authMode = AuthMode.AAT;
+    public DependencyMode dependencyMode = DependencyMode.Docker;
     private List<String> testPatterns = List.of();
 
     public CftlibExec() {
@@ -57,6 +58,7 @@ public class CftlibExec extends JavaExec {
     private void configure() {
         setRequiredJvmArgs();
         setStandardEnvVars();
+        environment("RSE_LIB_DEPENDENCY_MODE", dependencyMode.name().toLowerCase());
         if (authMode == AuthMode.Local) {
             environment("RSE_LIB_AUTH-MODE", "localAuth");
             // Enable idam simulator

@@ -263,11 +263,10 @@ public class CFTLibApiImpl implements CFTLib {
     @SneakyThrows
     @Override
     public Connection getConnection(Database database) {
-        var port = ControlPlane.getEnvVar("RSE_LIB_DB_PORT", 6432);
-        var host = ControlPlane.getEnvVar("RSE_LIB_DB_HOST", "localhost");
         return DriverManager.getConnection(
-                "jdbc:postgresql://" + host + ":" + port + "/" + String.valueOf(database).toLowerCase(),
-                "postgres", "postgres");
+                "jdbc:postgresql://" + CftlibConfig.dbHost() + ":" + CftlibConfig.dbPort()
+                    + "/" + String.valueOf(database).toLowerCase(),
+                CftlibConfig.dbUsername(), CftlibConfig.dbPassword());
     }
 
     @SneakyThrows

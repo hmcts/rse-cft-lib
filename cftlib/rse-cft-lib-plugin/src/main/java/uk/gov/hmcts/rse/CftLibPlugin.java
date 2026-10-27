@@ -220,6 +220,9 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.dependsOn("cftlibTestClasses");
         exec.args(file);
         exec.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
+        // No test needs XUI, and starting it costs an image pull or a node build.
+        exec.environment("RSE_LIB_XUI", "off");
+        exec.environment("RSE_LIB_XUI_MO", "off");
         exec.getOutputs().upToDateWhen(x -> false);
         return exec;
     }

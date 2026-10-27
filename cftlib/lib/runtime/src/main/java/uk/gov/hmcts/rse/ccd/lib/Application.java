@@ -10,7 +10,7 @@ public class Application {
     public static void main(String[] args) {
         // Load and register the postgres driver in java.sql.DriverManager
         Class.forName("org.postgresql.Driver");
-        new Thread(new ComposeRunner()::startBoot).start();
+        new Thread(new DependencyBoot()::startBoot).start();
         SpringApplication.run(Application.class, args);
     }
 }
