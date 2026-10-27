@@ -29,10 +29,17 @@ public class EmbeddedPostgres implements ManagedDependency {
     private io.zonky.test.db.postgres.embedded.EmbeddedPostgres instance;
 
     public EmbeddedPostgres() {
+        this(CftlibConfig.dbPort());
+    }
+
+    private EmbeddedPostgres(int port) {
         this(
-            buildDirectory(System.getenv("RSE_LIB_LOG_FOLDER")).resolve("postgres"),
+            // Per port, since bootWithCCD and cftlibTest are commonly configured with different
+            // ports and a cluster left running on one would hold the other's data directory.
+            buildDirectory(System.getenv("RSE_LIB_LOG_FOLDER")).resolve("postgres").resolve(
+                String.valueOf(port)),
             logFolder(System.getenv("RSE_LIB_LOG_FOLDER")).resolve("postgres.log"),
-            CftlibConfig.dbPort(),
+            port,
             System.getenv("RSE_LIB_CLEAN_BOOT") != null,
             System.getenv("RSE_LIB_CLEAN_BOOT") == null && System.getenv("CI") == null);
     }
