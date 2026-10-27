@@ -148,6 +148,36 @@ class EsStubTest {
     }
 
     @Test
+    void fetchesAnIndexedDocumentById() throws Exception {
+        var response = get("/" + CASES_INDEX + "/_doc/" + caseDataId(1234567890123456L));
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        var document = mapper.readTree(response.body());
+        assertThat(document.get("found").asBoolean()).isTrue();
+        assertThat(document.at("/_source/data/applicant1FirstName").asText()).isEqualTo("Ann-Marie");
+        assertThat(response.headers().firstValue("X-Elastic-Product")).hasValue("Elasticsearch");
+    }
+
+    @Test
+    void reportsAnAbsentDocumentAsNotFound() throws Exception {
+        var response = get("/" + CASES_INDEX + "/_doc/99999999");
+
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(mapper.readTree(response.body()).get("found").asBoolean()).isFalse();
+    }
+
+    private long caseDataId(long reference) throws Exception {
+        try (var c = connect("datastore");
+             var s = c.prepareStatement("select id from case_data where reference = ?")) {
+            s.setLong(1, reference);
+            try (var rs = s.executeQuery()) {
+                rs.next();
+                return rs.getLong(1);
+            }
+        }
+    }
+
+    @Test
     void healthIsGreenSoThatTheReadinessProbePasses() throws Exception {
         var response = get("/_cat/health");
 

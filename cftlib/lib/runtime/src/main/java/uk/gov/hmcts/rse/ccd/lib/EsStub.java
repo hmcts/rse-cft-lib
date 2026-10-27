@@ -92,6 +92,9 @@ public class EsStub implements ManagedDependency {
                 respond(exchange, 200, msearch(body(exchange), indexOf(path, "/_msearch")));
             } else if ("POST".equals(method) && path.endsWith("/_search")) {
                 search(exchange, indexOf(path, "/_search"));
+            } else if ("GET".equals(method) && path.contains("/_doc/")) {
+                var parts = path.substring(1).split("/_doc/", 2);
+                document(exchange, parts[0], parts[1]);
             } else {
                 respond(exchange, 404, error(EsStubException.badRequest(
                     method + " " + path + " is not served. The cftlib elasticsearch stub answers only '/', "
@@ -179,6 +182,38 @@ public class EsStub implements ManagedDependency {
             }
         }
         return fallback;
+    }
+
+    /**
+     * Fetches one indexed document by id, which consumers use to assert on what indexing
+     * produced rather than to search.
+     */
+    private void document(HttpExchange exchange, String index, String id) throws IOException, SQLException {
+        for (var source : sources.sourcesFor(index)) {
+            try (var c = sources.connect(source);
+                 var s = c.prepareStatement("select u.document from (\n"
+                     + sources.documentView(source, index)
+                     + ") u where u.index_id = ? and u.id::text = ?")) {
+                s.setString(1, index);
+                s.setString(2, id);
+                try (var rs = s.executeQuery()) {
+                    if (rs.next()) {
+                        var found = mapper.createObjectNode();
+                        found.put("_index", index);
+                        found.put("_id", id);
+                        found.put("found", true);
+                        found.set("_source", mapper.readTree(rs.getString("document")));
+                        respond(exchange, 200, found);
+                        return;
+                    }
+                }
+            }
+        }
+        var missing = mapper.createObjectNode();
+        missing.put("_index", index);
+        missing.put("_id", id);
+        missing.put("found", false);
+        respond(exchange, 404, missing);
     }
 
     private ObjectNode execute(String index, JsonNode body) throws SQLException {
