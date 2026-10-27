@@ -90,7 +90,13 @@ class EsStubSources {
                 owning.add(source);
             }
         }
-        return owning;
+
+        // A decentralised service's case data lives in its own database, while the data store keeps
+        // a metadata-only row for the same case. Only the service's data is ever indexed, because
+        // the centralised indexer is off for those case types, so the data store row must not
+        // shadow it here either.
+        var decentralised = owning.stream().filter(Source::decentralised).toList();
+        return decentralised.isEmpty() ? owning : decentralised;
     }
 
     /**
