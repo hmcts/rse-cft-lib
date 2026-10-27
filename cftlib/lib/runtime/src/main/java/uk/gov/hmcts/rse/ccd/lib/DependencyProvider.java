@@ -10,4 +10,10 @@ public interface DependencyProvider {
      * Readiness is signalled separately by {@link Readiness}.
      */
     void start();
+
+    /**
+     * Shut down anything this provider started outside the JVM. Idempotent.
+     */
+    default void stop() {
+    }
 }

@@ -15,6 +15,10 @@ public class DependencyBoot {
     public void startBoot() {
         try {
             var provider = provider();
+            // Halting runs no shutdown hooks, and failing fast on an unhandled error is the
+            // ordinary way a boot ends, so teardown is registered with the control plane too.
+            ControlPlane.setShutdownTask(provider::stop);
+            Runtime.getRuntime().addShutdownHook(new Thread(provider::stop, "cftlib-stop-dependencies"));
             // Start our monitoring of the dependencies before we start them, since starting
             // can take a few seconds and we don't want to block boot if they are already running.
             ControlPlane.setApi(new CFTLibApiImpl());
@@ -43,9 +47,39 @@ public class DependencyBoot {
 
     private DependencyProvider provider() {
         return switch (CftlibConfig.dependencyMode()) {
-            case DOCKER -> new ComposeRunner();
+            case DOCKER -> dockerProvider();
             case PROCESS -> new ProcessProvider();
         };
+    }
+
+    /**
+     * Compose starts the containers whatever the individual dependencies are set to, and other
+     * parts of the boot do honour those settings, so a value compose cannot deliver has to be
+     * rejected rather than half applied.
+     */
+    private DependencyProvider dockerProvider() {
+        requireDocker("RSE_LIB_DB", CftlibConfig.dbMode(), CftlibConfig.DbMode.DOCKER);
+        requireDocker("RSE_LIB_ES", CftlibConfig.esMode(), CftlibConfig.EsMode.DOCKER);
+        // XUI can be turned off in docker mode, since its containers sit behind a compose profile.
+        if (CftlibConfig.xuiMode() == CftlibConfig.XuiMode.PROCESS) {
+            throw unsupported("RSE_LIB_XUI", "process");
+        }
+        if (CftlibConfig.xuiManageOrgMode() == CftlibConfig.XuiMode.PROCESS) {
+            throw unsupported("RSE_LIB_XUI_MO", "process");
+        }
+        return new ComposeRunner();
+    }
+
+    private <T extends Enum<T>> void requireDocker(String var, T configured, T docker) {
+        if (configured != docker) {
+            throw unsupported(var, configured.name().toLowerCase());
+        }
+    }
+
+    private IllegalStateException unsupported(String var, String value) {
+        return new IllegalStateException(var + "=" + value + " cannot be combined with "
+            + "RSE_LIB_DEPENDENCY_MODE=docker, which runs every dependency as a container. Set "
+            + "RSE_LIB_DEPENDENCY_MODE=process to choose dependencies individually.");
     }
 
     private void monitorStartingServices() {

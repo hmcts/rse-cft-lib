@@ -103,9 +103,11 @@ public class EsStub implements ManagedDependency {
                 var parts = path.substring(1).split("/_doc/", 2);
                 document(exchange, parts[0], parts[1]);
             } else {
-                respond(exchange, 404, error(EsStubException.badRequest(
+                // The status in the body has to agree with the transport's: elasticsearch clients
+                // read the envelope's status for multi search items.
+                respond(exchange, 404, error(new EsStubException(EsStubException.BAD_REQUEST, 404,
                     method + " " + path + " is not served. The cftlib elasticsearch stub answers only '/', "
-                        + "'/_cat/health', '/{index}/_search' and '/_msearch'.")));
+                        + "'/_cat/health', '/{index}/_doc/{id}', '/{index}/_search' and '/_msearch'.")));
             }
         } catch (EsStubException e) {
             respond(exchange, e.status(), error(e));

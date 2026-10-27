@@ -22,7 +22,9 @@ final class NodeVersions {
 
     static boolean satisfies(String version, String range) {
         var found = parse(version);
-        for (var clause : range.trim().split("\\s*,\\s*|\\s+")) {
+        // An operator may be written apart from its version, as in '>= 24.22.1'.
+        var clauses = range.trim().replaceAll("(>=|<=|>|<|=)\\s+", "$1");
+        for (var clause : clauses.split("\\s*,\\s*|\\s+")) {
             if (!clause.isEmpty() && !satisfiesClause(found, clause)) {
                 return false;
             }

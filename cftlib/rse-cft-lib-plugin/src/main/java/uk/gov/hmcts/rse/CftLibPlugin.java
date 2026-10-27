@@ -60,6 +60,9 @@ public class CftLibPlugin implements Plugin<Project> {
         createBootWithCCDTask(project, manifestTask, "bootWithCCD");
         var dumpDefinitions = createBootWithCCDTask(project, manifestTask, "dumpCCDDefinitions");
         dumpDefinitions.environment("RSE_LIB_DUMP_DEFINITIONS", "true");
+        // Dumping definitions does not involve XUI, and building it would cost minutes.
+        dumpDefinitions.environment("RSE_LIB_XUI", "off");
+        dumpDefinitions.environment("RSE_LIB_XUI_MO", "off");
         dumpDefinitions.authMode = AuthMode.Local;
         dumpDefinitions.getOutputs().upToDateWhen(x -> false);
 

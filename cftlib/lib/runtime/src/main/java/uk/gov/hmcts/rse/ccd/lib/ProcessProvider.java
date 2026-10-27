@@ -11,6 +11,8 @@ import lombok.SneakyThrows;
  */
 public class ProcessProvider implements DependencyProvider {
 
+    private final List<ManagedDependency> started = new CopyOnWriteArrayList<>();
+
     @Override
     @SneakyThrows
     public void start() {
@@ -25,6 +27,7 @@ public class ProcessProvider implements DependencyProvider {
                 try {
                     System.out.println("**** Cftlib starting " + dependency.name());
                     dependency.start();
+                    started.add(dependency);
                 } catch (Throwable e) {
                     failures.add(new RuntimeException("Failed to start " + dependency.name(), e));
                 }
@@ -34,11 +37,31 @@ public class ProcessProvider implements DependencyProvider {
             t.start();
             threads.add(t);
         }
-        for (var t : threads) {
-            t.join();
+
+        // Reported as soon as any dependency fails rather than once they have all finished:
+        // building XUI takes minutes, and waiting for it would hide a database that failed
+        // in seconds behind a readiness timeout.
+        while (failures.isEmpty() && threads.stream().anyMatch(Thread::isAlive)) {
+            for (var t : threads) {
+                t.join(100);
+                if (!failures.isEmpty()) {
+                    break;
+                }
+            }
         }
         if (!failures.isEmpty()) {
             throw failures.get(0);
+        }
+    }
+
+    @Override
+    public void stop() {
+        for (var dependency : started) {
+            try {
+                dependency.stop();
+            } catch (Exception e) {
+                System.out.println("**** Cftlib failed to stop " + dependency.name() + ": " + e.getMessage());
+            }
         }
     }
 

@@ -84,8 +84,7 @@ public class EmbeddedPostgres implements ManagedDependency {
 
     @Override
     public void start() throws IOException {
-        if (cleanBoot) {
-            stopPreviousRun();
+        if (cleanBoot && stopPreviousRun()) {
             deleteDataDirectory();
         }
 
@@ -146,12 +145,12 @@ public class EmbeddedPostgres implements ManagedDependency {
      * Shuts down the postgres a previous boot deliberately left running, so that a clean boot can
      * delete its data directory.
      */
-    private void stopPreviousRun() {
+    private boolean stopPreviousRun() {
         var process = postmasterPid()
             .flatMap(ProcessHandle::of)
             .filter(ProcessHandle::isAlive);
         if (process.isEmpty()) {
-            return;
+            return true;
         }
 
         var postmaster = process.get();
@@ -164,9 +163,12 @@ public class EmbeddedPostgres implements ManagedDependency {
         }
 
         if (Ports.isListening(CftlibConfig.dbHost(), port)) {
+            // Its data directory must be left alone: it belongs to the server still serving it.
             System.out.println("**** Cftlib could not free port " + port + ", so the database already "
                 + "listening there will be used as it is rather than being recreated");
+            return false;
         }
+        return true;
     }
 
     private boolean ownPostgresIsRunning() {

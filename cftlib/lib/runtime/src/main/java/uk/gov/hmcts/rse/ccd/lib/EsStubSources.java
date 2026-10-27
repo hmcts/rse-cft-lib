@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -44,17 +45,50 @@ class EsStubSources {
     }
 
     private final Map<String, Source> probed = new LinkedHashMap<>();
+    private final Set<String> skipped = new LinkedHashSet<>();
     private final Set<String> caseTypeOwners = ConcurrentHashMap.newKeySet();
     private final List<String> configured;
     private final Connections connections;
+    private final Set<String> optional;
 
     EsStubSources() {
-        this(ControlPlane.getEnvVar("RSE_LIB_ES_STUB_SOURCES", Database.Datastore.toString().toLowerCase(Locale.ROOT)),
-            EsStubSources::cftlibConnection);
+        this(ControlPlane.getEnvVar("RSE_LIB_ES_STUB_SOURCES", defaultSources()), EsStubSources::cftlibConnection,
+            System.getenv("RSE_LIB_ES_STUB_SOURCES") == null ? discovered() : Set.of());
+    }
+
+    /**
+     * The data store plus any database the consuming build asked cftlib to create. A decentralised
+     * service keeps its case data in one of those, and searching only the data store would answer
+     * from its metadata rows, whose case data is empty. Databases that turn out to hold no case
+     * data are dropped when they are probed.
+     */
+    private static String defaultSources() {
+        var sources = new ArrayList<String>();
+        sources.add(Database.Datastore.toString().toLowerCase(Locale.ROOT));
+        sources.addAll(discovered());
+        return String.join(",", sources);
+    }
+
+    private static Set<String> discovered() {
+        var databases = new LinkedHashSet<String>();
+        var additional = System.getenv("RSE_LIB_ADDITIONAL_DATABASES");
+        if (additional != null) {
+            for (var database : additional.split(",")) {
+                if (!database.isBlank()) {
+                    databases.add(database.trim());
+                }
+            }
+        }
+        return databases;
     }
 
     EsStubSources(String configuration, Connections connections) {
+        this(configuration, connections, Set.of());
+    }
+
+    EsStubSources(String configuration, Connections connections, Set<String> optional) {
         this.connections = connections;
+        this.optional = optional;
         configured = new ArrayList<>();
         for (var entry : configuration.split(",")) {
             if (!entry.isBlank()) {
@@ -78,7 +112,10 @@ class EsStubSources {
     List<Source> sourcesFor(String index) throws SQLException {
         var sources = new ArrayList<Source>();
         for (var entry : configured) {
-            sources.add(source(entry));
+            var source = source(entry);
+            if (source != null) {
+                sources.add(source);
+            }
         }
         if (GLOBAL_SEARCH_INDEX.equals(index)) {
             // Global search spans case types and so every source, including the data store for
@@ -131,6 +168,9 @@ class EsStubSources {
     }
 
     private synchronized Source source(String entry) throws SQLException {
+        if (skipped.contains(entry)) {
+            return null;
+        }
         var cached = probed.get(entry);
         if (cached != null) {
             return cached;
@@ -145,6 +185,14 @@ class EsStubSources {
             System.out.println("**** Cftlib elasticsearch stub reading " + (resolved.decentralised()
                 ? "decentralised" : "centralised") + " case data from " + database + "." + resolved.schema());
             return resolved;
+        } catch (IllegalStateException | SQLException e) {
+            // A database cftlib discovered rather than was told about may hold no case data at
+            // all, which is not a misconfiguration to report.
+            if (!optional.contains(entry)) {
+                throw e;
+            }
+            skipped.add(entry);
+            return null;
         }
     }
 

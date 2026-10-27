@@ -224,7 +224,17 @@ class EsQueryTranslatorTest {
     @Test
     void mustNotIsNegated() {
         assertThat(translate("{\"query\":{\"bool\":{\"must_not\":[{\"match_all\":{}}]}}}").where())
-            .isEqualTo("(not (true))");
+            .isEqualTo("(not coalesce(true, false))");
+    }
+
+    @Test
+    void mustNotKeepsRowsWhoseMetadataColumnIsNull() {
+        // A null column makes the predicate null, and elasticsearch returns a document whose
+        // field is missing, so the negation has to treat null as "did not match".
+        var query = "{\"query\":{\"bool\":{\"must_not\":[{\"range\":"
+            + "{\"last_state_modified_date\":{\"gte\":\"2024-01-01\"}}}]}}}";
+
+        assertThat(translate(query).where()).startsWith("(not coalesce(");
     }
 
     @Test

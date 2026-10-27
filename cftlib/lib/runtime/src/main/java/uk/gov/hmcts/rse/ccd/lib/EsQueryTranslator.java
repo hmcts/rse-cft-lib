@@ -34,7 +34,9 @@ class EsQueryTranslator {
      * as {@code CARE_SUPERVISION_EPO} remains a single token.
      */
     static final String TOKEN_SEPARATOR_REGEX = "[^[:alnum:]_]+";
-    private static final String TOKEN_SEPARATOR_JAVA_REGEX = "[^\\p{Alnum}_]+";
+    // Matched against postgres, which applies its locale: an ASCII-only class here would
+    // tokenise an accented name differently from the column it is compared with.
+    private static final String TOKEN_SEPARATOR_JAVA_REGEX = "[^\\p{IsAlphabetic}\\p{IsDigit}_]+";
 
     private static final String KEYWORD_SUFFIX = ".keyword";
     private static final String TABLE = "u";
@@ -207,7 +209,9 @@ class EsQueryTranslator {
             conjuncts.add(query(clause, scope, params));
         }
         for (var clause : clauses(node.get("must_not"), "must_not")) {
-            conjuncts.add("not (" + query(clause, scope, params) + ")");
+            // A metadata column predicate is null when the column is, and elasticsearch treats a
+            // missing field as not matching the clause, so the row must survive the negation.
+            conjuncts.add("not coalesce(" + query(clause, scope, params) + ", false)");
         }
 
         var shoulds = new ArrayList<String>();

@@ -99,6 +99,12 @@ public class CftlibExec extends JavaExec {
         if (wanted("RSE_LIB_XUI_MO")) {
             profiles.add("xui-mo");
         }
+        var inherited = String.valueOf(getEnvironment().getOrDefault("COMPOSE_PROFILES", ""));
+        for (var profile : inherited.split(",")) {
+            if (!profile.isBlank() && !profiles.contains(profile.trim())) {
+                profiles.add(profile.trim());
+            }
+        }
         environment("COMPOSE_PROFILES", String.join(",", profiles));
     }
 

@@ -97,10 +97,26 @@ public class ControlPlane {
             : v;
     }
 
+    private static volatile Runnable shutdownTask = () -> {
+    };
+
+    /**
+     * Registers work to run before the JVM is halted, for dependencies cftlib started outside it:
+     * halting runs no shutdown hooks, and this is the ordinary way a cftlib boot ends.
+     */
+    public static void setShutdownTask(Runnable task) {
+        shutdownTask = task;
+    }
+
     // Immediately terminate upon an unhandled error that has caused a service to terminate.
     // This will ensure the JVM terminates even if we've started other threads.
     public static final Thread.UncaughtExceptionHandler failFast = (thread, exception) -> {
         exception.printStackTrace();
+        try {
+            shutdownTask.run();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
         System.out.println("*** Cftlib thread " + thread.getName() + " terminated with an unhandled exception ***");
         System.out.println("Logs are available in build/cftlib/logs");
         System.out.println("For further support visit https://moj.enterprise.slack.com/archives/C033F1GDD6Z");
