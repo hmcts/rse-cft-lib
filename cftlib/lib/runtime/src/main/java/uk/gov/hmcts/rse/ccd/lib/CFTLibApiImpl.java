@@ -272,6 +272,11 @@ public class CFTLibApiImpl implements CFTLib {
     @SneakyThrows
     @Override
     public void createGlobalSearchIndex() {
+        if (CftlibConfig.esMode() == CftlibConfig.EsMode.STUB) {
+            // The definition store's elastic support, including this endpoint, is switched off
+            // alongside the indexers, and the stub derives the global search index from case data.
+            return;
+        }
         HttpPost create = new HttpPost("http://localhost:4451/elastic-support/global-search/index");
         create.addHeader("Authorization", "Bearer " + buildJwt());
         create.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));

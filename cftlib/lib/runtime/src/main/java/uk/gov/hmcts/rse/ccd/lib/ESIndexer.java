@@ -24,6 +24,10 @@ public class ESIndexer {
     @SneakyThrows
     @Autowired
     public ESIndexer() {
+        if (CftlibConfig.esMode() == CftlibConfig.EsMode.STUB) {
+            // The stub answers searches from the case tables, so there is nothing to index.
+            return;
+        }
         var t = new Thread(this::index);
         t.setDaemon(true);
         t.setUncaughtExceptionHandler(ControlPlane.failFast);
