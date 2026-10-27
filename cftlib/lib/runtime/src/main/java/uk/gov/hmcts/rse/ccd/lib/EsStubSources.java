@@ -81,6 +81,10 @@ class EsStubSources {
             sources.add(source(entry));
         }
         if (GLOBAL_SEARCH_INDEX.equals(index)) {
+            // Global search spans case types and so every source, including the data store for
+            // centralised ones. A decentralised service's data store row cannot contribute a
+            // duplicate because the global search views only project cases whose data carries
+            // SearchCriteria, and that row holds no data.
             return sources;
         }
         var caseTypeId = caseTypeOf(index);

@@ -447,7 +447,7 @@ The host's node must satisfy the app's own `engines.node` range, which cftlib ch
 
 Unlike the containers, which are left up between runs, the postgres and XUI processes are shut down with the JVM. What makes a restart fast is the state they leave on disk rather than the processes themselves: the postgres data directory persists, so the server comes back in about a second with its databases intact, and XUI's clone, dependencies and build output are cached, so only the node startup is repeated. `RSE_LIB_CLEAN_BOOT` recreates both.
 
-A JVM killed outright — `kill -9`, or an application that calls `Runtime.halt` — gets no chance to shut them down. Cftlib adopts a postgres it finds on its own port with its own data directory, so the next boot in process mode simply reuses it, but the port stays occupied until it exits, which will stop the containers binding if you switch back to docker mode.
+A JVM killed outright — `kill -9`, or an application that calls `Runtime.halt` — gets no chance to shut them down. Cftlib recognises a postgres or XUI left behind by one of its own boots and reuses it, so the next boot in process mode carries on, but the port stays occupied until that process exits, which will stop the containers binding if you switch back to docker mode. Anything else holding one of these ports is reported rather than used, since serving from a stale container is worse than failing.
 
 ### Live reload
 

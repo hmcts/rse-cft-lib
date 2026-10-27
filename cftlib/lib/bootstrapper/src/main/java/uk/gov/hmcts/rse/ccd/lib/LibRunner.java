@@ -73,29 +73,29 @@ public class LibRunner {
 
         System.setProperty("USER_PROFILE_DB_HOST", dbHost);
         System.setProperty("USER_PROFILE_DB_PORT", dbPort);
-        System.setProperty("USER_PROFILE_DB_USERNAME", "postgres");
-        System.setProperty("USER_PROFILE_DB_PASSWORD", "postgres");
+        System.setProperty("USER_PROFILE_DB_USERNAME", "${RSE_LIB_DB_USERNAME:postgres}");
+        System.setProperty("USER_PROFILE_DB_PASSWORD", "${RSE_LIB_DB_PASSWORD:postgres}");
         System.setProperty("USER_PROFILE_DB_NAME", "userprofile");
         System.setProperty("USER_PROFILE_DB_OPTIONS", "?stringtype=unspecified");
 
         System.setProperty("DATA_STORE_DB_HOST", dbHost);
         System.setProperty("DATA_STORE_DB_PORT", dbPort);
-        System.setProperty("DATA_STORE_DB_USERNAME", "postgres");
-        System.setProperty("DATA_STORE_DB_PASSWORD", "postgres");
+        System.setProperty("DATA_STORE_DB_USERNAME", "${RSE_LIB_DB_USERNAME:postgres}");
+        System.setProperty("DATA_STORE_DB_PASSWORD", "${RSE_LIB_DB_PASSWORD:postgres}");
         System.setProperty("DATA_STORE_DB_NAME", "datastore");
         System.setProperty("DATA_STORE_DB_OPTIONS", "?stringtype=unspecified");
 
         System.setProperty("DEFINITION_STORE_DB_HOST", dbHost);
         System.setProperty("DEFINITION_STORE_DB_PORT", dbPort);
-        System.setProperty("DEFINITION_STORE_DB_USERNAME", "postgres");
-        System.setProperty("DEFINITION_STORE_DB_PASSWORD", "postgres");
+        System.setProperty("DEFINITION_STORE_DB_USERNAME", "${RSE_LIB_DB_USERNAME:postgres}");
+        System.setProperty("DEFINITION_STORE_DB_PASSWORD", "${RSE_LIB_DB_PASSWORD:postgres}");
         System.setProperty("DEFINITION_STORE_DB_NAME", "definitionstore");
 
         System.setProperty("ROLE_ASSIGNMENT_DB_HOST", dbHost);
         System.setProperty("ROLE_ASSIGNMENT_DB_PORT", dbPort);
         System.setProperty("ROLE_ASSIGNMENT_DB_NAME", "am");
-        System.setProperty("ROLE_ASSIGNMENT_DB_USERNAME", "postgres");
-        System.setProperty("ROLE_ASSIGNMENT_DB_PASSWORD", "postgres");
+        System.setProperty("ROLE_ASSIGNMENT_DB_USERNAME", "${RSE_LIB_DB_USERNAME:postgres}");
+        System.setProperty("ROLE_ASSIGNMENT_DB_PASSWORD", "${RSE_LIB_DB_PASSWORD:postgres}");
 
         var esHost = getenv("SEARCH_ELASTIC_HOSTS") != null ? getenv("SEARCH_ELASTIC_HOSTS") : "http://localhost:9200";
 

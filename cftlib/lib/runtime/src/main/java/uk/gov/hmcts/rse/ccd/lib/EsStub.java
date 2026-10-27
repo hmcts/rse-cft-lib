@@ -223,17 +223,34 @@ public class EsStub implements ManagedDependency {
         respond(exchange, 404, missing);
     }
 
+    private Connection connect(EsStubSources.Source source) {
+        try {
+            return sources.connect(source);
+        } catch (SQLException e) {
+            throw new EsStubException(EsStubException.QUERY_ERROR, 500,
+                "The cftlib elasticsearch stub could not reach " + source.database() + ": " + e.getMessage());
+        }
+    }
+
     private ObjectNode execute(String index, JsonNode body) throws SQLException {
         var translator = new EsQueryTranslator(mapper);
         var search = translator.translate(body);
-        var matching = sources.sourcesFor(index);
+        List<EsStubSources.Source> matching;
+        try {
+            matching = sources.sourcesFor(index);
+        } catch (SQLException e) {
+            // Reported against this search rather than thrown, so that one unreachable database
+            // does not fail every search in a multi search.
+            throw new EsStubException(EsStubException.QUERY_ERROR, 500,
+                "The cftlib elasticsearch stub could not reach the databases holding case data: " + e.getMessage());
+        }
 
         var hits = mapper.createArrayNode();
         long total = 0;
         var wanted = search.from() + search.size();
         var answering = 0;
         for (var source : matching) {
-            try (var c = sources.connect(source)) {
+            try (var c = connect(source)) {
                 total += count(c, source, index, search);
                 if (hits.size() < wanted) {
                     var before = hits.size();

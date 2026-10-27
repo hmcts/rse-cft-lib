@@ -7,21 +7,47 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class XuiTest {
 
     @Test
-    void adoptsAnInstanceThatIsAlreadyListening() throws Exception {
+    void reusesAnInstanceItLeftRunning(@TempDir Path cache) throws Exception {
         try (var listening = new ServerSocket(0)) {
+            var port = listening.getLocalPort();
+            // The pid of a live process on that port is what identifies it as ours; this JVM is
+            // holding the socket, so its own pid is exactly that.
+            var pidFile = Files.createDirectories(cache.resolve("xui")).resolve("manage-cases.pid");
+            Files.writeString(pidFile, ProcessHandle.current().pid() + " " + port);
+
             // A checkout that does not exist, so anything beyond adoption would fail.
             var source = Map.of(
-                "XUI_PORT", Integer.toString(listening.getLocalPort()),
+                "XUI_PORT", Integer.toString(port),
+                "RSE_LIB_CACHE_DIR", cache.toString(),
                 "RSE_LIB_XUI_DIR", "/cftlib/does/not/exist");
 
             assertThatCode(() -> Xui.manageCases().start(source)).doesNotThrowAnyException();
+        }
+    }
+
+    @Test
+    void refusesAPortHeldBySomethingElse(@TempDir Path cache) throws Exception {
+        try (var listening = new ServerSocket(0)) {
+            // No pid file, so the listener is not one of ours: a leftover container, most often.
+            var source = Map.of(
+                "XUI_PORT", Integer.toString(listening.getLocalPort()),
+                "RSE_LIB_CACHE_DIR", cache.toString(),
+                "RSE_LIB_XUI_DIR", "/cftlib/does/not/exist");
+
+            assertThatThrownBy(() -> Xui.manageCases().start(source))
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("already in use")
+                .hasMessageContaining("RSE_LIB_XUI=off");
         }
     }
 

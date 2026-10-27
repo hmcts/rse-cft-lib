@@ -11,8 +11,6 @@ import lombok.SneakyThrows;
  */
 public class ProcessProvider implements DependencyProvider {
 
-    private final List<ManagedDependency> started = new CopyOnWriteArrayList<>();
-
     @Override
     @SneakyThrows
     public void start() {
@@ -27,7 +25,6 @@ public class ProcessProvider implements DependencyProvider {
                 try {
                     System.out.println("**** Cftlib starting " + dependency.name());
                     dependency.start();
-                    started.add(dependency);
                 } catch (Throwable e) {
                     failures.add(new RuntimeException("Failed to start " + dependency.name(), e));
                 }
@@ -42,16 +39,6 @@ public class ProcessProvider implements DependencyProvider {
         }
         if (!failures.isEmpty()) {
             throw failures.get(0);
-        }
-    }
-
-    public void stop() {
-        for (var dependency : started) {
-            try {
-                dependency.stop();
-            } catch (Exception e) {
-                System.out.println("Failed to stop " + dependency.name() + ": " + e.getMessage());
-            }
         }
     }
 

@@ -13,8 +13,18 @@ class XuiBuildMarkerTest {
     private static final String COMMIT = "4d344f6ff7815ecf507a9db38667be6a7cf8d375";
 
     @Test
+    void anEditedCheckoutIsNotUpToDate(@TempDir Path tempDir) throws Exception {
+        var marker = tempDir.resolve("manage-cases.built");
+        var checkout = tempDir.resolve("cache/manage-cases");
+
+        XuiBuildMarker.write(marker, checkout, COMMIT, "clean");
+
+        assertThat(XuiBuildMarker.upToDate(marker, checkout, COMMIT, "a1b2c3:42")).isFalse();
+    }
+
+    @Test
     void anAbsentMarkerIsNotUpToDate(@TempDir Path tempDir) throws Exception {
-        assertThat(XuiBuildMarker.upToDate(tempDir.resolve("manage-cases.built"), tempDir, COMMIT)).isFalse();
+        assertThat(XuiBuildMarker.upToDate(tempDir.resolve("manage-cases.built"), tempDir, COMMIT, "clean")).isFalse();
     }
 
     @Test
@@ -22,9 +32,9 @@ class XuiBuildMarkerTest {
         var marker = tempDir.resolve("markers/manage-cases.built");
         var checkout = tempDir.resolve("manage-cases");
 
-        XuiBuildMarker.write(marker, checkout, COMMIT);
+        XuiBuildMarker.write(marker, checkout, COMMIT, "clean");
 
-        assertThat(XuiBuildMarker.upToDate(marker, checkout, COMMIT)).isTrue();
+        assertThat(XuiBuildMarker.upToDate(marker, checkout, COMMIT, "clean")).isTrue();
     }
 
     @Test
@@ -32,9 +42,9 @@ class XuiBuildMarkerTest {
         var marker = tempDir.resolve("manage-cases.built");
         var checkout = tempDir.resolve("manage-cases");
 
-        XuiBuildMarker.write(marker, checkout, COMMIT);
+        XuiBuildMarker.write(marker, checkout, COMMIT, "clean");
 
-        assertThat(XuiBuildMarker.upToDate(marker, checkout, "0000000000000000000000000000000000000000"))
+        assertThat(XuiBuildMarker.upToDate(marker, checkout, "0000000000000000000000000000000000000000", "clean"))
             .isFalse();
     }
 
@@ -42,20 +52,20 @@ class XuiBuildMarkerTest {
     void markerForAnotherCheckoutIsNotUpToDate(@TempDir Path tempDir) throws Exception {
         var marker = tempDir.resolve("manage-cases.built");
 
-        XuiBuildMarker.write(marker, tempDir.resolve("cache/manage-cases"), COMMIT);
+        XuiBuildMarker.write(marker, tempDir.resolve("cache/manage-cases"), COMMIT, "clean");
 
-        assertThat(XuiBuildMarker.upToDate(marker, tempDir.resolve("my-own-clone"), COMMIT)).isFalse();
+        assertThat(XuiBuildMarker.upToDate(marker, tempDir.resolve("my-own-clone"), COMMIT, "clean")).isFalse();
     }
 
     @Test
     void markerInAnOlderFormatIsNotUpToDate(@TempDir Path tempDir) throws Exception {
         var marker = tempDir.resolve("manage-cases.built");
         var checkout = tempDir.resolve("manage-cases");
-        XuiBuildMarker.write(marker, checkout, COMMIT);
+        XuiBuildMarker.write(marker, checkout, COMMIT, "clean");
 
         Files.writeString(marker, Files.readString(marker).replace("format=" + XuiBuildMarker.FORMAT, "format=0"));
 
-        assertThat(XuiBuildMarker.upToDate(marker, checkout, COMMIT)).isFalse();
+        assertThat(XuiBuildMarker.upToDate(marker, checkout, COMMIT, "clean")).isFalse();
     }
 
     @Test
@@ -63,7 +73,7 @@ class XuiBuildMarkerTest {
         var checkout = Files.createDirectories(tempDir.resolve("manage-cases"));
         var marker = tempDir.resolve("manage-cases.built");
 
-        XuiBuildMarker.write(marker, checkout, COMMIT);
+        XuiBuildMarker.write(marker, checkout, COMMIT, "clean");
 
         try (var contents = Files.list(checkout)) {
             assertThat(contents).isEmpty();

@@ -60,8 +60,17 @@ public class Xui implements ManagedDependency {
     void start(Map<String, String> source) throws Exception {
         var port = app.port(source, XuiEnvironment.Network.HOST);
         if (Ports.isListening(port)) {
-            log("already listening on port " + port + ", adopting it");
-            return;
+            // Only a process from one of our own boots, which a hard-killed JVM can leave behind.
+            // Anything else is usually a leftover cftlib container, and adopting that would serve
+            // the published image rather than the revision pinned for this build.
+            if (ownProcessIsRunning(source, port)) {
+                log("reusing the instance it left running on port " + port);
+                return;
+            }
+            throw new IOException("Port " + port + " is already in use, but not by a " + name()
+                + " cftlib started. A leftover cftlib container is the usual cause, and "
+                + "'docker compose -p cftlib down' clears it. Set RSE_LIB_XUI=off to run without "
+                + name() + ", or RSE_LIB_XUI=docker to use the published image.");
         }
 
         var node = source.getOrDefault("RSE_LIB_NODE", "node");
@@ -128,7 +137,14 @@ public class Xui implements ManagedDependency {
         }
         var declared = NodeVersions.enginesNode(Files.readString(packageJson));
         if (declared != null) {
-            NodeVersions.require(name() + " at " + checkout, declared, nodeVersion);
+            try {
+                NodeVersions.require(name() + " at " + checkout, declared, nodeVersion);
+            } catch (IllegalArgumentException e) {
+                // This check exists to report a pin that has drifted from the repository, so an
+                // engines range it cannot read must not be the thing that stops the boot.
+                log("could not read the node range '" + declared + "' declared by " + packageJson
+                    + ", so it has not been checked against " + nodeVersion);
+            }
         }
     }
 
@@ -162,7 +178,10 @@ public class Xui implements ManagedDependency {
     private void build(Path checkout, String node, Map<String, String> source) throws Exception {
         var marker = cacheRoot(source).resolve(app.slug() + ".built");
         var commit = head(checkout);
-        if (!forceRebuild(source) && XuiBuildMarker.upToDate(marker, checkout, commit)) {
+        // A checkout cftlib was pointed at can be edited, so the build has to follow the working
+        // tree and not just the commit.
+        var workingTree = workingTreeState(checkout);
+        if (!forceRebuild(source) && XuiBuildMarker.upToDate(marker, checkout, commit, workingTree)) {
             log("reusing the existing build of " + commit);
             return;
         }
@@ -171,7 +190,7 @@ public class Xui implements ManagedDependency {
         log("installing dependencies and building; this takes several minutes. Output in " + logFile());
         run(List.of(XuiCommands.yarn(node, yarn, app.installArgs())), checkout, XuiCommands.INSTALL_ENVIRONMENT);
         run(List.of(XuiCommands.yarn(node, yarn, List.of("build"))), checkout, XuiCommands.INSTALL_ENVIRONMENT);
-        XuiBuildMarker.write(marker, checkout, commit);
+        XuiBuildMarker.write(marker, checkout, commit, workingTree);
     }
 
     private void launch(Path checkout, String node, Map<String, String> source, int port) throws Exception {
@@ -184,11 +203,38 @@ public class Xui implements ManagedDependency {
         builder.environment().putAll(XuiCommands.processEnvironment(System.getenv(), computed));
 
         process = builder.start();
+        recordPid(source, port);
         shutdownHook = new Thread(this::stop, "cftlib-stop-" + name());
         Runtime.getRuntime().addShutdownHook(shutdownHook);
         log("starting on port " + port + "; logs in " + logFile());
         awaitPort(port);
         watch(process);
+    }
+
+    private Path pidFile(Map<String, String> source) {
+        return cacheRoot(source).resolve(app.slug() + ".pid");
+    }
+
+    private boolean ownProcessIsRunning(Map<String, String> source, int port) {
+        var file = pidFile(source);
+        if (!Files.isReadable(file)) {
+            return false;
+        }
+        try {
+            var parts = Files.readString(file).trim().split("\\s+");
+            if (parts.length != 2 || Integer.parseInt(parts[1]) != port) {
+                return false;
+            }
+            return ProcessHandle.of(Long.parseLong(parts[0])).filter(ProcessHandle::isAlive).isPresent();
+        } catch (IOException | NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private void recordPid(Map<String, String> source, int port) throws IOException {
+        var file = pidFile(source);
+        Files.createDirectories(file.getParent());
+        Files.writeString(file, process.pid() + " " + port);
     }
 
     /**
@@ -242,6 +288,16 @@ public class Xui implements ManagedDependency {
         }
         throw new IllegalStateException(name() + " did not listen on port " + port + " within "
             + START_TIMEOUT_SECONDS + " seconds. See " + logFile());
+    }
+
+    /**
+     * A digest of the checkout.s uncommitted changes, so that editing a checkout cftlib was
+     * pointed at invalidates its build while a stable working tree keeps reusing it.
+     */
+    private String workingTreeState(Path checkout) throws Exception {
+        var status = capture(List.of("git", "-C", checkout.toString(), "status", "--porcelain"));
+        return status.isBlank() ? "clean"
+            : Integer.toHexString(status.hashCode()) + ":" + status.length();
     }
 
     private String head(Path checkout) throws Exception {

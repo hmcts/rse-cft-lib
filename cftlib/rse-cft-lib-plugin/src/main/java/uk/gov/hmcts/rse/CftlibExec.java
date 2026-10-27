@@ -15,6 +15,7 @@ import org.gradle.jvm.toolchain.JavaToolchainService;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -91,9 +92,18 @@ public class CftlibExec extends JavaExec {
     // The XUI containers sit behind a compose profile so that runs which do not want them,
     // such as cftlibTest, do not pay for the image pull.
     private void setComposeProfiles() {
-        if (!"off".equalsIgnoreCase(String.valueOf(getEnvironment().get("RSE_LIB_XUI")))) {
-            environment("COMPOSE_PROFILES", "xui");
+        var profiles = new ArrayList<String>();
+        if (wanted("RSE_LIB_XUI")) {
+            profiles.add("xui");
         }
+        if (wanted("RSE_LIB_XUI_MO")) {
+            profiles.add("xui-mo");
+        }
+        environment("COMPOSE_PROFILES", String.join(",", profiles));
+    }
+
+    private boolean wanted(String var) {
+        return !"off".equalsIgnoreCase(String.valueOf(getEnvironment().get(var)));
     }
 
     // All services share a Java 21 JVM.

@@ -21,21 +21,23 @@ final class XuiBuildMarker {
     private XuiBuildMarker() {
     }
 
-    static boolean upToDate(Path marker, Path checkout, String commit) throws IOException {
+    static boolean upToDate(Path marker, Path checkout, String commit, String workingTree) throws IOException {
         if (!Files.exists(marker)) {
             return false;
         }
         var recorded = read(marker);
         return FORMAT.equals(recorded.getProperty("format"))
             && checkout.toString().equals(recorded.getProperty("checkout"))
-            && commit.equals(recorded.getProperty("commit"));
+            && commit.equals(recorded.getProperty("commit"))
+            && workingTree.equals(recorded.getProperty("workingTree"));
     }
 
-    static void write(Path marker, Path checkout, String commit) throws IOException {
+    static void write(Path marker, Path checkout, String commit, String workingTree) throws IOException {
         var properties = new Properties();
         properties.setProperty("format", FORMAT);
         properties.setProperty("checkout", checkout.toString());
         properties.setProperty("commit", commit);
+        properties.setProperty("workingTree", workingTree);
         Files.createDirectories(marker.getParent());
         try (var writer = Files.newBufferedWriter(marker, StandardCharsets.UTF_8)) {
             properties.store(writer, "Written by cftlib; delete to force an XUI rebuild");
