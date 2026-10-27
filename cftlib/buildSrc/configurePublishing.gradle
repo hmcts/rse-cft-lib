@@ -14,6 +14,15 @@ def configurePublishing(p) {
                 }
             }
 
+            // Build the idam simulator on CFTLib's Java 21 JVM rather than requiring its own JDK 17.
+            if (project.name == 'rse-idam-simulator') {
+                java {
+                    toolchain {
+                        languageVersion = JavaLanguageVersion.of(21)
+                    }
+                }
+            }
+
             // Configure publishing
             if (components.hasProperty('java')) {
                 configure(project) {

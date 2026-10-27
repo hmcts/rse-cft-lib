@@ -59,10 +59,9 @@ public class CftlibExec extends JavaExec {
         setRequiredJvmArgs();
         setStandardEnvVars();
         environment("RSE_LIB_DEPENDENCY_MODE", dependencyMode.name().toLowerCase());
+        setComposeProfiles();
         if (authMode == AuthMode.Local) {
             environment("RSE_LIB_AUTH-MODE", "localAuth");
-            // Enable idam simulator
-            environment("COMPOSE_PROFILES", "localAuth");
 
             // S2S simulator
             environment("IDAM_S2S-AUTH_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
@@ -82,6 +81,14 @@ public class CftlibExec extends JavaExec {
             fetchAndSetAATSecrets();
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
                 "https://idam-web-public.aat.platform.hmcts.net/o");
+        }
+    }
+
+    // The XUI containers sit behind a compose profile so that runs which do not want them,
+    // such as cftlibTest, do not pay for the image pull.
+    private void setComposeProfiles() {
+        if (!"off".equalsIgnoreCase(String.valueOf(getEnvironment().get("RSE_LIB_XUI")))) {
+            environment("COMPOSE_PROFILES", "xui");
         }
     }
 
