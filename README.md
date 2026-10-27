@@ -27,7 +27,7 @@ Improved local development and robust automated tests when working with CCD:
 
 - Java 21
 - Gradle 8.7
-- Docker
+- Docker (not needed in [process mode](#running-without-docker))
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) (when using automated AAT secret management)
 
 The bundled Docker Compose environment pulls some HMCTS images from `hmctsprod.azurecr.io`. Log in before running `bootWithCCD` or `cftlibTest`:
@@ -387,7 +387,65 @@ Services run on the following default ports:
 
 ### Clean boot
 
-For a clean boot define the RSE_LIB_CLEAN_BOOT environment variable, which will force recreate all docker containers upon boot.
+For a clean boot define the RSE_LIB_CLEAN_BOOT environment variable, which will force recreate all docker containers upon boot. In process mode it instead recreates the postgres data directory and rebuilds XUI.
+
+## Running without docker
+
+Cftlib can run its dependencies on the host instead of in containers:
+
+```groovy
+tasks.withType(uk.gov.hmcts.rse.CftlibExec) {
+    dependencyMode = uk.gov.hmcts.rse.DependencyMode.Process
+}
+```
+
+Or per run, without touching the build script:
+
+```sh
+RSE_LIB_DEPENDENCY_MODE=process ./gradlew cftlibTest
+```
+
+| Dependency | In docker mode | In process mode |
+| ---------- | -------------- | --------------- |
+| Postgres | `postgres:16` container | postgres run from the binaries published by `io.zonky.test`, downloaded on first use and cached in `~/.cftlib` |
+| Elasticsearch | `elasticsearch` container | a stub on port 9200 answering CCD's searches from postgres |
+| IDAM simulator | — | in the cftlib JVM in both modes |
+| XUI manage cases | container on port 3000 | built from a shallow clone with the host's node |
+| XUI manage organisations | container on port 3001 | off by default |
+
+Each dependency can be chosen independently, which is also how you opt out of one entirely:
+
+| Variable | Values | Default |
+| -------- | ------ | ------- |
+| `RSE_LIB_DEPENDENCY_MODE` | `docker`, `process` | `docker` |
+| `RSE_LIB_DB` | `docker`, `embedded`, `external` | follows the mode |
+| `RSE_LIB_ES` | `docker`, `stub`, `external` | follows the mode |
+| `RSE_LIB_XUI` | `docker`, `process`, `off` | follows the mode; `off` for `cftlibTest` |
+| `RSE_LIB_XUI_MO` | `docker`, `process`, `off` | `docker` in docker mode, `off` in process mode |
+
+`external` means cftlib uses something already running: set `RSE_LIB_DB_HOST`, `RSE_LIB_DB_PORT`, `RSE_LIB_DB_USERNAME` and `RSE_LIB_DB_PASSWORD` for a database, or `SEARCH_ELASTIC_HOSTS` for elasticsearch.
+
+### The elasticsearch stub
+
+The stub reads the case tables directly rather than maintaining an index, so there is no indexing lag — a case is searchable as soon as it is saved — and both the cftlib and SDK indexers are switched off. It answers the case type indices and `global_search`, for centralised and decentralised services alike.
+
+It supports the clauses CCD and XUI generate, and **rejects anything else with a 400 naming the clause** rather than returning no hits, so a query it cannot answer fails loudly instead of passing locally and failing in AAT. It does not score, and its text matching approximates elasticsearch's analysis, so it is not the place to validate a search feature — use `RSE_LIB_ES=docker` or point `SEARCH_ELASTIC_HOSTS` at a real cluster for that.
+
+Set `RSE_LIB_ES_STUB_SOURCES` to a comma separated list of `database[:schema]` if case data lives somewhere other than the `datastore` database.
+
+### XUI without docker
+
+Each XUI app is pinned to a commit, shallow cloned into `~/.cftlib` and built once per commit, which takes several minutes the first time. Point cftlib at a checkout you already have to skip the clone:
+
+```sh
+RSE_LIB_XUI_DIR=~/code/rpx-xui-webapp ./gradlew bootWithCCD
+```
+
+The host's node must satisfy the app's own `engines.node` range, which cftlib checks before cloning or building. `RSE_LIB_NODE` selects a particular node binary, `RSE_LIB_XUI_REF` and `RSE_LIB_XUI_REPO` override the pin, and `RSE_LIB_XUI_REBUILD` forces a rebuild.
+
+### Processes left running
+
+Docker leaves its containers up between runs so the next boot is fast, and process mode does the same with postgres: it stays running and the next boot adopts it. `RSE_LIB_CLEAN_BOOT` stops it and recreates the data directory, and cftlib prints the `kill` command when it leaves one behind. XUI is stopped with the JVM, but its clone, dependencies and build output are cached, so a restart only repeats the node startup.
 
 ### Live reload
 
