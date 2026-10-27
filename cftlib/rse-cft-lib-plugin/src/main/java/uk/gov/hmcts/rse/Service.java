@@ -74,6 +74,67 @@ public enum Service {
         "--WA_SYSTEM_USERNAME=" + Wa.SYSTEM_USERNAME,
         "--WA_SYSTEM_PASSWORD=" + Wa.SYSTEM_PASSWORD,
         "--WA_INITIATE_TASKS_ON_CREATE_ENABLED=true"
+    ),
+    // Takes hearing requests, sends them to HMI through the outbound adapter and publishes hearing updates to the
+    // hmc-to-cft topic.
+    hmcCftHearingService(Feature.hmc,
+        "--CFT_HEARING_SERVICE_DB_HOST=${RSE_LIB_DB_HOST:localhost}",
+        "--CFT_HEARING_SERVICE_DB_PORT=${RSE_LIB_DB_PORT:6432}",
+        "--CFT_HEARING_SERVICE_DB_NAME=" + Hmc.DATABASE,
+        "--CFT_HEARING_SERVICE_DB_USERNAME=postgres",
+        "--CFT_HEARING_SERVICE_DB_PASSWORD=postgres",
+        "--HMC_SERVICE_BUS_CONNECTION_STRING=" + Hmc.SERVICE_BUS,
+        "--HMC_SERVICE_BUS_TOPIC=" + Hmc.TO_CFT_TOPIC,
+        "--HMC_QUEUE_CONNECTION_STRING=" + Hmc.SERVICE_BUS,
+        "--HMC_SERVICE_BUS_QUEUE=" + Hmc.FROM_HMI_QUEUE,
+        "--HMC_OUTBOUND_QUEUE_CONNECTION_STRING=" + Hmc.SERVICE_BUS,
+        "--HMC_OUTBOUND_SERVICE_BUS_QUEUE=" + Hmc.TO_HMI_QUEUE,
+        "--IDAM_OIDC_URL=${IDAM_API_URL}",
+        // The IDAM client adds /o itself, so HMC's own default, IDAM_OIDC_URL with /o, would double it.
+        "--idam.oidc.url=${IDAM_API_URL}",
+        "--CCD_DATA_STORE_API_BASE_URL=http://localhost:4452",
+        "--CFT_HEARING_SERVICE_S2S_AUTHORISED_SERVICES=" + Hmc.S2S_AUTHORISED_SERVICES,
+        "--FH_BASE_URL=" + Hmc.HMI_URL,
+        "--FH_GET_TOKEN_URL=" + Hmc.TOKEN_PATH,
+        "--HMI_BASE_URL=" + Hmc.HMI_URL,
+        // Written by the runtime, since the service cannot read the copy in its jar.
+        "--ROOM_ATTRIBUTES_FILE=file:${java.io.tmpdir}/cftlib-hmc-room-attributes.json"
+    ),
+    // Receives HMI's listings and passes them to the hearing service through the hmc-from-hmi queue.
+    hmcHmiInboundAdapter(Feature.hmc,
+        "--CFT_HEARING_SERVICE_URL=http://localhost:4561",
+        "--HMC_SERVICE_BUS_CONNECTION_STRING=" + Hmc.SERVICE_BUS,
+        "--HMC_SERVICE_BUS_QUEUE=" + Hmc.FROM_HMI_QUEUE,
+        "--IDAM_OIDC_URL=${IDAM_API_URL}",
+        "--idam.oidc.url=${IDAM_API_URL}",
+        // HMI's tokens come from ForgeRock in an environment.
+        "--OIDC_ISSUER_FORGEROCK=${IDAM_API_URL}/o",
+        "--HMC_SYSTEM_USER_ID=" + Hmc.SYSTEM_USERNAME,
+        "--HMC_SYSTEM_USER_PASSWORD=" + Hmc.SYSTEM_PASSWORD
+    ),
+    // Sends the hearing service's pending requests to HMI, which in cftlib is a stand-in in the runtime.
+    hmcHmiOutboundAdapter(Feature.hmc,
+        "--CFT_HEARING_SERVICE_DB_HOST=${RSE_LIB_DB_HOST:localhost}",
+        "--CFT_HEARING_SERVICE_DB_PORT=${RSE_LIB_DB_PORT:6432}",
+        "--CFT_HEARING_SERVICE_DB_NAME=" + Hmc.DATABASE,
+        "--CFT_HEARING_SERVICE_DB_USERNAME=postgres",
+        "--CFT_HEARING_SERVICE_DB_PASSWORD=postgres",
+        "--HMC_SERVICE_BUS_OUTBOUND_CONNECTION_STRING=" + Hmc.SERVICE_BUS,
+        "--HMC_SERVICE_BUS_OUTBOUND_QUEUE=" + Hmc.TO_HMI_QUEUE,
+        "--HMC_SERVICE_BUS_INBOUND_CONNECTION_STRING=" + Hmc.SERVICE_BUS,
+        "--HMC_SERVICE_BUS_INBOUND_QUEUE=" + Hmc.FROM_HMI_QUEUE,
+        "--HMC_SERVICE_BUS_CONNECTION_STRING=" + Hmc.SERVICE_BUS,
+        "--HMC_SERVICE_BUS_TOPIC=" + Hmc.TO_CFT_TOPIC,
+        "--FH_BASE_URL=" + Hmc.HMI_URL,
+        "--FH_GET_TOKEN_URL=" + Hmc.TOKEN_PATH,
+        "--HMI_BASE_URL=" + Hmc.HMI_URL,
+        // In an environment the adapter looks for pending requests every two minutes, and retries after two more.
+        "--PR_PENDING_WAIT_IN_MILLISECS=500",
+        "--PR_PENDING_WAIT_INTERVAL=5,SECONDS",
+        // The adapter logs every SQL statement and its parameters, and each poll, which at this rate floods the log.
+        "--logging.level.org.hibernate.SQL=INFO",
+        "--logging.level.org.hibernate.type.descriptor.sql.BasicBinder=INFO",
+        "--logging.level.uk.gov.hmcts.reform.hmc.service.PendingRequestServiceImpl=WARN"
     );
 
     public final List<String> args;
@@ -98,6 +159,23 @@ public enum Service {
         static final String CAMUNDA_URL = "http://localhost:${CAMUNDA_PORT:8999}/engine-rest";
         static final String SYSTEM_USERNAME = "wa-system-user@cftlib.local";
         static final String SYSTEM_PASSWORD = "password";
+    }
+
+    // Settings the HMC services share. The runtime creates the system user and serves HMI when the hmc feature is on.
+    static final class Hmc {
+        static final String DATABASE = "hmc_cft_hearing_service";
+        static final String SERVICE_BUS = "${RSE_LIB_SERVICEBUS_CONNECTION_STRING}";
+        static final String TO_HMI_QUEUE = "hmc-to-hmi";
+        static final String FROM_HMI_QUEUE = "hmc-from-hmi";
+        static final String TO_CFT_TOPIC = "hmc-to-cft";
+        static final String HMI_URL = "http://localhost:${RSE_LIB_S2S_PORT:8489}/hmi";
+        static final String TOKEN_PATH = "/oauth2/token";
+        static final String SYSTEM_USERNAME = "hmc-system-user@cftlib.local";
+        static final String SYSTEM_PASSWORD = "password";
+        // The services that call HMC in an environment, which a build can replace with RSE_LIB_HMC_S2S_SERVICES.
+        static final String S2S_AUTHORISED_SERVICES = "${RSE_LIB_HMC_S2S_SERVICES:xui_webapp,hmc_hmi_inbound_adapter,"
+            + "civil_service,et_cos,et_hearings_api,ia_hearings_api,prl_cos_api,prl-cos-api,sscs,fis_hmc_api,pcs_api,"
+            + "sptribs_case_api,finrem_case_orchestration,hmc-admin-ui}";
     }
 
     public String id() {

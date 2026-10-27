@@ -62,9 +62,9 @@ bootWithCCD {
 
 cftlibTest {
     authMode = AuthMode.Local
-    // CamundaTests, WorkAllocationTests and ServiceBusTests: work allocation, which brings the Camunda engine, and the
-    // Service Bus emulator.
-    features 'wa', 'servicebus'
+    // CamundaTests, WorkAllocationTests, ServiceBusTests and HmcTests: work allocation, which brings the Camunda
+    // engine, and hearings, which bring the Service Bus emulator.
+    features 'wa', 'hmc'
     environment 'RSE_LIB_SERVICEBUS_CONFIG', file('src/cftlib/servicebus.json').path
     environment("RSE_LIB_ADDITIONAL_DATABASES", "mydb")
     // Check that we are able to override the default port.

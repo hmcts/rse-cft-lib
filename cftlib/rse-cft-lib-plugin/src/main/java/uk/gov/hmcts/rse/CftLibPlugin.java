@@ -44,7 +44,10 @@ public class CftLibPlugin implements Plugin<Project> {
             Map.entry(Service.waTaskManagementApi, "uk.gov.hmcts.reform.wataskmanagementapi.Application"),
             Map.entry(Service.waCaseEventHandler, "uk.gov.hmcts.reform.wacaseeventhandler.Application"),
             Map.entry(Service.waWorkflowApi, "uk.gov.hmcts.reform.waworkflowapi.Application"),
-            Map.entry(Service.waTaskMonitor, "uk.gov.hmcts.reform.wataskmonitor.Application")
+            Map.entry(Service.waTaskMonitor, "uk.gov.hmcts.reform.wataskmonitor.Application"),
+            Map.entry(Service.hmcCftHearingService, "uk.gov.hmcts.reform.hmc.Application"),
+            Map.entry(Service.hmcHmiInboundAdapter, "uk.gov.hmcts.reform.hmc.Application"),
+            Map.entry(Service.hmcHmiOutboundAdapter, "uk.gov.hmcts.reform.hmc.Application")
     );
     private final List<File> manifests = new ArrayList<>();
     private final List<ManifestTask> manifestTasks = Lists.newArrayList();

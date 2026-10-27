@@ -20,6 +20,12 @@ public class FeatureTest {
     }
 
     @Test
+    public void addsTheFeaturesAFeatureNeeds() {
+        assertThat(Feature.resolve(List.of("hmc", "wa")))
+            .containsExactly(Feature.hmc, Feature.servicebus, Feature.wa, Feature.camunda);
+    }
+
+    @Test
     public void rejectsAnUnknownFeature() {
         assertThatThrownBy(() -> Feature.resolve(List.of("rabbitmq")))
             .isInstanceOf(InvalidUserDataException.class)

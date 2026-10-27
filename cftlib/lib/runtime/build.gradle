@@ -37,6 +37,11 @@ processResources {
         include '*.bpmn'
         into 'wa'
     }
+    // The hearing service's room attributes, which it reads as a file rather than a classpath resource.
+    from(rootProject.file('../projects/hmc-cft-hearing-service/src/main/resources')) {
+        include 'room-attributes.json'
+        into 'hmc'
+    }
 }
 
 test {

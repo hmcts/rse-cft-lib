@@ -4,6 +4,7 @@ import uk.gov.hmcts.rse.ccd.lib.Database;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.List;
 import java.util.Map;
 
 public interface CFTLib {
@@ -90,6 +91,26 @@ public interface CFTLib {
      * schedule.
      */
     void runWaTaskMonitorJob(String jobName);
+
+    /**
+     * With the hmc feature, the requests HMC's outbound adapter has sent the HMI stand-in for a hearing, oldest
+     * first, each as its HTTP method and JSON body, such as {@code POST {...}}.
+     */
+    List<String> getHmiRequests(String hearingId);
+
+    /**
+     * With the hmc feature, have the HMI stand-in reject the next hearing request it receives with a 400 and this
+     * error, as HMI does a request it cannot list. HMC then puts the hearing in EXCEPTION.
+     */
+    void rejectNextHmiRequest(int errorCode, String description);
+
+    /**
+     * With the hmc feature, send HMI's response to a hearing request, such as its listing, to the inbound adapter's
+     * PUT /listings/{hearingId}, as HMI does.
+     *
+     * @param body a HearingDetailsRequest: {@code {"hearingResponse": {"meta": ..., "hearing": ...}}}
+     */
+    void sendHmiListing(String hearingId, String body);
 
     String generateDummyS2SToken(String serviceName);
 

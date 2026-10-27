@@ -168,7 +168,10 @@ services:
       # looking for new tasks on a schedule.
       WA_INITIATE_TASKS_ON_CREATE_ENABLED: "true"
     depends_on:
-      - shared-database-pg
+      shared-database-pg:
+        condition: service_started
+        # Recreating the database, as a clean boot does, removes Camunda's tables, which it only creates on start.
+        restart: true
     # Starts before cftlib has created its database, so retry until it has.
     restart: on-failure
     extra_hosts:

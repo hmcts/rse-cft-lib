@@ -55,6 +55,12 @@ public class LibRunner {
             System.setProperty("IDAM_API_URL", "https://idam-api.aat.platform.hmcts.net");
             System.setProperty("DM_STORE_BASE_URL", "http://dm-store-aat.service.core-compute-aat.internal");
         }
+        if ("localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))
+            && System.getenv("IDAM_DATA_STORE_SYSTEM_USER_USERNAME") == null) {
+            // The runtime creates this user in the IDAM simulator, whose users have this password.
+            System.setProperty("IDAM_DATA_STORE_SYSTEM_USER_USERNAME", "data-store-system-user@cftlib.local");
+            System.setProperty("IDAM_DATA_STORE_SYSTEM_USER_PASSWORD", "password");
+        }
         var dbHost = "${RSE_LIB_DB_HOST:localhost}";
         var dbPort = "${RSE_LIB_DB_PORT:6432}";
 

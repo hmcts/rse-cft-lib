@@ -37,3 +37,12 @@
 [submodule "resources/wa-standalone-task-bpmn"]
 	path = resources/wa-standalone-task-bpmn
 	url = https://github.com/hmcts/wa-standalone-task-bpmn.git
+[submodule "projects/hmc-cft-hearing-service"]
+	path = projects/hmc-cft-hearing-service
+	url = https://github.com/hmcts/hmc-cft-hearing-service.git
+[submodule "projects/hmc-hmi-inbound-adapter"]
+	path = projects/hmc-hmi-inbound-adapter
+	url = https://github.com/hmcts/hmc-hmi-inbound-adapter.git
+[submodule "projects/hmc-hmi-outbound-adapter"]
+	path = projects/hmc-hmi-outbound-adapter
+	url = https://github.com/hmcts/hmc-hmi-outbound-adapter.git

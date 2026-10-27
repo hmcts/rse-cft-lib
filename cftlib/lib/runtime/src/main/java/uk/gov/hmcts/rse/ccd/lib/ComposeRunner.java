@@ -37,7 +37,9 @@ public class ComposeRunner {
             // boot if the dependencies are already running.
             var api = new CFTLibApiImpl();
             ControlPlane.setApi(api);
+            createSystemUsers(api);
             WorkAllocation.startWhenBooted(api);
+            Hearings.startWhenBooted(api);
             if (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT")) {
                 // On CNP jenkins it is possible for daemonised containers to be left running
                 // in between builds.
@@ -58,6 +60,27 @@ public class ComposeRunner {
         }
     }
 
+    /**
+     * With local auth, create the IDAM users the services act as themselves, once the IDAM simulator is up.
+     */
+    private void createSystemUsers(CFTLibApiImpl api) {
+        if (!"localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
+            return;
+        }
+        var thread = new Thread(() -> {
+            ControlPlane.waitForAuthServer();
+            // Data store looks up the roles of the user a case is created by.
+            var dataStoreUser = System.getProperty("IDAM_DATA_STORE_SYSTEM_USER_USERNAME");
+            if (dataStoreUser != null) {
+                api.createIdamUser(dataStoreUser, "caseworker");
+            }
+        });
+        thread.setName("cftlib system users");
+        thread.setDaemon(true);
+        thread.setUncaughtExceptionHandler(ControlPlane.failFast);
+        thread.start();
+    }
+
     @SneakyThrows
     void dockerBoot() {
 
@@ -72,6 +95,7 @@ public class ComposeRunner {
             XUI_ENV_PREFIX));
         // Docker mounts the emulator's config whether or not the servicebus profile is on, so always write it.
         ServiceBusConfig.write(dir.resolve("servicebus/Config.json"), System.getenv());
+        Hearings.writeRoomAttributes(System.getenv());
         var args = new ArrayList<String>(List.of("docker", "compose", "-p", "cftlib", "up", "-d", "--remove-orphans"));
         // When running on a CI server ensure clean container builds.
         if (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT")) {
@@ -265,6 +289,9 @@ public class ComposeRunner {
             if (WorkAllocation.enabled(System.getenv())) {
                 dbs.add("wa_case_event_messages_db");
                 dbs.add("wa_workflow_api");
+            }
+            if (Hearings.enabled(System.getenv())) {
+                dbs.add("hmc_cft_hearing_service");
             }
 
             var additionalDbs = System.getenv("RSE_LIB_ADDITIONAL_DATABASES");

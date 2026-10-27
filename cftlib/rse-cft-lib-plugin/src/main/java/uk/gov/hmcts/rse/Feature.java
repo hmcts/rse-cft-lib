@@ -19,7 +19,10 @@ public enum Feature {
     // Azure Service Bus emulator in docker.
     servicebus(List.of("servicebus"), List.of()),
     // Work allocation: wa-case-event-handler, wa-workflow-api and wa-task-monitor in-process, on Camunda.
-    wa(List.of(), List.of(camunda));
+    wa(List.of(), List.of(camunda)),
+    // Hearings: hmc-cft-hearing-service and both HMI adapters in-process, on the Service Bus emulator, with a
+    // stand-in for HMI.
+    hmc(List.of(), List.of(servicebus));
 
     // The docker compose profiles the feature starts.
     public final List<String> composeProfiles;

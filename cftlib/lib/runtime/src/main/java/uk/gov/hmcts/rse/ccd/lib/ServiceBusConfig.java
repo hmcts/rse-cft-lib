@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +21,10 @@ import lombok.SneakyThrows;
  * The Azure Service Bus emulator's Config.json, which declares every queue, topic and subscription up front.
  *
  * <p>Services add their entities with RSE_LIB_SERVICEBUS_CONFIG, a comma separated list of JSON files in the
- * emulator's own format for a namespace: {@code {"Queues": [...], "Topics": [...]}}. An entity declared twice keeps
- * its first declaration.
+ * emulator's own format for a namespace: {@code {"Queues": [...], "Topics": [...]}}. Features add the entities of
+ * the services they run, such as HMC's for hmc, ahead of those. A queue, topic or subscription declared twice keeps
+ * its first declaration, but a topic gets the subscriptions of every declaration, so a service can subscribe to a
+ * topic another declares.
  */
 public class ServiceBusConfig {
     // The emulator supports a single namespace with this name.
@@ -31,9 +34,20 @@ public class ServiceBusConfig {
         return Arrays.asList(env.getOrDefault("RSE_LIB_FEATURES", "").split(",")).contains("servicebus");
     }
 
+    // The entities each feature's services use, as classpath resources.
+    private static final Map<String, String> FEATURE_ENTITIES = Map.of("hmc", "/servicebus/hmc.json");
+
     @SneakyThrows
     static void write(Path file, Map<String, String> env) {
         var namespaces = new ArrayList<JsonElement>();
+        var features = Arrays.asList(env.getOrDefault("RSE_LIB_FEATURES", "").split(","));
+        for (var feature : FEATURE_ENTITIES.entrySet()) {
+            if (features.contains(feature.getKey())) {
+                try (var in = ServiceBusConfig.class.getResourceAsStream(feature.getValue())) {
+                    namespaces.add(JsonParser.parseString(new String(in.readAllBytes(), StandardCharsets.UTF_8)));
+                }
+            }
+        }
         for (var path : sources(env)) {
             namespaces.add(JsonParser.parseString(Files.readString(Path.of(path), StandardCharsets.UTF_8)));
         }
@@ -68,15 +82,40 @@ public class ServiceBusConfig {
     }
 
     private static JsonArray merge(List<JsonElement> namespaces, String kind) {
-        var byName = new LinkedHashMap<String, JsonElement>();
+        var byName = new LinkedHashMap<String, JsonObject>();
         for (var namespace : namespaces) {
             var entities = namespace.getAsJsonObject().getAsJsonArray(kind);
-            if (entities != null) {
-                entities.forEach(e -> byName.putIfAbsent(e.getAsJsonObject().get("Name").getAsString(), e));
+            if (entities == null) {
+                continue;
+            }
+            for (var e : entities) {
+                var entity = e.getAsJsonObject();
+                var existing = byName.putIfAbsent(name(entity), entity.deepCopy());
+                if (existing != null && entity.has("Subscriptions")) {
+                    addSubscriptions(existing, entity.getAsJsonArray("Subscriptions"));
+                }
             }
         }
         var result = new JsonArray();
         byName.values().forEach(result::add);
         return result;
+    }
+
+    private static void addSubscriptions(JsonObject topic, JsonArray subscriptions) {
+        if (!topic.has("Subscriptions")) {
+            topic.add("Subscriptions", new JsonArray());
+        }
+        var existing = topic.getAsJsonArray("Subscriptions");
+        var names = new HashSet<String>();
+        existing.forEach(s -> names.add(name(s.getAsJsonObject())));
+        for (var s : subscriptions) {
+            if (names.add(name(s.getAsJsonObject()))) {
+                existing.add(s.deepCopy());
+            }
+        }
+    }
+
+    private static String name(JsonObject entity) {
+        return entity.get("Name").getAsString();
     }
 }
