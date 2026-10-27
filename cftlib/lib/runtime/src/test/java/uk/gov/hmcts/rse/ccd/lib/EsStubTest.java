@@ -1,6 +1,7 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -144,6 +145,19 @@ class EsStubTest {
             s.setLong(6, reference);
             s.setString(7, classification);
             s.execute();
+        }
+    }
+
+    @Test
+    void refusesAPortHeldBySomethingElseRatherThanAnsweringFromIt() throws Exception {
+        try (var occupied = new java.net.ServerSocket(0)) {
+            var port = occupied.getLocalPort();
+            // An elasticsearch cftlib did not start would never be populated, since this mode
+            // runs no indexer, so waiting on a document in it could not succeed.
+            assertThatThrownBy(() -> new EsStub().start("localhost", port))
+                .isInstanceOf(java.io.IOException.class)
+                .hasMessageContaining("already in use")
+                .hasMessageContaining("RSE_LIB_ES=external");
         }
     }
 

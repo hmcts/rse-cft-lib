@@ -50,12 +50,19 @@ public class EsStub implements ManagedDependency {
     @Override
     public void start() throws IOException {
         var url = URI.create(CftlibConfig.esUrl());
-        var host = url.getHost() == null ? "localhost" : url.getHost();
-        var port = url.getPort() == -1 ? 9200 : url.getPort();
+        start(url.getHost() == null ? "localhost" : url.getHost(), url.getPort() == -1 ? 9200 : url.getPort());
+    }
 
+    void start(String host, int port) throws IOException {
         if (Ports.isListening(host, port)) {
-            System.out.println("**** Cftlib adopting the elasticsearch already listening on " + host + ":" + port);
-            return;
+            // Adopting would be worse than failing: the stub answers from the case tables, so
+            // cftlib runs no indexer in this mode and an elasticsearch it did not start stays
+            // empty however long anything waits for a document to appear in it.
+            throw new IOException("Port " + port + " on " + host + " is already in use, so the cftlib "
+                + "elasticsearch stub cannot serve it. A leftover cftlib container is the usual cause, "
+                + "and 'docker rm -f cftlib-ccd-elasticsearch-1' clears it. To use an elasticsearch that "
+                + "is already running, set RSE_LIB_ES=external instead, which keeps cftlib's indexers on "
+                + "so that it gets populated.");
         }
         bind(host, port);
     }
