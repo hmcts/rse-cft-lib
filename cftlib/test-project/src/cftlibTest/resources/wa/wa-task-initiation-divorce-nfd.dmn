@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Creates a task when a case has the event WorkAllocationTests sends. -->
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:camunda="http://camunda.org/schema/1.0/dmn"
+             id="cftlib-initiation" name="cftlib initiation" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="wa-task-initiation-divorce-nfd" name="cftlib task initiation">
+    <decisionTable id="initiation" hitPolicy="COLLECT">
+      <input id="event" label="Event Id" camunda:inputVariable="eventId">
+        <inputExpression id="eventExpression" typeRef="string"><text>eventId</text></inputExpression>
+      </input>
+      <output id="taskId" label="Task Id" name="taskId" typeRef="string"/>
+      <output id="name" label="Name" name="name" typeRef="string"/>
+      <output id="processCategories" label="Process Categories" name="processCategories" typeRef="string"/>
+      <rule id="reviewCase">
+        <inputEntry id="reviewCaseEvent"><text>"cftlib-wa-event"</text></inputEntry>
+        <outputEntry id="reviewCaseTask"><text>"cftlibReviewCase"</text></outputEntry>
+        <outputEntry id="reviewCaseName"><text>"Review the case"</text></outputEntry>
+        <outputEntry id="reviewCaseCategory"><text>"cftlib"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

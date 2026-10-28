@@ -21,7 +21,13 @@ public class DependencyBoot {
             Runtime.getRuntime().addShutdownHook(new Thread(provider::stop, "cftlib-stop-dependencies"));
             // Start our monitoring of the dependencies before we start them, since starting
             // can take a few seconds and we don't want to block boot if they are already running.
-            ControlPlane.setApi(new CFTLibApiImpl());
+            var api = new CFTLibApiImpl();
+            ControlPlane.setApi(api);
+            createSystemUsers(api);
+            // Both modes run the hmc feature's services in this JVM, and they read the file from disk.
+            Hearings.writeRoomAttributes(System.getenv());
+            WorkAllocation.startWhenBooted(api);
+            Hearings.startWhenBooted(api);
             var recreatingContainers = provider instanceof ComposeRunner
                 && (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT"));
             if (recreatingContainers) {
@@ -48,8 +54,53 @@ public class DependencyBoot {
     private DependencyProvider provider() {
         return switch (CftlibConfig.dependencyMode()) {
             case DOCKER -> dockerProvider();
-            case PROCESS -> new ProcessProvider();
+            case PROCESS -> processProvider();
         };
+    }
+
+    /**
+     * Camunda and the Service Bus emulator, which the wa and hmc features bring, are only available as containers.
+     */
+    private DependencyProvider processProvider() {
+        var containerOnly = Readiness.composeProfiles(System.getenv()).stream()
+            .filter(profile -> profile.equals("camunda") || profile.equals("servicebus"))
+            .toList();
+        if (!containerOnly.isEmpty()) {
+            throw new IllegalStateException("The " + String.join(" and ", containerOnly) + " compose profiles, which "
+                + "the wa and hmc features use, only run as containers, so cannot be combined with "
+                + "RSE_LIB_DEPENDENCY_MODE=process. Use RSE_LIB_DEPENDENCY_MODE=docker.");
+        }
+        return new ProcessProvider();
+    }
+
+    /**
+     * With local auth, create the IDAM users the services act as themselves, once the IDAM simulator is up.
+     */
+    private void createSystemUsers(CFTLibApiImpl api) {
+        if (!CftlibConfig.localAuth()) {
+            return;
+        }
+        var thread = new Thread(() -> {
+            ControlPlane.waitForAuthServer();
+            // Data store looks up the roles of the user a case is created by.
+            var dataStoreUser = System.getProperty("IDAM_DATA_STORE_SYSTEM_USER_USERNAME");
+            if (dataStoreUser != null) {
+                // A simulator container left by an older cftlib can answer the readiness check and then be removed
+                // as compose's orphan, so retry until the simulator in this JVM answers.
+                Awaitility.await()
+                    .pollInterval(Duration.ofSeconds(1))
+                    .ignoreExceptions()
+                    .timeout(2, TimeUnit.MINUTES)
+                    .until(() -> {
+                        api.createIdamUser(dataStoreUser, "caseworker");
+                        return true;
+                    });
+            }
+        });
+        thread.setName("cftlib system users");
+        thread.setDaemon(true);
+        thread.setUncaughtExceptionHandler(ControlPlane.failFast);
+        thread.start();
     }
 
     /**
@@ -113,5 +164,17 @@ public class DependencyBoot {
             .until(readiness::esReady);
 
         ControlPlane.setESReady();
+
+        if (ServiceBusConfig.enabled(System.getenv())) {
+            // The emulator waits for its SQL Server before it opens, which takes a minute or two on first boot.
+            Awaitility.await()
+                .pollInSameThread()
+                .pollInterval(Duration.ofSeconds(1))
+                .pollDelay(Duration.ZERO)
+                .ignoreExceptions()
+                .timeout(10, TimeUnit.MINUTES)
+                .until(readiness::serviceBusReady);
+        }
+        ControlPlane.setServiceBusReady();
     }
 }

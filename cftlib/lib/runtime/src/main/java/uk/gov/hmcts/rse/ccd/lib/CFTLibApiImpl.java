@@ -39,6 +39,37 @@ public class CFTLibApiImpl implements CFTLib {
 
     private String lastImportHash;
 
+    @Override
+    public void importCamundaDefinitions(String tenantId, File... files) {
+        new WorkAllocation(this, List.of()).importCamundaDefinitions(tenantId, files);
+    }
+
+    @Override
+    public void deliverCaseEvents() {
+        WorkAllocation.get().deliverCaseEvents();
+    }
+
+    @Override
+    public void runWaTaskMonitorJob(String jobName) {
+        WorkAllocation.get().runTaskMonitorJob(jobName);
+    }
+
+    @Override
+    public List<String> getHmiRequests(String hearingId) {
+        return Hearings.get(this).hmiRequests(hearingId);
+    }
+
+    @Override
+    public void rejectNextHmiRequest(int errorCode, String description) {
+        Hearings.get(this).rejectNextHmiRequest(errorCode, description);
+    }
+
+    @Override
+    public void sendHmiListing(String hearingId, String body) {
+        Hearings.get(this).sendHmiListing(hearingId, body);
+    }
+
+    @Override
     public String generateDummyS2SToken(String serviceName) {
         return JWT.create()
             .withSubject(serviceName)

@@ -16,13 +16,17 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class CftlibExec extends JavaExec {
     public AuthMode authMode = AuthMode.AAT;
     public DependencyMode dependencyMode = DependencyMode.Docker;
+    // Optional parts of the stack this task runs, as Feature names. RSE_LIB_FEATURES adds more for one run.
+    public List<String> features = new ArrayList<>();
     private List<String> testPatterns = List.of();
 
     public CftlibExec() {
@@ -35,6 +39,15 @@ public class CftlibExec extends JavaExec {
             throw new InvalidUserDataException("--tests is supported by cftlibTest only.");
         }
         testPatterns = List.copyOf(patterns);
+    }
+
+    public void features(String... names) {
+        features.addAll(Arrays.asList(names));
+    }
+
+    @Internal
+    public Set<Feature> getResolvedFeatures() {
+        return Feature.resolve(features, getEnvironment());
     }
 
     @Internal
@@ -89,8 +102,9 @@ public class CftlibExec extends JavaExec {
         }
     }
 
-    // The XUI containers sit behind a compose profile so that runs which do not want them,
-    // such as cftlibTest, do not pay for the image pull.
+    // Optional docker services: the XUI containers, which sit behind a compose profile so that runs which do not
+    // want them, such as cftlibTest, do not pay for the image pull; those of the task's features; and any listed in
+    // RSE_LIB_COMPOSE_PROFILES or COMPOSE_PROFILES.
     private void setComposeProfiles() {
         var profiles = new ArrayList<String>();
         if (wanted("RSE_LIB_XUI")) {
@@ -99,11 +113,19 @@ public class CftlibExec extends JavaExec {
         if (wanted("RSE_LIB_XUI_MO")) {
             profiles.add("xui-mo");
         }
-        var inherited = String.valueOf(getEnvironment().getOrDefault("COMPOSE_PROFILES", ""));
-        for (var profile : inherited.split(",")) {
-            if (!profile.isBlank() && !profiles.contains(profile.trim())) {
-                profiles.add(profile.trim());
-            }
+        var resolved = getResolvedFeatures();
+        resolved.forEach(feature -> feature.composeProfiles.stream()
+            .filter(profile -> !profiles.contains(profile))
+            .forEach(profiles::add));
+        // Read by the runtime, which prepares the features' dependencies such as their databases.
+        environment("RSE_LIB_FEATURES", resolved.stream().map(Enum::name).collect(Collectors.joining(",")));
+        // The task's environment: the shell's, plus anything the build script sets on the task.
+        for (var var : List.of("RSE_LIB_COMPOSE_PROFILES", "COMPOSE_PROFILES")) {
+            var requested = String.valueOf(getEnvironment().getOrDefault(var, ""));
+            Arrays.stream(requested.split(","))
+                .map(String::trim)
+                .filter(profile -> !profile.isEmpty() && !profiles.contains(profile))
+                .forEach(profiles::add);
         }
         environment("COMPOSE_PROFILES", String.join(",", profiles));
     }
@@ -166,6 +188,9 @@ public class CftlibExec extends JavaExec {
         environment("CORE_CASE_DATA_API_URL", "http://localhost:4452");
         environment("RSE_LIB_LOG_FOLDER", getProject().getLayout()
                 .getBuildDirectory().dir("cftlib/logs").get().getAsFile().getCanonicalPath());
+        // Documents stored by the runtime's dm-store stand-in.
+        environment("RSE_LIB_DM_STORE_DIR", getProject().getLayout()
+                .getBuildDirectory().dir("cftlib/dm-store").get().getAsFile().getCanonicalPath());
     }
 
     private void setRequiredJvmArgs() {

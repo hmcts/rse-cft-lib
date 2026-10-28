@@ -36,6 +36,8 @@ public class ComposeRunner implements DependencyProvider {
         var dir = Files.createTempDirectory("cftlib");
         new ZipFile(f).extractAll(dir.toString());
         writeXuiEnvFiles(dir);
+        // Docker mounts the emulator's config whether or not the servicebus profile is on, so always write it.
+        ServiceBusConfig.write(dir.resolve("servicebus/Config.json"), System.getenv());
         var args = new ArrayList<String>(List.of("docker", "compose", "-p", "cftlib", "up", "-d", "--remove-orphans"));
         // When running on a CI server ensure clean container builds.
         if (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT")) {

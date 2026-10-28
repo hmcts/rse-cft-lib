@@ -1,0 +1,9 @@
+{
+  "Queues": [
+    {"Name": "hmc-to-hmi"},
+    {"Name": "hmc-from-hmi"}
+  ],
+  "Topics": [
+    {"Name": "hmc-to-cft", "Subscriptions": []}
+  ]
+}

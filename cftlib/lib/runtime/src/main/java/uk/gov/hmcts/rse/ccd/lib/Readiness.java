@@ -5,7 +5,9 @@ import java.net.URL;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -46,6 +48,16 @@ public class Readiness {
                 .collect(Collectors.toCollection(ArrayList::new));
 
             dbs.add("cft_task_db");
+            if (composeProfiles(System.getenv()).contains("camunda")) {
+                dbs.add("camunda");
+            }
+            if (WorkAllocation.enabled(System.getenv())) {
+                dbs.add("wa_case_event_messages_db");
+                dbs.add("wa_workflow_api");
+            }
+            if (Hearings.enabled(System.getenv())) {
+                dbs.add("hmc_cft_hearing_service");
+            }
 
             var additionalDbs = System.getenv("RSE_LIB_ADDITIONAL_DATABASES");
             if (additionalDbs != null) {
@@ -66,6 +78,25 @@ public class Readiness {
             throw s;
         }
         return true;
+    }
+
+    static List<String> composeProfiles(Map<String, String> env) {
+        var profiles = env.getOrDefault("COMPOSE_PROFILES", "");
+        return Arrays.stream(profiles.split(",")).map(String::trim).filter(p -> !p.isEmpty()).toList();
+    }
+
+    boolean serviceBusReady() {
+        try {
+            var c = (HttpURLConnection) new URL("http://localhost:"
+                + ControlPlane.getEnvVar("SERVICEBUS_HTTP_PORT", 5300) + "/health").openConnection();
+            if (c.getResponseCode() == 200) {
+                return true;
+            }
+        } catch (Exception e) {
+            // Not listening yet.
+        }
+        System.out.println("Service Bus emulator not yet available...");
+        return false;
     }
 
     @SneakyThrows
