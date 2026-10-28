@@ -22,10 +22,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * a clause that was silently dropped would let a search test pass locally and fail against a real
  * elasticsearch.
  *
- * <p>Fields that elasticsearch analyses (the {@code text} mapped metadata and the dynamically
- * mapped case data) are matched against their tokens, so {@code term} on {@code state} matches a
- * stored value of {@code Draft} just as it does in elasticsearch. A {@code .keyword} sub-field is
- * matched whole, lowercased and ascii folded by the {@code lowercase_normalizer} CCD gives it.
+ * <p>Fields that elasticsearch analyses (the {@code text} mapped metadata and case data) are
+ * matched against their tokens, so {@code term} on {@code state} matches a stored value of
+ * {@code Draft} just as it does in elasticsearch. A {@code .keyword} sub-field is matched whole,
+ * lowercased and ascii folded by the {@code lowercase_normalizer} CCD gives it.
+ *
+ * <p>What the translator cannot know is a case data field's own type, which it would need to tell
+ * a {@code Postcode} from a {@code Text}, so every path under {@code data} is matched as though it
+ * were {@code Text}. The README names the types that leaves wrong.
  */
 class EsQueryTranslator {
 
