@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -75,6 +76,20 @@ public class WorkAllocation {
     }
 
     /**
+     * WA's own roles, plus the service's in RSE_LIB_WA_SYSTEM_USER_ROLES. In an environment the system user reads
+     * each onboarded service's cases through that service's IDAM roles, such as civil's caseworker-civil-systemupdate,
+     * as caseworker-wa-task-configuration alone is rarely granted enough of a case to configure its tasks.
+     */
+    static String[] systemUserRoles(Map<String, String> env) {
+        var roles = new LinkedHashSet<>(List.of("caseworker", "caseworker-wa", "caseworker-wa-task-configuration"));
+        Arrays.stream(env.getOrDefault("RSE_LIB_WA_SYSTEM_USER_ROLES", "").split(","))
+            .map(String::trim)
+            .filter(role -> !role.isEmpty())
+            .forEach(roles::add);
+        return roles.toArray(String[]::new);
+    }
+
+    /**
      * Once cftlib has booted, deploy WA's task process, create its system user and start delivering case events.
      */
     static void startWhenBooted(CFTLibApiImpl api) {
@@ -104,7 +119,7 @@ public class WorkAllocation {
 
     @SneakyThrows
     private void prepare() {
-        api.createIdamUser(SYSTEM_USERNAME, "caseworker", "caseworker-wa", "caseworker-wa-task-configuration");
+        api.createIdamUser(SYSTEM_USERNAME, systemUserRoles(System.getenv()));
         try (var bpmn = getClass().getResourceAsStream("/wa/wa-task-initiation-ia-asylum.bpmn")) {
             // WA deploys its task process without a tenant, so every service's DMNs can start it.
             var file = File.createTempFile("wa-task-initiation", ".bpmn");
