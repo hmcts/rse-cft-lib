@@ -431,7 +431,18 @@ The stub reads the case tables directly rather than maintaining an index, so the
 
 It supports the clauses CCD and XUI generate, and **rejects anything else with a 400 naming the clause** rather than returning no hits, so a query it cannot answer fails loudly instead of passing locally and failing in AAT. It does not score, and its text matching approximates elasticsearch's analysis, so it is not the place to validate a search feature — use `RSE_LIB_ES=docker` or point `SEARCH_ELASTIC_HOSTS` at a real cluster for that.
 
-The stub reads no mappings, which shows up in three ways. It is more permissive in two: sorting on an analysed text field, and a `nested` query on a path that is not mapped as nested, both answer here and are errors against a real cluster. And it compares and orders case data as text, because it cannot know a field's type: a `range` over `data.*` is lexicographic, so a date-only bound does not round to the end of the day as elasticsearch's does (`2024-01-15T10:30:00.000` falls outside `lte: 2024-01-15` here and inside it there), and numbers order as strings. Metadata columns are compared as the dates and numbers they are. A search feature that relies on any of this will behave differently in AAT.
+It applies the analysis CCD's own mappings describe: a `.keyword` sub-field is matched and sorted lowercased and ascii folded, as `lowercase_normalizer` leaves it; `reference` ignores the hyphens the UI groups its digits with; a date bound with no time of day covers the whole of that day; and `o'brien` and `john.smith` are one word each, as the standard tokenizer leaves them.
+
+What it does not read is each case type's **field types**, which is where it still differs from a real cluster. It is more permissive in two ways: sorting on an analysed text field, and a `nested` query on a path that is not mapped as nested, both answer here and are errors against a real cluster. It also returns different hits in these cases:
+
+| | Elasticsearch | The stub |
+| --- | --- | --- |
+| `Email`, `Postcode`, `YesOrNo` fields | whole values, as `keyword` | split into words, so one word of an address matches it |
+| `PhoneUK` fields | spaces removed by `phone_number_analyzer` | split on the spaces |
+| `Date` and `DateTime` fields inside `data` | compared and rounded as dates | compared as text, which agrees for whole ISO timestamps only |
+| `Number` and `MoneyGBP` fields inside `data` | compared as numbers | compared as text, so `9` sorts above `10` |
+
+Each of those is a query that passes locally and behaves differently in AAT, so a feature or an end-to-end test that leans on exact-value matching of those types should be confirmed against `RSE_LIB_ES=docker` or a real cluster. Closing the gap means reading each case type's field types from the definition store and applying CCD's type-to-mapping table, which is not done here.
 
 The stub searches the data store and any database named in `RSE_LIB_ADDITIONAL_DATABASES`, which covers a decentralised service without further configuration. Set `RSE_LIB_ES_STUB_SOURCES` to a comma separated list of `database[:schema]` if case data lives anywhere else.
 

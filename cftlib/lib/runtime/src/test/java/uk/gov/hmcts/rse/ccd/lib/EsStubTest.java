@@ -100,6 +100,8 @@ class EsStubTest {
             {
               "applicant1FirstName": "Ann-Marie",
               "applicant1LastName": "Smith",
+              "applicant2LastName": "O'Béiró",
+              "solicitorEmail": "john.smith@example.com",
               "CaseAccessCategory": "Civil/Standard",
               "caseNameHmctsInternal": "Smith v Jones",
               "SearchCriteria": {
@@ -314,6 +316,51 @@ class EsStubTest {
         var item = firstItem(msearch(CASES_INDEX, caseListBody(query, "[]")));
 
         assertThat(references(item)).containsExactlyInAnyOrder("1234567890123456", "1234567890123458");
+    }
+
+    @Test
+    void keywordSearchFindsAValueWhoseCaseAndAccentsDiffer() throws Exception {
+        // The sub-field holds what lowercase_normalizer leaves: o'beiro, from O'Béiró.
+        var query = "{\"bool\":{\"must\":[{\"term\":{\"data.applicant2LastName.keyword\":\"O'Beiro\"}}]}}";
+        var item = firstItem(msearch(CASES_INDEX, caseListBody(query, "[]")));
+
+        assertThat(references(item)).containsExactly("1234567890123456");
+    }
+
+    @Test
+    void anEmailMatchesOnItsLocalPart() throws Exception {
+        // The standard tokenizer breaks john.smith@example.com at the @ and nowhere else.
+        var query = "{\"bool\":{\"must\":[{\"match\":{\"data.solicitorEmail\":"
+            + "{\"operator\":\"and\",\"query\":\"john.smith\"}}}]}}";
+        var item = firstItem(msearch(CASES_INDEX, caseListBody(query, "[]")));
+
+        assertThat(references(item)).containsExactly("1234567890123456");
+    }
+
+    @Test
+    void halfAnEmailsLocalPartIsNotOneOfItsTokens() throws Exception {
+        var query = "{\"bool\":{\"must\":[{\"match\":{\"data.solicitorEmail\":\"john\"}}]}}";
+        var item = firstItem(msearch(CASES_INDEX, caseListBody(query, "[]")));
+
+        assertThat(references(item)).isEmpty();
+    }
+
+    @Test
+    void caseReferenceIsFoundInTheGroupedFormTheUiShows() throws Exception {
+        var query = "{\"bool\":{\"must\":[{\"match\":{\"reference\":\"1234-5678-9012-3456\"}}]}}";
+        var item = firstItem(msearch(CASES_INDEX, caseListBody(query, "[]")));
+
+        assertThat(references(item)).containsExactly("1234567890123456");
+    }
+
+    @Test
+    void anUpperDateBoundCoversCasesCreatedDuringItsDay() throws Exception {
+        // The newest case was created at 10:00 on the third, which a range ending on the third
+        // includes: elasticsearch rounds a bound with no time of day up to the end of the day.
+        var query = "{\"bool\":{\"filter\":[{\"range\":{\"created_date\":{\"lte\":\"2024-01-03\"}}}]}}";
+        var item = firstItem(msearch(CASES_INDEX, caseListBody(query, "[]")));
+
+        assertThat(references(item)).hasSize(3);
     }
 
     @Test
