@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 import lombok.SneakyThrows;
@@ -87,25 +88,26 @@ public class EmbeddedPostgres implements ManagedDependency {
 
     @Override
     public void start() throws IOException {
-        var freed = !cleanBoot || stopPreviousRun();
-
-        // Checked before anything is deleted: a boot that cannot have the port is going to fail,
-        // and it must not take the databases of previous boots with it.
+        // Nothing is signalled or deleted until something is known to be serving the port: a
+        // pid file outlives its server, and a boot that cannot have the port is going to fail
+        // without taking the databases of previous boots with it.
         if (Ports.isListening(CftlibConfig.dbHost(), port)) {
-            // Only adopt a server from one of our own previous boots. Anything else on the port is
-            // most often a leftover cftlib container, which would quietly put docker back in the mix.
-            if (ownPostgresIsRunning()) {
+            // Only a server from one of our own previous boots. Anything else on the port is most
+            // often a leftover cftlib container, which would quietly put docker back in the mix.
+            if (!ownPostgresIsRunning()) {
+                throw new IOException("Port " + port + " is already in use, but not by a postgres cftlib "
+                    + "started: its data directory " + dataDirectory + " holds no matching postmaster. "
+                    + "A leftover cftlib container is the usual cause, and 'docker rm -f "
+                    + "cftlib-shared-database-pg-1' clears it. Set RSE_LIB_DB_PORT to use a different "
+                    + "port, or RSE_LIB_DB=external to have cftlib use the database already there.");
+            }
+            if (!cleanBoot || !stopPreviousRun()) {
                 System.out.println("**** Cftlib is using the postgres it left running on port " + port);
                 return;
             }
-            throw new IOException("Port " + port + " is already in use, but not by a postgres cftlib "
-                + "started: its data directory " + dataDirectory + " holds no matching postmaster. "
-                + "A leftover cftlib container is the usual cause, and 'docker rm -f "
-                + "cftlib-shared-database-pg-1' clears it. Set RSE_LIB_DB_PORT to use a different "
-                + "port, or RSE_LIB_DB=external to have cftlib use the database already there.");
         }
 
-        if (cleanBoot && freed) {
+        if (cleanBoot) {
             deleteDataDirectory();
         }
 
@@ -164,7 +166,7 @@ public class EmbeddedPostgres implements ManagedDependency {
             .filter(ProcessHandle::isAlive)
             // Checked before signalling, not only before adopting: a pid in a stale file can
             // belong to anything by now, and this path sends SIGTERM and then SIGKILL.
-            .filter(EmbeddedPostgres::isPostgres);
+            .filter(this::isOurPostgres);
         if (process.isEmpty()) {
             return true;
         }
@@ -193,8 +195,25 @@ public class EmbeddedPostgres implements ManagedDependency {
             .filter(ProcessHandle::isAlive)
             // A pid outlives the process that wrote it, and after a reboot it can belong to
             // something else entirely, so the process has to look like the server we left.
-            .filter(EmbeddedPostgres::isPostgres)
+            .filter(this::isOurPostgres)
             .isPresent();
+    }
+
+    /**
+     * Whether a process is the server for this data directory, rather than merely a postgres: the
+     * host's own server is a postgres too, and a recorded pid can have been reassigned to it.
+     */
+    private boolean isOurPostgres(ProcessHandle process) {
+        if (!isPostgres(process)) {
+            return false;
+        }
+        var arguments = process.info().arguments();
+        if (arguments.isEmpty()) {
+            // Not readable for another user's process, and on some platforms not at all, so this
+            // falls back to the weaker check rather than refusing to recognise our own server.
+            return true;
+        }
+        return List.of(arguments.get()).contains(dataDirectory.toString());
     }
 
     private static boolean isPostgres(ProcessHandle process) {

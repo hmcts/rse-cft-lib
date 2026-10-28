@@ -13,18 +13,15 @@ public class ProcessProvider implements DependencyProvider {
 
     private final List<ManagedDependency> started = new CopyOnWriteArrayList<>();
 
+    /**
+     * Brings the database up, which a clean boot does by stopping the last one and deleting its
+     * data directory. Runs before anything observes the port, and so before monitoring starts.
+     */
     @Override
     @SneakyThrows
-    public void start() {
-        var dependencies = new ArrayList<>(resolve());
-
-        // Postgres goes first and alone. A clean boot stops the server from the last boot and
-        // deletes its data directory, and the readiness monitor is already polling that port: if
-        // it connected in between it would create the databases and open the gates against a
-        // server being torn down, and every service would then migrate into it.
-        for (var dependency : List.copyOf(dependencies)) {
+    public void prepare() {
+        for (var dependency : resolve()) {
             if (dependency instanceof EmbeddedPostgres) {
-                dependencies.remove(dependency);
                 System.out.println("**** Cftlib starting " + dependency.name());
                 try {
                     dependency.start();
@@ -34,6 +31,14 @@ public class ProcessProvider implements DependencyProvider {
                 }
             }
         }
+    }
+
+    @Override
+    @SneakyThrows
+    public void start() {
+        var dependencies = new ArrayList<>(resolve());
+        // Already up, in prepare().
+        dependencies.removeIf(EmbeddedPostgres.class::isInstance);
 
         // The rest are independent of one another, and building XUI is slow,
         // so bring them up concurrently.
@@ -98,7 +103,17 @@ public class ProcessProvider implements DependencyProvider {
         var result = new ArrayList<ManagedDependency>();
 
         switch (CftlibConfig.dbMode()) {
-            case EMBEDDED -> result.add(new EmbeddedPostgres());
+            case EMBEDDED -> {
+                // initdb creates the postgres superuser and no other, so a boot configured for a
+                // different one would fail every connection and sit out the readiness timeout.
+                if (!"postgres".equals(CftlibConfig.dbUsername())) {
+                    throw new UnsupportedOperationException("RSE_LIB_DB_USERNAME="
+                        + CftlibConfig.dbUsername() + " cannot be used with the embedded database, which "
+                        + "only has the postgres superuser. Set RSE_LIB_DB=external to use a database "
+                        + "that has that role, or leave the username unset.");
+                }
+                result.add(new EmbeddedPostgres());
+            }
             case EXTERNAL -> {
                 // Nothing to start: the database is already running elsewhere.
             }

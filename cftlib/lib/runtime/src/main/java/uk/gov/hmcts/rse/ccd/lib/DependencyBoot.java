@@ -19,11 +19,14 @@ public class DependencyBoot {
             // ordinary way a boot ends, so teardown is registered with the control plane too.
             ControlPlane.setShutdownTask(provider::stop);
             Runtime.getRuntime().addShutdownHook(new Thread(provider::stop, "cftlib-stop-dependencies"));
+
+            // Before monitoring starts: a clean boot stops the database from the last boot and
+            // deletes its data directory, and a probe that reached the old server in between
+            // would create the databases in it and open the gates for good.
+            provider.prepare();
             // Start our monitoring of the dependencies before we start them, since starting
             // can take a few seconds and we don't want to block boot if they are already running.
             ControlPlane.setApi(new CFTLibApiImpl());
-            // Only compose needs this ordering now: the process provider brings postgres up before
-            // anything can observe it, so monitoring may start immediately in either case.
             var recreatingContainers = provider instanceof ComposeRunner
                 && (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT"));
             if (recreatingContainers) {
