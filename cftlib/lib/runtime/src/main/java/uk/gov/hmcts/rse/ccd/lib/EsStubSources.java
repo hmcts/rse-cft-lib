@@ -17,10 +17,13 @@ import java.util.regex.Pattern;
  * The databases the elasticsearch stub reads case data from, and the SQL that reproduces the
  * document each indexer would have written.
  *
- * <p>Sources default to the centralised data store database and can be overridden with
- * RSE_LIB_ES_STUB_SOURCES, a comma separated list of {@code database[:schema]}. Whether a source
- * holds centralised or decentralised case data is detected from its catalog rather than
- * configured: the decentralised schema carries {@code case_event.case_revision}.
+ * <p>Sources default to the data store database plus any the consuming build asked cftlib to
+ * create, and can be overridden with RSE_LIB_ES_STUB_SOURCES, a comma separated list of
+ * {@code database[:schema]}. Whether a source holds centralised or decentralised case data is
+ * detected from its catalog rather than configured: the decentralised schema carries
+ * {@code case_event.case_revision}. A database with no case data is simply not a source, and
+ * because migrations run while the stub is already serving, that and the shape it reports are
+ * re-checked periodically rather than settled once.
  */
 class EsStubSources {
 
@@ -45,6 +48,8 @@ class EsStubSources {
     }
 
     private final Map<String, Source> probed = new LinkedHashMap<>();
+    private final Map<String, Long> probedUntil = new LinkedHashMap<>();
+    private static final long PROBE_TTL_MILLIS = 2_000;
     private final Set<String> caseTypeOwners = ConcurrentHashMap.newKeySet();
     private final List<String> configured;
     private final Connections connections;
@@ -166,9 +171,19 @@ class EsStubSources {
             CftlibConfig.dbUsername(), CftlibConfig.dbPassword());
     }
 
+    /**
+     * Resolves a configured entry, remembering the answer only briefly.
+     *
+     * <p>A verdict reached while the service's migrations are still running can be wrong — the
+     * decentralised schema gains {@code case_data} several migrations before
+     * {@code case_event.case_revision} — and a database that holds no case data yet may hold some
+     * later. Remembering either for the run would answer from the wrong shape, or not at all, for
+     * as long as it lasted; re-probing on every search would instead open a connection per search
+     * inside this lock. A short expiry bounds both.
+     */
     private synchronized Source source(String entry) throws SQLException {
         var cached = probed.get(entry);
-        if (cached != null) {
+        if (probed.containsKey(entry) && System.currentTimeMillis() <= probedUntil.get(entry)) {
             return cached;
         }
         var parts = entry.split(":", 2);
@@ -177,9 +192,11 @@ class EsStubSources {
 
         try (var c = connections.open(database)) {
             var resolved = probe(c, database, schema);
-            probed.put(entry, resolved);
-            System.out.println("**** Cftlib elasticsearch stub reading " + (resolved.decentralised()
-                ? "decentralised" : "centralised") + " case data from " + database + "." + resolved.schema());
+            if (cached == null || cached.decentralised() != resolved.decentralised()) {
+                System.out.println("**** Cftlib elasticsearch stub reading " + (resolved.decentralised()
+                    ? "decentralised" : "centralised") + " case data from " + database + "." + resolved.schema());
+            }
+            remember(entry, resolved);
             return resolved;
         } catch (IllegalStateException | SQLException e) {
             // A database cftlib discovered rather than was told about may hold no case data at
@@ -187,11 +204,15 @@ class EsStubSources {
             if (!optional.contains(entry)) {
                 throw e;
             }
-            // Not remembered: flyway may not have created the case tables yet, or postgres may have
-            // been out of connections, and a database skipped for good would silently answer no
-            // hits for its service for the rest of the run.
+            remember(entry, null);
             return null;
         }
+    }
+
+
+    private void remember(String entry, Source source) {
+        probed.put(entry, source);
+        probedUntil.put(entry, System.currentTimeMillis() + PROBE_TTL_MILLIS);
     }
 
     private Source probe(Connection c, String database, String requestedSchema) throws SQLException {
@@ -266,23 +287,36 @@ class EsStubSources {
      * names line up with the real index by construction.
      */
     String documentView(Source source, String index) {
+        return view(source, index, true);
+    }
+
+    /**
+     * The same view without the document column, for counting: building a json document per row
+     * is the expensive part, and a count needs none of them.
+     */
+    String countView(Source source, String index) {
+        return view(source, index, false);
+    }
+
+    private String view(Source source, String index, boolean withDocument) {
         var caseIndex = source.decentralised()
             ? decentralisedCaseRows(source)
             : centralisedCaseRows(source);
 
         if (GLOBAL_SEARCH_INDEX.equals(index)) {
             return source.decentralised()
-                ? projection(decentralisedGlobalSearchRows(caseIndex), false, false)
-                : projection(centralisedGlobalSearchRows(caseIndex), true, false);
+                ? projection(decentralisedGlobalSearchRows(caseIndex), false, false, withDocument)
+                : projection(centralisedGlobalSearchRows(caseIndex), true, false, withDocument);
         }
-        return projection(caseIndex, !source.decentralised(), true);
+        return projection(caseIndex, !source.decentralised(), true, withDocument);
     }
 
     /**
      * Projects an indexer's row set onto the uniform column set the query translator targets,
      * plus the document the indexer would have produced.
      */
-    private String projection(String rows, boolean hasDataClassification, boolean hasDates) {
+    private String projection(String rows, boolean hasDataClassification, boolean hasDates,
+                              boolean withDocument) {
         var columns = new ArrayList<String>(List.of(
             "r.id as id",
             "r.reference as reference",
@@ -298,7 +332,9 @@ class EsStubSources {
         for (var date : List.of("created_date", "last_modified", "last_state_modified_date")) {
             columns.add((hasDates ? "r." + date : "null::timestamp") + " as " + date);
         }
-        columns.add("row_to_json(r)::jsonb as document");
+        if (withDocument) {
+            columns.add("row_to_json(r)::jsonb as document");
+        }
 
         return "select\n    " + String.join(",\n    ", columns) + "\nfrom (\n" + rows + ") r\n";
     }

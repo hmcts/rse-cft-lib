@@ -164,8 +164,10 @@ public class EsStub implements ManagedDependency {
 
         var responses = mapper.createArrayNode();
         for (var request : requests) {
-            var index = headerIndex(request[0], pathIndex);
             try {
+                // Inside the slot: a header this stub will not serve must fail its own search
+                // rather than the valid ones alongside it.
+                var index = headerIndex(request[0], pathIndex);
                 if (index == null) {
                     throw EsStubException.badRequest("a multi search header named no index");
                 }
@@ -270,10 +272,13 @@ public class EsStub implements ManagedDependency {
         var answering = 0;
         for (var source : matching) {
             try (var c = connect(source)) {
-                var before = hits.size();
-                total += collect(c, source, index, search, wanted, hits);
-                if (hits.size() > before) {
-                    answering++;
+                total += count(c, source, index, search);
+                if (wanted > 0 && hits.size() < wanted) {
+                    var before = hits.size();
+                    collect(c, source, index, search, wanted, hits);
+                    if (hits.size() > before) {
+                        answering++;
+                    }
                 }
             }
         }
@@ -294,23 +299,19 @@ public class EsStub implements ManagedDependency {
     }
 
     /**
-     * Appends this source's hits and returns how many it matched in total. The count comes from a
-     * window over the same scan, which postgres evaluates before the limit, so one pass answers
-     * both rather than scanning the case tables twice per search.
+     * Appends this source's hits, up to the page being returned.
      */
-    private long collect(Connection c, EsStubSources.Source source, String index,
+    private void collect(Connection c, EsStubSources.Source source, String index,
                          EsQueryTranslator.Search search, int limit, ArrayNode hits) {
         var order = new ArrayList<String>();
         for (var sort : search.sorts()) {
             order.add(sort.expression() + (sort.ascending() ? " asc" : " desc") + " nulls last");
         }
-        // At least one row even when none is wanted: 'size': 0 is how a caller asks for the
-        // count alone, and the count is carried by the rows.
-        var sql = "select u.id, u.document, count(*) over () as total from (\n"
+        var sql = "select u.id, u.document from (\n"
             + sources.documentView(source, index)
             + ") u where u.index_id = ? and (" + search.where() + ")"
             + (order.isEmpty() ? "" : " order by " + String.join(", ", order))
-            + " limit " + Math.max(limit, 1);
+            + " limit " + limit;
 
         try (var s = c.prepareStatement(sql)) {
             var parameter = 1;
@@ -324,14 +325,32 @@ public class EsStub implements ManagedDependency {
                 }
             }
             try (var rs = s.executeQuery()) {
-                long total = 0;
                 while (rs.next()) {
-                    total = rs.getLong("total");
-                    if (hits.size() < limit) {
-                        hits.add(hit(index, rs.getString("id"), rs.getString("document"), search));
-                    }
+                    hits.add(hit(index, rs.getString("id"), rs.getString("document"), search));
                 }
-                return total;
+            }
+        } catch (SQLException e) {
+            throw queryError(e, sql);
+        }
+    }
+
+    /**
+     * Counts this source's matches over a view without the document column, so that a page of
+     * results does not cost a json document per matching case.
+     */
+    private long count(Connection c, EsStubSources.Source source, String index,
+                       EsQueryTranslator.Search search) {
+        var sql = "select count(*) from (\n" + sources.countView(source, index)
+            + ") u where u.index_id = ? and (" + search.where() + ")";
+        try (var s = c.prepareStatement(sql)) {
+            var parameter = 1;
+            s.setString(parameter++, index);
+            for (var value : search.whereParams()) {
+                s.setObject(parameter++, value);
+            }
+            try (var rs = s.executeQuery()) {
+                rs.next();
+                return rs.getLong(1);
             }
         } catch (SQLException e) {
             throw queryError(e, sql);

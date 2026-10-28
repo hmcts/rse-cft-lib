@@ -207,18 +207,22 @@ public class Xui implements ManagedDependency {
         builder.environment().clear();
         builder.environment().putAll(XuiCommands.processEnvironment(System.getenv(), computed));
 
-        process = builder.start();
+        // Held locally as well, since a concurrent stop() clears the field and everything below
+        // would then fail on a null rather than reporting why the boot ended.
+        var started = builder.start();
+        process = started;
         if (stopped) {
             // Asked to stop while this was starting, so do not leave it behind.
             stop();
+            started.destroy();
             throw new IllegalStateException(name() + " was stopped while it was starting");
         }
-        recordPid(source, port);
+        recordPid(started, port, source);
         shutdownHook = new Thread(this::stop, "cftlib-stop-" + name());
         Runtime.getRuntime().addShutdownHook(shutdownHook);
         log("starting on port " + port + "; logs in " + logFile());
-        awaitPort(port);
-        watch(process);
+        awaitPort(started, port);
+        watch(started);
     }
 
     private Path pidFile(Map<String, String> source) {
@@ -241,10 +245,10 @@ public class Xui implements ManagedDependency {
         }
     }
 
-    private void recordPid(Map<String, String> source, int port) throws IOException {
+    private void recordPid(Process started, int port, Map<String, String> source) throws IOException {
         var file = pidFile(source);
         Files.createDirectories(file.getParent());
-        Files.writeString(file, process.pid() + " " + port);
+        Files.writeString(file, started.pid() + " " + port);
     }
 
     /**
@@ -283,11 +287,11 @@ public class Xui implements ManagedDependency {
             + "answer within " + AUTH_TIMEOUT_SECONDS + " seconds; XUI exits at boot without it.");
     }
 
-    private void awaitPort(int port) throws Exception {
+    private void awaitPort(Process started, int port) throws Exception {
         var deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(START_TIMEOUT_SECONDS);
         while (System.nanoTime() < deadline) {
-            if (!process.isAlive()) {
-                throw new IllegalStateException(name() + " exited with status " + process.exitValue()
+            if (!started.isAlive()) {
+                throw new IllegalStateException(name() + " exited with status " + started.exitValue()
                     + " before listening on port " + port + ". See " + logFile());
             }
             if (Ports.isListening(port)) {
@@ -308,10 +312,12 @@ public class Xui implements ManagedDependency {
         // The diff rather than the status: a status lists the paths that changed, so editing an
         // already modified file again would leave it identical and the stale build in place.
         var tracked = capture(List.of("git", "-C", checkout.toString(), "diff", "HEAD"));
+        // NUL separated, because git quotes a path with unusual characters in it and two
+        // different such paths can quote to the same text.
         var untracked = capture(List.of("git", "-C", checkout.toString(),
-            "ls-files", "--others", "--exclude-standard"));
+            "ls-files", "--others", "--exclude-standard", "-z"));
         var digest = new StringBuilder(tracked);
-        for (var path : untracked.split("\n")) {
+        for (var path : untracked.split("\0")) {
             if (!path.isBlank()) {
                 var file = checkout.resolve(path.trim());
                 digest.append(path).append(':')

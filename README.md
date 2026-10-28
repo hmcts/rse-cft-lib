@@ -433,7 +433,9 @@ It supports the clauses CCD and XUI generate, and **rejects anything else with a
 
 The stub reads no mappings, so it is more permissive than elasticsearch in one direction: sorting on an analysed text field, and a `nested` query on a path that is not mapped as nested, both answer here and are errors against a real cluster. A search feature that relies on either will pass locally and fail in AAT.
 
-Set `RSE_LIB_ES_STUB_SOURCES` to a comma separated list of `database[:schema]` if case data lives somewhere other than the `datastore` database.
+The stub searches the data store and any database named in `RSE_LIB_ADDITIONAL_DATABASES`, which covers a decentralised service without further configuration. Set `RSE_LIB_ES_STUB_SOURCES` to a comma separated list of `database[:schema]` if case data lives anywhere else.
+
+It is built for development volumes: there is no index, so every search scans the case tables, and each search opens a connection per source it reads rather than drawing on a pool. A few thousand cases are fine; a database grown over months of local work will be noticeably slower than elasticsearch.
 
 ### XUI without docker
 

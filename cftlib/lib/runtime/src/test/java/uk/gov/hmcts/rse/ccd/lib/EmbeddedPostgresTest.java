@@ -102,6 +102,24 @@ class EmbeddedPostgresTest {
     }
 
     @Test
+    void cleanBootLeavesAProcessThatIsNotPostgresAlone(@TempDir Path dir) throws Exception {
+        var data = Files.createDirectories(dir.resolve("postgres"));
+        var port = freePort();
+        // A pid file left by a previous boot whose pid now belongs to something else entirely:
+        // this JVM. A clean boot signals the pid it finds, so it must check what it is first.
+        Files.writeString(data.resolve("postmaster.pid"),
+            ProcessHandle.current().pid() + "\n" + data + "\n0\n" + port + "\n");
+
+        var postgres = new EmbeddedPostgres(data, dir.resolve("logs/postgres.log"), port, true, false);
+        postgres.start();
+        try {
+            assertThat(ProcessHandle.current().isAlive()).isTrue();
+        } finally {
+            postgres.stop();
+        }
+    }
+
+    @Test
     void cleanBootStopsThePreviousRunAndRecreatesTheData(@TempDir Path dir) throws Exception {
         var port = freePort();
         var data = dir.resolve("postgres");

@@ -155,7 +155,10 @@ public class EmbeddedPostgres implements ManagedDependency {
     private boolean stopPreviousRun() {
         var process = postmasterPid()
             .flatMap(ProcessHandle::of)
-            .filter(ProcessHandle::isAlive);
+            .filter(ProcessHandle::isAlive)
+            // Checked before signalling, not only before adopting: a pid in a stale file can
+            // belong to anything by now, and this path sends SIGTERM and then SIGKILL.
+            .filter(EmbeddedPostgres::isPostgres);
         if (process.isEmpty()) {
             return true;
         }

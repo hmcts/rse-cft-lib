@@ -75,13 +75,25 @@ public class LibRunner {
      * is starting, so the bind would otherwise lose a race it can simply wait out.
      */
     private static void awaitAuthServerPort() {
+        if (!portInUse()) {
+            return;
+        }
+        var hint = "An idam simulator container from an older cftlib is the usual cause: "
+            + "'docker rm -f cftlib-rse-idam-simulator-1' removes it.";
+        // Only docker mode is going to free it, by removing the orphan as it brings compose up.
+        // Nothing will in process mode, so say so now rather than after a minute of waiting.
+        if (!"docker".equalsIgnoreCase(getenv("RSE_LIB_DEPENDENCY_MODE") == null
+            ? "docker" : getenv("RSE_LIB_DEPENDENCY_MODE"))) {
+            throw new IllegalStateException("Port " + AUTH_SERVER_PORT + " is already in use, and the idam "
+                + "simulator runs in this JVM. " + hint);
+        }
+
         var deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(AUTH_SERVER_PORT_WAIT_SECONDS);
         var reported = false;
         while (portInUse() && System.nanoTime() < deadline) {
             if (!reported) {
                 System.out.println("**** Cftlib is waiting for port " + AUTH_SERVER_PORT + ", which something "
-                    + "else is holding. An idam simulator container from an older cftlib is the usual cause: "
-                    + "'docker rm -f cftlib-rse-idam-simulator-1' removes it.");
+                    + "else is holding. " + hint);
                 reported = true;
             }
             try {

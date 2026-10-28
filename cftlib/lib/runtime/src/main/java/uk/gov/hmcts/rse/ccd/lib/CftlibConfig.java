@@ -86,7 +86,14 @@ public final class CftlibConfig {
      * The base url of elasticsearch, as used by both the CFT services and the readiness probe.
      */
     public static String esUrl() {
-        return ControlPlane.getEnvVar("SEARCH_ELASTIC_HOSTS", "http://localhost:9200");
+        var configured = ControlPlane.getEnvVar("SEARCH_ELASTIC_HOSTS", "http://localhost:9200");
+        // The data store accepts a comma separated list and tolerates a trailing slash; callers
+        // here append paths to a single host, so take the first and drop the slash.
+        var first = configured.split(",")[0].trim();
+        while (first.endsWith("/")) {
+            first = first.substring(0, first.length() - 1);
+        }
+        return first;
     }
 
     private static <T extends Enum<T>> T parse(Class<T> type, String var, T defaultValue) {
