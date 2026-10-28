@@ -34,7 +34,7 @@ public class Xui implements ManagedDependency {
 
     private volatile Process process;
     private volatile boolean stopped;
-    private Thread shutdownHook;
+    private volatile Thread shutdownHook;
 
     private Xui(XuiApp app) {
         this.app = app;

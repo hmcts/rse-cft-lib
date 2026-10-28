@@ -107,6 +107,11 @@ public class LibRunner {
                 return;
             }
         }
+        if (portInUse()) {
+            // Reported rather than left to surface as a bind error from deep inside spring.
+            throw new IllegalStateException("Port " + AUTH_SERVER_PORT + " was still in use after "
+                + AUTH_SERVER_PORT_WAIT_SECONDS + " seconds, so the idam simulator cannot start. " + hint);
+        }
     }
 
     private static boolean portInUse() {

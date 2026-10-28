@@ -16,9 +16,26 @@ public class ProcessProvider implements DependencyProvider {
     @Override
     @SneakyThrows
     public void start() {
-        var dependencies = resolve();
+        var dependencies = new ArrayList<>(resolve());
 
-        // Dependencies are independent of one another, and building XUI is slow,
+        // Postgres goes first and alone. A clean boot stops the server from the last boot and
+        // deletes its data directory, and the readiness monitor is already polling that port: if
+        // it connected in between it would create the databases and open the gates against a
+        // server being torn down, and every service would then migrate into it.
+        for (var dependency : List.copyOf(dependencies)) {
+            if (dependency instanceof EmbeddedPostgres) {
+                dependencies.remove(dependency);
+                System.out.println("**** Cftlib starting " + dependency.name());
+                try {
+                    dependency.start();
+                    started.add(dependency);
+                } catch (Throwable e) {
+                    throw new RuntimeException("Failed to start " + dependency.name(), e);
+                }
+            }
+        }
+
+        // The rest are independent of one another, and building XUI is slow,
         // so bring them up concurrently.
         var failures = new CopyOnWriteArrayList<Throwable>();
         var threads = new ArrayList<Thread>();

@@ -46,7 +46,9 @@ public class EmbeddedPostgres implements ManagedDependency {
                 String.valueOf(port)),
             logFolder(System.getenv("RSE_LIB_LOG_FOLDER")).resolve("postgres.log"),
             port,
-            System.getenv("RSE_LIB_CLEAN_BOOT") != null,
+            // CI counts as a clean boot, as it does for the containers and for the XUI build: a
+            // reused agent workspace would otherwise carry the last build's databases into this one.
+            System.getenv("RSE_LIB_CLEAN_BOOT") != null || System.getenv("CI") != null,
             false);
     }
 
@@ -196,7 +198,11 @@ public class EmbeddedPostgres implements ManagedDependency {
     }
 
     private static boolean isPostgres(ProcessHandle process) {
-        return process.info().command().filter(command -> command.endsWith("postgres")).isPresent();
+        // The suffix differs by platform: zonky publishes binaries for windows too.
+        return process.info().command()
+            .map(command -> command.endsWith(".exe") ? command.substring(0, command.length() - 4) : command)
+            .filter(command -> command.endsWith("postgres"))
+            .isPresent();
     }
 
     private Optional<Long> postmasterPid() {
