@@ -55,6 +55,10 @@ public class LibRunner {
                     awaitAuthServerPort();
                     launchAppOrFailFast(new File(f));
                 });
+                // launchAppOrFailFast installs this itself, but the port check runs before it and
+                // its failure is fatal: without a handler the thread would die quietly and the
+                // services would wait on an auth server that is never coming.
+                t.setUncaughtExceptionHandler(ControlPlane.failFast);
                 t.setName(AUTH_SERVER_MANIFEST);
                 t.start();
                 threads.add(t);
@@ -109,6 +113,11 @@ public class LibRunner {
                 Thread.currentThread().interrupt();
                 return;
             }
+        }
+        if (portInUse()) {
+            // Reported rather than left to surface as a bind error from deep inside spring.
+            throw new IllegalStateException("Port " + AUTH_SERVER_PORT + " was still in use after "
+                + AUTH_SERVER_PORT_WAIT_SECONDS + " seconds, so the idam simulator cannot start. " + hint);
         }
     }
 

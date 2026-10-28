@@ -46,7 +46,9 @@ public class EmbeddedPostgres implements ManagedDependency {
                 String.valueOf(port)),
             logFolder(System.getenv("RSE_LIB_LOG_FOLDER")).resolve("postgres.log"),
             port,
-            System.getenv("RSE_LIB_CLEAN_BOOT") != null,
+            // CI counts as a clean boot, as it does for the containers and for the XUI build: a
+            // reused agent workspace would otherwise carry the last build's databases into this one.
+            System.getenv("RSE_LIB_CLEAN_BOOT") != null || System.getenv("CI") != null,
             false);
     }
 
@@ -85,10 +87,10 @@ public class EmbeddedPostgres implements ManagedDependency {
 
     @Override
     public void start() throws IOException {
-        if (cleanBoot && stopPreviousRun()) {
-            deleteDataDirectory();
-        }
+        var freed = !cleanBoot || stopPreviousRun();
 
+        // Checked before anything is deleted: a boot that cannot have the port is going to fail,
+        // and it must not take the databases of previous boots with it.
         if (Ports.isListening(CftlibConfig.dbHost(), port)) {
             // Only adopt a server from one of our own previous boots. Anything else on the port is
             // most often a leftover cftlib container, which would quietly put docker back in the mix.
@@ -101,6 +103,10 @@ public class EmbeddedPostgres implements ManagedDependency {
                 + "A leftover cftlib container is the usual cause, and 'docker rm -f "
                 + "cftlib-shared-database-pg-1' clears it. Set RSE_LIB_DB_PORT to use a different "
                 + "port, or RSE_LIB_DB=external to have cftlib use the database already there.");
+        }
+
+        if (cleanBoot && freed) {
+            deleteDataDirectory();
         }
 
         Files.createDirectories(logFile.getParent());
@@ -192,7 +198,11 @@ public class EmbeddedPostgres implements ManagedDependency {
     }
 
     private static boolean isPostgres(ProcessHandle process) {
-        return process.info().command().filter(command -> command.endsWith("postgres")).isPresent();
+        // The suffix differs by platform: zonky publishes binaries for windows too.
+        return process.info().command()
+            .map(command -> command.endsWith(".exe") ? command.substring(0, command.length() - 4) : command)
+            .filter(command -> command.endsWith("postgres"))
+            .isPresent();
     }
 
     private Optional<Long> postmasterPid() {

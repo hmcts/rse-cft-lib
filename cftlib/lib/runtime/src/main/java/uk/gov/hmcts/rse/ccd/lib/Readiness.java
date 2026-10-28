@@ -19,6 +19,18 @@ import lombok.SneakyThrows;
  */
 public class Readiness {
 
+    private static final int PROBE_TIMEOUT_MILLIS = 2_000;
+
+    /**
+     * Probes have to give up: a peer that accepts the connection and never answers would
+     * otherwise block the polling thread past every deadline above it, including awaitility's,
+     * since those are only checked between polls.
+     */
+    private static void timeout(HttpURLConnection connection) {
+        connection.setConnectTimeout(PROBE_TIMEOUT_MILLIS);
+        connection.setReadTimeout(PROBE_TIMEOUT_MILLIS);
+    }
+
     @SneakyThrows
     boolean authReady() {
         if (CftlibConfig.localAuth()) {
@@ -26,6 +38,7 @@ public class Readiness {
                 // Wait for Idam Simulator to come up.
                 var c = (HttpURLConnection) new URL("http://localhost:5062/health")
                     .openConnection();
+                timeout(c);
                 if (c.getResponseCode() != 200) {
                     throw new RuntimeException();
                 }
@@ -104,6 +117,7 @@ public class Readiness {
         try {
             var c = (HttpURLConnection) new URL(CftlibConfig.esUrl() + "/_cat/health")
                 .openConnection();
+            timeout(c);
             if (c.getResponseCode() != 200) {
                 return false;
             }

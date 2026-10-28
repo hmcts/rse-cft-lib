@@ -218,25 +218,32 @@ class EsQueryTranslator {
             conjuncts.add("not coalesce(" + query(clause, scope, params) + ", false)");
         }
 
-        var shoulds = new ArrayList<String>();
-        for (var clause : clauses(node.get("should"), "should")) {
-            shoulds.add(query(clause, scope, params));
-        }
-
+        var shouldClauses = clauses(node.get("should"), "should");
         var minimumShouldMatch = minimumShouldMatch(node.get("minimum_should_match"),
             !musts.isEmpty() || !filters.isEmpty());
 
-        if (!shoulds.isEmpty()) {
-            if (minimumShouldMatch > shoulds.size()) {
+        // Translated only where the result is used. Translating binds the clause's values, and a
+        // clause whose sql is then discarded would leave them bound with no placeholder to fill,
+        // so the statement would be given more values than it has parameters.
+        if (!shouldClauses.isEmpty()) {
+            if (minimumShouldMatch > shouldClauses.size()) {
                 conjuncts.add("false");
-            } else if (minimumShouldMatch == 1) {
-                conjuncts.add("(" + String.join(" or ", shoulds) + ")");
-            } else if (minimumShouldMatch > 1) {
-                var counted = shoulds.stream()
-                    .map(s -> "(case when " + s + " then 1 else 0 end)")
-                    .toList();
-                conjuncts.add("(" + String.join(" + ", counted) + ") >= " + minimumShouldMatch);
+            } else if (minimumShouldMatch >= 1) {
+                var shoulds = new ArrayList<String>();
+                for (var clause : shouldClauses) {
+                    shoulds.add(query(clause, scope, params));
+                }
+                if (minimumShouldMatch == 1) {
+                    conjuncts.add("(" + String.join(" or ", shoulds) + ")");
+                } else {
+                    var counted = shoulds.stream()
+                        .map(s -> "(case when " + s + " then 1 else 0 end)")
+                        .toList();
+                    conjuncts.add("(" + String.join(" + ", counted) + ") >= " + minimumShouldMatch);
+                }
             }
+            // Otherwise none of them has to match: alongside a must or filter they only affect
+            // the score, which this stub does not produce.
         }
 
         return conjuncts.isEmpty() ? "true" : "(" + String.join(" and ", conjuncts) + ")";

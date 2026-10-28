@@ -28,6 +28,8 @@ public class DependencyBoot {
             Hearings.writeRoomAttributes(System.getenv());
             WorkAllocation.startWhenBooted(api);
             Hearings.startWhenBooted(api);
+            // Only compose needs this ordering now: the process provider brings postgres up before
+            // anything can observe it, so monitoring may start immediately in either case.
             var recreatingContainers = provider instanceof ComposeRunner
                 && (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT"));
             if (recreatingContainers) {

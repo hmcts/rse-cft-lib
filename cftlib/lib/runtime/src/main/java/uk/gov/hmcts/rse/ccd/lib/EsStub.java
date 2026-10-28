@@ -114,12 +114,26 @@ public class EsStub implements ManagedDependency {
                         + "'/_cat/health', '/{index}/_doc/{id}', '/{index}/_search' and '/_msearch'.")));
             }
         } catch (EsStubException e) {
-            respond(exchange, e.status(), error(e));
+            reportFailure(exchange, e.status(), e);
         } catch (Exception e) {
-            respond(exchange, 500, error(new EsStubException(EsStubException.QUERY_ERROR, 500,
-                "The cftlib elasticsearch stub failed: " + e)));
+            reportFailure(exchange, 500, new EsStubException(EsStubException.QUERY_ERROR, 500,
+                "The cftlib elasticsearch stub failed: " + e));
         } finally {
             exchange.close();
+        }
+    }
+
+    /**
+     * Reports a failure, tolerating a response that has already begun: a caller that disconnects
+     * mid-write leaves the headers sent, and trying to send them again would replace the real
+     * failure with a complaint about the attempt.
+     */
+    private void reportFailure(HttpExchange exchange, int status, EsStubException failure) {
+        try {
+            respond(exchange, status, error(failure));
+        } catch (IOException | IllegalStateException e) {
+            System.out.println("**** Cftlib elasticsearch stub could not report a failure to its caller: "
+                + failure.getMessage());
         }
     }
 

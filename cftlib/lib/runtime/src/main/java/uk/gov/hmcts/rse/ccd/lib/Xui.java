@@ -34,7 +34,7 @@ public class Xui implements ManagedDependency {
 
     private volatile Process process;
     private volatile boolean stopped;
-    private Thread shutdownHook;
+    private volatile Thread shutdownHook;
 
     private Xui(XuiApp app) {
         this.app = app;
@@ -235,11 +235,17 @@ public class Xui implements ManagedDependency {
             return false;
         }
         try {
-            var parts = Files.readString(file).trim().split("\\s+");
-            if (parts.length != 2 || Integer.parseInt(parts[1]) != port) {
+            var parts = Files.readString(file).trim().split("\\s+", 3);
+            if (parts.length != 3 || Integer.parseInt(parts[1]) != port) {
                 return false;
             }
-            return ProcessHandle.of(Long.parseLong(parts[0])).filter(ProcessHandle::isAlive).isPresent();
+            return ProcessHandle.of(Long.parseLong(parts[0]))
+                .filter(ProcessHandle::isAlive)
+                // A pid outlives the process that wrote it, so the command has to match too:
+                // adopting on the pid alone could serve a leftover container's published image
+                // in place of the revision this boot pinned.
+                .filter(process -> process.info().command().filter(parts[2]::equals).isPresent())
+                .isPresent();
         } catch (IOException | NumberFormatException e) {
             return false;
         }
@@ -248,7 +254,9 @@ public class Xui implements ManagedDependency {
     private void recordPid(Process started, int port, Map<String, String> source) throws IOException {
         var file = pidFile(source);
         Files.createDirectories(file.getParent());
-        Files.writeString(file, started.pid() + " " + port);
+        // The command as well as the pid: a pid outlives its process, so adopting on the pid
+        // alone could serve something else that happens to hold the port.
+        Files.writeString(file, started.pid() + " " + port + " " + started.info().command().orElse(""));
     }
 
     /**
