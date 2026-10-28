@@ -31,6 +31,24 @@ public enum Service {
         "--WA_SYSTEM_USERNAME=" + Wa.SYSTEM_USERNAME,
         "--WA_SYSTEM_PASSWORD=" + Wa.SYSTEM_PASSWORD
     ),
+    // HMCTS's Camunda engine, built on the community edition. As in preview, services call its REST API without S2S.
+    camundaBpm(Feature.camunda,
+        "--server.port=${CAMUNDA_PORT:8999}",
+        "--management.server.port=${CAMUNDA_PORT:8999}",
+        "--CAMUNDA_DB_HOST=${RSE_LIB_DB_HOST:localhost}",
+        "--CAMUNDA_DB_PORT=${RSE_LIB_DB_PORT:6432}",
+        "--CAMUNDA_DB_NAME=camunda",
+        "--CAMUNDA_DB_USER_NAME=${RSE_LIB_DB_USERNAME:postgres}",
+        "--CAMUNDA_DB_PASSWORD=${RSE_LIB_DB_PASSWORD:postgres}",
+        // Environments migrate the schema with Flyway in their pipeline; here the engine creates it.
+        "--camunda.bpm.database.schema-update=true",
+        "--camunda.api.auth.enabled=false",
+        "--S2S_URL=http://localhost:${RSE_LIB_S2S_PORT:8489}",
+        "--TASK_MANAGEMENT_API_URL=http://localhost:8087",
+        // Camunda asks task management to initiate each WA task as it is created, rather than wa-task-monitor
+        // looking for new tasks on a schedule.
+        "--WA_INITIATE_TASKS_ON_CREATE_ENABLED=true"
+    ),
     // Turns CCD case events into Camunda messages that start and cancel tasks.
     waCaseEventHandler(Feature.wa,
         "--POSTGRES_HOST=${RSE_LIB_DB_HOST:localhost}",

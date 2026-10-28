@@ -49,3 +49,6 @@
 [submodule "projects/hmc-hmi-outbound-adapter"]
 	path = projects/hmc-hmi-outbound-adapter
 	url = https://github.com/hmcts/hmc-hmi-outbound-adapter.git
+[submodule "projects/camunda-bpm"]
+	path = projects/camunda-bpm
+	url = https://github.com/hmcts/camunda-bpm.git

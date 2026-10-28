@@ -50,37 +50,6 @@ services:
     ports:
       - ${XUI_MO_PORT:-3001}:3001
 
-  # Camunda engine for services whose business processes run on it, such as civil.
-  # Opt in with RSE_LIB_COMPOSE_PROFILES=camunda; cftlib then creates its database.
-  camunda:
-    image: "${CAMUNDA_IMAGE:-hmctsprod.azurecr.io/camunda/bpm:latest}"
-    profiles: ["camunda"]
-    ports:
-      - ${CAMUNDA_PORT:-8999}:8999
-    environment:
-      CAMUNDA_DB_HOST: shared-database-pg
-      CAMUNDA_DB_PORT: 5432
-      CAMUNDA_DB_NAME: camunda
-      CAMUNDA_DB_USER_NAME: postgres
-      CAMUNDA_DB_PASSWORD: postgres
-      CAMUNDA_BPM_DATABASE_SCHEMA_UPDATE: "true"
-      # As in preview: services call the engine REST API without S2S.
-      CAMUNDA_API_AUTH_ENABLED: "false"
-      S2S_URL: http://${JVM_HOST:-host.docker.internal}:${RSE_LIB_S2S_PORT:-8489}
-      TASK_MANAGEMENT_API_URL: http://${JVM_HOST:-host.docker.internal}:8087
-      # Camunda asks task management to initiate each WA task as it is created, rather than wa-task-monitor
-      # looking for new tasks on a schedule.
-      WA_INITIATE_TASKS_ON_CREATE_ENABLED: "true"
-    depends_on:
-      shared-database-pg:
-        condition: service_started
-        # Recreating the database, as a clean boot does, removes Camunda's tables, which it only creates on start.
-        restart: true
-    # Starts before cftlib has created its database, so retry until it has.
-    restart: on-failure
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
   # Azure Service Bus emulator, with the entities cftlib writes to servicebus/Config.json.
   # Opt in with the servicebus feature. Clients connect with RSE_LIB_SERVICEBUS_CONNECTION_STRING.
   servicebus:

@@ -61,16 +61,13 @@ public class DependencyBoot {
     }
 
     /**
-     * Camunda and the Service Bus emulator, which the wa and hmc features bring, are only available as containers.
+     * The Service Bus emulator, which the hmc feature brings, is only available as a container.
      */
     private DependencyProvider processProvider() {
-        var containerOnly = Readiness.composeProfiles(System.getenv()).stream()
-            .filter(profile -> profile.equals("camunda") || profile.equals("servicebus"))
-            .toList();
-        if (!containerOnly.isEmpty()) {
-            throw new IllegalStateException("The " + String.join(" and ", containerOnly) + " compose profiles, which "
-                + "the wa and hmc features use, only run as containers, so cannot be combined with "
-                + "RSE_LIB_DEPENDENCY_MODE=process. Use RSE_LIB_DEPENDENCY_MODE=docker.");
+        if (Readiness.composeProfiles(System.getenv()).contains("servicebus")) {
+            throw new IllegalStateException("The Service Bus emulator, which the servicebus and hmc features use, "
+                + "only runs as a container, so cannot be combined with RSE_LIB_DEPENDENCY_MODE=process. Use "
+                + "RSE_LIB_DEPENDENCY_MODE=docker.");
         }
         return new ProcessProvider();
     }

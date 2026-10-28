@@ -44,6 +44,7 @@ public class CftLibPlugin implements Plugin<Project> {
             Map.entry(Service.dgDocassemblyApi, "uk.gov.hmcts.reform.dg.docassembly.Application"),
             Map.entry(Service.waTaskManagementApi, "uk.gov.hmcts.reform.wataskmanagementapi.Application"),
             Map.entry(Service.rseIdamSimulator, "uk.gov.hmcts.reform.rse.idam.simulator.Application"),
+            Map.entry(Service.camundaBpm, "uk.gov.hmcts.reform.camunda.bpm.CamundaApplication"),
             Map.entry(Service.waCaseEventHandler, "uk.gov.hmcts.reform.wacaseeventhandler.Application"),
             Map.entry(Service.waWorkflowApi, "uk.gov.hmcts.reform.waworkflowapi.Application"),
             Map.entry(Service.waTaskMonitor, "uk.gov.hmcts.reform.wataskmonitor.Application"),

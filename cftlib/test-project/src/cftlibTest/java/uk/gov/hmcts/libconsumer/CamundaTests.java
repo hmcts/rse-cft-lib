@@ -21,7 +21,6 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.postgresql.Driver;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
@@ -30,8 +29,6 @@ import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
  * The Camunda engine cftlib runs with the camunda feature, which this project's cftlibTest task turns on.
  */
 // The same context as LibConsumerApplicationTests, which Spring reuses rather than starting another on the same port.
-// The feature runs containers, so is off when the test-project runs without docker.
-@EnabledIfEnvironmentVariable(named = "RSE_LIB_FEATURES", matches = "(.*,)?wa(,.*)?")
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

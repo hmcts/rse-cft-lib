@@ -64,11 +64,12 @@ cftlibTest {
     authMode = AuthMode.Local
     // Consumers' tests do not start XUI, but xuiContainerReceivesPrefixedEnvVars covers
     // the RSE_LIB_XUI_ENV_ plumbing and so needs it where there are containers at all.
+    // CamundaTests and WorkAllocationTests: work allocation, which brings the Camunda engine, in-process.
+    features 'wa'
     if (System.getenv('RSE_LIB_DEPENDENCY_MODE') != 'process') {
         environment 'RSE_LIB_XUI', 'docker'
-        // CamundaTests, WorkAllocationTests, ServiceBusTests and HmcTests: work allocation, which brings the Camunda
-        // engine, and hearings, which bring the Service Bus emulator. Both run as containers.
-        features 'wa', 'hmc'
+        // ServiceBusTests and HmcTests: hearings, which bring the Service Bus emulator, a container.
+        features 'hmc'
     }
     environment 'RSE_LIB_SERVICEBUS_CONFIG', file('src/cftlib/servicebus.json').path
     environment("RSE_LIB_ADDITIONAL_DATABASES", "mydb")

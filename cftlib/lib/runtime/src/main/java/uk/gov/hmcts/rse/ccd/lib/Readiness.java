@@ -61,7 +61,7 @@ public class Readiness {
                 .collect(Collectors.toCollection(ArrayList::new));
 
             dbs.add("cft_task_db");
-            if (composeProfiles(System.getenv()).contains("camunda")) {
+            if (Arrays.asList(System.getenv().getOrDefault("RSE_LIB_FEATURES", "").split(",")).contains("camunda")) {
                 dbs.add("camunda");
             }
             if (WorkAllocation.enabled(System.getenv())) {

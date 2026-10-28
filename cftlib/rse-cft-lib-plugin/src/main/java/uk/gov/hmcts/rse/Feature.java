@@ -14,9 +14,9 @@ import org.gradle.api.InvalidUserDataException;
  * with RSE_LIB_FEATURES=camunda,servicebus.
  */
 public enum Feature {
-    // Camunda engine in docker.
-    camunda(List.of("camunda"), List.of()),
-    // Azure Service Bus emulator in docker.
+    // HMCTS's Camunda engine, camunda-bpm, in-process.
+    camunda(List.of(), List.of()),
+    // Azure Service Bus emulator in docker. It is a .NET application, so cannot run in-process.
     servicebus(List.of("servicebus"), List.of()),
     // Work allocation: wa-case-event-handler, wa-workflow-api and wa-task-monitor in-process, on Camunda.
     wa(List.of(), List.of(camunda)),
