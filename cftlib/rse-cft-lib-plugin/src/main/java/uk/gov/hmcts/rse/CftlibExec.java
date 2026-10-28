@@ -93,8 +93,9 @@ public class CftlibExec extends JavaExec {
      */
     void resolveDependencies() {
         // An inherited or explicitly configured value wins, so the mode can be flipped
-        // from the environment without editing the build script.
-        if (getEnvironment().get("RSE_LIB_DEPENDENCY_MODE") == null) {
+        // from the environment without editing the build script. Blank counts as unset, as it
+        // does everywhere else it is read.
+        if (unset("RSE_LIB_DEPENDENCY_MODE")) {
             environment("RSE_LIB_DEPENDENCY_MODE", dependencyMode.name().toLowerCase());
         }
         // A test suite needs XUI only if it drives the browser. In process mode starting it
@@ -115,10 +116,14 @@ public class CftlibExec extends JavaExec {
     }
 
     private void offUnlessChosen(String variable) {
-        var chosen = getEnvironment().get(variable);
-        if (chosen == null || String.valueOf(chosen).isBlank()) {
+        if (unset(variable)) {
             environment(variable, "off");
         }
+    }
+
+    private boolean unset(String variable) {
+        var value = getEnvironment().get(variable);
+        return value == null || String.valueOf(value).isBlank();
     }
 
     // The XUI containers sit behind a compose profile so that a run which does not want them

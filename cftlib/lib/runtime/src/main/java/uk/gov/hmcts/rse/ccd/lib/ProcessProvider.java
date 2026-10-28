@@ -21,6 +21,9 @@ public class ProcessProvider implements DependencyProvider {
      */
     private final List<ManagedDependency> owned = new CopyOnWriteArrayList<>();
 
+    /** The threads starting those dependencies, which stopping has to interrupt. */
+    private final List<Thread> starting = new CopyOnWriteArrayList<>();
+
     /**
      * Brings the database up, which a clean boot does by stopping the last one and deleting its
      * data directory. Runs before anything observes the port, and so before monitoring starts.
@@ -66,6 +69,7 @@ public class ProcessProvider implements DependencyProvider {
             t.setDaemon(true);
             t.start();
             threads.add(t);
+            starting.add(t);
         }
 
         // Reported as soon as any dependency fails rather than once they have all finished:
@@ -80,29 +84,30 @@ public class ProcessProvider implements DependencyProvider {
             }
         }
         if (!failures.isEmpty()) {
-            // The boot is over, so stop the dependencies still starting rather than leaving a
-            // yarn install running unparented once the JVM halts.
-            for (var t : threads) {
-                t.interrupt();
-            }
-            // Waited for, because the boot ends by halting and that runs no shutdown hooks: an
-            // install that has not yet seen the interrupt would otherwise carry on without us.
-            for (var t : threads) {
-                t.join(INTERRUPT_WAIT_MILLIS);
-            }
-            for (var dependency : dependencies) {
-                try {
-                    dependency.stop();
-                } catch (Exception e) {
-                    System.out.println("**** Cftlib failed to stop " + dependency.name() + ": " + e.getMessage());
-                }
-            }
+            stop();
             throw failures.get(0);
         }
     }
 
     @Override
     public void stop() {
+        // The boot is over, so a dependency part way through starting has to be taken with it.
+        // Interrupting is what reaches the child process: zt-exec destroys it when the thread
+        // waiting on it is interrupted, and its own destroyOnExit hook cannot help here, since
+        // a boot that failed ends by halting and that runs no shutdown hooks.
+        for (var t : starting) {
+            t.interrupt();
+        }
+        // Waited for, for the same reason: an install that has not yet seen the interrupt would
+        // otherwise carry on without us.
+        for (var t : starting) {
+            try {
+                t.join(INTERRUPT_WAIT_MILLIS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
         for (var dependency : owned) {
             try {
                 dependency.stop();

@@ -82,8 +82,9 @@ public class LibRunner {
         if (!portInUse()) {
             return;
         }
-        var hint = "An idam simulator container from an older cftlib is the usual cause: "
-            + "'docker rm -f cftlib-rse-idam-simulator-1' removes it.";
+        var hint = "Another cftlib run holds it, since the simulator now runs in the cftlib JVM "
+            + "rather than in a container shared by every run; or a simulator container from an "
+            + "older cftlib does, which 'docker rm -f cftlib-rse-idam-simulator-1' removes.";
         // Only docker mode is going to free it, by removing the orphan as it brings compose up.
         // Nothing will in process mode, so say so now rather than after a minute of waiting.
         if (!"docker".equalsIgnoreCase(dependencyMode())) {
