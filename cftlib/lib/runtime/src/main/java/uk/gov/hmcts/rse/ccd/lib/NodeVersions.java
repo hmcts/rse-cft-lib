@@ -40,7 +40,8 @@ final class NodeVersions {
         if (!satisfies(version, range)) {
             throw new IllegalStateException(
                 app + " requires node " + range + " but found " + version + " on the path. "
-                    + "Install a matching node, or run XUI in docker with RSE_LIB_XUI=docker.");
+                    + "Install a matching node, or set RSE_LIB_DEPENDENCY_MODE=docker to run XUI "
+                    + "from its published image.");
         }
     }
 

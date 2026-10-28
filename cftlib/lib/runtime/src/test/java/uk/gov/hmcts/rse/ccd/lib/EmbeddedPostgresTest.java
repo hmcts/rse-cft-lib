@@ -33,6 +33,13 @@ class EmbeddedPostgresTest {
             try (var c = connect(port, "postgres")) {
                 exec(c, "create database datastore");
             }
+            try (var c = connect(port, "postgres")) {
+                // Not the environment's locale, which under a plain C locale is SQL_ASCII, where
+                // the stub's folding and tokenising would read each byte of an accented name as a
+                // character of its own.
+                assertThat(queryString(c, "select pg_encoding_to_char(encoding) from pg_database"
+                    + " where datname = 'datastore'")).isEqualTo("UTF8");
+            }
             try (var c = connect(port, "datastore")) {
                 // The extensions the CFT services and CFTLibApiImpl create for themselves.
                 exec(c, "create extension if not exists btree_gin");

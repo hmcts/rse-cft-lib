@@ -14,6 +14,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class EsQueryTranslatorTest {
 
+    /**
+     * A query value bound for postgres to lowercase, which is where every fold happens: the
+     * stored value and the value searched for have to be folded by the same engine.
+     */
+    private static final String NEEDLE = "lower(?::text)";
+
     private final ObjectMapper mapper = new ObjectMapper();
 
     private EsQueryTranslator.Search translate(String json) {
@@ -62,17 +68,19 @@ class EsQueryTranslatorTest {
     void termOnAnalysedMetadataMatchesTokens() {
         var search = translate("{\"query\":{\"term\":{\"state\":\"open\"}}}");
 
-        assertThat(search.where()).isEqualTo("? = any(" + tokens("u.state") + ")");
+        assertThat(search.where()).isEqualTo(NEEDLE + " = any(" + tokens("u.state") + ")");
         assertThat(search.whereParams()).containsExactly("open");
     }
 
     @Test
-    void termOnAnalysedMetadataLowercasesTheValue() {
+    void termOnAnalysedMetadataIsFoldedByPostgresRatherThanTheTranslator() {
         // Elasticsearch indexes 'Draft' as the token 'draft', so a term query on the text field
-        // matches regardless of the stored case.
+        // matches regardless of the stored case. The value is bound as it came and lowercased by
+        // the same engine, and under the same locale, as the column it is compared with.
         var search = translate("{\"query\":{\"term\":{\"state\":{\"value\":\"Draft\",\"boost\":1.0}}}}");
 
-        assertThat(search.whereParams()).containsExactly("draft");
+        assertThat(search.where()).startsWith(NEEDLE + " =");
+        assertThat(search.whereParams()).containsExactly("Draft");
     }
 
     @Test
@@ -81,8 +89,8 @@ class EsQueryTranslatorTest {
         // holds 'draft' however the case was stored and whatever case the query asks for.
         var search = translate("{\"query\":{\"term\":{\"state.keyword\":\"Draft\"}}}");
 
-        assertThat(search.where()).isEqualTo(normalised("u.state") + " = ?");
-        assertThat(search.whereParams()).containsExactly("draft");
+        assertThat(search.where()).isEqualTo(normalised("u.state") + " = " + normalised("?::text"));
+        assertThat(search.whereParams()).containsExactly("Draft");
     }
 
     @Test
@@ -90,17 +98,17 @@ class EsQueryTranslatorTest {
         // asciifolding is the normalizer's second filter: a search for 'Beiro' finds 'Béiró'.
         var search = translate("{\"query\":{\"term\":{\"data.partyName.keyword\":\"Béiró\"}}}");
 
-        assertThat(search.whereParams()).containsExactly("lax $.\"partyName\"", "beiro");
+        assertThat(search.where()).contains(normalised("?::text"));
+        assertThat(search.whereParams()).containsExactly("lax $.\"partyName\"", "Béiró");
     }
 
     @Test
     void securityClassificationIsMatchedWholeAndFolded() {
         var search = translate("{\"query\":{\"terms\":{\"security_classification\":[\"PUBLIC\",\"PRIVATE\"]}}}");
 
-        assertThat(search.where()).isEqualTo(
-            "(" + normalised("u.security_classification") + " = ? or "
-                + normalised("u.security_classification") + " = ?)");
-        assertThat(search.whereParams()).containsExactly("public", "private");
+        var folded = normalised("u.security_classification") + " = " + normalised("?::text");
+        assertThat(search.where()).isEqualTo("(" + folded + " or " + folded + ")");
+        assertThat(search.whereParams()).containsExactly("PUBLIC", "PRIVATE");
     }
 
     @Test
@@ -153,7 +161,7 @@ class EsQueryTranslatorTest {
     void referencePrefixDropsHyphensToo() {
         var search = translate("{\"query\":{\"match_phrase_prefix\":{\"reference\":\"1234-56\"}}}");
 
-        assertThat(search.where()).isEqualTo("u.reference::text like ? escape '\\'");
+        assertThat(search.where()).isEqualTo("u.reference::text like ?::text escape '\\'");
         assertThat(search.whereParams()).containsExactly("123456%");
     }
 
@@ -169,10 +177,10 @@ class EsQueryTranslatorTest {
             "{\"query\":{\"match\":{\"data.applicant1FirstName\":{\"operator\":\"and\",\"query\":\"Ann Marie\"}}}}");
 
         var token = "exists (select 1 from jsonb_array_elements_text(jsonb_path_query_array(u.data, ?::jsonpath)) "
-            + "as v(val) where ? = any(" + tokens("v.val") + "))";
+            + "as v(val) where " + NEEDLE + " = any(" + tokens("v.val") + "))";
         assertThat(search.where()).isEqualTo("(" + token + " and " + token + ")");
         assertThat(search.whereParams())
-            .containsExactly("lax $.\"applicant1FirstName\"", "ann", "lax $.\"applicant1FirstName\"", "marie");
+            .containsExactly("lax $.\"applicant1FirstName\"", "Ann", "lax $.\"applicant1FirstName\"", "Marie");
     }
 
     @Test
@@ -181,7 +189,7 @@ class EsQueryTranslatorTest {
         // keeping it, which matches the same cases because it drops it from the query too.
         var search = translate("{\"query\":{\"match\":{\"data.lastName\":\"O'Brien\"}}}");
 
-        assertThat(search.whereParams()).containsExactly("lax $.\"lastName\"", "obrien");
+        assertThat(search.whereParams()).containsExactly("lax $.\"lastName\"", "OBrien");
     }
 
     @Test
@@ -195,7 +203,7 @@ class EsQueryTranslatorTest {
 
     @Test
     void trailingPunctuationIsNotPartOfAToken() {
-        assertThat(EsQueryTranslator.tokenise("Smith, J.")).containsExactly("smith", "j");
+        assertThat(EsQueryTranslator.tokenise("Smith, J.")).containsExactly("Smith", "J");
     }
 
     @Test
@@ -216,8 +224,8 @@ class EsQueryTranslatorTest {
         var search = translate("{\"query\":{\"match_phrase\":{\"data.name\":\"Ann-Marie Smith\"}}}");
 
         assertThat(search.where()).contains(
-            "strpos((' ' || array_to_string(" + tokens("v.val") + ", ' ') || ' '), ?) > 0");
-        assertThat(search.whereParams()).containsExactly("lax $.\"name\"", " ann marie smith ");
+            "strpos((' ' || array_to_string(" + tokens("v.val") + ", ' ') || ' '), " + NEEDLE + ") > 0");
+        assertThat(search.whereParams()).containsExactly("lax $.\"name\"", " Ann Marie Smith ");
     }
 
     @Test
@@ -226,9 +234,9 @@ class EsQueryTranslatorTest {
         var search = translate(
             "{\"query\":{\"match_phrase_prefix\":{\"data.CaseAccessCategory\":\"Civil/Standard\"}}}");
 
-        assertThat(search.where()).contains(" ~ ?");
+        assertThat(search.where()).contains(" ~ " + NEEDLE);
         assertThat(search.whereParams())
-            .containsExactly("lax $.\"CaseAccessCategory\"", " civil standard[^ ]* ");
+            .containsExactly("lax $.\"CaseAccessCategory\"", " Civil Standard[^ ]* ");
     }
 
     @Test
@@ -236,7 +244,7 @@ class EsQueryTranslatorTest {
         // Global search's case reference and party searches.
         var search = translate("{\"query\":{\"wildcard\":{\"reference.keyword\":{\"wildcard\":\"16*\"}}}}");
 
-        assertThat(search.where()).isEqualTo("u.reference::text like ? escape '\\'");
+        assertThat(search.where()).isEqualTo("u.reference::text like ?::text escape '\\'");
         assertThat(search.whereParams()).containsExactly("16%");
     }
 
@@ -262,8 +270,8 @@ class EsQueryTranslatorTest {
     void wildcardOnAKeywordSubfieldIsFolded() {
         var search = translate("{\"query\":{\"wildcard\":{\"data.caseName.keyword\":{\"wildcard\":\"Smith*\"}}}}");
 
-        assertThat(search.where()).contains(normalised("v.val") + " like ?");
-        assertThat(search.whereParams()).containsExactly("lax $.\"caseName\"", "smith%");
+        assertThat(search.where()).contains(normalised("v.val") + " like " + normalised("?::text"));
+        assertThat(search.whereParams()).containsExactly("lax $.\"caseName\"", "Smith%");
     }
 
     @Test
@@ -419,8 +427,9 @@ class EsQueryTranslatorTest {
 
         var search = translate("{\"query\":{\"bool\":{\"must\":[{\"wrapper\":{\"query\":\"" + encoded + "\"}}]}}}");
 
-        assertThat(search.where()).isEqualTo("((" + normalised("u.state") + " = ?))");
-        assertThat(search.whereParams()).containsExactly("draft");
+        assertThat(search.where()).isEqualTo(
+            "((" + normalised("u.state") + " = " + normalised("?::text") + "))");
+        assertThat(search.whereParams()).containsExactly("Draft");
     }
 
     @Test
@@ -440,9 +449,9 @@ class EsQueryTranslatorTest {
         assertThat(search.whereParams()).containsExactly(
             "lax $.\"SearchCriteria\".\"SearchParties\".\"value\"",
             "lax $.\"Name\"",
-            "smith%",
+            "Smith%",
             "lax $.\"PostCode\"",
-            " sw1a 1aa ");
+            " SW1A 1AA ");
         assertThat(search.where()).contains("jsonb_path_query_array(n0.elem, ?::jsonpath)");
     }
 
@@ -615,8 +624,9 @@ class EsQueryTranslatorTest {
 
     /** The tokens of an expression, as the standard analyzer and tokenizer leave it. */
     private static String tokens(String expression) {
-        return "regexp_split_to_array(regexp_replace(lower(" + expression
-            + "), '([[:alnum:]])[''.,]([[:alnum:]])', '\\1\\2', 'g'), '[^[:alnum:]_]+')";
+        var separators = " \\t\\n\\r!-/:-@[-^`{-~";
+        return "regexp_split_to_array(regexp_replace(lower(" + expression + "), '([^" + separators
+            + "])[''.,]([^" + separators + "])', '\\1\\2', 'g'), '[" + separators + "]+')";
     }
 
     /** An expression as lowercase_normalizer leaves it: lowercased and ascii folded. */

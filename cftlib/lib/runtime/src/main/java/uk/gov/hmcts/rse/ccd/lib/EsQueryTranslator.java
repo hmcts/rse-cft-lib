@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -34,15 +33,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 class EsQueryTranslator {
 
     /**
-     * Splits a value into the tokens the standard analyzer would produce. Underscores join words
-     * under the unicode segmentation rules the standard tokenizer follows, so a case type id such
-     * as {@code CARE_SUPERVISION_EPO} remains a single token.
+     * The characters that separate tokens: ascii whitespace and ascii punctuation, bar the
+     * underscore, which joins words under the unicode segmentation rules the standard tokenizer
+     * follows, so a case type id such as {@code CARE_SUPERVISION_EPO} remains a single token.
+     *
+     * <p>Spelt out rather than taken from {@code [:alnum:]}, whose membership postgres decides
+     * from the cluster's {@code LC_CTYPE}: under a C locale that class excludes every accented
+     * letter, which would split a stored name into tokens this translator never produces for the
+     * value being searched for, and nothing would match itself. Everything above ascii is a word
+     * character on both sides instead. Elasticsearch's tokenizer does break on some of it —
+     * an em dash, an ideographic space — which this does not.
      */
-    static final String TOKEN_SEPARATOR_REGEX = "[^[:alnum:]_]+";
-    // Matched against postgres, which applies its locale: an ASCII-only class here would
-    // tokenise an accented name differently from the column it is compared with.
-    private static final String WORD = "\\p{IsAlphabetic}\\p{IsDigit}";
-    private static final String TOKEN_SEPARATOR_JAVA_REGEX = "[^" + WORD + "_]+";
+    private static final String SEPARATORS_REGEX = " \\t\\n\\r!-/:-@[-^`{-~";
+    private static final String SEPARATORS_JAVA_REGEX = " \\t\\n\\r!-/:-@\\[-^`{-~";
+
+    /** The break between one token and the next. */
+    static final String TOKEN_SEPARATOR_REGEX = "[" + SEPARATORS_REGEX + "]+";
+    private static final String TOKEN_SEPARATOR_JAVA_REGEX = "[" + SEPARATORS_JAVA_REGEX + "]+";
 
     /**
      * The characters the standard tokenizer keeps inside a token when a word character sits on
@@ -53,12 +60,10 @@ class EsQueryTranslator {
      *
      * <p>The doubled apostrophe in the postgres form is SQL quoting, not part of the class.
      */
-    private static final String WORD_JOINER_REGEX = "([[:alnum:]])[''.,]([[:alnum:]])";
-    private static final String WORD_JOINER_JAVA_REGEX = "([" + WORD + "])['.,]([" + WORD + "])";
-    /**
-     * The same, in a wildcard pattern, where {@code *} and {@code ?} stand in for word characters.
-     */
-    private static final String WORD_JOINER_PATTERN_REGEX = "([" + WORD + "*?])['.,]([" + WORD + "*?])";
+    private static final String WORD_JOINER_REGEX =
+        "([^" + SEPARATORS_REGEX + "])[''.,]([^" + SEPARATORS_REGEX + "])";
+    private static final String WORD_JOINER_JAVA_REGEX =
+        "([^" + SEPARATORS_JAVA_REGEX + "])['.,]([^" + SEPARATORS_JAVA_REGEX + "])";
 
     private static final String KEYWORD_SUFFIX = ".keyword";
 
@@ -417,7 +422,9 @@ class EsQueryTranslator {
         if (!field.analysed()) {
             return wholeValue(field, value, params);
         }
-        return tokenHeld(field, value.toLowerCase(Locale.ROOT), params);
+        // A term is not analysed, but it is looked for among terms that were, so it has to be
+        // put in their form: 'john.smith' is held as one token, and the stub holds it squashed.
+        return tokenHeld(field, squashJoiners(value), params);
     }
 
     private String match(JsonNode node, Scope scope, Params params) {
@@ -474,8 +481,8 @@ class EsQueryTranslator {
             return "false";
         }
         var needle = " " + String.join(" ", tokens) + " ";
-        return scalarPredicate(field, params,
-            expression -> "strpos(" + analysedPhrase(expression) + ", " + params.bind(needle) + ") > 0");
+        return scalarPredicate(field, params, expression -> "strpos(" + analysedPhrase(expression)
+            + ", lower(" + bindText(params, needle) + ")) > 0");
     }
 
     private String matchPhrasePrefix(JsonNode node, Scope scope, Params params) {
@@ -488,16 +495,17 @@ class EsQueryTranslator {
             return like(field, likeEscape(hyphenless(value)) + "%", params);
         }
         if (!field.analysed()) {
-            return like(field, likeEscape(matchable(field, value)) + "%", params);
+            return like(field, likeEscape(value) + "%", params);
         }
         var tokens = tokenise(value);
         if (tokens.isEmpty()) {
             return "false";
         }
-        // Tokens only ever contain alphanumerics and underscores, so need no regex escaping.
+        // A token holds no character the regex engine treats specially, bar the ones squashed
+        // out of it, so the pattern needs no escaping.
         var pattern = " " + String.join(" ", tokens) + "[^ ]* ";
-        return scalarPredicate(field, params,
-            expression -> analysedPhrase(expression) + " ~ " + params.bind(pattern));
+        return scalarPredicate(field, params, expression ->
+            analysedPhrase(expression) + " ~ lower(" + bindText(params, pattern) + ")");
     }
 
     private String wildcard(JsonNode node, Scope scope, Params params) {
@@ -517,13 +525,12 @@ class EsQueryTranslator {
         if (!field.analysed()) {
             // A wildcard is not analysed, but it runs against terms that the normalizer has
             // already folded, so the pattern has to be folded to meet them.
-            return like(field, wildcardToLike(matchable(field, pattern)), params);
+            return like(field, wildcardToLike(pattern), params);
         }
-        var tokenPattern = wildcardToLike(
-            squashJoiners(pattern.toLowerCase(Locale.ROOT), WORD_JOINER_PATTERN_REGEX));
+        var tokenPattern = wildcardToLike(squashJoiners(pattern));
         return scalarPredicate(field, params, expression ->
-            "exists (select 1 from unnest(" + tokensOf(expression) + ") as t(token) where t.token like "
-                + params.bind(tokenPattern) + " escape '\\')");
+            "exists (select 1 from unnest(" + tokensOf(expression) + ") as t(token) where t.token like lower("
+                + bindText(params, tokenPattern) + ") escape '\\')");
     }
 
     private String range(JsonNode node, Scope scope, Params params) {
@@ -616,18 +623,23 @@ class EsQueryTranslator {
             return compare(field, "=", value, params);
         }
         return scalarPredicate(field, params,
-            expression -> normalised(expression) + " = " + params.bind(normalise(value)));
+            expression -> normalised(expression) + " = " + normalised(bindText(params, value)));
     }
 
     private String like(Field field, String pattern, Params params) {
-        return scalarPredicate(field, params, expression ->
-            (field.normalised() ? normalised(expression) : expression)
-                + " like " + params.bind(pattern) + " escape '\\'");
+        return scalarPredicate(field, params, expression -> {
+            var needle = bindText(params, pattern);
+            return (field.normalised() ? normalised(expression) : expression)
+                + " like " + (field.normalised() ? normalised(needle) : needle) + " escape '\\'";
+        });
     }
 
-    /** The form of a query value that can be compared with a whole stored value. */
-    private String matchable(Field field, String value) {
-        return field.normalised() ? normalise(value) : value;
+    /**
+     * Binds a value postgres is to fold, which needs its type spelt out: the driver sends a
+     * string as unknown, and {@code lower} has an overload for ranges to be told apart from.
+     */
+    private String bindText(Params params, String value) {
+        return params.bind(value) + "::text";
     }
 
     /**
@@ -646,9 +658,9 @@ class EsQueryTranslator {
         return value.replace("-", "");
     }
 
-    private String tokenHeld(Field field, String lowercasedToken, Params params) {
+    private String tokenHeld(Field field, String token, Params params) {
         return scalarPredicate(field, params,
-            expression -> params.bind(lowercasedToken) + " = any(" + tokensOf(expression) + ")");
+            expression -> "lower(" + bindText(params, token) + ") = any(" + tokensOf(expression) + ")");
     }
 
     /**
@@ -967,9 +979,14 @@ class EsQueryTranslator {
         return names;
     }
 
+    /**
+     * Splits a value into tokens, leaving the case alone: postgres lowercases both the stored
+     * value and the token bound from this one, so that the two are folded by the same engine
+     * under the same locale and a value always matches itself.
+     */
     static List<String> tokenise(String value) {
         var tokens = new ArrayList<String>();
-        var analysed = squashJoiners(value.toLowerCase(Locale.ROOT), WORD_JOINER_JAVA_REGEX);
+        var analysed = squashJoiners(value);
         for (var token : analysed.split(TOKEN_SEPARATOR_JAVA_REGEX)) {
             if (!token.isEmpty()) {
                 tokens.add(token);
@@ -978,21 +995,8 @@ class EsQueryTranslator {
         return tokens;
     }
 
-    private static String squashJoiners(String value, String regex) {
-        return value.replaceAll(regex, "$1$2");
-    }
-
-    /**
-     * Folds a value the way {@code lowercase_normalizer} does, using the same character pairs as
-     * the postgres {@code translate} it is compared against.
-     */
-    static String normalise(String value) {
-        var folded = new StringBuilder(value.length());
-        for (var c : value.toCharArray()) {
-            var accent = ACCENTED.indexOf(c);
-            folded.append(accent < 0 ? c : UNACCENTED.charAt(accent));
-        }
-        return folded.toString().toLowerCase(Locale.ROOT);
+    private static String squashJoiners(String value) {
+        return value.replaceAll(WORD_JOINER_JAVA_REGEX, "$1$2");
     }
 
     /**

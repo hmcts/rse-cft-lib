@@ -61,6 +61,13 @@ enum XuiApp {
         return slug;
     }
 
+    /**
+     * The variable that selects how this app is run, which is also the prefix of its others.
+     */
+    String variable() {
+        return envPrefix;
+    }
+
     List<String> installArgs() {
         return installArgs;
     }

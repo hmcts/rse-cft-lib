@@ -21,6 +21,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Drives the stub over HTTP with the query bodies the data store really sends, against a real
@@ -41,7 +43,9 @@ class EsStubTest {
 
     @BeforeAll
     void startStack() throws Exception {
-        postgres = EmbeddedPostgres.builder().start();
+        // As cftlib's own wrapper configures it: the encoding decides whether an accented
+        // character is one character or a string of bytes to every expression below.
+        postgres = EmbeddedPostgres.builder().setLocaleConfig("encoding", "UTF8").start();
         try (var c = connect("postgres"); var s = c.createStatement()) {
             s.execute("create database datastore");
         }
@@ -316,6 +320,66 @@ class EsStubTest {
         var item = firstItem(msearch(CASES_INDEX, caseListBody(query, "[]")));
 
         assertThat(references(item)).containsExactlyInAnyOrder("1234567890123456", "1234567890123458");
+    }
+
+    /**
+     * Every clause has to find a value by the value itself. The query is analysed partly in java
+     * and the stored value entirely in postgres, so a disagreement between the two — over where a
+     * token ends, or over how a character lowercases under the cluster's locale — would leave a
+     * case unfindable by the very text it holds, on some machines and not others.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {"O'Brien", "john.smith@example.com", "Ann-Marie Smith", "José Beiró",
+        "CARE_SUPERVISION_EPO", "1,234.50", "Smith, J.", "SW1A 1AA", "a[b]c\\d^e`f{g}h~i",
+        "  padded  out  ", "Ωμέγα", "日本語"})
+    void everyClauseFindsAValueByTheValueItself(String value) throws Exception {
+        for (var clause : List.of("match", "match_phrase", "match_phrase_prefix")) {
+            assertThat(matchesItself("{\"" + clause + "\":{\"data.name\":%s}}", value))
+                .as("%s on '%s'", clause, value)
+                .isTrue();
+        }
+        // A term is a single term, so it finds a value only where the whole of it analyses to
+        // one token: elasticsearch holds no term 'ann-marie smith' either.
+        assertThat(matchesItself("{\"term\":{\"data.name\":%s}}", value))
+            .as("term on '%s'", value)
+            .isEqualTo(EsQueryTranslator.tokenise(value).size() == 1);
+        assertThat(matchesItself("{\"term\":{\"data.name.keyword\":%s}}", value))
+            .as("term on the keyword sub-field of '%s'", value)
+            .isTrue();
+        assertThat(matchesItself("{\"wildcard\":{\"data.name.keyword\":%s}}", value))
+            .as("wildcard on the keyword sub-field of '%s'", value)
+            .isTrue();
+    }
+
+    /**
+     * Runs a query's predicate against a single synthetic row holding the value, which keeps the
+     * shared fixture out of it.
+     */
+    private boolean matchesItself(String clauseTemplate, String value) throws Exception {
+        var query = clauseTemplate.formatted(mapper.writeValueAsString(value));
+        var search = new EsQueryTranslator(mapper).translate(mapper.readTree("{\"query\":" + query + "}"));
+        var sql = "select " + search.where() + " from (select jsonb_build_object('name', ?::text) as data) u";
+        try (var c = connect("datastore"); var s = c.prepareStatement(sql)) {
+            var index = 1;
+            for (var param : search.whereParams()) {
+                s.setObject(index++, param);
+            }
+            s.setString(index, value);
+            try (var rs = s.executeQuery()) {
+                assertThat(rs.next()).isTrue();
+                return rs.getBoolean(1);
+            }
+        }
+    }
+
+    @Test
+    void termOnAnAnalysedFieldMatchesAValueCarryingAJoiner() throws Exception {
+        // A term is not analysed by elasticsearch, but it is looked for among terms that were,
+        // where john.smith is one of them. The stub must put the term in the same form.
+        var query = "{\"bool\":{\"must\":[{\"term\":{\"data.solicitorEmail\":\"john.smith\"}}]}}";
+        var item = firstItem(msearch(CASES_INDEX, caseListBody(query, "[]")));
+
+        assertThat(references(item)).containsExactly("1234567890123456");
     }
 
     @Test

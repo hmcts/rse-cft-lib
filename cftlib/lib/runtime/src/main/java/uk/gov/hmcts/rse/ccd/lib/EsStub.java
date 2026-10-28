@@ -199,6 +199,12 @@ public class EsStub implements ManagedDependency {
                 responses.add(result);
             } catch (EsStubException e) {
                 responses.add(error(e));
+            } catch (Exception e) {
+                // Anything else belongs to its own slot too: a statement postgres rejected, or a
+                // source that went away mid-search, would otherwise be reported as one failure
+                // for the whole multi search and lose the searches that did answer.
+                responses.add(error(new EsStubException(EsStubException.QUERY_ERROR, 500,
+                    "The cftlib elasticsearch stub failed: " + e)));
             }
         }
         var response = mapper.createObjectNode();
@@ -282,11 +288,12 @@ public class EsStub implements ManagedDependency {
         List<EsStubSources.Source> matching;
         try {
             matching = sources.sourcesFor(index);
-        } catch (SQLException e) {
-            // Reported against this search rather than thrown, so that one unreachable database
-            // does not fail every search in a multi search.
+        } catch (SQLException | IllegalStateException e) {
+            // Reported against this search rather than thrown, so that one unreachable or
+            // misconfigured database does not fail every search in a multi search. A source that
+            // holds no case data at all is an IllegalStateException naming it.
             throw new EsStubException(EsStubException.QUERY_ERROR, 500,
-                "The cftlib elasticsearch stub could not reach the databases holding case data: " + e.getMessage());
+                "The cftlib elasticsearch stub could not read the databases holding case data: " + e.getMessage());
         }
 
         var hits = mapper.createArrayNode();

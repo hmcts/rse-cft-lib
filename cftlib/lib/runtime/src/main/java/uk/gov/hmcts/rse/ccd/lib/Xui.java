@@ -74,8 +74,9 @@ public class Xui implements ManagedDependency {
             }
             throw new IOException("Port " + port + " is already in use, but not by a " + name()
                 + " cftlib started. A leftover cftlib container is the usual cause, and "
-                + "'docker compose -p cftlib down' clears it. Set RSE_LIB_XUI=off to run without "
-                + name() + ", or RSE_LIB_XUI=docker to use the published image.");
+                + "'docker compose -p cftlib down' clears it. Set " + app.variable()
+                + "=off to run without " + name()
+                + ", or RSE_LIB_DEPENDENCY_MODE=docker to use the published image.");
         }
 
         var node = source.getOrDefault("RSE_LIB_NODE", "node");
@@ -136,7 +137,8 @@ public class Xui implements ManagedDependency {
         } catch (Exception e) {
             throw new IllegalStateException(
                 "Could not run '" + node + " --version'. " + name() + " is built with the host's node, so node "
-                    + range + " must be installed, or set RSE_LIB_XUI=docker to use the published image.", e);
+                    + range + " must be installed, or set RSE_LIB_DEPENDENCY_MODE=docker to use the "
+                    + "published image.", e);
         }
     }
 
