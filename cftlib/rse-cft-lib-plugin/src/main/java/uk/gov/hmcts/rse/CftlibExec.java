@@ -21,6 +21,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class CftlibExec extends JavaExec {
+    /** The compose profiles cftlib manages itself, one per optional service. */
+    private static final List<String> OWN_PROFILES = List.of("xui", "xui-mo");
+
     public AuthMode authMode = AuthMode.AAT;
     public DependencyMode dependencyMode = DependencyMode.Docker;
     private List<String> testPatterns = List.of();
@@ -130,9 +133,14 @@ public class CftlibExec extends JavaExec {
         }
         var inherited = String.valueOf(getEnvironment().getOrDefault("COMPOSE_PROFILES", ""));
         for (var profile : inherited.split(",")) {
-            if (!profile.isBlank() && !profiles.contains(profile.trim())) {
-                profiles.add(profile.trim());
+            var name = profile.trim();
+            // A profile of cftlib's own is decided by the variable that owns it, so an ambient
+            // COMPOSE_PROFILES cannot bring back a service this run asked to keep down. Any
+            // other profile is the consumer's and is passed along.
+            if (name.isBlank() || profiles.contains(name) || OWN_PROFILES.contains(name)) {
+                continue;
             }
+            profiles.add(name);
         }
         environment("COMPOSE_PROFILES", String.join(",", profiles));
     }

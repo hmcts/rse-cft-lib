@@ -65,6 +65,16 @@ class EsQueryTranslator {
     private static final String WORD_JOINER_JAVA_REGEX =
         "([^" + SEPARATORS_JAVA_REGEX + "])['.,]([^" + SEPARATORS_JAVA_REGEX + "])";
 
+    /**
+     * The same joiners in a wildcard pattern, where a word character on either side may be one
+     * the pattern has yet to match: the dot of {@code john.*} has been squashed out of the
+     * tokens the pattern is run against, so it has to go from the pattern too. The class is a
+     * union of the word characters with {@code *} and {@code ?}.
+     */
+    private static final String WORD_OR_WILDCARD = "[[^" + SEPARATORS_JAVA_REGEX + "]*?]";
+    private static final String WORD_JOINER_PATTERN_REGEX =
+        "(" + WORD_OR_WILDCARD + ")['.,](" + WORD_OR_WILDCARD + ")";
+
     private static final String KEYWORD_SUFFIX = ".keyword";
 
     /**
@@ -527,7 +537,7 @@ class EsQueryTranslator {
             // already folded, so the pattern has to be folded to meet them.
             return like(field, wildcardToLike(pattern), params);
         }
-        var tokenPattern = wildcardToLike(squashJoiners(pattern));
+        var tokenPattern = wildcardToLike(squashJoiners(pattern, WORD_JOINER_PATTERN_REGEX));
         return scalarPredicate(field, params, expression ->
             "exists (select 1 from unnest(" + tokensOf(expression) + ") as t(token) where t.token like lower("
                 + bindText(params, tokenPattern) + ") escape '\\')");
@@ -996,7 +1006,11 @@ class EsQueryTranslator {
     }
 
     private static String squashJoiners(String value) {
-        return value.replaceAll(WORD_JOINER_JAVA_REGEX, "$1$2");
+        return squashJoiners(value, WORD_JOINER_JAVA_REGEX);
+    }
+
+    private static String squashJoiners(String value, String regex) {
+        return value.replaceAll(regex, "$1$2");
     }
 
     /**

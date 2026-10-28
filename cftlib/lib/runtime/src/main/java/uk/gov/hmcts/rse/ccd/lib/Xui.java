@@ -1,13 +1,16 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -86,9 +89,15 @@ public class Xui implements ManagedDependency {
         var nodeVersion = nodeVersion(node, range);
         NodeVersions.require(name(), range, nodeVersion);
 
-        var checkout = checkout(source);
-        requireDeclaredNode(checkout, nodeVersion);
-        build(checkout, node, nodeVersion, source);
+        Path checkout;
+        // One clone and one build directory are shared by every project on the machine, so two
+        // boots starting together would otherwise run yarn install over each other's
+        // node_modules. The loser waits and then finds the build it needed already made.
+        try (var exclusive = exclusively(source)) {
+            checkout = checkout(source);
+            requireDeclaredNode(checkout, nodeVersion);
+            build(checkout, node, nodeVersion, source);
+        }
 
         awaitAuthServer();
         launch(checkout, node, source, port);
@@ -181,6 +190,28 @@ public class Xui implements ManagedDependency {
                     + ", so it has not been checked against " + nodeVersion);
             }
         }
+    }
+
+    /**
+     * Takes the lock that makes cloning and building this app one boot's business at a time.
+     * Held in a file, so the operating system releases it even where a boot ends by halting,
+     * and taken even when a checkout was supplied: two boots can be pointed at one of those too.
+     */
+    private Closeable exclusively(Map<String, String> source) throws IOException {
+        var file = cacheRoot(source).resolve(app.slug() + ".lock");
+        Files.createDirectories(file.getParent());
+        var channel = FileChannel.open(file, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        var held = channel.tryLock();
+        if (held == null) {
+            log("waiting for another cftlib to finish building " + name());
+            held = channel.lock();
+        }
+        var lock = held;
+        return () -> {
+            try (channel) {
+                lock.release();
+            }
+        };
     }
 
     private Path checkout(Map<String, String> source) throws Exception {

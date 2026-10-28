@@ -13,7 +13,13 @@ public class ProcessProvider implements DependencyProvider {
 
     private static final long INTERRUPT_WAIT_MILLIS = 10_000;
 
-    private final List<ManagedDependency> started = new CopyOnWriteArrayList<>();
+    /**
+     * What this provider has taken responsibility for. A dependency joins before it is started,
+     * not after: starting XUI takes minutes, a failure anywhere else in the boot halts the JVM
+     * without running shutdown hooks, and {@link #stop()} is the only thing that would have
+     * stopped the install it was part way through.
+     */
+    private final List<ManagedDependency> owned = new CopyOnWriteArrayList<>();
 
     /**
      * Brings the database up, which a clean boot does by stopping the last one and deleting its
@@ -25,9 +31,9 @@ public class ProcessProvider implements DependencyProvider {
         for (var dependency : resolve()) {
             if (dependency instanceof EmbeddedPostgres) {
                 System.out.println("**** Cftlib starting " + dependency.name());
+                owned.add(dependency);
                 try {
                     dependency.start();
-                    started.add(dependency);
                 } catch (Throwable e) {
                     throw new RuntimeException("Failed to start " + dependency.name(), e);
                 }
@@ -47,11 +53,11 @@ public class ProcessProvider implements DependencyProvider {
         var failures = new CopyOnWriteArrayList<Throwable>();
         var threads = new ArrayList<Thread>();
         for (var dependency : dependencies) {
+            owned.add(dependency);
             var t = new Thread(() -> {
                 try {
                     System.out.println("**** Cftlib starting " + dependency.name());
                     dependency.start();
-                    started.add(dependency);
                 } catch (Throwable e) {
                     failures.add(new RuntimeException("Failed to start " + dependency.name(), e));
                 }
@@ -97,7 +103,7 @@ public class ProcessProvider implements DependencyProvider {
 
     @Override
     public void stop() {
-        for (var dependency : started) {
+        for (var dependency : owned) {
             try {
                 dependency.stop();
             } catch (Exception e) {

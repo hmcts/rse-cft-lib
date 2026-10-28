@@ -267,6 +267,15 @@ class EsQueryTranslatorTest {
     }
 
     @Test
+    void wildcardDropsAJoinerNextToAWildcard() {
+        // The tokens hold johnsmith, so a pattern whose dot survived would match none of them.
+        // XUI wraps what the user typed in stars, which is how the dot ends up beside one.
+        var search = translate("{\"query\":{\"wildcard\":{\"data.email\":\"*john.*\"}}}");
+
+        assertThat(search.whereParams()).containsExactly("lax $.\"email\"", "%john%");
+    }
+
+    @Test
     void wildcardOnAKeywordSubfieldIsFolded() {
         var search = translate("{\"query\":{\"wildcard\":{\"data.caseName.keyword\":{\"wildcard\":\"Smith*\"}}}}");
 
