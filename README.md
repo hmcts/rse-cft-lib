@@ -420,7 +420,7 @@ Within a mode each dependency can be chosen individually, which is also how you 
 | `RSE_LIB_DEPENDENCY_MODE` | | | `docker` |
 | `RSE_LIB_DB` | `docker` | `embedded`, `external` | follows the mode |
 | `RSE_LIB_ES` | `docker` | `stub`, `external` | follows the mode |
-| `RSE_LIB_XUI` | `docker`, `off` | `process`, `off` | follows the mode; `off` for `cftlibTest` |
+| `RSE_LIB_XUI` | `docker`, `off` | `process`, `off` | follows the mode; `off` for a process mode `cftlibTest` |
 | `RSE_LIB_XUI_MO` | `docker`, `off` | `process`, `off` | `docker` in docker mode, `off` in process mode |
 
 The two sets do not mix: compose brings up every container it manages whatever the individual variables say, so `RSE_LIB_ES=docker` in process mode is rejected rather than half applied. Switch `RSE_LIB_DEPENDENCY_MODE` to run a dependency as a container.
@@ -459,6 +459,8 @@ RSE_LIB_XUI_DIR=~/code/rpx-xui-webapp ./gradlew bootWithCCD
 ```
 
 The host's node must satisfy the app's own `engines.node` range, which cftlib checks before cloning or building. `RSE_LIB_NODE` selects a particular node binary, `RSE_LIB_XUI_REF` and `RSE_LIB_XUI_REPO` override the pin, and `RSE_LIB_XUI_REBUILD` forces a rebuild.
+
+Because that build would otherwise run before every test suite, a process mode `cftlibTest` leaves XUI out. A suite that drives the browser asks for it back with `RSE_LIB_XUI=process`.
 
 ### Lifetime of the dependencies
 

@@ -11,7 +11,9 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.zeroturnaround.exec.ProcessExecutor;
 
@@ -106,6 +108,10 @@ public class Xui implements ManagedDependency {
         adopted = null;
         if (reused != null && reused.isAlive()) {
             reused.destroy();
+            // Waited for, because the JVM halts as soon as this returns: a process still
+            // holding the port when the next boot probes it is the state adoption exists to
+            // prevent.
+            awaitExit(reused);
         }
         var running = process;
         process = null;
@@ -128,6 +134,18 @@ public class Xui implements ManagedDependency {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             running.destroyForcibly();
+        }
+    }
+
+    /** Waits out an adopted process, escalating as the one this boot started is escalated. */
+    private void awaitExit(ProcessHandle process) {
+        try {
+            process.onExit().get(STOP_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            process.destroyForcibly();
+        } catch (ExecutionException | TimeoutException e) {
+            process.destroyForcibly();
         }
     }
 

@@ -89,8 +89,8 @@ public class CftlibExec extends JavaExec {
         }
     }
 
-    // The XUI containers sit behind a compose profile so that runs which do not want them,
-    // such as cftlibTest, do not pay for the image pull.
+    // The XUI containers sit behind a compose profile so that a run which does not want them
+    // does not pay for the image pull. Compose started them whatever RSE_LIB_XUI said before.
     private void setComposeProfiles() {
         var profiles = new ArrayList<String>();
         if (wanted("RSE_LIB_XUI")) {
