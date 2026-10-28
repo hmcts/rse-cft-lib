@@ -29,6 +29,7 @@ public class EmbeddedPostgres implements ManagedDependency {
 
     private volatile io.zonky.test.db.postgres.embedded.EmbeddedPostgres instance;
     private volatile boolean stopped;
+    private volatile ProcessHandle adopted;
 
     public EmbeddedPostgres() {
         this(CftlibConfig.dbPort());
@@ -103,6 +104,9 @@ public class EmbeddedPostgres implements ManagedDependency {
             }
             if (!cleanBoot || !stopPreviousRun()) {
                 System.out.println("**** Cftlib is using the postgres it left running on port " + port);
+                // Adopted, so this boot owns it from here: without that it would hold the port
+                // after every subsequent run too, and a switch back to docker mode would fail.
+                adopted = postmasterPid().flatMap(ProcessHandle::of).orElse(null);
                 return;
             }
         }
@@ -139,6 +143,12 @@ public class EmbeddedPostgres implements ManagedDependency {
     @SneakyThrows
     public void stop() {
         stopped = true;
+        var reused = adopted;
+        adopted = null;
+        if (reused != null && reused.isAlive()) {
+            reused.destroy();
+            waitForExit(reused);
+        }
         if (instance == null) {
             return;
         }

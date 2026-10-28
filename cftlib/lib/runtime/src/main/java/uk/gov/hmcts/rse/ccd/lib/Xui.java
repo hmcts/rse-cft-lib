@@ -34,6 +34,7 @@ public class Xui implements ManagedDependency {
 
     private volatile Process process;
     private volatile boolean stopped;
+    private volatile ProcessHandle adopted;
     private volatile Thread shutdownHook;
 
     private Xui(XuiApp app) {
@@ -66,6 +67,9 @@ public class Xui implements ManagedDependency {
             // the published image rather than the revision pinned for this build.
             if (ownProcessIsRunning(source, port)) {
                 log("reusing the instance it left running on port " + port);
+                // Adopted, so this boot owns it: otherwise it would hold the port after every
+                // later run too, and a switch back to docker mode would fail.
+                adopted = recordedPid(source).flatMap(ProcessHandle::of).orElse(null);
                 return;
             }
             throw new IOException("Port " + port + " is already in use, but not by a " + name()
@@ -81,14 +85,15 @@ public class Xui implements ManagedDependency {
 
         var checkout = checkout(source);
         requireDeclaredNode(checkout, nodeVersion);
-        build(checkout, node, source);
+        build(checkout, node, nodeVersion, source);
 
         awaitAuthServer();
         launch(checkout, node, source, port);
     }
 
     /**
-     * Terminates the node process cftlib started, leaving an adopted one alone.
+     * Terminates the node process this boot is using, whether it started it or adopted one left
+     * by an earlier boot.
      */
     @Override
     public void stop() {
@@ -96,6 +101,11 @@ public class Xui implements ManagedDependency {
         // another dependency has failed: without this the launch would complete unobserved and
         // outlive a JVM that halts without running shutdown hooks.
         stopped = true;
+        var reused = adopted;
+        adopted = null;
+        if (reused != null && reused.isAlive()) {
+            reused.destroy();
+        }
         var running = process;
         process = null;
         if (shutdownHook != null) {
@@ -180,13 +190,17 @@ public class Xui implements ManagedDependency {
         return dir;
     }
 
-    private void build(Path checkout, String node, Map<String, String> source) throws Exception {
+    private void build(Path checkout, String node, String nodeVersion, Map<String, String> source)
+        throws Exception {
         var marker = cacheRoot(source).resolve(app.slug() + ".built");
         var commit = head(checkout);
         // A checkout cftlib was pointed at can be edited, so the build has to follow the working
         // tree and not just the commit.
         var workingTree = workingTreeState(checkout);
-        if (!forceRebuild(source) && XuiBuildMarker.upToDate(marker, checkout, commit, workingTree)) {
+        // The node that built it matters too: a build made by another version may not run.
+        var output = checkout.resolve(app.startArgs().get(app.startArgs().size() - 1));
+        if (!forceRebuild(source)
+            && XuiBuildMarker.upToDate(marker, checkout, commit, workingTree, nodeVersion, output)) {
             log("reusing the existing build of " + commit);
             return;
         }
@@ -195,7 +209,7 @@ public class Xui implements ManagedDependency {
         log("installing dependencies and building; this takes several minutes. Output in " + logFile());
         run(List.of(XuiCommands.yarn(node, yarn, app.installArgs())), checkout, XuiCommands.INSTALL_ENVIRONMENT);
         run(List.of(XuiCommands.yarn(node, yarn, List.of("build"))), checkout, XuiCommands.INSTALL_ENVIRONMENT);
-        XuiBuildMarker.write(marker, checkout, commit, workingTree);
+        XuiBuildMarker.write(marker, checkout, commit, workingTree, nodeVersion);
     }
 
     private void launch(Path checkout, String node, Map<String, String> source, int port) throws Exception {
@@ -227,6 +241,18 @@ public class Xui implements ManagedDependency {
 
     private Path pidFile(Map<String, String> source) {
         return cacheRoot(source).resolve(app.slug() + ".pid");
+    }
+
+    private java.util.Optional<Long> recordedPid(Map<String, String> source) {
+        var file = pidFile(source);
+        if (!Files.isReadable(file)) {
+            return java.util.Optional.empty();
+        }
+        try {
+            return java.util.Optional.of(Long.parseLong(Files.readString(file).trim().split("\\s+")[0]));
+        } catch (IOException | NumberFormatException e) {
+            return java.util.Optional.empty();
+        }
     }
 
     private boolean ownProcessIsRunning(Map<String, String> source, int port) {

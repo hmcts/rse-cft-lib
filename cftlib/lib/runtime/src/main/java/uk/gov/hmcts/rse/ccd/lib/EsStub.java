@@ -295,14 +295,18 @@ public class EsStub implements ManagedDependency {
         var answering = 0;
         for (var source : matching) {
             try (var c = connect(source)) {
-                total += count(c, source, index, search);
-                if (wanted > 0 && hits.size() < wanted) {
-                    var before = hits.size();
+                var before = hits.size();
+                if (wanted > 0) {
                     collect(c, source, index, search, wanted, hits);
-                    if (hits.size() > before) {
-                        answering++;
-                    }
                 }
+                var returned = hits.size() - before;
+                if (returned > 0) {
+                    answering++;
+                }
+                // The page is the count whenever it came back short, which is the ordinary case
+                // at development volumes. Only a full page can have more behind it, and only
+                // then is a second scan of the case tables worth doing.
+                total += returned < wanted ? returned : count(c, source, index, search);
             }
         }
         if (answering > 1) {

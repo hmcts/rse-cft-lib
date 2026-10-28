@@ -59,7 +59,7 @@ class EmbeddedPostgresTest {
     }
 
     @Test
-    void adoptsAPostgresThatIsAlreadyListening(@TempDir Path dir) throws Exception {
+    void adoptsAndThenOwnsAPostgresThatIsAlreadyListening(@TempDir Path dir) throws Exception {
         var port = freePort();
         var log = dir.resolve("logs/postgres.log");
 
@@ -70,11 +70,15 @@ class EmbeddedPostgresTest {
             var adopter = new EmbeddedPostgres(data, log, port, false, false);
             adopter.start();
 
-            // Stopping an adopted instance must leave the database alone.
-            adopter.stop();
+            // The adopted server serves this boot.
             try (var c = connect(port, "postgres")) {
                 assertThat(queryString(c, "select 'up'")).isEqualTo("up");
             }
+
+            // And this boot owns it: left running it would hold the port after every later run
+            // too, and a switch back to docker mode would fail.
+            adopter.stop();
+            assertThat(Ports.isListening(port)).isFalse();
         } finally {
             running.stop();
         }

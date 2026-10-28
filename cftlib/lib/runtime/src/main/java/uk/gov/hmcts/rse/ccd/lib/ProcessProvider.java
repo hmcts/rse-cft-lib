@@ -130,9 +130,6 @@ public class ProcessProvider implements DependencyProvider {
 
         switch (CftlibConfig.esMode()) {
             case STUB -> result.add(new EsStub());
-            case PROCESS -> throw new UnsupportedOperationException(
-                "RSE_LIB_ES=process is not implemented yet. Use RSE_LIB_ES=stub, or run elasticsearch "
-                    + "yourself and set RSE_LIB_ES=external with SEARCH_ELASTIC_HOSTS.");
             case EXTERNAL -> {
                 // Nothing to start: elasticsearch is already running elsewhere.
             }

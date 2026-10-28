@@ -234,8 +234,11 @@ class EsStubSources {
                 throw new IllegalStateException("The elasticsearch stub found no case_data table in database '"
                     + database + "'. Check RSE_LIB_ES_STUB_SOURCES.");
             }
-            schema = candidates.contains("public") ? "public"
-                : candidates.contains("ccd") ? "ccd" : candidates.get(0);
+            // ccd ahead of public: a decentralised service's own case data lives in ccd, which is
+            // what its indexer reads, and a database carrying both would otherwise be read from
+            // the wrong one. The data store has only public.
+            schema = candidates.contains("ccd") ? "ccd"
+                : candidates.contains("public") ? "public" : candidates.get(0);
         }
 
         boolean decentralised;
