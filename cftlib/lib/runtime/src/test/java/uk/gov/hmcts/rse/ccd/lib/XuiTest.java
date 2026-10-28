@@ -39,6 +39,25 @@ class XuiTest {
     }
 
     @Test
+    void reusesAnInstanceWhoseCommandWasNotRecorded(@TempDir Path cache) throws Exception {
+        try (var listening = new ServerSocket(0)) {
+            var port = listening.getLocalPort();
+            var checkout = "/cftlib/does/not/exist";
+            // A process does not always tell us its command, and the record then ends with an
+            // empty field. Reading that back as a record of three fields would leave a process
+            // cftlib itself started unadoptable, and the boot blaming a container for the port.
+            record(cache, port, ProcessHandle.current().pid(), checkout, "");
+
+            var source = Map.of(
+                "XUI_PORT", Integer.toString(port),
+                "RSE_LIB_CACHE_DIR", cache.toString(),
+                "RSE_LIB_XUI_DIR", checkout);
+
+            assertThatCode(() -> Xui.manageCases().start(source)).doesNotThrowAnyException();
+        }
+    }
+
+    @Test
     void replacesAnInstanceBuiltFromAnotherRevision(@TempDir Path cache) throws Exception {
         assumeTrue(hostNodeVersion() != null, "no node on the path");
         try (var listening = new ServerSocket(0)) {

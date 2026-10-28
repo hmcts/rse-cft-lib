@@ -585,6 +585,24 @@ class EsQueryTranslatorTest {
     }
 
     @Test
+    void theStandardAnalyzerCcdNamesIsAccepted() {
+        // Global search asks for it by name on every party clause.
+        var search = translate("{\"query\":{\"match_phrase\":{\"data.PostCode\":"
+            + "{\"query\":\"SW1A 1AA\",\"analyzer\":\"standard\"}}}}");
+
+        assertThat(search.whereParams()).containsExactly("lax $.\"PostCode\"", " SW1A 1AA ");
+    }
+
+    @Test
+    void anotherAnalyzerIsRejectedBecauseTheStubDoesNotImplementIt() {
+        // Answering a phone number search with word matching would return different cases.
+        assertThat(catchIt("{\"query\":{\"match\":{\"data.phone\":"
+            + "{\"query\":\"01234 567890\",\"analyzer\":\"phone_number_analyzer\"}}}}"))
+            .hasMessageContaining("does not support 'analyzer 'phone_number_analyzer''")
+            .hasMessageContaining("standard analyzer");
+    }
+
+    @Test
     void caseInsensitiveTermIsRejectedBecauseItWouldChangeWhichCasesMatch() {
         // A keyword with no normalizer is matched as stored, so answering this without the
         // option it asked for would match a different set of cases than a real cluster.

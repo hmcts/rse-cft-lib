@@ -347,16 +347,18 @@ public class Xui implements ManagedDependency {
             return null;
         }
         try {
-            var lines = Files.readAllLines(file);
-            if (lines.size() < 4) {
+            // Split rather than read as lines, which drops the empty last field a process whose
+            // command could not be read leaves behind, and with it the tolerance below.
+            var lines = Files.readString(file).split("\n", -1);
+            if (lines.length < 4) {
                 // Written by a cftlib that recorded less than this one does.
                 return null;
             }
-            var pid = Long.parseLong(lines.get(0).trim());
-            if (Integer.parseInt(lines.get(1).trim()) != port) {
+            var pid = Long.parseLong(lines[0].trim());
+            if (Integer.parseInt(lines[1].trim()) != port) {
                 return null;
             }
-            var command = lines.get(3);
+            var command = lines[3];
             var alive = ProcessHandle.of(pid)
                 .filter(ProcessHandle::isAlive)
                 // A pid outlives the process that wrote it, so the command has to match too:
@@ -367,7 +369,7 @@ public class Xui implements ManagedDependency {
                 .filter(process -> command.isBlank()
                     || process.info().command().filter(command::equals).isPresent())
                 .isPresent();
-            return alive ? new Instance(pid, lines.get(2)) : null;
+            return alive ? new Instance(pid, lines[2]) : null;
         } catch (IOException | NumberFormatException e) {
             return null;
         }

@@ -458,6 +458,7 @@ class EsQueryTranslator {
                     default -> throw EsStubException.unsupported(name, "It appeared inside a match query.");
                 }
             }
+            requireStandardAnalyzer(spec, "match");
             var operator = spec.get("operator");
             and = operator != null && "and".equalsIgnoreCase(operator.asText());
             var zeroTerms = spec.get("zero_terms_query");
@@ -951,8 +952,24 @@ class EsQueryTranslator {
         }
     }
 
+    /**
+     * Rejects an analyser the stub does not implement. It analyses as the standard analyzer
+     * does, which is the one CCD names, and a clause asking for another — the phone number or
+     * case id analyser a service team may search those field types with — would be answered by
+     * word matching and quietly return a different set of cases.
+     */
+    private void requireStandardAnalyzer(JsonNode spec, String clause) {
+        var analyzer = spec.get("analyzer");
+        if (analyzer == null || analyzer.isNull() || "standard".equalsIgnoreCase(analyzer.asText())) {
+            return;
+        }
+        throw EsStubException.unsupported("analyzer '" + analyzer.asText() + "'",
+            "A " + clause + " query is analysed as the standard analyzer would analyse it.");
+    }
+
     private void rejectSlop(JsonNode spec, String clause) {
         if (spec.isObject()) {
+            requireStandardAnalyzer(spec, clause);
             for (var name : fieldNames(spec)) {
                 switch (name) {
                     case "query", "analyzer", "boost", "_name", "max_expansions", "zero_terms_query" -> { }
