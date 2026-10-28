@@ -14,11 +14,13 @@ import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.zeroturnaround.exec.ProcessExecutor;
+import org.zeroturnaround.exec.stop.ProcessStopper;
 
 /**
  * Builds and runs an XUI app from a shallow clone using the host's node, with no container runtime.
@@ -34,6 +36,19 @@ public class Xui implements ManagedDependency {
     private static final long START_TIMEOUT_SECONDS = 300;
     private static final long AUTH_TIMEOUT_SECONDS = 300;
     private static final long STOP_TIMEOUT_SECONDS = 10;
+
+    /**
+     * Stops a build and everything it started. Yarn runs the real work in children of its own,
+     * and destroying only the process cftlib launched would leave those writing to the build
+     * output while the next boot builds into the same checkout.
+     */
+    private static final ProcessStopper STOP_WITH_DESCENDANTS = process -> {
+        // Collected before the parent goes: the children of a process that has exited are no
+        // longer reachable through it.
+        var descendants = process.toHandle().descendants().toList();
+        process.destroy();
+        descendants.forEach(ProcessHandle::destroy);
+    };
 
     private final XuiApp app;
 
@@ -425,21 +440,33 @@ public class Xui implements ManagedDependency {
      * one interrupted during its fetch — which takes minutes the first time — leaves a .git
      * behind with no commit in it. Fetching into that fails, and would go on failing every boot
      * until the directory was removed by hand, so it is cloned again instead.
+     *
+     * <p>Only an absent commit is answered for. Anything else git has to say about the
+     * repository is raised, rather than taken as a reason to delete a clone and its
+     * node_modules: a devcontainer that git considers a dubiously owned checkout would
+     * otherwise have every boot spend minutes cloning it afresh.
      */
-    private boolean hasCommit(Path dir) {
+    private boolean hasCommit(Path dir) throws Exception {
         if (!Files.isDirectory(dir.resolve(".git"))) {
             return false;
         }
-        try {
-            head(dir);
+        // Exit 1 and nothing on stdout is how it says there is no commit.
+        if (!capture(XuiCommands.headIfAnyCommand(dir), Set.of(0, 1)).isBlank()) {
             return true;
-        } catch (Exception e) {
-            log("the clone in " + dir + " holds no commit, so it is being made again");
-            return false;
         }
+        log("the clone in " + dir + " holds no commit, so it is being made again");
+        return false;
     }
 
     private String capture(List<String> command) throws Exception {
+        return capture(command, Set.of(0));
+    }
+
+    /**
+     * Runs a command that answers with its exit status as well as its output, so that a status
+     * the caller expects is read as an answer rather than raised as a failure.
+     */
+    private String capture(List<String> command, Set<Integer> expected) throws Exception {
         var process = new ProcessBuilder(command).redirectErrorStream(true).start();
         String output;
         try (var stream = process.getInputStream()) {
@@ -449,7 +476,7 @@ public class Xui implements ManagedDependency {
             process.destroyForcibly();
             throw new IllegalStateException("'" + String.join(" ", command) + "' did not finish");
         }
-        if (process.exitValue() != 0) {
+        if (!expected.contains(process.exitValue())) {
             throw new IllegalStateException("'" + String.join(" ", command) + "' failed with status "
                 + process.exitValue() + ": " + output);
         }
@@ -469,6 +496,7 @@ public class Xui implements ManagedDependency {
                         .exitValueNormal()
                         // An install interrupted because another dependency failed must take its
                         // child with it, or it keeps building after the JVM has gone.
+                        .stopper(STOP_WITH_DESCENDANTS)
                         .destroyOnExit()
                         .timeout(INSTALL_TIMEOUT_MINUTES, TimeUnit.MINUTES)
                         .execute();

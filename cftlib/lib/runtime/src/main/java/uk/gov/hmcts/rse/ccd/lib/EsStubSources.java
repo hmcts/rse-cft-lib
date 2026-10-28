@@ -198,13 +198,22 @@ class EsStubSources {
             }
             remember(entry, resolved);
             return resolved;
-        } catch (IllegalStateException | SQLException e) {
+        } catch (IllegalStateException e) {
             // A database cftlib discovered rather than was told about may hold no case data at
-            // all, which is not a misconfiguration to report.
+            // all, which is not a misconfiguration to report. Remembered, because it is a fact
+            // about that database rather than about this moment.
             if (!optional.contains(entry)) {
                 throw e;
             }
             remember(entry, null);
+            return null;
+        } catch (SQLException e) {
+            // Not remembered: a database that could not be reached just now may well answer the
+            // next search, and holding on to the failure would answer that one from the other
+            // sources alone, with the decentralised cases carrying no data at all.
+            if (!optional.contains(entry)) {
+                throw e;
+            }
             return null;
         }
     }

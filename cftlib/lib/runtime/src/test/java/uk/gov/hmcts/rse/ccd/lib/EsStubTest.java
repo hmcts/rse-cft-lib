@@ -331,7 +331,9 @@ class EsStubTest {
     @ParameterizedTest
     @ValueSource(strings = {"O'Brien", "john.smith@example.com", "Ann-Marie Smith", "José Beiró",
         "CARE_SUPERVISION_EPO", "1,234.50", "Smith, J.", "SW1A 1AA", "a[b]c\\d^e`f{g}h~i",
-        "  padded  out  ", "Ωμέγα", "日本語"})
+        "  padded  out  ", "Ωμέγα", "日本語",
+        // Joiners two characters apart: squashing one must not step over the next.
+        "10.0.0.1", "J.R.R. Tolkien", "a.b.c", "1.2.3.4.5", "Bloggs,Joe"})
     void everyClauseFindsAValueByTheValueItself(String value) throws Exception {
         for (var clause : List.of("match", "match_phrase", "match_phrase_prefix")) {
             assertThat(matchesItself("{\"" + clause + "\":{\"data.name\":%s}}", value))

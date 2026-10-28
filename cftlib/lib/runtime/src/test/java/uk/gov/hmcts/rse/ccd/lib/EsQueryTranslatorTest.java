@@ -207,6 +207,32 @@ class EsQueryTranslatorTest {
     }
 
     @Test
+    void everyJoinerInAValueIsSquashed() {
+        // Squashing one joiner must not step over the next: an address held as '100' and '01'
+        // could not be found by the address itself.
+        assertThat(EsQueryTranslator.tokenise("10.0.0.1")).containsExactly("10001");
+        assertThat(EsQueryTranslator.tokenise("J.R.R. Tolkien")).containsExactly("JRR", "Tolkien");
+    }
+
+    @Test
+    void commaJoinsDigitsAndSeparatesWords() {
+        // Elasticsearch's word boundary rules join a comma between two digits and nowhere else,
+        // so a name typed surname first is two words and 'Joe' finds it.
+        assertThat(EsQueryTranslator.tokenise("1,234.50")).containsExactly("123450");
+        assertThat(EsQueryTranslator.tokenise("Bloggs,Joe")).containsExactly("Bloggs", "Joe");
+    }
+
+    @Test
+    void dotOrApostropheJoinsOnlyLikeWithLike() {
+        // A dot joins two letters or two digits, and the apostrophe only letters, as the
+        // boundary rules have it.
+        assertThat(EsQueryTranslator.tokenise("john.smith")).containsExactly("johnsmith");
+        assertThat(EsQueryTranslator.tokenise("1.5")).containsExactly("15");
+        assertThat(EsQueryTranslator.tokenise("a.1")).containsExactly("a", "1");
+        assertThat(EsQueryTranslator.tokenise("1'2")).containsExactly("1", "2");
+    }
+
+    @Test
     void matchWithoutAnOperatorOrsItsTokens() {
         var search = translate("{\"query\":{\"match\":{\"data.name\":\"ann marie\"}}}");
 
@@ -380,7 +406,8 @@ class EsQueryTranslatorTest {
         var search = translate("{\"query\":{\"bool\":{\"must\":[{\"match\":{\"state\":\"Draft\"}}],"
             + "\"should\":[{\"term\":{\"jurisdiction\":\"DIVORCE\"}}]}}}");
 
-        assertThat(search.whereParams()).hasSize((int) search.where().chars().filter(c -> c == '?').count());
+        assertThat(search.whereParams())
+            .hasSize(EsQueryTranslatorInvariantTest.placeholders(search.where()));
     }
 
     @Test
@@ -634,8 +661,9 @@ class EsQueryTranslatorTest {
     /** The tokens of an expression, as the standard analyzer and tokenizer leave it. */
     private static String tokens(String expression) {
         var separators = " \\t\\n\\r!-/:-@[-^`{-~";
-        return "regexp_split_to_array(regexp_replace(lower(" + expression + "), '([^" + separators
-            + "])[''.,]([^" + separators + "])', '\\1\\2', 'g'), '[" + separators + "]+')";
+        var letter = "[^" + separators + "0-9]";
+        return "regexp_split_to_array(regexp_replace(lower(" + expression + "), '(?<=" + letter
+            + ")[''.](?=" + letter + ")|(?<=[0-9])[.,](?=[0-9])', '', 'g'), '[" + separators + "]+')";
     }
 
     /** An expression as lowercase_normalizer leaves it: lowercased and ascii folded. */

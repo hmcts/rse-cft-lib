@@ -51,29 +51,34 @@ class EsQueryTranslator {
     static final String TOKEN_SEPARATOR_REGEX = "[" + SEPARATORS_REGEX + "]+";
     private static final String TOKEN_SEPARATOR_JAVA_REGEX = "[" + SEPARATORS_JAVA_REGEX + "]+";
 
+    /** A word character that is not a digit, which for the joining rules below is a letter. */
+    private static final String LETTER_REGEX = "[^" + SEPARATORS_REGEX + "0-9]";
+    private static final String LETTER_JAVA_REGEX = "[^" + SEPARATORS_JAVA_REGEX + "0-9]";
+    /** The same, in a wildcard pattern, where a metacharacter stands in for what it will match. */
+    private static final String LETTER_OR_WILDCARD = "[[^" + SEPARATORS_JAVA_REGEX + "0-9]*?]";
+    private static final String DIGIT_OR_WILDCARD = "[0-9*?]";
+
     /**
-     * The characters the standard tokenizer keeps inside a token when a word character sits on
-     * either side of them: the apostrophe of {@code o'brien}, the dot of {@code john.smith}, the
-     * separators of {@code 1,234.5}. Dropping them instead of keeping them tokenises a stored
-     * value and a query term the same way, so the same documents match even though the tokens
-     * themselves read differently from elasticsearch's.
+     * The characters the standard tokenizer keeps inside a token, under the word boundary rules
+     * elasticsearch follows: an apostrophe or a dot between two letters, as in {@code o'brien}
+     * and {@code john.smith}, and a dot or a comma between two digits, as in {@code 1,234.5}.
+     * A comma between letters is not one of them, so {@code bloggs,joe} is two words.
+     *
+     * <p>Dropping the character instead of keeping it tokenises a stored value and a value
+     * searched for the same way, so the same documents match even though the tokens themselves
+     * read differently from elasticsearch's. Matched by lookaround rather than by consuming the
+     * characters on either side, which would skip every second joiner and split
+     * {@code 10.0.0.1} into {@code 10001} where the next boundary falls.
      *
      * <p>The doubled apostrophe in the postgres form is SQL quoting, not part of the class.
      */
     private static final String WORD_JOINER_REGEX =
-        "([^" + SEPARATORS_REGEX + "])[''.,]([^" + SEPARATORS_REGEX + "])";
+        "(?<=" + LETTER_REGEX + ")[''.](?=" + LETTER_REGEX + ")|(?<=[0-9])[.,](?=[0-9])";
     private static final String WORD_JOINER_JAVA_REGEX =
-        "([^" + SEPARATORS_JAVA_REGEX + "])['.,]([^" + SEPARATORS_JAVA_REGEX + "])";
-
-    /**
-     * The same joiners in a wildcard pattern, where a word character on either side may be one
-     * the pattern has yet to match: the dot of {@code john.*} has been squashed out of the
-     * tokens the pattern is run against, so it has to go from the pattern too. The class is a
-     * union of the word characters with {@code *} and {@code ?}.
-     */
-    private static final String WORD_OR_WILDCARD = "[[^" + SEPARATORS_JAVA_REGEX + "]*?]";
+        "(?<=" + LETTER_JAVA_REGEX + ")['.](?=" + LETTER_JAVA_REGEX + ")|(?<=[0-9])[.,](?=[0-9])";
     private static final String WORD_JOINER_PATTERN_REGEX =
-        "(" + WORD_OR_WILDCARD + ")['.,](" + WORD_OR_WILDCARD + ")";
+        "(?<=" + LETTER_OR_WILDCARD + ")['.](?=" + LETTER_OR_WILDCARD + ")"
+            + "|(?<=" + DIGIT_OR_WILDCARD + ")[.,](?=" + DIGIT_OR_WILDCARD + ")";
 
     private static final String KEYWORD_SUFFIX = ".keyword";
 
@@ -700,7 +705,7 @@ class EsQueryTranslator {
 
     /** A value in the form the standard analyzer leaves it in, before it is split into tokens. */
     private String analysed(String expression) {
-        return "regexp_replace(lower(" + expression + "), '" + WORD_JOINER_REGEX + "', '\\1\\2', 'g')";
+        return "regexp_replace(lower(" + expression + "), '" + WORD_JOINER_REGEX + "', '', 'g')";
     }
 
     /**
@@ -1010,7 +1015,7 @@ class EsQueryTranslator {
     }
 
     private static String squashJoiners(String value, String regex) {
-        return value.replaceAll(regex, "$1$2");
+        return value.replaceAll(regex, "");
     }
 
     /**

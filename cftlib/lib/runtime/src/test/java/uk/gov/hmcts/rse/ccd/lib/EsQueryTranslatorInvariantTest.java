@@ -99,8 +99,28 @@ class EsQueryTranslatorInvariantTest {
         }
     }
 
-    private int placeholders(String sql) {
-        // '?' only ever appears as a parameter marker: every literal is bound, not interpolated.
-        return (int) sql.chars().filter(c -> c == '?').count();
+    /**
+     * The parameter markers of a statement, which are the question marks outside its string
+     * literals: the regexes the translator embeds carry question marks of their own, and those
+     * bind nothing.
+     */
+    static int placeholders(String sql) {
+        var markers = 0;
+        var literal = false;
+        for (var i = 0; i < sql.length(); i++) {
+            var c = sql.charAt(i);
+            if (c == '\'') {
+                // Doubled inside a literal is an escaped quote, not the end of one.
+                if (literal && i + 1 < sql.length() && sql.charAt(i + 1) == '\'') {
+                    i++;
+                    continue;
+                }
+                literal = !literal;
+            } else if (c == '?' && !literal) {
+                markers++;
+            }
+        }
+        assertThat(literal).as("unterminated string literal in %s", sql).isFalse();
+        return markers;
     }
 }

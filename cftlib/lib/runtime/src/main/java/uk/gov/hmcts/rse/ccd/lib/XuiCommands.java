@@ -80,6 +80,15 @@ final class XuiCommands {
     }
 
     /**
+     * Asks only whether a commit is checked out. {@code --verify --quiet} exits 1 and says
+     * nothing when HEAD does not resolve, which separates a clone that holds no commit from a
+     * repository git refused to read at all, such as one it considers dubiously owned.
+     */
+    static List<String> headIfAnyCommand(Path dir) {
+        return List.of("git", "-C", dir.toString(), "rev-parse", "--verify", "--quiet", "HEAD");
+    }
+
+    /**
      * Runs the yarn release the checkout vendors, so neither corepack nor a global yarn is needed.
      */
     static List<String> yarn(String node, Path yarnRelease, List<String> args) {
