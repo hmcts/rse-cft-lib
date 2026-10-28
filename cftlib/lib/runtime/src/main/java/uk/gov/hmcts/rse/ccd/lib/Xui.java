@@ -198,7 +198,7 @@ public class Xui implements ManagedDependency {
         var dir = cacheRoot(source).resolve(app.slug());
         var url = app.repoUrl(source);
         var ref = app.ref(source);
-        if (!Files.isDirectory(dir.resolve(".git"))) {
+        if (!hasCommit(dir)) {
             log("cloning " + url + " at " + ref + " into " + dir);
             deleteRecursively(dir);
             Files.createDirectories(dir.getParent());
@@ -387,6 +387,25 @@ public class Xui implements ManagedDependency {
 
     private String head(Path checkout) throws Exception {
         return capture(XuiCommands.headCommand(checkout));
+    }
+
+    /**
+     * Whether a cached clone holds a commit. A clone of a pinned sha starts with a git init, so
+     * one interrupted during its fetch — which takes minutes the first time — leaves a .git
+     * behind with no commit in it. Fetching into that fails, and would go on failing every boot
+     * until the directory was removed by hand, so it is cloned again instead.
+     */
+    private boolean hasCommit(Path dir) {
+        if (!Files.isDirectory(dir.resolve(".git"))) {
+            return false;
+        }
+        try {
+            head(dir);
+            return true;
+        } catch (Exception e) {
+            log("the clone in " + dir + " holds no commit, so it is being made again");
+            return false;
+        }
     }
 
     private String capture(List<String> command) throws Exception {

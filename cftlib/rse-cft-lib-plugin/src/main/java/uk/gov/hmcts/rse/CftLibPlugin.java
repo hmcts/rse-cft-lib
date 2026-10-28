@@ -227,31 +227,10 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.dependsOn("cftlibTestClasses");
         exec.args(file);
         exec.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
-        // Docker mode starts the XUI containers for cftlibTest as it always has: a consumer's
-        // suite may drive the browser, and nfdiv's does, on port 3000. In process mode XUI is
-        // built from the source of a shallow clone, which would run before every test suite, so
-        // there it is left out unless the suite asks for it.
-        if ("process".equalsIgnoreCase(environment(project, "RSE_LIB_DEPENDENCY_MODE", "docker"))) {
-            offUnlessChosen(project, exec, "RSE_LIB_XUI");
-            offUnlessChosen(project, exec, "RSE_LIB_XUI_MO");
-        }
+        // Whether this suite gets XUI is settled by CftlibExec as it runs, once the consuming
+        // build has had its say over the dependency mode.
         exec.getOutputs().upToDateWhen(x -> false);
         return exec;
-    }
-
-    private void offUnlessChosen(Project project, CftlibExec exec, String variable) {
-        if (environment(project, variable, "").isEmpty()) {
-            exec.environment(variable, "off");
-        }
-    }
-
-    /**
-     * Reads an environment variable through the provider api, which a configuration cache entry
-     * records as an input rather than baking in the value it was built with.
-     */
-    private String environment(Project project, String variable, String fallback) {
-        var value = project.getProviders().environmentVariable(variable).getOrElse(fallback);
-        return value.isBlank() ? fallback : value.trim();
     }
 
     private void createManifestTasks(Project project) {

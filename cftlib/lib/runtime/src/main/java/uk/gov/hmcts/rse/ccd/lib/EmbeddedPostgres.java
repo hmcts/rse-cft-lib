@@ -19,6 +19,8 @@ public class EmbeddedPostgres implements ManagedDependency {
 
     private static final Duration STARTUP_WAIT = Duration.ofSeconds(60);
     private static final Duration SHUTDOWN_WAIT = Duration.ofSeconds(20);
+    /** All a smart shutdown gets, since it cannot finish while this JVM holds the pools open. */
+    private static final Duration SMART_SHUTDOWN_GRACE = Duration.ofSeconds(2);
     private static final int LOG_TAIL_LINES = 40;
 
     private final Path dataDirectory;
@@ -152,8 +154,16 @@ public class EmbeddedPostgres implements ManagedDependency {
         var reused = adopted;
         adopted = null;
         if (reused != null && reused.isAlive()) {
+            // A postmaster reads SIGTERM as a smart shutdown and waits for every client to
+            // disconnect. The CFT apps hold their pools open until this JVM halts, which is the
+            // next thing that happens, so the signal is given a moment to work and the server is
+            // then killed. Postgres recovers from that as it starts, which is what the previous
+            // boot's own hard exit left it to do anyway.
             reused.destroy();
-            waitForExit(reused);
+            if (!waitForExit(reused, SMART_SHUTDOWN_GRACE)) {
+                reused.destroyForcibly();
+                waitForExit(reused);
+            }
         }
         if (instance == null) {
             return;
@@ -299,7 +309,11 @@ public class EmbeddedPostgres implements ManagedDependency {
     }
 
     private static boolean waitForExit(ProcessHandle process) {
-        var deadline = System.nanoTime() + SHUTDOWN_WAIT.toNanos();
+        return waitForExit(process, SHUTDOWN_WAIT);
+    }
+
+    private static boolean waitForExit(ProcessHandle process, Duration wait) {
+        var deadline = System.nanoTime() + wait.toNanos();
         while (process.isAlive() && System.nanoTime() < deadline) {
             try {
                 Thread.sleep(100);

@@ -59,12 +59,7 @@ public class CftlibExec extends JavaExec {
     private void configure() {
         setRequiredJvmArgs();
         setStandardEnvVars();
-        // An inherited or explicitly configured value wins, so the mode can be flipped
-        // from the environment without editing the build script.
-        if (getEnvironment().get("RSE_LIB_DEPENDENCY_MODE") == null) {
-            environment("RSE_LIB_DEPENDENCY_MODE", dependencyMode.name().toLowerCase());
-        }
-        setComposeProfiles();
+        resolveDependencies();
         if (authMode == AuthMode.Local) {
             environment("RSE_LIB_AUTH-MODE", "localAuth");
 
@@ -86,6 +81,40 @@ public class CftlibExec extends JavaExec {
             fetchAndSetAATSecrets();
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
                 "https://idam-web-public.aat.platform.hmcts.net/o");
+        }
+    }
+
+    /**
+     * Settles which dependencies this run brings up. Done here rather than when the task is
+     * created, because {@link #dependencyMode} is assigned by the consuming build afterwards.
+     */
+    void resolveDependencies() {
+        // An inherited or explicitly configured value wins, so the mode can be flipped
+        // from the environment without editing the build script.
+        if (getEnvironment().get("RSE_LIB_DEPENDENCY_MODE") == null) {
+            environment("RSE_LIB_DEPENDENCY_MODE", dependencyMode.name().toLowerCase());
+        }
+        // A test suite needs XUI only if it drives the browser. In process mode starting it
+        // clones and builds it from source before the suite runs, and fails the boot outright
+        // where the host's node is too old, so a process mode cftlibTest leaves it out unless
+        // the suite asks for it. Docker mode starts the containers as it always has: a
+        // consumer's suite may drive them, and nfdiv's does.
+        if ("cftlibTest".equals(getName()) && processMode()) {
+            offUnlessChosen("RSE_LIB_XUI");
+            offUnlessChosen("RSE_LIB_XUI_MO");
+        }
+        setComposeProfiles();
+    }
+
+    private boolean processMode() {
+        var mode = String.valueOf(getEnvironment().get("RSE_LIB_DEPENDENCY_MODE"));
+        return "process".equalsIgnoreCase(mode.trim());
+    }
+
+    private void offUnlessChosen(String variable) {
+        var chosen = getEnvironment().get(variable);
+        if (chosen == null || String.valueOf(chosen).isBlank()) {
+            environment(variable, "off");
         }
     }
 
