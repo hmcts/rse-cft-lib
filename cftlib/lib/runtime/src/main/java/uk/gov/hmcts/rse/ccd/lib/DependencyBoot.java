@@ -35,11 +35,11 @@ public class DependencyBoot {
                 // If we're running in CI we therefore re-create any existing containers
                 // and cannot start monitoring them until after this restart.
                 provider.start();
-                new Thread(this::monitorStartingServices).start();
+                monitor();
             } else {
                 // Otherwise boot as fast as possible by immediately checking to
                 // see if our dependencies are already up.
-                new Thread(this::monitorStartingServices).start();
+                monitor();
                 provider.start();
             }
         } catch (Throwable e) {
@@ -85,6 +85,16 @@ public class DependencyBoot {
         return new IllegalStateException(var + "=" + value + " cannot be combined with "
             + "RSE_LIB_DEPENDENCY_MODE=docker, which runs every dependency as a container. Set "
             + "RSE_LIB_DEPENDENCY_MODE=process to choose dependencies individually.");
+    }
+
+    /**
+     * Monitors on its own thread, which fails the boot if a wait expires: nothing else would
+     * notice, and the services would then wait on a gate that is never going to open.
+     */
+    private void monitor() {
+        var t = new Thread(this::monitorStartingServices, "cftlib-readiness");
+        t.setUncaughtExceptionHandler(ControlPlane.failFast);
+        t.start();
     }
 
     private void monitorStartingServices() {

@@ -149,6 +149,21 @@ class EsStubTest {
     }
 
     @Test
+    void oneMalformedSearchDoesNotDenyTheOthersTheirResults() throws Exception {
+        var good = "{\"index\":[\"" + CASES_INDEX + "\"]}\n{\"query\":{\"match_all\":{}}}\n";
+        var truncated = "{\"index\":[\"" + CASES_INDEX + "\"]}\n{\"query\":{\"match_all\":\n";
+
+        var response = post("/_msearch", good + truncated + good);
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        var items = mapper.readTree(response.body()).at("/responses");
+        assertThat(items).hasSize(3);
+        assertThat(items.get(0).at("/hits/hits")).isNotEmpty();
+        assertThat(items.get(1).at("/error/reason").asText()).contains("not json");
+        assertThat(items.get(2).at("/hits/hits")).isNotEmpty();
+    }
+
+    @Test
     void reportsTheTotalForACountOnlySearch() throws Exception {
         var response = post("/" + CASES_INDEX + "/_search", "{\"size\":0,\"query\":{\"match_all\":{}}}");
 

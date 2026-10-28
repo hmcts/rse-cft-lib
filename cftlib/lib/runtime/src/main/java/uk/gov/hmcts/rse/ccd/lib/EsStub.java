@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,6 +34,7 @@ public class EsStub implements ManagedDependency {
     private final ObjectMapper mapper = new ObjectMapper();
     private final EsStubSources sources;
     private HttpServer server;
+    private ExecutorService requests;
 
     public EsStub() {
         this(new EsStubSources());
@@ -69,7 +71,8 @@ public class EsStub implements ManagedDependency {
 
     void bind(String host, int port) throws IOException {
         server = HttpServer.create(new InetSocketAddress(host, port), 0);
-        server.setExecutor(Executors.newFixedThreadPool(QUERY_THREADS));
+        requests = Executors.newFixedThreadPool(QUERY_THREADS);
+        server.setExecutor(requests);
         server.createContext("/", this::handle);
         server.start();
         System.out.println("**** Cftlib elasticsearch stub listening on " + host + ":" + port()
@@ -80,6 +83,11 @@ public class EsStub implements ManagedDependency {
     public void stop() {
         if (server != null) {
             server.stop(0);
+        }
+        if (requests != null) {
+            // HttpServer shuts down only an executor it created itself, and these threads are
+            // not daemons, so they would outlive a stop that is meant to release everything.
+            requests.shutdownNow();
         }
     }
 
@@ -158,17 +166,18 @@ public class EsStub implements ManagedDependency {
      * does, so that the caller reports which search failed.
      */
     private ObjectNode msearch(String body, String pathIndex) throws SQLException {
-        var requests = new ArrayList<JsonNode[]>();
-        JsonNode header = null;
+        // Paired as text and parsed inside each slot below: a line that is not json belongs to
+        // one search, and parsing here would deny the searches beside it their results.
+        var requests = new ArrayList<String[]>();
+        String header = null;
         for (var line : body.split("\n")) {
             if (line.isBlank()) {
                 continue;
             }
-            var node = parse(line);
             if (header == null) {
-                header = node;
+                header = line;
             } else {
-                requests.add(new JsonNode[] {header, node});
+                requests.add(new String[] {header, line});
                 header = null;
             }
         }
@@ -179,13 +188,13 @@ public class EsStub implements ManagedDependency {
         var responses = mapper.createArrayNode();
         for (var request : requests) {
             try {
-                // Inside the slot: a header this stub will not serve must fail its own search
-                // rather than the valid ones alongside it.
-                var index = headerIndex(request[0], pathIndex);
+                // Inside the slot: a header or body this stub will not serve must fail its own
+                // search rather than the valid ones alongside it.
+                var index = headerIndex(parse(request[0]), pathIndex);
                 if (index == null) {
                     throw EsStubException.badRequest("a multi search header named no index");
                 }
-                var result = execute(index, request[1]);
+                var result = execute(index, parse(request[1]));
                 result.put("status", 200);
                 responses.add(result);
             } catch (EsStubException e) {

@@ -236,15 +236,18 @@ public class Xui implements ManagedDependency {
         }
         try {
             var parts = Files.readString(file).trim().split("\\s+", 3);
-            if (parts.length != 3 || Integer.parseInt(parts[1]) != port) {
+            if (parts.length < 2 || Integer.parseInt(parts[1]) != port) {
                 return false;
             }
             return ProcessHandle.of(Long.parseLong(parts[0]))
                 .filter(ProcessHandle::isAlive)
                 // A pid outlives the process that wrote it, so the command has to match too:
                 // adopting on the pid alone could serve a leftover container's published image
-                // in place of the revision this boot pinned.
-                .filter(process -> process.info().command().filter(parts[2]::equals).isPresent())
+                // in place of the revision this boot pinned. Where the command could not be read
+                // at launch there is nothing to compare, and refusing would leave a process
+                // cftlib started unadoptable, with advice about containers that cannot help.
+                .filter(process -> parts.length < 3 || parts[2].isBlank()
+                    || process.info().command().filter(parts[2]::equals).isPresent())
                 .isPresent();
         } catch (IOException | NumberFormatException e) {
             return false;

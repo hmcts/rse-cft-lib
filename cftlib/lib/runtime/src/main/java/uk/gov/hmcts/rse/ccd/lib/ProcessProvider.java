@@ -11,6 +11,8 @@ import lombok.SneakyThrows;
  */
 public class ProcessProvider implements DependencyProvider {
 
+    private static final long INTERRUPT_WAIT_MILLIS = 10_000;
+
     private final List<ManagedDependency> started = new CopyOnWriteArrayList<>();
 
     /**
@@ -76,6 +78,11 @@ public class ProcessProvider implements DependencyProvider {
             // yarn install running unparented once the JVM halts.
             for (var t : threads) {
                 t.interrupt();
+            }
+            // Waited for, because the boot ends by halting and that runs no shutdown hooks: an
+            // install that has not yet seen the interrupt would otherwise carry on without us.
+            for (var t : threads) {
+                t.join(INTERRUPT_WAIT_MILLIS);
             }
             for (var dependency : dependencies) {
                 try {
