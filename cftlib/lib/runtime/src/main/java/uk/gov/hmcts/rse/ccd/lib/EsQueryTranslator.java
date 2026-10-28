@@ -408,6 +408,9 @@ class EsQueryTranslator {
     private String term(JsonNode node, Scope scope, Params params) {
         var entry = singleField(node, "term");
         var field = field(entry.getKey(), scope);
+        // case_insensitive is the one that matters: a term that asked for it and was answered
+        // without it would match a different set of cases here than in a real cluster.
+        rejectUnknownKeys(entry.getValue(), "term", Set.of("value", "boost", "_name"));
         var value = scalar(entry.getValue(), "term", Set.of("value"));
         return matchTerm(field, value, params);
     }
@@ -929,6 +932,22 @@ class EsQueryTranslator {
     private void requireObject(JsonNode node, String clause) {
         if (node == null || !node.isObject()) {
             throw EsStubException.badRequest("the '" + clause + "' clause must be a json object");
+        }
+    }
+
+    /**
+     * Rejects an option the clause does not implement, rather than reading the ones it knows of
+     * and passing over the rest: an option that changes which documents match has to fail
+     * loudly, as one the stub cannot translate at all does.
+     */
+    private void rejectUnknownKeys(JsonNode spec, String clause, Set<String> known) {
+        if (!spec.isObject()) {
+            return;
+        }
+        for (var name : fieldNames(spec)) {
+            if (!known.contains(name)) {
+                throw EsStubException.unsupported(name, "It appeared inside a " + clause + " query.");
+            }
         }
     }
 

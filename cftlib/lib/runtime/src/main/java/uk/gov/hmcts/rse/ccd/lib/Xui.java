@@ -81,22 +81,35 @@ public class Xui implements ManagedDependency {
 
     void start(Map<String, String> source) throws Exception {
         var port = app.port(source, XuiEnvironment.Network.HOST);
+        var revision = revision(source);
         if (Ports.isListening(port)) {
             // Only a process from one of our own boots, which a hard-killed JVM can leave behind.
             // Anything else is usually a leftover cftlib container, and adopting that would serve
             // the published image rather than the revision pinned for this build.
-            if (ownProcessIsRunning(source, port)) {
+            var running = ownInstance(source, port);
+            if (running != null && revision.equals(running.revision())) {
                 log("reusing the instance it left running on port " + port);
                 // Adopted, so this boot owns it: otherwise it would hold the port after every
                 // later run too, and a switch back to docker mode would fail.
-                adopted = recordedPid(source).flatMap(ProcessHandle::of).orElse(null);
+                adopted = ProcessHandle.of(running.pid()).orElse(null);
                 return;
             }
-            throw new IOException("Port " + port + " is already in use, but not by a " + name()
-                + " cftlib started. A leftover cftlib container is the usual cause, and "
-                + "'docker compose -p cftlib down' clears it. Set " + app.variable()
-                + "=off to run without " + name()
-                + ", or RSE_LIB_DEPENDENCY_MODE=docker to use the published image.");
+            if (running != null) {
+                // Adopting it would serve the revision it was built from, however the pin or the
+                // checkout has moved on since, and say it was reusing what it left running.
+                log("the instance left running on port " + port + " was built from "
+                    + running.revision() + ", so it is being replaced with " + revision);
+                ProcessHandle.of(running.pid()).ifPresent(stale -> {
+                    stale.destroy();
+                    awaitExit(stale);
+                });
+            } else {
+                throw new IOException("Port " + port + " is already in use, but not by a " + name()
+                    + " cftlib started. A leftover cftlib container is the usual cause, and "
+                    + "'docker compose -p cftlib down' clears it. Set " + app.variable()
+                    + "=off to run without " + name()
+                    + ", or RSE_LIB_DEPENDENCY_MODE=docker to use the published image.");
+            }
         }
 
         var node = source.getOrDefault("RSE_LIB_NODE", "node");
@@ -305,53 +318,72 @@ public class Xui implements ManagedDependency {
         watch(started);
     }
 
-    private Path pidFile(Map<String, String> source) {
-        return cacheRoot(source).resolve(app.slug() + ".pid");
+    /**
+     * Where a boot records the instance it leaves running, by port: the clone is shared by every
+     * project on the machine, but the instance is not, and one project running on another port
+     * would otherwise overwrite the record of an instance it has nothing to do with.
+     */
+    private Path pidFile(Map<String, String> source, int port) {
+        return cacheRoot(source).resolve(app.slug() + "-" + port + ".pid");
     }
 
-    private java.util.Optional<Long> recordedPid(Map<String, String> source) {
-        var file = pidFile(source);
-        if (!Files.isReadable(file)) {
-            return java.util.Optional.empty();
-        }
-        try {
-            return java.util.Optional.of(Long.parseLong(Files.readString(file).trim().split("\\s+")[0]));
-        } catch (IOException | NumberFormatException e) {
-            return java.util.Optional.empty();
-        }
+    /** What an instance was built from: a checkout given to cftlib, or the revision it pinned. */
+    private String revision(Map<String, String> source) {
+        var override = app.checkoutOverride(source);
+        return override != null ? override : app.ref(source);
     }
 
-    private boolean ownProcessIsRunning(Map<String, String> source, int port) {
-        var file = pidFile(source);
+    /** An instance a previous boot recorded, as its pid file describes it. */
+    private record Instance(long pid, String revision) {
+    }
+
+    /**
+     * The instance this boot's own records say is holding the port, or null for anything else.
+     * Each field is a line of its own, since a checkout path and a command both hold spaces.
+     */
+    private Instance ownInstance(Map<String, String> source, int port) {
+        var file = pidFile(source, port);
         if (!Files.isReadable(file)) {
-            return false;
+            return null;
         }
         try {
-            var parts = Files.readString(file).trim().split("\\s+", 3);
-            if (parts.length < 2 || Integer.parseInt(parts[1]) != port) {
-                return false;
+            var lines = Files.readAllLines(file);
+            if (lines.size() < 4) {
+                // Written by a cftlib that recorded less than this one does.
+                return null;
             }
-            return ProcessHandle.of(Long.parseLong(parts[0]))
+            var pid = Long.parseLong(lines.get(0).trim());
+            if (Integer.parseInt(lines.get(1).trim()) != port) {
+                return null;
+            }
+            var command = lines.get(3);
+            var alive = ProcessHandle.of(pid)
                 .filter(ProcessHandle::isAlive)
                 // A pid outlives the process that wrote it, so the command has to match too:
                 // adopting on the pid alone could serve a leftover container's published image
                 // in place of the revision this boot pinned. Where the command could not be read
                 // at launch there is nothing to compare, and refusing would leave a process
                 // cftlib started unadoptable, with advice about containers that cannot help.
-                .filter(process -> parts.length < 3 || parts[2].isBlank()
-                    || process.info().command().filter(parts[2]::equals).isPresent())
+                .filter(process -> command.isBlank()
+                    || process.info().command().filter(command::equals).isPresent())
                 .isPresent();
+            return alive ? new Instance(pid, lines.get(2)) : null;
         } catch (IOException | NumberFormatException e) {
-            return false;
+            return null;
         }
     }
 
     private void recordPid(Process started, int port, Map<String, String> source) throws IOException {
-        var file = pidFile(source);
+        var file = pidFile(source, port);
         Files.createDirectories(file.getParent());
-        // The command as well as the pid: a pid outlives its process, so adopting on the pid
-        // alone could serve something else that happens to hold the port.
-        Files.writeString(file, started.pid() + " " + port + " " + started.info().command().orElse(""));
+        // The revision and the command as well as the pid: a pid outlives its process, so
+        // adopting on the pid alone could serve something else that happens to hold the port,
+        // and adopting without the revision could serve a build of the wrong one.
+        Files.writeString(file, String.join("\n",
+            Long.toString(started.pid()),
+            Integer.toString(port),
+            revision(source),
+            started.info().command().orElse("")));
     }
 
     /**

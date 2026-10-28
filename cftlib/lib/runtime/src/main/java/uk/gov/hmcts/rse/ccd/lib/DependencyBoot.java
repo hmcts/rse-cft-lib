@@ -63,6 +63,16 @@ public class DependencyBoot {
      * rejected rather than half applied.
      */
     private DependencyProvider dockerProvider() {
+        // The container creates the postgres superuser and no other, as initdb does for the
+        // embedded database, and every connection would fail for a role that does not exist.
+        // Nothing read the variable before dependency modes existed, so this is worth saying
+        // rather than leaving to the readiness timeout.
+        if (!"postgres".equals(CftlibConfig.dbUsername())) {
+            throw new IllegalStateException("RSE_LIB_DB_USERNAME=" + CftlibConfig.dbUsername()
+                + " cannot be used with the database container, which only has the postgres "
+                + "superuser. Leave the username unset, or reach a database that has that role "
+                + "with RSE_LIB_DEPENDENCY_MODE=process and RSE_LIB_DB=external.");
+        }
         requireDocker("RSE_LIB_DB", CftlibConfig.dbMode(), CftlibConfig.DbMode.DOCKER);
         requireDocker("RSE_LIB_ES", CftlibConfig.esMode(), CftlibConfig.EsMode.DOCKER);
         // XUI can be turned off in docker mode, since its containers sit behind a compose profile.

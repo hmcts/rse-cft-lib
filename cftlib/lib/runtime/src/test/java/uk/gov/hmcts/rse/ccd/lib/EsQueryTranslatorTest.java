@@ -585,6 +585,16 @@ class EsQueryTranslatorTest {
     }
 
     @Test
+    void caseInsensitiveTermIsRejectedBecauseItWouldChangeWhichCasesMatch() {
+        // A keyword with no normalizer is matched as stored, so answering this without the
+        // option it asked for would match a different set of cases than a real cluster.
+        assertThat(catchIt("{\"query\":{\"term\":{\"data_classification.x\":"
+            + "{\"value\":\"PRIVATE\",\"case_insensitive\":true}}}}"))
+            .hasMessageContaining("does not support 'case_insensitive'")
+            .hasMessageContaining("term query");
+    }
+
+    @Test
     void fuzzinessIsRejectedBecauseItWouldChangeWhichCasesMatch() {
         assertThat(catchIt("{\"query\":{\"match\":{\"data.name\":{\"query\":\"smith\",\"fuzziness\":\"2\"}}}}"))
             .hasMessageContaining("does not support 'fuzziness'");

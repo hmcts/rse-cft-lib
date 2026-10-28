@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -113,7 +114,7 @@ public class EsStub implements ManagedDependency {
                     throw EsStubException.badRequest("a document fetch must name an index, as in "
                         + "'/{index}/_doc/{id}'");
                 }
-                document(exchange, parts[0], parts[1]);
+                document(exchange, single(parts[0]), parts[1]);
             } else {
                 // The status in the body has to agree with the transport's: elasticsearch clients
                 // read the envelope's status for multi search items.
@@ -238,7 +239,10 @@ public class EsStub implements ManagedDependency {
             throw EsStubException.unsupported("a search over several indices",
                 "'" + index + "' names more than one, and CCD searches one index per request.");
         }
-        return index;
+        // An elasticsearch index name is lowercase, and the views derive theirs by lowercasing
+        // the case type, so a caller that names the index in the case type's own casing is
+        // answered rather than told, with a 200 and no hits, that there is nothing there.
+        return index.toLowerCase(Locale.ROOT);
     }
 
     /**
