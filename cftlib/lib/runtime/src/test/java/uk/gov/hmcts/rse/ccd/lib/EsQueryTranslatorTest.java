@@ -238,6 +238,25 @@ class EsQueryTranslatorTest {
     }
 
     @Test
+    void bindsAValueForEveryPlaceholderAndNoMore() {
+        // A should alongside a must is optional, so its sql is discarded; its values must not be
+        // left bound, or the statement is given more of them than it has parameters.
+        var search = translate("{\"query\":{\"bool\":{\"must\":[{\"match\":{\"state\":\"Draft\"}}],"
+            + "\"should\":[{\"term\":{\"jurisdiction\":\"DIVORCE\"}}]}}}");
+
+        assertThat(search.whereParams()).hasSize((int) search.where().chars().filter(c -> c == '?').count());
+    }
+
+    @Test
+    void bindsNothingForShouldsThatCannotAllMatch() {
+        var search = translate("{\"query\":{\"bool\":{\"minimum_should_match\":5,"
+            + "\"should\":[{\"term\":{\"jurisdiction\":\"DIVORCE\"}}]}}}");
+
+        assertThat(search.where()).isEqualTo("(false)");
+        assertThat(search.whereParams()).isEmpty();
+    }
+
+    @Test
     void shouldDefaultsToOneWhenThereIsNoMustOrFilter() {
         assertThat(translate(
             "{\"query\":{\"bool\":{\"should\":[{\"match_all\":{}},{\"match_none\":{}}]}}}").where())

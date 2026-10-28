@@ -48,6 +48,10 @@ public class LibRunner {
                     awaitAuthServerPort();
                     launchAppOrFailFast(new File(f));
                 });
+                // launchAppOrFailFast installs this itself, but the port check runs before it and
+                // its failure is fatal: without a handler the thread would die quietly and the
+                // services would wait on an auth server that is never coming.
+                t.setUncaughtExceptionHandler(ControlPlane.failFast);
                 t.setName(AUTH_SERVER_MANIFEST);
                 t.start();
                 threads.add(t);

@@ -85,10 +85,10 @@ public class EmbeddedPostgres implements ManagedDependency {
 
     @Override
     public void start() throws IOException {
-        if (cleanBoot && stopPreviousRun()) {
-            deleteDataDirectory();
-        }
+        var freed = !cleanBoot || stopPreviousRun();
 
+        // Checked before anything is deleted: a boot that cannot have the port is going to fail,
+        // and it must not take the databases of previous boots with it.
         if (Ports.isListening(CftlibConfig.dbHost(), port)) {
             // Only adopt a server from one of our own previous boots. Anything else on the port is
             // most often a leftover cftlib container, which would quietly put docker back in the mix.
@@ -101,6 +101,10 @@ public class EmbeddedPostgres implements ManagedDependency {
                 + "A leftover cftlib container is the usual cause, and 'docker rm -f "
                 + "cftlib-shared-database-pg-1' clears it. Set RSE_LIB_DB_PORT to use a different "
                 + "port, or RSE_LIB_DB=external to have cftlib use the database already there.");
+        }
+
+        if (cleanBoot && freed) {
+            deleteDataDirectory();
         }
 
         Files.createDirectories(logFile.getParent());

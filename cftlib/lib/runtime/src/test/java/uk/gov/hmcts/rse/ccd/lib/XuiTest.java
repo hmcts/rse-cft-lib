@@ -23,7 +23,8 @@ class XuiTest {
             // The pid of a live process on that port is what identifies it as ours; this JVM is
             // holding the socket, so its own pid is exactly that.
             var pidFile = Files.createDirectories(cache.resolve("xui")).resolve("manage-cases.pid");
-            Files.writeString(pidFile, ProcessHandle.current().pid() + " " + port);
+            Files.writeString(pidFile, ProcessHandle.current().pid() + " " + port + " "
+                + ProcessHandle.current().info().command().orElseThrow());
 
             // A checkout that does not exist, so anything beyond adoption would fail.
             var source = Map.of(
@@ -32,6 +33,26 @@ class XuiTest {
                 "RSE_LIB_XUI_DIR", "/cftlib/does/not/exist");
 
             assertThatCode(() -> Xui.manageCases().start(source)).doesNotThrowAnyException();
+        }
+    }
+
+    @Test
+    void refusesAPortWhoseRecordedPidIsNowSomethingElse(@TempDir Path cache) throws Exception {
+        try (var listening = new ServerSocket(0)) {
+            var port = listening.getLocalPort();
+            // A live pid on the right port, but not the process that was recorded: a recycled pid
+            // with a leftover container on the port is how this arises.
+            var pidFile = Files.createDirectories(cache.resolve("xui")).resolve("manage-cases.pid");
+            Files.writeString(pidFile, ProcessHandle.current().pid() + " " + port + " /not/the/recorded/node");
+
+            var source = Map.of(
+                "XUI_PORT", Integer.toString(port),
+                "RSE_LIB_CACHE_DIR", cache.toString(),
+                "RSE_LIB_XUI_DIR", "/cftlib/does/not/exist");
+
+            assertThatThrownBy(() -> Xui.manageCases().start(source))
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("already in use");
         }
     }
 
