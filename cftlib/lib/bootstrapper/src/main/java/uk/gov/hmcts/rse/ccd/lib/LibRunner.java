@@ -89,12 +89,12 @@ public class LibRunner {
         if (!portInUse()) {
             return;
         }
-        var hint = "An idam simulator container from an older cftlib is the usual cause: "
-            + "'docker rm -f cftlib-rse-idam-simulator-1' removes it.";
+        var hint = "Another cftlib run holds it, since the simulator now runs in the cftlib JVM "
+            + "rather than in a container shared by every run; or a simulator container from an "
+            + "older cftlib does, which 'docker rm -f cftlib-rse-idam-simulator-1' removes.";
         // Only docker mode is going to free it, by removing the orphan as it brings compose up.
         // Nothing will in process mode, so say so now rather than after a minute of waiting.
-        if (!"docker".equalsIgnoreCase(getenv("RSE_LIB_DEPENDENCY_MODE") == null
-            ? "docker" : getenv("RSE_LIB_DEPENDENCY_MODE"))) {
+        if (!"docker".equalsIgnoreCase(dependencyMode())) {
             throw new IllegalStateException("Port " + AUTH_SERVER_PORT + " is already in use, and the idam "
                 + "simulator runs in this JVM. " + hint);
         }
@@ -230,8 +230,16 @@ public class LibRunner {
         if (es != null && !es.isBlank()) {
             return es.trim().equalsIgnoreCase("stub");
         }
+        return "process".equalsIgnoreCase(dependencyMode());
+    }
+
+    /**
+     * The configured dependency mode, as the runtime's own config reads it: unset and blank both
+     * mean docker, and surrounding space is not part of the value.
+     */
+    private static String dependencyMode() {
         var mode = getenv("RSE_LIB_DEPENDENCY_MODE");
-        return mode != null && mode.trim().equalsIgnoreCase("process");
+        return mode == null || mode.isBlank() ? "docker" : mode.trim();
     }
 
     // The S2S names of the services each optional feature runs.

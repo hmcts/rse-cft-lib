@@ -14,6 +14,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class EsQueryTranslatorTest {
 
+    /**
+     * A query value bound for postgres to lowercase, which is where every fold happens: the
+     * stored value and the value searched for have to be folded by the same engine.
+     */
+    private static final String NEEDLE = "lower(?::text)";
+
     private final ObjectMapper mapper = new ObjectMapper();
 
     private EsQueryTranslator.Search translate(String json) {
@@ -62,35 +68,65 @@ class EsQueryTranslatorTest {
     void termOnAnalysedMetadataMatchesTokens() {
         var search = translate("{\"query\":{\"term\":{\"state\":\"open\"}}}");
 
-        assertThat(search.where())
-            .isEqualTo("? = any(regexp_split_to_array(lower(u.state), '[^[:alnum:]_]+'))");
+        assertThat(search.where()).isEqualTo(NEEDLE + " = any(" + tokens("u.state") + ")");
         assertThat(search.whereParams()).containsExactly("open");
     }
 
     @Test
-    void termOnAnalysedMetadataLowercasesTheValue() {
+    void termOnAnalysedMetadataIsFoldedByPostgresRatherThanTheTranslator() {
         // Elasticsearch indexes 'Draft' as the token 'draft', so a term query on the text field
-        // matches regardless of the stored case.
+        // matches regardless of the stored case. The value is bound as it came and lowercased by
+        // the same engine, and under the same locale, as the column it is compared with.
         var search = translate("{\"query\":{\"term\":{\"state\":{\"value\":\"Draft\",\"boost\":1.0}}}}");
 
-        assertThat(search.whereParams()).containsExactly("draft");
-    }
-
-    @Test
-    void termOnKeywordSubfieldIsExact() {
-        var search = translate("{\"query\":{\"term\":{\"state.keyword\":\"Draft\"}}}");
-
-        assertThat(search.where()).isEqualTo("u.state = ?");
+        assertThat(search.where()).startsWith(NEEDLE + " =");
         assertThat(search.whereParams()).containsExactly("Draft");
     }
 
     @Test
-    void securityClassificationIsAlwaysExactBecauseItIsMappedAsAKeyword() {
+    void termOnKeywordSubfieldMatchesTheWholeValueFolded() {
+        // CCD gives every keyword sub-field it maps the lowercase_normalizer, so the sub-field
+        // holds 'draft' however the case was stored and whatever case the query asks for.
+        var search = translate("{\"query\":{\"term\":{\"state.keyword\":\"Draft\"}}}");
+
+        assertThat(search.where()).isEqualTo(normalised("u.state") + " = " + normalised("?::text"));
+        assertThat(search.whereParams()).containsExactly("Draft");
+    }
+
+    @Test
+    void keywordMatchingFoldsAccents() {
+        // asciifolding is the normalizer's second filter: a search for 'Beiro' finds 'Béiró'.
+        var search = translate("{\"query\":{\"term\":{\"data.partyName.keyword\":\"Béiró\"}}}");
+
+        assertThat(search.where()).contains(normalised("?::text"));
+        assertThat(search.whereParams()).containsExactly("lax $.\"partyName\"", "Béiró");
+    }
+
+    @Test
+    void securityClassificationIsMatchedWholeAndFolded() {
         var search = translate("{\"query\":{\"terms\":{\"security_classification\":[\"PUBLIC\",\"PRIVATE\"]}}}");
 
-        assertThat(search.where()).isEqualTo(
-            "(u.security_classification = ? or u.security_classification = ?)");
+        var folded = normalised("u.security_classification") + " = " + normalised("?::text");
+        assertThat(search.where()).isEqualTo("(" + folded + " or " + folded + ")");
         assertThat(search.whereParams()).containsExactly("PUBLIC", "PRIVATE");
+    }
+
+    @Test
+    void supplementaryDataKeywordsAreNotFoldedBecauseCcdDoesNotMapThem() {
+        // Elasticsearch's dynamic mapping gives supplementary_data a plain keyword sub-field,
+        // with no normalizer, so it is matched as stored.
+        var search = translate("{\"query\":{\"term\":{\"supplementary_data.HMCTSServiceId.keyword\":\"AAA6\"}}}");
+
+        assertThat(search.where()).contains("v.val = ?").doesNotContain("translate(");
+        assertThat(search.whereParams()).containsExactly("lax $.\"HMCTSServiceId\"", "AAA6");
+    }
+
+    @Test
+    void dataClassificationIsMatchedWholeBecauseItIsMappedAsAPlainKeyword() {
+        var search = translate("{\"query\":{\"term\":{\"data_classification.partyName\":\"PUBLIC\"}}}");
+
+        assertThat(search.where()).contains("v.val = ?").doesNotContain("regexp_split_to_array");
+        assertThat(search.whereParams()).containsExactly("lax $.\"partyName\"", "PUBLIC");
     }
 
     @Test
@@ -99,6 +135,34 @@ class EsQueryTranslatorTest {
 
         assertThat(search.where()).isEqualTo("(u.reference::text = ?)");
         assertThat(search.whereParams()).containsExactly("1234567890123456");
+    }
+
+    @Test
+    void referenceIgnoresTheHyphensTheUiPutsInIt() {
+        // CCD gives reference a search analyzer that strips hyphens and does not split the
+        // value, so the grouped form a user copies out of the UI finds the case.
+        var search = translate("{\"query\":{\"match\":{\"reference\":\"1234-5678-9012-3456\"}}}");
+
+        assertThat(search.where()).isEqualTo("u.reference::text = ?");
+        assertThat(search.whereParams()).containsExactly("1234567890123456");
+    }
+
+    @Test
+    void referenceDoesNotMatchOneGroupOfItsDigits() {
+        // The search analyzer's keyword tokenizer produces one term, so a part of a reference is
+        // not a term of it.
+        var search = translate("{\"query\":{\"term\":{\"reference\":\"1234\"}}}");
+
+        assertThat(search.where()).isEqualTo("u.reference::text = ?");
+        assertThat(search.whereParams()).containsExactly("1234");
+    }
+
+    @Test
+    void referencePrefixDropsHyphensToo() {
+        var search = translate("{\"query\":{\"match_phrase_prefix\":{\"reference\":\"1234-56\"}}}");
+
+        assertThat(search.where()).isEqualTo("u.reference::text like ?::text escape '\\'");
+        assertThat(search.whereParams()).containsExactly("123456%");
     }
 
     @Test
@@ -112,13 +176,60 @@ class EsQueryTranslatorTest {
         var search = translate(
             "{\"query\":{\"match\":{\"data.applicant1FirstName\":{\"operator\":\"and\",\"query\":\"Ann Marie\"}}}}");
 
-        assertThat(search.where()).isEqualTo(
-            "(exists (select 1 from jsonb_array_elements_text(jsonb_path_query_array(u.data, ?::jsonpath)) "
-                + "as v(val) where ? = any(regexp_split_to_array(lower(v.val), '[^[:alnum:]_]+')))"
-                + " and exists (select 1 from jsonb_array_elements_text(jsonb_path_query_array(u.data, ?::jsonpath)) "
-                + "as v(val) where ? = any(regexp_split_to_array(lower(v.val), '[^[:alnum:]_]+'))))");
+        var token = "exists (select 1 from jsonb_array_elements_text(jsonb_path_query_array(u.data, ?::jsonpath)) "
+            + "as v(val) where " + NEEDLE + " = any(" + tokens("v.val") + "))";
+        assertThat(search.where()).isEqualTo("(" + token + " and " + token + ")");
         assertThat(search.whereParams())
-            .containsExactly("lax $.\"applicant1FirstName\"", "ann", "lax $.\"applicant1FirstName\"", "marie");
+            .containsExactly("lax $.\"applicant1FirstName\"", "Ann", "lax $.\"applicant1FirstName\"", "Marie");
+    }
+
+    @Test
+    void anApostropheDoesNotSplitAName() {
+        // The standard tokenizer keeps o'brien whole. The stub drops the apostrophe instead of
+        // keeping it, which matches the same cases because it drops it from the query too.
+        var search = translate("{\"query\":{\"match\":{\"data.lastName\":\"O'Brien\"}}}");
+
+        assertThat(search.whereParams()).containsExactly("lax $.\"lastName\"", "OBrien");
+    }
+
+    @Test
+    void anEmailSplitsOnlyAtTheAtSign() {
+        var search = translate(
+            "{\"query\":{\"match\":{\"data.email\":{\"operator\":\"and\",\"query\":\"john.smith@example.com\"}}}}");
+
+        assertThat(search.whereParams())
+            .containsExactly("lax $.\"email\"", "johnsmith", "lax $.\"email\"", "examplecom");
+    }
+
+    @Test
+    void trailingPunctuationIsNotPartOfAToken() {
+        assertThat(EsQueryTranslator.tokenise("Smith, J.")).containsExactly("Smith", "J");
+    }
+
+    @Test
+    void everyJoinerInAValueIsSquashed() {
+        // Squashing one joiner must not step over the next: an address held as '100' and '01'
+        // could not be found by the address itself.
+        assertThat(EsQueryTranslator.tokenise("10.0.0.1")).containsExactly("10001");
+        assertThat(EsQueryTranslator.tokenise("J.R.R. Tolkien")).containsExactly("JRR", "Tolkien");
+    }
+
+    @Test
+    void commaJoinsDigitsAndSeparatesWords() {
+        // Elasticsearch's word boundary rules join a comma between two digits and nowhere else,
+        // so a name typed surname first is two words and 'Joe' finds it.
+        assertThat(EsQueryTranslator.tokenise("1,234.50")).containsExactly("123450");
+        assertThat(EsQueryTranslator.tokenise("Bloggs,Joe")).containsExactly("Bloggs", "Joe");
+    }
+
+    @Test
+    void dotOrApostropheJoinsOnlyLikeWithLike() {
+        // A dot joins two letters or two digits, and the apostrophe only letters, as the
+        // boundary rules have it.
+        assertThat(EsQueryTranslator.tokenise("john.smith")).containsExactly("johnsmith");
+        assertThat(EsQueryTranslator.tokenise("1.5")).containsExactly("15");
+        assertThat(EsQueryTranslator.tokenise("a.1")).containsExactly("a", "1");
+        assertThat(EsQueryTranslator.tokenise("1'2")).containsExactly("1", "2");
     }
 
     @Test
@@ -138,9 +249,9 @@ class EsQueryTranslatorTest {
     void matchPhraseLooksForConsecutiveTokens() {
         var search = translate("{\"query\":{\"match_phrase\":{\"data.name\":\"Ann-Marie Smith\"}}}");
 
-        assertThat(search.where()).contains("strpos((' ' || array_to_string(regexp_split_to_array(lower(v.val), "
-            + "'[^[:alnum:]_]+'), ' ') || ' '), ?) > 0");
-        assertThat(search.whereParams()).containsExactly("lax $.\"name\"", " ann marie smith ");
+        assertThat(search.where()).contains(
+            "strpos((' ' || array_to_string(" + tokens("v.val") + ", ' ') || ' '), " + NEEDLE + ") > 0");
+        assertThat(search.whereParams()).containsExactly("lax $.\"name\"", " Ann Marie Smith ");
     }
 
     @Test
@@ -149,9 +260,9 @@ class EsQueryTranslatorTest {
         var search = translate(
             "{\"query\":{\"match_phrase_prefix\":{\"data.CaseAccessCategory\":\"Civil/Standard\"}}}");
 
-        assertThat(search.where()).contains(" ~ ?");
+        assertThat(search.where()).contains(" ~ " + NEEDLE);
         assertThat(search.whereParams())
-            .containsExactly("lax $.\"CaseAccessCategory\"", " civil standard[^ ]* ");
+            .containsExactly("lax $.\"CaseAccessCategory\"", " Civil Standard[^ ]* ");
     }
 
     @Test
@@ -159,7 +270,7 @@ class EsQueryTranslatorTest {
         // Global search's case reference and party searches.
         var search = translate("{\"query\":{\"wildcard\":{\"reference.keyword\":{\"wildcard\":\"16*\"}}}}");
 
-        assertThat(search.where()).isEqualTo("u.reference::text like ? escape '\\'");
+        assertThat(search.where()).isEqualTo("u.reference::text like ?::text escape '\\'");
         assertThat(search.whereParams()).containsExactly("16%");
     }
 
@@ -168,8 +279,34 @@ class EsQueryTranslatorTest {
         // XUI sends '*term*' lowercased for its configured wildcard search fields.
         var search = translate("{\"query\":{\"wildcard\":{\"data.caseName\":\"*smith*\"}}}");
 
-        assertThat(search.where()).contains("unnest(regexp_split_to_array(lower(v.val), '[^[:alnum:]_]+'))");
+        assertThat(search.where()).contains("unnest(" + tokens("v.val") + ")");
         assertThat(search.whereParams()).containsExactly("lax $.\"caseName\"", "%smith%");
+    }
+
+    @Test
+    void wildcardOnAnAnalysedFieldDropsTheJoinersItsTokensHaveLost() {
+        // The tokens hold obrien, so a pattern still carrying the apostrophe would match none
+        // of them.
+        var search = translate("{\"query\":{\"wildcard\":{\"data.caseName\":\"*o'brie*\"}}}");
+
+        assertThat(search.whereParams()).containsExactly("lax $.\"caseName\"", "%obrie%");
+    }
+
+    @Test
+    void wildcardDropsAJoinerNextToAWildcard() {
+        // The tokens hold johnsmith, so a pattern whose dot survived would match none of them.
+        // XUI wraps what the user typed in stars, which is how the dot ends up beside one.
+        var search = translate("{\"query\":{\"wildcard\":{\"data.email\":\"*john.*\"}}}");
+
+        assertThat(search.whereParams()).containsExactly("lax $.\"email\"", "%john%");
+    }
+
+    @Test
+    void wildcardOnAKeywordSubfieldIsFolded() {
+        var search = translate("{\"query\":{\"wildcard\":{\"data.caseName.keyword\":{\"wildcard\":\"Smith*\"}}}}");
+
+        assertThat(search.where()).contains(normalised("v.val") + " like " + normalised("?::text"));
+        assertThat(search.whereParams()).containsExactly("lax $.\"caseName\"", "Smith%");
     }
 
     @Test
@@ -183,6 +320,31 @@ class EsQueryTranslatorTest {
 
         assertThat(search.where()).isEqualTo("(u.created_date >= ?::timestamp)");
         assertThat(search.whereParams()).containsExactly("2024-01-01");
+    }
+
+    @Test
+    void anUpperDateBoundCoversTheWholeOfItsDay() {
+        // Elasticsearch rounds a bound with no time of day to the end of that day, so a case
+        // created at noon on the 31st is inside a range that ends on the 31st.
+        var search = translate("{\"query\":{\"range\":{\"created_date\":"
+            + "{\"gte\":\"2024-01-01\",\"lte\":\"2024-01-31\"}}}}");
+
+        assertThat(search.whereParams()).containsExactly("2024-01-01", "2024-01-31T23:59:59.999");
+    }
+
+    @Test
+    void greaterThanBoundSkipsTheWholeOfItsDay() {
+        var search = translate("{\"query\":{\"range\":{\"last_modified\":"
+            + "{\"gt\":\"2024-01-01\",\"lt\":\"2024-01-31\"}}}}");
+
+        assertThat(search.whereParams()).containsExactly("2024-01-01T23:59:59.999", "2024-01-31");
+    }
+
+    @Test
+    void boundThatNamesATimeIsLeftAlone() {
+        var search = translate("{\"query\":{\"range\":{\"created_date\":{\"lte\":\"2024-01-31T09:30:00.000\"}}}}");
+
+        assertThat(search.whereParams()).containsExactly("2024-01-31T09:30:00.000");
     }
 
     @Test
@@ -244,7 +406,8 @@ class EsQueryTranslatorTest {
         var search = translate("{\"query\":{\"bool\":{\"must\":[{\"match\":{\"state\":\"Draft\"}}],"
             + "\"should\":[{\"term\":{\"jurisdiction\":\"DIVORCE\"}}]}}}");
 
-        assertThat(search.whereParams()).hasSize((int) search.where().chars().filter(c -> c == '?').count());
+        assertThat(search.whereParams())
+            .hasSize(EsQueryTranslatorInvariantTest.placeholders(search.where()));
     }
 
     @Test
@@ -300,7 +463,8 @@ class EsQueryTranslatorTest {
 
         var search = translate("{\"query\":{\"bool\":{\"must\":[{\"wrapper\":{\"query\":\"" + encoded + "\"}}]}}}");
 
-        assertThat(search.where()).isEqualTo("((u.state = ?))");
+        assertThat(search.where()).isEqualTo(
+            "((" + normalised("u.state") + " = " + normalised("?::text") + "))");
         assertThat(search.whereParams()).containsExactly("Draft");
     }
 
@@ -323,7 +487,7 @@ class EsQueryTranslatorTest {
             "lax $.\"Name\"",
             "Smith%",
             "lax $.\"PostCode\"",
-            " sw1a 1aa ");
+            " SW1A 1AA ");
         assertThat(search.where()).contains("jsonb_path_query_array(n0.elem, ?::jsonpath)");
     }
 
@@ -345,7 +509,7 @@ class EsQueryTranslatorTest {
 
         assertThat(search.sorts()).hasSize(3);
         assertThat(search.sorts().get(0).expression())
-            .isEqualTo("(jsonb_path_query_array(u.data, ?::jsonpath) ->> 0)");
+            .isEqualTo(normalised("(jsonb_path_query_array(u.data, ?::jsonpath) ->> 0)"));
         assertThat(search.sorts().get(0).params()).containsExactly("lax $.\"caseName\"");
         assertThat(search.sorts().get(0).ascending()).isFalse();
         assertThat(search.sorts().get(1).expression()).isEqualTo("u.reference");
@@ -421,6 +585,34 @@ class EsQueryTranslatorTest {
     }
 
     @Test
+    void theStandardAnalyzerCcdNamesIsAccepted() {
+        // Global search asks for it by name on every party clause.
+        var search = translate("{\"query\":{\"match_phrase\":{\"data.PostCode\":"
+            + "{\"query\":\"SW1A 1AA\",\"analyzer\":\"standard\"}}}}");
+
+        assertThat(search.whereParams()).containsExactly("lax $.\"PostCode\"", " SW1A 1AA ");
+    }
+
+    @Test
+    void anotherAnalyzerIsRejectedBecauseTheStubDoesNotImplementIt() {
+        // Answering a phone number search with word matching would return different cases.
+        assertThat(catchIt("{\"query\":{\"match\":{\"data.phone\":"
+            + "{\"query\":\"01234 567890\",\"analyzer\":\"phone_number_analyzer\"}}}}"))
+            .hasMessageContaining("does not support 'analyzer 'phone_number_analyzer''")
+            .hasMessageContaining("standard analyzer");
+    }
+
+    @Test
+    void caseInsensitiveTermIsRejectedBecauseItWouldChangeWhichCasesMatch() {
+        // A keyword with no normalizer is matched as stored, so answering this without the
+        // option it asked for would match a different set of cases than a real cluster.
+        assertThat(catchIt("{\"query\":{\"term\":{\"data_classification.x\":"
+            + "{\"value\":\"PRIVATE\",\"case_insensitive\":true}}}}"))
+            .hasMessageContaining("does not support 'case_insensitive'")
+            .hasMessageContaining("term query");
+    }
+
+    @Test
     void fuzzinessIsRejectedBecauseItWouldChangeWhichCasesMatch() {
         assertThat(catchIt("{\"query\":{\"match\":{\"data.name\":{\"query\":\"smith\",\"fuzziness\":\"2\"}}}}"))
             .hasMessageContaining("does not support 'fuzziness'");
@@ -492,6 +684,21 @@ class EsQueryTranslatorTest {
         assertThat(thrown.type()).doesNotContain("index_not_found_exception");
         assertThat(thrown.getMessage()).doesNotContain("index_not_found_exception");
         assertThat(thrown.getMessage()).doesNotContain("no_shard_available_action_exception");
+    }
+
+    /** The tokens of an expression, as the standard analyzer and tokenizer leave it. */
+    private static String tokens(String expression) {
+        var separators = " \\t\\n\\r!-/:-@[-^`{-~";
+        var letter = "[^" + separators + "0-9]";
+        return "regexp_split_to_array(regexp_replace(lower(" + expression + "), '(?<=" + letter
+            + ")[''.](?=" + letter + ")|(?<=[0-9])[.,](?=[0-9])', '', 'g'), '[" + separators + "]+')";
+    }
+
+    /** An expression as lowercase_normalizer leaves it: lowercased and ascii folded. */
+    private static String normalised(String expression) {
+        return "lower(translate(" + expression
+            + ", 'àáâãäåèéêëìíîïòóôõöøùúûüýÿñçÀÁÂÃÄÅÈÉÊËÌÍÎÏÒÓÔÕÖØÙÚÛÜÝÑÇ'"
+            + ", 'aaaaaaeeeeiiiioooooouuuuyyncAAAAAAEEEEIIIIOOOOOOUUUUYNC'))";
     }
 
     private Throwable catchIt(String json) {

@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,24 +21,79 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * a clause that was silently dropped would let a search test pass locally and fail against a real
  * elasticsearch.
  *
- * <p>Fields that elasticsearch analyses (the {@code text} mapped metadata and the dynamically
- * mapped case data) are matched against their tokens, so {@code term} on {@code state} matches a
- * stored value of {@code Draft} just as it does in elasticsearch. The {@code .keyword} sub-field
- * and the {@code keyword} mapped {@code security_classification} are matched exactly.
+ * <p>Fields that elasticsearch analyses (the {@code text} mapped metadata and case data) are
+ * matched against their tokens, so {@code term} on {@code state} matches a stored value of
+ * {@code Draft} just as it does in elasticsearch. A {@code .keyword} sub-field is matched whole,
+ * lowercased and ascii folded by the {@code lowercase_normalizer} CCD gives it.
+ *
+ * <p>What the translator cannot know is a case data field's own type, which it would need to tell
+ * a {@code Postcode} from a {@code Text}, so every path under {@code data} is matched as though it
+ * were {@code Text}. The README names the types that leaves wrong.
  */
 class EsQueryTranslator {
 
     /**
-     * Splits a value into the tokens the standard analyzer would produce. Underscores join words
-     * under the unicode segmentation rules the standard tokenizer follows, so a case type id such
-     * as {@code CARE_SUPERVISION_EPO} remains a single token.
+     * The characters that separate tokens: ascii whitespace and ascii punctuation, bar the
+     * underscore, which joins words under the unicode segmentation rules the standard tokenizer
+     * follows, so a case type id such as {@code CARE_SUPERVISION_EPO} remains a single token.
+     *
+     * <p>Spelt out rather than taken from {@code [:alnum:]}, whose membership postgres decides
+     * from the cluster's {@code LC_CTYPE}: under a C locale that class excludes every accented
+     * letter, which would split a stored name into tokens this translator never produces for the
+     * value being searched for, and nothing would match itself. Everything above ascii is a word
+     * character on both sides instead. Elasticsearch's tokenizer does break on some of it —
+     * an em dash, an ideographic space — which this does not.
      */
-    static final String TOKEN_SEPARATOR_REGEX = "[^[:alnum:]_]+";
-    // Matched against postgres, which applies its locale: an ASCII-only class here would
-    // tokenise an accented name differently from the column it is compared with.
-    private static final String TOKEN_SEPARATOR_JAVA_REGEX = "[^\\p{IsAlphabetic}\\p{IsDigit}_]+";
+    private static final String SEPARATORS_REGEX = " \\t\\n\\r!-/:-@[-^`{-~";
+    private static final String SEPARATORS_JAVA_REGEX = " \\t\\n\\r!-/:-@\\[-^`{-~";
+
+    /** The break between one token and the next. */
+    static final String TOKEN_SEPARATOR_REGEX = "[" + SEPARATORS_REGEX + "]+";
+    private static final String TOKEN_SEPARATOR_JAVA_REGEX = "[" + SEPARATORS_JAVA_REGEX + "]+";
+
+    /** A word character that is not a digit, which for the joining rules below is a letter. */
+    private static final String LETTER_REGEX = "[^" + SEPARATORS_REGEX + "0-9]";
+    private static final String LETTER_JAVA_REGEX = "[^" + SEPARATORS_JAVA_REGEX + "0-9]";
+    /** The same, in a wildcard pattern, where a metacharacter stands in for what it will match. */
+    private static final String LETTER_OR_WILDCARD = "[[^" + SEPARATORS_JAVA_REGEX + "0-9]*?]";
+    private static final String DIGIT_OR_WILDCARD = "[0-9*?]";
+
+    /**
+     * The characters the standard tokenizer keeps inside a token, under the word boundary rules
+     * elasticsearch follows: an apostrophe or a dot between two letters, as in {@code o'brien}
+     * and {@code john.smith}, and a dot or a comma between two digits, as in {@code 1,234.5}.
+     * A comma between letters is not one of them, so {@code bloggs,joe} is two words.
+     *
+     * <p>Dropping the character instead of keeping it tokenises a stored value and a value
+     * searched for the same way, so the same documents match even though the tokens themselves
+     * read differently from elasticsearch's. Matched by lookaround rather than by consuming the
+     * characters on either side, which would skip every second joiner and split
+     * {@code 10.0.0.1} into {@code 10001} where the next boundary falls.
+     *
+     * <p>The doubled apostrophe in the postgres form is SQL quoting, not part of the class.
+     */
+    private static final String WORD_JOINER_REGEX =
+        "(?<=" + LETTER_REGEX + ")[''.](?=" + LETTER_REGEX + ")|(?<=[0-9])[.,](?=[0-9])";
+    private static final String WORD_JOINER_JAVA_REGEX =
+        "(?<=" + LETTER_JAVA_REGEX + ")['.](?=" + LETTER_JAVA_REGEX + ")|(?<=[0-9])[.,](?=[0-9])";
+    private static final String WORD_JOINER_PATTERN_REGEX =
+        "(?<=" + LETTER_OR_WILDCARD + ")['.](?=" + LETTER_OR_WILDCARD + ")"
+            + "|(?<=" + DIGIT_OR_WILDCARD + ")[.,](?=" + DIGIT_OR_WILDCARD + ")";
 
     private static final String KEYWORD_SUFFIX = ".keyword";
+
+    /**
+     * The accents CCD's {@code lowercase_normalizer} folds away, as a pair of equal length
+     * strings so that postgres and this translator fold a value identically. Elasticsearch's
+     * asciifolding covers more of unicode, and the characters it expands rather than maps —
+     * {@code ß} to {@code ss}, {@code æ} to {@code ae} — are left alone here.
+     */
+    private static final String ACCENTED = "àáâãäåèéêëìíîïòóôõöøùúûüýÿñçÀÁÂÃÄÅÈÉÊËÌÍÎÏÒÓÔÕÖØÙÚÛÜÝÑÇ";
+    private static final String UNACCENTED = "aaaaaaeeeeiiiioooooouuuuyyncAAAAAAEEEEIIIIOOOOOOUUUUYNC";
+
+    /** A date with no time of day, which elasticsearch rounds to an end of the day. */
+    private static final Pattern DATE_ONLY = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
+
     private static final String TABLE = "u";
 
     private static final Set<String> SUPPORTED_BODY_KEYS = Set.of(
@@ -80,25 +135,44 @@ class EsQueryTranslator {
         "security_classification", new Column("security_classification", ColumnType.TEXT, false),
         "id", new Column("id", ColumnType.NUMBER, false));
 
+    private static final String REFERENCE = "reference";
+
+    /**
+     * The jsonb columns a field path can address, and whether CCD maps what is under them with
+     * {@code lowercase_normalizer}. It maps {@code data} from the case type's field types;
+     * {@code data_classification} is a plain keyword per field, and {@code supplementary_data}
+     * is left to elasticsearch's dynamic mapping, so neither is normalised.
+     */
     private static final Map<String, String> JSON_ROOTS = Map.of(
         "data", TABLE + ".data",
         "data_classification", TABLE + ".data_classification",
         "supplementary_data", TABLE + ".supplementary_data");
 
+    private static final Set<String> NORMALISED_ROOTS = Set.of("data");
+
+    /** A plain keyword is matched byte for byte, so its value is never tokenised either. */
+    private static final Set<String> KEYWORD_ROOTS = Set.of("data_classification");
+
     /**
      * The context a field name is resolved in. Inside a {@code nested} clause the root is a single
      * element of the nested array and field names are relative to the nested path.
      */
-    private record Scope(String jsonRoot, String pathPrefix) {
+    private record Scope(String jsonRoot, String pathPrefix, boolean normalised) {
     }
 
-    private static final Scope ROOT_SCOPE = new Scope(null, "");
+    private static final Scope ROOT_SCOPE = new Scope(null, "", false);
 
     /**
      * A resolved field: either a column of the document view or a json path into one of its
-     * jsonb columns.
+     * jsonb columns. {@code normalised} says whether elasticsearch holds the whole value
+     * lowercased and ascii folded, which is how CCD maps every keyword it declares itself.
      */
-    private record Field(String name, Column column, String jsonRoot, String jsonPath, boolean analysed) {
+    private record Field(String name,
+                         Column column,
+                         String jsonRoot,
+                         String jsonPath,
+                         boolean analysed,
+                         boolean normalised) {
     }
 
     private static boolean isNested(Scope scope) {
@@ -325,7 +399,7 @@ class EsQueryTranslator {
         var alias = "n" + nestedAliases++;
         var pathParam = params.bind(pathField.jsonPath());
         var inner = query(node.get("query"),
-            new Scope(alias + ".elem", path.asText() + "."), params);
+            new Scope(alias + ".elem", path.asText() + ".", pathField.normalised()), params);
 
         return "exists (select 1 from jsonb_array_elements(jsonb_path_query_array("
             + pathField.jsonRoot() + ", " + pathParam + "::jsonpath)) as " + alias + "(elem) where " + inner + ")";
@@ -334,6 +408,9 @@ class EsQueryTranslator {
     private String term(JsonNode node, Scope scope, Params params) {
         var entry = singleField(node, "term");
         var field = field(entry.getKey(), scope);
+        // case_insensitive is the one that matters: a term that asked for it and was answered
+        // without it would match a different set of cases here than in a real cluster.
+        rejectUnknownKeys(entry.getValue(), "term", Set.of("value", "boost", "_name"));
         var value = scalar(entry.getValue(), "term", Set.of("value"));
         return matchTerm(field, value, params);
     }
@@ -357,10 +434,15 @@ class EsQueryTranslator {
     }
 
     private String matchTerm(Field field, String value, Params params) {
-        if (!field.analysed()) {
-            return compare(field, "=", value, params);
+        if (isCaseReference(field)) {
+            return caseReference(field, value, params);
         }
-        return tokenHeld(field, value.toLowerCase(Locale.ROOT), params);
+        if (!field.analysed()) {
+            return wholeValue(field, value, params);
+        }
+        // A term is not analysed, but it is looked for among terms that were, so it has to be
+        // put in their form: 'john.smith' is held as one token, and the stub holds it squashed.
+        return tokenHeld(field, squashJoiners(value), params);
     }
 
     private String match(JsonNode node, Scope scope, Params params) {
@@ -376,6 +458,7 @@ class EsQueryTranslator {
                     default -> throw EsStubException.unsupported(name, "It appeared inside a match query.");
                 }
             }
+            requireStandardAnalyzer(spec, "match");
             var operator = spec.get("operator");
             and = operator != null && "and".equalsIgnoreCase(operator.asText());
             var zeroTerms = spec.get("zero_terms_query");
@@ -383,8 +466,11 @@ class EsQueryTranslator {
         }
         var value = scalar(spec, "match", Set.of("query"));
 
+        if (isCaseReference(field)) {
+            return caseReference(field, value, params);
+        }
         if (!field.analysed()) {
-            return compare(field, "=", value, params);
+            return wholeValue(field, value, params);
         }
         var tokens = tokenise(value);
         if (tokens.isEmpty()) {
@@ -403,16 +489,19 @@ class EsQueryTranslator {
         rejectSlop(entry.getValue(), "match_phrase");
         var value = scalar(entry.getValue(), "match_phrase", Set.of("query"));
 
+        if (isCaseReference(field)) {
+            return caseReference(field, value, params);
+        }
         if (!field.analysed()) {
-            return compare(field, "=", value, params);
+            return wholeValue(field, value, params);
         }
         var tokens = tokenise(value);
         if (tokens.isEmpty()) {
             return "false";
         }
         var needle = " " + String.join(" ", tokens) + " ";
-        return scalarPredicate(field, params,
-            expression -> "strpos(" + analysedPhrase(expression) + ", " + params.bind(needle) + ") > 0");
+        return scalarPredicate(field, params, expression -> "strpos(" + analysedPhrase(expression)
+            + ", lower(" + bindText(params, needle) + ")) > 0");
     }
 
     private String matchPhrasePrefix(JsonNode node, Scope scope, Params params) {
@@ -421,19 +510,21 @@ class EsQueryTranslator {
         rejectSlop(entry.getValue(), "match_phrase_prefix");
         var value = scalar(entry.getValue(), "match_phrase_prefix", Set.of("query"));
 
+        if (isCaseReference(field)) {
+            return like(field, likeEscape(hyphenless(value)) + "%", params);
+        }
         if (!field.analysed()) {
-            var prefix = likeEscape(value) + "%";
-            return scalarPredicate(field, params,
-                expression -> expression + " like " + params.bind(prefix) + " escape '\\'");
+            return like(field, likeEscape(value) + "%", params);
         }
         var tokens = tokenise(value);
         if (tokens.isEmpty()) {
             return "false";
         }
-        // Tokens only ever contain alphanumerics and underscores, so need no regex escaping.
+        // A token holds no character the regex engine treats specially, bar the ones squashed
+        // out of it, so the pattern needs no escaping.
         var pattern = " " + String.join(" ", tokens) + "[^ ]* ";
-        return scalarPredicate(field, params,
-            expression -> analysedPhrase(expression) + " ~ " + params.bind(pattern));
+        return scalarPredicate(field, params, expression ->
+            analysedPhrase(expression) + " ~ lower(" + bindText(params, pattern) + ")");
     }
 
     private String wildcard(JsonNode node, Scope scope, Params params) {
@@ -451,14 +542,14 @@ class EsQueryTranslator {
         var pattern = scalar(spec, "wildcard", Set.of("wildcard", "value"));
 
         if (!field.analysed()) {
-            var exact = wildcardToLike(pattern);
-            return scalarPredicate(field, params,
-                expression -> expression + " like " + params.bind(exact) + " escape '\\'");
+            // A wildcard is not analysed, but it runs against terms that the normalizer has
+            // already folded, so the pattern has to be folded to meet them.
+            return like(field, wildcardToLike(pattern), params);
         }
-        var like = wildcardToLike(pattern.toLowerCase(Locale.ROOT));
+        var tokenPattern = wildcardToLike(squashJoiners(pattern, WORD_JOINER_PATTERN_REGEX));
         return scalarPredicate(field, params, expression ->
-            "exists (select 1 from unnest(" + tokensOf(expression) + ") as t(token) where t.token like "
-                + params.bind(like) + " escape '\\')");
+            "exists (select 1 from unnest(" + tokensOf(expression) + ") as t(token) where t.token like lower("
+                + bindText(params, tokenPattern) + ") escape '\\')");
     }
 
     private String range(JsonNode node, Scope scope, Params params) {
@@ -522,16 +613,73 @@ class EsQueryTranslator {
                 case NUMBER -> "=".equals(operator)
                     ? column + "::text = " + params.bind(value)
                     : column + " " + operator + " " + params.bind(value) + "::numeric";
-                case DATE -> column + " " + operator + " " + params.bind(value) + "::timestamp";
+                case DATE -> column + " " + operator + " "
+                    + params.bind(dateBound(value, operator)) + "::timestamp";
                 case TEXT -> column + " " + operator + " " + params.bind(value);
             };
         }
         return scalarPredicate(field, params, v -> v + " " + operator + " " + params.bind(value));
     }
 
-    private String tokenHeld(Field field, String lowercasedToken, Params params) {
+    /**
+     * Elasticsearch rounds a bound given as a date with no time of day to the end of that day
+     * that includes the whole of it, so a case modified at noon is inside
+     * {@code lte: 2024-01-15}.
+     */
+    private static String dateBound(String value, String operator) {
+        if (!DATE_ONLY.matcher(value).matches()) {
+            return value;
+        }
+        return switch (operator) {
+            case "<=", ">" -> value + "T23:59:59.999";
+            default -> value;
+        };
+    }
+
+    /** Matches a field elasticsearch holds whole, rather than as tokens. */
+    private String wholeValue(Field field, String value, Params params) {
+        if (!field.normalised()) {
+            return compare(field, "=", value, params);
+        }
         return scalarPredicate(field, params,
-            expression -> params.bind(lowercasedToken) + " = any(" + tokensOf(expression) + ")");
+            expression -> normalised(expression) + " = " + normalised(bindText(params, value)));
+    }
+
+    private String like(Field field, String pattern, Params params) {
+        return scalarPredicate(field, params, expression -> {
+            var needle = bindText(params, pattern);
+            return (field.normalised() ? normalised(expression) : expression)
+                + " like " + (field.normalised() ? normalised(needle) : needle) + " escape '\\'";
+        });
+    }
+
+    /**
+     * Binds a value postgres is to fold, which needs its type spelt out: the driver sends a
+     * string as unknown, and {@code lower} has an overload for ranges to be told apart from.
+     */
+    private String bindText(Params params, String value) {
+        return params.bind(value) + "::text";
+    }
+
+    /**
+     * CCD gives {@code reference} a search analyzer that strips hyphens and leaves the value
+     * whole, so a case reference matches however the user grouped its digits.
+     */
+    private static boolean isCaseReference(Field field) {
+        return isColumn(field) && field.analysed() && REFERENCE.equals(field.column().name());
+    }
+
+    private String caseReference(Field field, String value, Params params) {
+        return TABLE + "." + field.column().name() + "::text = " + params.bind(hyphenless(value));
+    }
+
+    private static String hyphenless(String value) {
+        return value.replace("-", "");
+    }
+
+    private String tokenHeld(Field field, String token, Params params) {
+        return scalarPredicate(field, params,
+            expression -> "lower(" + bindText(params, token) + ") = any(" + tokensOf(expression) + ")");
     }
 
     /**
@@ -551,12 +699,24 @@ class EsQueryTranslator {
     }
 
     private String tokensOf(String expression) {
-        return "regexp_split_to_array(lower(" + expression + "), '" + TOKEN_SEPARATOR_REGEX + "')";
+        return "regexp_split_to_array(" + analysed(expression) + ", '" + TOKEN_SEPARATOR_REGEX + "')";
     }
 
     private String analysedPhrase(String expression) {
-        return "(' ' || array_to_string(regexp_split_to_array(lower(" + expression + "), '"
+        return "(' ' || array_to_string(regexp_split_to_array(" + analysed(expression) + ", '"
             + TOKEN_SEPARATOR_REGEX + "'), ' ') || ' ')";
+    }
+
+    /** A value in the form the standard analyzer leaves it in, before it is split into tokens. */
+    private String analysed(String expression) {
+        return "regexp_replace(lower(" + expression + "), '" + WORD_JOINER_REGEX + "', '', 'g')";
+    }
+
+    /**
+     * A value in the form {@code lowercase_normalizer} leaves it in.
+     */
+    private String normalised(String expression) {
+        return "lower(translate(" + expression + ", '" + ACCENTED + "', '" + UNACCENTED + "'))";
     }
 
     private Field field(String rawName, Scope scope) {
@@ -577,21 +737,25 @@ class EsQueryTranslator {
                         + scope.pathPrefix() + "'.");
             }
             return jsonField(rawName, scope.jsonRoot(),
-                name.substring(scope.pathPrefix().length()), analysed);
+                name.substring(scope.pathPrefix().length()), analysed, scope.normalised());
         }
 
         var column = COLUMNS.get(name);
         if (column != null) {
-            return new Field(rawName, column, null, null, analysed && column.analysed());
+            // Only the text columns carry the normalizer; a number or a date has nothing to fold.
+            return new Field(rawName, column, null, null, analysed && column.analysed(),
+                column.type() == ColumnType.TEXT);
         }
 
         for (var root : JSON_ROOTS.entrySet()) {
+            var normalised = NORMALISED_ROOTS.contains(root.getKey());
+            var tokenised = analysed && !KEYWORD_ROOTS.contains(root.getKey());
             if (name.equals(root.getKey())) {
-                return jsonField(rawName, root.getValue(), "", analysed);
+                return jsonField(rawName, root.getValue(), "", tokenised, normalised);
             }
             if (name.startsWith(root.getKey() + ".")) {
                 return jsonField(rawName, root.getValue(),
-                    name.substring(root.getKey().length() + 1), analysed);
+                    name.substring(root.getKey().length() + 1), tokenised, normalised);
             }
         }
 
@@ -600,8 +764,8 @@ class EsQueryTranslator {
                 + " and paths under " + JSON_ROOTS.keySet() + ".");
     }
 
-    private Field jsonField(String name, String root, String path, boolean analysed) {
-        return new Field(name, null, root, jsonPath(path), analysed);
+    private Field jsonField(String name, String root, String path, boolean analysed, boolean normalised) {
+        return new Field(name, null, root, jsonPath(path), analysed, normalised);
     }
 
     /**
@@ -691,7 +855,10 @@ class EsQueryTranslator {
             expression = "(jsonb_path_query_array(" + field.jsonRoot() + ", "
                 + params.bind(field.jsonPath()) + "::jsonpath) ->> 0)";
         }
-        return new Sort(expression, params.values(), ascending);
+        // A sort runs on the sub-field's own values, which the normalizer has folded, so a
+        // lowercase name is not ordered after every uppercase one.
+        return new Sort(field.normalised() ? normalised(expression) : expression,
+            params.values(), ascending);
     }
 
     /**
@@ -769,8 +936,40 @@ class EsQueryTranslator {
         }
     }
 
+    /**
+     * Rejects an option the clause does not implement, rather than reading the ones it knows of
+     * and passing over the rest: an option that changes which documents match has to fail
+     * loudly, as one the stub cannot translate at all does.
+     */
+    private void rejectUnknownKeys(JsonNode spec, String clause, Set<String> known) {
+        if (!spec.isObject()) {
+            return;
+        }
+        for (var name : fieldNames(spec)) {
+            if (!known.contains(name)) {
+                throw EsStubException.unsupported(name, "It appeared inside a " + clause + " query.");
+            }
+        }
+    }
+
+    /**
+     * Rejects an analyser the stub does not implement. It analyses as the standard analyzer
+     * does, which is the one CCD names, and a clause asking for another — the phone number or
+     * case id analyser a service team may search those field types with — would be answered by
+     * word matching and quietly return a different set of cases.
+     */
+    private void requireStandardAnalyzer(JsonNode spec, String clause) {
+        var analyzer = spec.get("analyzer");
+        if (analyzer == null || analyzer.isNull() || "standard".equalsIgnoreCase(analyzer.asText())) {
+            return;
+        }
+        throw EsStubException.unsupported("analyzer '" + analyzer.asText() + "'",
+            "A " + clause + " query is analysed as the standard analyzer would analyse it.");
+    }
+
     private void rejectSlop(JsonNode spec, String clause) {
         if (spec.isObject()) {
+            requireStandardAnalyzer(spec, clause);
             for (var name : fieldNames(spec)) {
                 switch (name) {
                     case "query", "analyzer", "boost", "_name", "max_expansions", "zero_terms_query" -> { }
@@ -831,14 +1030,28 @@ class EsQueryTranslator {
         return names;
     }
 
+    /**
+     * Splits a value into tokens, leaving the case alone: postgres lowercases both the stored
+     * value and the token bound from this one, so that the two are folded by the same engine
+     * under the same locale and a value always matches itself.
+     */
     static List<String> tokenise(String value) {
         var tokens = new ArrayList<String>();
-        for (var token : value.toLowerCase(Locale.ROOT).split(TOKEN_SEPARATOR_JAVA_REGEX)) {
+        var analysed = squashJoiners(value);
+        for (var token : analysed.split(TOKEN_SEPARATOR_JAVA_REGEX)) {
             if (!token.isEmpty()) {
                 tokens.add(token);
             }
         }
         return tokens;
+    }
+
+    private static String squashJoiners(String value) {
+        return squashJoiners(value, WORD_JOINER_JAVA_REGEX);
+    }
+
+    private static String squashJoiners(String value, String regex) {
+        return value.replaceAll(regex, "");
     }
 
     /**

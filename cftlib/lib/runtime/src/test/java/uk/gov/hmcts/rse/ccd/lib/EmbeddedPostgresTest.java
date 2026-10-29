@@ -33,6 +33,13 @@ class EmbeddedPostgresTest {
             try (var c = connect(port, "postgres")) {
                 exec(c, "create database datastore");
             }
+            try (var c = connect(port, "postgres")) {
+                // Not the environment's locale, which under a plain C locale is SQL_ASCII, where
+                // the stub's folding and tokenising would read each byte of an accented name as a
+                // character of its own.
+                assertThat(queryString(c, "select pg_encoding_to_char(encoding) from pg_database"
+                    + " where datname = 'datastore'")).isEqualTo("UTF8");
+            }
             try (var c = connect(port, "datastore")) {
                 // The extensions the CFT services and CFTLibApiImpl create for themselves.
                 exec(c, "create extension if not exists btree_gin");
@@ -59,7 +66,7 @@ class EmbeddedPostgresTest {
     }
 
     @Test
-    void adoptsAPostgresThatIsAlreadyListening(@TempDir Path dir) throws Exception {
+    void adoptsAndThenOwnsAPostgresThatIsAlreadyListening(@TempDir Path dir) throws Exception {
         var port = freePort();
         var log = dir.resolve("logs/postgres.log");
 
@@ -70,11 +77,15 @@ class EmbeddedPostgresTest {
             var adopter = new EmbeddedPostgres(data, log, port, false, false);
             adopter.start();
 
-            // Stopping an adopted instance must leave the database alone.
-            adopter.stop();
+            // The adopted server serves this boot.
             try (var c = connect(port, "postgres")) {
                 assertThat(queryString(c, "select 'up'")).isEqualTo("up");
             }
+
+            // And this boot owns it: left running it would hold the port after every later run
+            // too, and a switch back to docker mode would fail.
+            adopter.stop();
+            assertThat(Ports.isListening(port)).isFalse();
         } finally {
             running.stop();
         }

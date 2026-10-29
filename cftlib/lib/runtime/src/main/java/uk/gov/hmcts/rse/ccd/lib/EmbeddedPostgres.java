@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 import lombok.SneakyThrows;
@@ -18,6 +19,8 @@ public class EmbeddedPostgres implements ManagedDependency {
 
     private static final Duration STARTUP_WAIT = Duration.ofSeconds(60);
     private static final Duration SHUTDOWN_WAIT = Duration.ofSeconds(20);
+    /** All a smart shutdown gets, since it cannot finish while this JVM holds the pools open. */
+    private static final Duration SMART_SHUTDOWN_GRACE = Duration.ofSeconds(2);
     private static final int LOG_TAIL_LINES = 40;
 
     private final Path dataDirectory;
@@ -28,6 +31,7 @@ public class EmbeddedPostgres implements ManagedDependency {
 
     private volatile io.zonky.test.db.postgres.embedded.EmbeddedPostgres instance;
     private volatile boolean stopped;
+    private volatile ProcessHandle adopted;
 
     public EmbeddedPostgres() {
         this(CftlibConfig.dbPort());
@@ -87,25 +91,29 @@ public class EmbeddedPostgres implements ManagedDependency {
 
     @Override
     public void start() throws IOException {
-        var freed = !cleanBoot || stopPreviousRun();
-
-        // Checked before anything is deleted: a boot that cannot have the port is going to fail,
-        // and it must not take the databases of previous boots with it.
+        // Nothing is signalled or deleted until something is known to be serving the port: a
+        // pid file outlives its server, and a boot that cannot have the port is going to fail
+        // without taking the databases of previous boots with it.
         if (Ports.isListening(CftlibConfig.dbHost(), port)) {
-            // Only adopt a server from one of our own previous boots. Anything else on the port is
-            // most often a leftover cftlib container, which would quietly put docker back in the mix.
-            if (ownPostgresIsRunning()) {
+            // Only a server from one of our own previous boots. Anything else on the port is most
+            // often a leftover cftlib container, which would quietly put docker back in the mix.
+            if (!ownPostgresIsRunning()) {
+                throw new IOException("Port " + port + " is already in use, but not by a postgres cftlib "
+                    + "started: its data directory " + dataDirectory + " holds no matching postmaster. "
+                    + "A leftover cftlib container is the usual cause, and 'docker rm -f "
+                    + "cftlib-shared-database-pg-1' clears it. Set RSE_LIB_DB_PORT to use a different "
+                    + "port, or RSE_LIB_DB=external to have cftlib use the database already there.");
+            }
+            if (!cleanBoot || !stopPreviousRun()) {
                 System.out.println("**** Cftlib is using the postgres it left running on port " + port);
+                // Adopted, so this boot owns it from here: without that it would hold the port
+                // after every subsequent run too, and a switch back to docker mode would fail.
+                adopted = postmasterPid().flatMap(ProcessHandle::of).orElse(null);
                 return;
             }
-            throw new IOException("Port " + port + " is already in use, but not by a postgres cftlib "
-                + "started: its data directory " + dataDirectory + " holds no matching postmaster. "
-                + "A leftover cftlib container is the usual cause, and 'docker rm -f "
-                + "cftlib-shared-database-pg-1' clears it. Set RSE_LIB_DB_PORT to use a different "
-                + "port, or RSE_LIB_DB=external to have cftlib use the database already there.");
         }
 
-        if (cleanBoot && freed) {
+        if (cleanBoot) {
             deleteDataDirectory();
         }
 
@@ -113,6 +121,12 @@ public class EmbeddedPostgres implements ManagedDependency {
         try {
             instance = io.zonky.test.db.postgres.embedded.EmbeddedPostgres.builder()
                 .setPort(port)
+                // initdb otherwise takes its encoding from the environment's locale, and under a
+                // plain C locale it picks SQL_ASCII, where every multi-byte character is a string
+                // of separate bytes: accented case data then tokenises and folds differently from
+                // the same case on a machine whose locale is a UTF-8 one. The data directory
+                // outlives the boot, so the choice is frozen the first time.
+                .setLocaleConfig("encoding", "UTF8")
                 .setDataDirectory(dataDirectory.toFile())
                 .setCleanDataDirectory(false)
                 .setRegisterShutdownHook(!leaveRunning)
@@ -137,6 +151,20 @@ public class EmbeddedPostgres implements ManagedDependency {
     @SneakyThrows
     public void stop() {
         stopped = true;
+        var reused = adopted;
+        adopted = null;
+        if (reused != null && reused.isAlive()) {
+            // A postmaster reads SIGTERM as a smart shutdown and waits for every client to
+            // disconnect. The CFT apps hold their pools open until this JVM halts, which is the
+            // next thing that happens, so the signal is given a moment to work and the server is
+            // then killed. Postgres recovers from that as it starts, which is what the previous
+            // boot's own hard exit left it to do anyway.
+            reused.destroy();
+            if (!waitForExit(reused, SMART_SHUTDOWN_GRACE)) {
+                reused.destroyForcibly();
+                waitForExit(reused);
+            }
+        }
         if (instance == null) {
             return;
         }
@@ -164,7 +192,7 @@ public class EmbeddedPostgres implements ManagedDependency {
             .filter(ProcessHandle::isAlive)
             // Checked before signalling, not only before adopting: a pid in a stale file can
             // belong to anything by now, and this path sends SIGTERM and then SIGKILL.
-            .filter(EmbeddedPostgres::isPostgres);
+            .filter(this::isOurPostgres);
         if (process.isEmpty()) {
             return true;
         }
@@ -193,8 +221,25 @@ public class EmbeddedPostgres implements ManagedDependency {
             .filter(ProcessHandle::isAlive)
             // A pid outlives the process that wrote it, and after a reboot it can belong to
             // something else entirely, so the process has to look like the server we left.
-            .filter(EmbeddedPostgres::isPostgres)
+            .filter(this::isOurPostgres)
             .isPresent();
+    }
+
+    /**
+     * Whether a process is the server for this data directory, rather than merely a postgres: the
+     * host's own server is a postgres too, and a recorded pid can have been reassigned to it.
+     */
+    private boolean isOurPostgres(ProcessHandle process) {
+        if (!isPostgres(process)) {
+            return false;
+        }
+        var arguments = process.info().arguments();
+        if (arguments.isEmpty()) {
+            // Not readable for another user's process, and on some platforms not at all, so this
+            // falls back to the weaker check rather than refusing to recognise our own server.
+            return true;
+        }
+        return List.of(arguments.get()).contains(dataDirectory.toString());
     }
 
     private static boolean isPostgres(ProcessHandle process) {
@@ -264,7 +309,11 @@ public class EmbeddedPostgres implements ManagedDependency {
     }
 
     private static boolean waitForExit(ProcessHandle process) {
-        var deadline = System.nanoTime() + SHUTDOWN_WAIT.toNanos();
+        return waitForExit(process, SHUTDOWN_WAIT);
+    }
+
+    private static boolean waitForExit(ProcessHandle process, Duration wait) {
+        var deadline = System.nanoTime() + wait.toNanos();
         while (process.isAlive() && System.nanoTime() < deadline) {
             try {
                 Thread.sleep(100);

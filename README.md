@@ -413,15 +413,17 @@ RSE_LIB_DEPENDENCY_MODE=process ./gradlew cftlibTest
 | XUI manage cases | container on port 3000 | built from a shallow clone with the host's node |
 | XUI manage organisations | container on port 3001 | off by default |
 
-Each dependency can be chosen independently, which is also how you opt out of one entirely:
+Within a mode each dependency can be chosen individually, which is also how you point cftlib at something you already run, or opt out of one entirely:
 
-| Variable | Values | Default |
-| -------- | ------ | ------- |
-| `RSE_LIB_DEPENDENCY_MODE` | `docker`, `process` | `docker` |
-| `RSE_LIB_DB` | `docker`, `embedded`, `external` | follows the mode |
-| `RSE_LIB_ES` | `docker`, `stub`, `external` | follows the mode |
-| `RSE_LIB_XUI` | `docker`, `process`, `off` | follows the mode; `off` for `cftlibTest` |
-| `RSE_LIB_XUI_MO` | `docker`, `process`, `off` | `docker` in docker mode, `off` in process mode |
+| Variable | In docker mode | In process mode | Default |
+| -------- | -------------- | --------------- | ------- |
+| `RSE_LIB_DEPENDENCY_MODE` | | | `docker` |
+| `RSE_LIB_DB` | `docker` | `embedded`, `external` | follows the mode |
+| `RSE_LIB_ES` | `docker` | `stub`, `external` | follows the mode |
+| `RSE_LIB_XUI` | `docker`, `off` | `process`, `off` | follows the mode; `off` for a process mode `cftlibTest` |
+| `RSE_LIB_XUI_MO` | `docker`, `off` | `process`, `off` | `docker` in docker mode, `off` in process mode |
+
+The two sets do not mix: compose brings up every container it manages whatever the individual variables say, so `RSE_LIB_ES=docker` in process mode is rejected rather than half applied. Switch `RSE_LIB_DEPENDENCY_MODE` to run a dependency as a container.
 
 `external` means cftlib uses something already running: set `RSE_LIB_DB_HOST`, `RSE_LIB_DB_PORT`, `RSE_LIB_DB_USERNAME` and `RSE_LIB_DB_PASSWORD` for a database, or `SEARCH_ELASTIC_HOSTS` for elasticsearch.
 
@@ -429,9 +431,20 @@ Each dependency can be chosen independently, which is also how you opt out of on
 
 The stub reads the case tables directly rather than maintaining an index, so there is no indexing lag — a case is searchable as soon as it is saved — and both the cftlib and SDK indexers are switched off. It answers the case type indices and `global_search`, for centralised and decentralised services alike.
 
-It supports the clauses CCD and XUI generate, and **rejects anything else with a 400 naming the clause** rather than returning no hits, so a query it cannot answer fails loudly instead of passing locally and failing in AAT. It does not score, and its text matching approximates elasticsearch's analysis, so it is not the place to validate a search feature — use `RSE_LIB_ES=docker` or point `SEARCH_ELASTIC_HOSTS` at a real cluster for that.
+It supports the clauses CCD and XUI generate, and **rejects anything else with a 400 naming the clause** rather than returning no hits, so a query it cannot answer fails loudly instead of passing locally and failing in AAT. It does not score, and its text matching approximates elasticsearch's analysis, so it is not the place to validate a search feature — go back to docker mode, or point `SEARCH_ELASTIC_HOSTS` at a real cluster with `RSE_LIB_ES=external`, for that.
 
-The stub reads no mappings, so it is more permissive than elasticsearch in one direction: sorting on an analysed text field, and a `nested` query on a path that is not mapped as nested, both answer here and are errors against a real cluster. A search feature that relies on either will pass locally and fail in AAT.
+It applies the analysis CCD's own mappings describe: a `.keyword` sub-field is matched and sorted lowercased and ascii folded, as `lowercase_normalizer` leaves it; `reference` ignores the hyphens the UI groups its digits with; a date bound with no time of day covers the whole of that day; and `o'brien` and `john.smith` are one word each, as the standard tokenizer leaves them.
+
+What it does not read is each case type's **field types**, which is where it still differs from a real cluster. It is more permissive in two ways: sorting on an analysed text field, and a `nested` query on a path that is not mapped as nested, both answer here and are errors against a real cluster. It also returns different hits in these cases:
+
+| | Elasticsearch | The stub |
+| --- | --- | --- |
+| `Email`, `Postcode`, `YesOrNo` fields | whole values, as `keyword` | split into words, so one word of an address matches it |
+| `PhoneUK` fields | spaces removed by `phone_number_analyzer` | split on the spaces |
+| `Date` and `DateTime` fields inside `data` | compared and rounded as dates | compared as text, which agrees for whole ISO timestamps only |
+| `Number` and `MoneyGBP` fields inside `data` | compared as numbers | compared as text, so `9` sorts above `10` |
+
+Each of those is a query that passes locally and behaves differently in AAT, so a feature or an end-to-end test that leans on exact-value matching of those types should be confirmed in docker mode, or against a real cluster with `RSE_LIB_ES=external`. Closing the gap means reading each case type's field types from the definition store and applying CCD's type-to-mapping table, which is not done here.
 
 The stub searches the data store and any database named in `RSE_LIB_ADDITIONAL_DATABASES`, which covers a decentralised service without further configuration. Set `RSE_LIB_ES_STUB_SOURCES` to a comma separated list of `database[:schema]` if case data lives anywhere else.
 
@@ -446,6 +459,8 @@ RSE_LIB_XUI_DIR=~/code/rpx-xui-webapp ./gradlew bootWithCCD
 ```
 
 The host's node must satisfy the app's own `engines.node` range, which cftlib checks before cloning or building. `RSE_LIB_NODE` selects a particular node binary, `RSE_LIB_XUI_REF` and `RSE_LIB_XUI_REPO` override the pin, and `RSE_LIB_XUI_REBUILD` forces a rebuild.
+
+Because that build would otherwise run before every test suite, a process mode `cftlibTest` leaves XUI out. A suite that drives the browser asks for it back with `RSE_LIB_XUI=process`.
 
 ### Lifetime of the dependencies
 

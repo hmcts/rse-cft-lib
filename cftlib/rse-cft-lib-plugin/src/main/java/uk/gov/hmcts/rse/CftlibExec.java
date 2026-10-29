@@ -23,6 +23,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class CftlibExec extends JavaExec {
+    /** The compose profiles cftlib manages itself, one per optional service. */
+    private static final List<String> OWN_PROFILES = List.of("xui", "xui-mo");
+
     public AuthMode authMode = AuthMode.AAT;
     public DependencyMode dependencyMode = DependencyMode.Docker;
     // Optional parts of the stack this task runs, as Feature names. RSE_LIB_FEATURES adds more for one run.
@@ -72,12 +75,7 @@ public class CftlibExec extends JavaExec {
     private void configure() {
         setRequiredJvmArgs();
         setStandardEnvVars();
-        // An inherited or explicitly configured value wins, so the mode can be flipped
-        // from the environment without editing the build script.
-        if (getEnvironment().get("RSE_LIB_DEPENDENCY_MODE") == null) {
-            environment("RSE_LIB_DEPENDENCY_MODE", dependencyMode.name().toLowerCase());
-        }
-        setComposeProfiles();
+        resolveDependencies();
         if (authMode == AuthMode.Local) {
             environment("RSE_LIB_AUTH-MODE", "localAuth");
 
@@ -102,9 +100,48 @@ public class CftlibExec extends JavaExec {
         }
     }
 
-    // Optional docker services: the XUI containers, which sit behind a compose profile so that runs which do not
-    // want them, such as cftlibTest, do not pay for the image pull; those of the task's features; and any listed in
-    // RSE_LIB_COMPOSE_PROFILES or COMPOSE_PROFILES.
+    /**
+     * Settles which dependencies this run brings up. Done here rather than when the task is
+     * created, because {@link #dependencyMode} is assigned by the consuming build afterwards.
+     */
+    void resolveDependencies() {
+        // An inherited or explicitly configured value wins, so the mode can be flipped
+        // from the environment without editing the build script. Blank counts as unset, as it
+        // does everywhere else it is read.
+        if (unset("RSE_LIB_DEPENDENCY_MODE")) {
+            environment("RSE_LIB_DEPENDENCY_MODE", dependencyMode.name().toLowerCase());
+        }
+        // A test suite needs XUI only if it drives the browser. In process mode starting it
+        // clones and builds it from source before the suite runs, and fails the boot outright
+        // where the host's node is too old, so a process mode cftlibTest leaves it out unless
+        // the suite asks for it. Docker mode starts the containers as it always has: a
+        // consumer's suite may drive them, and nfdiv's does.
+        if ("cftlibTest".equals(getName()) && processMode()) {
+            offUnlessChosen("RSE_LIB_XUI");
+            offUnlessChosen("RSE_LIB_XUI_MO");
+        }
+        setComposeProfiles();
+    }
+
+    private boolean processMode() {
+        var mode = String.valueOf(getEnvironment().get("RSE_LIB_DEPENDENCY_MODE"));
+        return "process".equalsIgnoreCase(mode.trim());
+    }
+
+    private void offUnlessChosen(String variable) {
+        if (unset(variable)) {
+            environment(variable, "off");
+        }
+    }
+
+    private boolean unset(String variable) {
+        var value = getEnvironment().get(variable);
+        return value == null || String.valueOf(value).isBlank();
+    }
+
+    // The XUI containers sit behind a compose profile so that a run which does not want them
+    // does not pay for the image pull. Compose started them whatever RSE_LIB_XUI said before.
+    // The task's features bring their own profiles too.
     private void setComposeProfiles() {
         var profiles = new ArrayList<String>();
         if (wanted("RSE_LIB_XUI")) {
@@ -119,15 +156,23 @@ public class CftlibExec extends JavaExec {
             .forEach(profiles::add));
         // Read by the runtime, which prepares the features' dependencies such as their databases.
         environment("RSE_LIB_FEATURES", resolved.stream().map(Enum::name).collect(Collectors.joining(",")));
-        // The task's environment: the shell's, plus anything the build script sets on the task.
-        for (var var : List.of("RSE_LIB_COMPOSE_PROFILES", "COMPOSE_PROFILES")) {
-            var requested = String.valueOf(getEnvironment().getOrDefault(var, ""));
-            Arrays.stream(requested.split(","))
-                .map(String::trim)
-                .filter(profile -> !profile.isEmpty() && !profiles.contains(profile))
-                .forEach(profiles::add);
+        var inherited = String.valueOf(getEnvironment().getOrDefault("COMPOSE_PROFILES", ""));
+        for (var profile : inherited.split(",")) {
+            var name = profile.trim();
+            // A profile of cftlib's own is decided by the variable or feature that owns it, so an
+            // ambient COMPOSE_PROFILES cannot bring back a service this run asked to keep down. Any
+            // other profile is the consumer's and is passed along.
+            if (name.isBlank() || profiles.contains(name) || ownProfile(name)) {
+                continue;
+            }
+            profiles.add(name);
         }
         environment("COMPOSE_PROFILES", String.join(",", profiles));
+    }
+
+    private static boolean ownProfile(String name) {
+        return OWN_PROFILES.contains(name)
+            || Arrays.stream(Feature.values()).anyMatch(feature -> feature.composeProfiles.contains(name));
     }
 
     private boolean wanted(String var) {

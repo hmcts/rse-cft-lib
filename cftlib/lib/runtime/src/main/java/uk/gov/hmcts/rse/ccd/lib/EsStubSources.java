@@ -198,13 +198,22 @@ class EsStubSources {
             }
             remember(entry, resolved);
             return resolved;
-        } catch (IllegalStateException | SQLException e) {
+        } catch (IllegalStateException e) {
             // A database cftlib discovered rather than was told about may hold no case data at
-            // all, which is not a misconfiguration to report.
+            // all, which is not a misconfiguration to report. Remembered, because it is a fact
+            // about that database rather than about this moment.
             if (!optional.contains(entry)) {
                 throw e;
             }
             remember(entry, null);
+            return null;
+        } catch (SQLException e) {
+            // Not remembered: a database that could not be reached just now may well answer the
+            // next search, and holding on to the failure would answer that one from the other
+            // sources alone, with the decentralised cases carrying no data at all.
+            if (!optional.contains(entry)) {
+                throw e;
+            }
             return null;
         }
     }
@@ -234,8 +243,11 @@ class EsStubSources {
                 throw new IllegalStateException("The elasticsearch stub found no case_data table in database '"
                     + database + "'. Check RSE_LIB_ES_STUB_SOURCES.");
             }
-            schema = candidates.contains("public") ? "public"
-                : candidates.contains("ccd") ? "ccd" : candidates.get(0);
+            // ccd ahead of public: a decentralised service's own case data lives in ccd, which is
+            // what its indexer reads, and a database carrying both would otherwise be read from
+            // the wrong one. The data store has only public.
+            schema = candidates.contains("ccd") ? "ccd"
+                : candidates.contains("public") ? "public" : candidates.get(0);
         }
 
         boolean decentralised;

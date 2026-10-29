@@ -19,6 +19,11 @@ public class DependencyBoot {
             // ordinary way a boot ends, so teardown is registered with the control plane too.
             ControlPlane.setShutdownTask(provider::stop);
             Runtime.getRuntime().addShutdownHook(new Thread(provider::stop, "cftlib-stop-dependencies"));
+
+            // Before monitoring starts: a clean boot stops the database from the last boot and
+            // deletes its data directory, and a probe that reached the old server in between
+            // would create the databases in it and open the gates for good.
+            provider.prepare();
             // Start our monitoring of the dependencies before we start them, since starting
             // can take a few seconds and we don't want to block boot if they are already running.
             var api = new CFTLibApiImpl();
@@ -28,8 +33,6 @@ public class DependencyBoot {
             Hearings.writeRoomAttributes(System.getenv());
             WorkAllocation.startWhenBooted(api);
             Hearings.startWhenBooted(api);
-            // Only compose needs this ordering now: the process provider brings postgres up before
-            // anything can observe it, so monitoring may start immediately in either case.
             var recreatingContainers = provider instanceof ComposeRunner
                 && (null != System.getenv("CI") || null != System.getenv("RSE_LIB_CLEAN_BOOT"));
             if (recreatingContainers) {
@@ -38,11 +41,11 @@ public class DependencyBoot {
                 // If we're running in CI we therefore re-create any existing containers
                 // and cannot start monitoring them until after this restart.
                 provider.start();
-                new Thread(this::monitorStartingServices).start();
+                monitor();
             } else {
                 // Otherwise boot as fast as possible by immediately checking to
                 // see if our dependencies are already up.
-                new Thread(this::monitorStartingServices).start();
+                monitor();
                 provider.start();
             }
         } catch (Throwable e) {
@@ -108,6 +111,16 @@ public class DependencyBoot {
      * rejected rather than half applied.
      */
     private DependencyProvider dockerProvider() {
+        // The container creates the postgres superuser and no other, as initdb does for the
+        // embedded database, and every connection would fail for a role that does not exist.
+        // Nothing read the variable before dependency modes existed, so this is worth saying
+        // rather than leaving to the readiness timeout.
+        if (!"postgres".equals(CftlibConfig.dbUsername())) {
+            throw new IllegalStateException("RSE_LIB_DB_USERNAME=" + CftlibConfig.dbUsername()
+                + " cannot be used with the database container, which only has the postgres "
+                + "superuser. Leave the username unset, or reach a database that has that role "
+                + "with RSE_LIB_DEPENDENCY_MODE=process and RSE_LIB_DB=external.");
+        }
         requireDocker("RSE_LIB_DB", CftlibConfig.dbMode(), CftlibConfig.DbMode.DOCKER);
         requireDocker("RSE_LIB_ES", CftlibConfig.esMode(), CftlibConfig.EsMode.DOCKER);
         // XUI can be turned off in docker mode, since its containers sit behind a compose profile.
@@ -130,6 +143,16 @@ public class DependencyBoot {
         return new IllegalStateException(var + "=" + value + " cannot be combined with "
             + "RSE_LIB_DEPENDENCY_MODE=docker, which runs every dependency as a container. Set "
             + "RSE_LIB_DEPENDENCY_MODE=process to choose dependencies individually.");
+    }
+
+    /**
+     * Monitors on its own thread, which fails the boot if a wait expires: nothing else would
+     * notice, and the services would then wait on a gate that is never going to open.
+     */
+    private void monitor() {
+        var t = new Thread(this::monitorStartingServices, "cftlib-readiness");
+        t.setUncaughtExceptionHandler(ControlPlane.failFast);
+        t.start();
     }
 
     private void monitorStartingServices() {

@@ -6,6 +6,13 @@ package uk.gov.hmcts.rse.ccd.lib;
 public interface DependencyProvider {
 
     /**
+     * Bring up anything whose startup destroys or replaces state the readiness probes can see,
+     * before monitoring begins. Returns when that state is settled.
+     */
+    default void prepare() {
+    }
+
+    /**
      * Start every dependency this provider owns, blocking until they have been launched.
      * Readiness is signalled separately by {@link Readiness}.
      */

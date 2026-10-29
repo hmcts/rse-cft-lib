@@ -1,19 +1,26 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.zeroturnaround.exec.ProcessExecutor;
+import org.zeroturnaround.exec.stop.ProcessStopper;
 
 /**
  * Builds and runs an XUI app from a shallow clone using the host's node, with no container runtime.
@@ -30,10 +37,24 @@ public class Xui implements ManagedDependency {
     private static final long AUTH_TIMEOUT_SECONDS = 300;
     private static final long STOP_TIMEOUT_SECONDS = 10;
 
+    /**
+     * Stops a build and everything it started. Yarn runs the real work in children of its own,
+     * and destroying only the process cftlib launched would leave those writing to the build
+     * output while the next boot builds into the same checkout.
+     */
+    private static final ProcessStopper STOP_WITH_DESCENDANTS = process -> {
+        // Collected before the parent goes: the children of a process that has exited are no
+        // longer reachable through it.
+        var descendants = process.toHandle().descendants().toList();
+        process.destroy();
+        descendants.forEach(ProcessHandle::destroy);
+    };
+
     private final XuiApp app;
 
     private volatile Process process;
     private volatile boolean stopped;
+    private volatile ProcessHandle adopted;
     private volatile Thread shutdownHook;
 
     private Xui(XuiApp app) {
@@ -60,18 +81,35 @@ public class Xui implements ManagedDependency {
 
     void start(Map<String, String> source) throws Exception {
         var port = app.port(source, XuiEnvironment.Network.HOST);
+        var revision = revision(source);
         if (Ports.isListening(port)) {
             // Only a process from one of our own boots, which a hard-killed JVM can leave behind.
             // Anything else is usually a leftover cftlib container, and adopting that would serve
             // the published image rather than the revision pinned for this build.
-            if (ownProcessIsRunning(source, port)) {
+            var running = ownInstance(source, port);
+            if (running != null && revision.equals(running.revision())) {
                 log("reusing the instance it left running on port " + port);
+                // Adopted, so this boot owns it: otherwise it would hold the port after every
+                // later run too, and a switch back to docker mode would fail.
+                adopted = ProcessHandle.of(running.pid()).orElse(null);
                 return;
             }
-            throw new IOException("Port " + port + " is already in use, but not by a " + name()
-                + " cftlib started. A leftover cftlib container is the usual cause, and "
-                + "'docker compose -p cftlib down' clears it. Set RSE_LIB_XUI=off to run without "
-                + name() + ", or RSE_LIB_XUI=docker to use the published image.");
+            if (running != null) {
+                // Adopting it would serve the revision it was built from, however the pin or the
+                // checkout has moved on since, and say it was reusing what it left running.
+                log("the instance left running on port " + port + " was built from "
+                    + running.revision() + ", so it is being replaced with " + revision);
+                ProcessHandle.of(running.pid()).ifPresent(stale -> {
+                    stale.destroy();
+                    awaitExit(stale);
+                });
+            } else {
+                throw new IOException("Port " + port + " is already in use, but not by a " + name()
+                    + " cftlib started. A leftover cftlib container is the usual cause, and "
+                    + "'docker compose -p cftlib down' clears it. Set " + app.variable()
+                    + "=off to run without " + name()
+                    + ", or RSE_LIB_DEPENDENCY_MODE=docker to use the published image.");
+            }
         }
 
         var node = source.getOrDefault("RSE_LIB_NODE", "node");
@@ -79,16 +117,23 @@ public class Xui implements ManagedDependency {
         var nodeVersion = nodeVersion(node, range);
         NodeVersions.require(name(), range, nodeVersion);
 
-        var checkout = checkout(source);
-        requireDeclaredNode(checkout, nodeVersion);
-        build(checkout, node, source);
+        Path checkout;
+        // One clone and one build directory are shared by every project on the machine, so two
+        // boots starting together would otherwise run yarn install over each other's
+        // node_modules. The loser waits and then finds the build it needed already made.
+        try (var exclusive = exclusively(source)) {
+            checkout = checkout(source);
+            requireDeclaredNode(checkout, nodeVersion);
+            build(checkout, node, nodeVersion, source);
+        }
 
         awaitAuthServer();
         launch(checkout, node, source, port);
     }
 
     /**
-     * Terminates the node process cftlib started, leaving an adopted one alone.
+     * Terminates the node process this boot is using, whether it started it or adopted one left
+     * by an earlier boot.
      */
     @Override
     public void stop() {
@@ -96,6 +141,15 @@ public class Xui implements ManagedDependency {
         // another dependency has failed: without this the launch would complete unobserved and
         // outlive a JVM that halts without running shutdown hooks.
         stopped = true;
+        var reused = adopted;
+        adopted = null;
+        if (reused != null && reused.isAlive()) {
+            reused.destroy();
+            // Waited for, because the JVM halts as soon as this returns: a process still
+            // holding the port when the next boot probes it is the state adoption exists to
+            // prevent.
+            awaitExit(reused);
+        }
         var running = process;
         process = null;
         if (shutdownHook != null) {
@@ -120,13 +174,26 @@ public class Xui implements ManagedDependency {
         }
     }
 
+    /** Waits out an adopted process, escalating as the one this boot started is escalated. */
+    private void awaitExit(ProcessHandle process) {
+        try {
+            process.onExit().get(STOP_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            process.destroyForcibly();
+        } catch (ExecutionException | TimeoutException e) {
+            process.destroyForcibly();
+        }
+    }
+
     private String nodeVersion(String node, String range) {
         try {
             return capture(List.of(node, "--version"));
         } catch (Exception e) {
             throw new IllegalStateException(
                 "Could not run '" + node + " --version'. " + name() + " is built with the host's node, so node "
-                    + range + " must be installed, or set RSE_LIB_XUI=docker to use the published image.", e);
+                    + range + " must be installed, or set RSE_LIB_DEPENDENCY_MODE=docker to use the "
+                    + "published image.", e);
         }
     }
 
@@ -153,6 +220,28 @@ public class Xui implements ManagedDependency {
         }
     }
 
+    /**
+     * Takes the lock that makes cloning and building this app one boot's business at a time.
+     * Held in a file, so the operating system releases it even where a boot ends by halting,
+     * and taken even when a checkout was supplied: two boots can be pointed at one of those too.
+     */
+    private Closeable exclusively(Map<String, String> source) throws IOException {
+        var file = cacheRoot(source).resolve(app.slug() + ".lock");
+        Files.createDirectories(file.getParent());
+        var channel = FileChannel.open(file, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        var held = channel.tryLock();
+        if (held == null) {
+            log("waiting for another cftlib to finish building " + name());
+            held = channel.lock();
+        }
+        var lock = held;
+        return () -> {
+            try (channel) {
+                lock.release();
+            }
+        };
+    }
+
     private Path checkout(Map<String, String> source) throws Exception {
         var override = app.checkoutOverride(source);
         if (override != null) {
@@ -168,7 +257,7 @@ public class Xui implements ManagedDependency {
         var dir = cacheRoot(source).resolve(app.slug());
         var url = app.repoUrl(source);
         var ref = app.ref(source);
-        if (!Files.isDirectory(dir.resolve(".git"))) {
+        if (!hasCommit(dir)) {
             log("cloning " + url + " at " + ref + " into " + dir);
             deleteRecursively(dir);
             Files.createDirectories(dir.getParent());
@@ -180,13 +269,17 @@ public class Xui implements ManagedDependency {
         return dir;
     }
 
-    private void build(Path checkout, String node, Map<String, String> source) throws Exception {
+    private void build(Path checkout, String node, String nodeVersion, Map<String, String> source)
+        throws Exception {
         var marker = cacheRoot(source).resolve(app.slug() + ".built");
         var commit = head(checkout);
         // A checkout cftlib was pointed at can be edited, so the build has to follow the working
         // tree and not just the commit.
         var workingTree = workingTreeState(checkout);
-        if (!forceRebuild(source) && XuiBuildMarker.upToDate(marker, checkout, commit, workingTree)) {
+        // The node that built it matters too: a build made by another version may not run.
+        var output = checkout.resolve(app.startArgs().get(app.startArgs().size() - 1));
+        if (!forceRebuild(source)
+            && XuiBuildMarker.upToDate(marker, checkout, commit, workingTree, nodeVersion, output)) {
             log("reusing the existing build of " + commit);
             return;
         }
@@ -195,7 +288,7 @@ public class Xui implements ManagedDependency {
         log("installing dependencies and building; this takes several minutes. Output in " + logFile());
         run(List.of(XuiCommands.yarn(node, yarn, app.installArgs())), checkout, XuiCommands.INSTALL_ENVIRONMENT);
         run(List.of(XuiCommands.yarn(node, yarn, List.of("build"))), checkout, XuiCommands.INSTALL_ENVIRONMENT);
-        XuiBuildMarker.write(marker, checkout, commit, workingTree);
+        XuiBuildMarker.write(marker, checkout, commit, workingTree, nodeVersion);
     }
 
     private void launch(Path checkout, String node, Map<String, String> source, int port) throws Exception {
@@ -225,38 +318,74 @@ public class Xui implements ManagedDependency {
         watch(started);
     }
 
-    private Path pidFile(Map<String, String> source) {
-        return cacheRoot(source).resolve(app.slug() + ".pid");
+    /**
+     * Where a boot records the instance it leaves running, by port: the clone is shared by every
+     * project on the machine, but the instance is not, and one project running on another port
+     * would otherwise overwrite the record of an instance it has nothing to do with.
+     */
+    private Path pidFile(Map<String, String> source, int port) {
+        return cacheRoot(source).resolve(app.slug() + "-" + port + ".pid");
     }
 
-    private boolean ownProcessIsRunning(Map<String, String> source, int port) {
-        var file = pidFile(source);
+    /** What an instance was built from: a checkout given to cftlib, or the revision it pinned. */
+    private String revision(Map<String, String> source) {
+        var override = app.checkoutOverride(source);
+        return override != null ? override : app.ref(source);
+    }
+
+    /** An instance a previous boot recorded, as its pid file describes it. */
+    private record Instance(long pid, String revision) {
+    }
+
+    /**
+     * The instance this boot's own records say is holding the port, or null for anything else.
+     * Each field is a line of its own, since a checkout path and a command both hold spaces.
+     */
+    private Instance ownInstance(Map<String, String> source, int port) {
+        var file = pidFile(source, port);
         if (!Files.isReadable(file)) {
-            return false;
+            return null;
         }
         try {
-            var parts = Files.readString(file).trim().split("\\s+", 3);
-            if (parts.length != 3 || Integer.parseInt(parts[1]) != port) {
-                return false;
+            // Split rather than read as lines, which drops the empty last field a process whose
+            // command could not be read leaves behind, and with it the tolerance below.
+            var lines = Files.readString(file).split("\n", -1);
+            if (lines.length < 4) {
+                // Written by a cftlib that recorded less than this one does.
+                return null;
             }
-            return ProcessHandle.of(Long.parseLong(parts[0]))
+            var pid = Long.parseLong(lines[0].trim());
+            if (Integer.parseInt(lines[1].trim()) != port) {
+                return null;
+            }
+            var command = lines[3];
+            var alive = ProcessHandle.of(pid)
                 .filter(ProcessHandle::isAlive)
                 // A pid outlives the process that wrote it, so the command has to match too:
                 // adopting on the pid alone could serve a leftover container's published image
-                // in place of the revision this boot pinned.
-                .filter(process -> process.info().command().filter(parts[2]::equals).isPresent())
+                // in place of the revision this boot pinned. Where the command could not be read
+                // at launch there is nothing to compare, and refusing would leave a process
+                // cftlib started unadoptable, with advice about containers that cannot help.
+                .filter(process -> command.isBlank()
+                    || process.info().command().filter(command::equals).isPresent())
                 .isPresent();
+            return alive ? new Instance(pid, lines[2]) : null;
         } catch (IOException | NumberFormatException e) {
-            return false;
+            return null;
         }
     }
 
     private void recordPid(Process started, int port, Map<String, String> source) throws IOException {
-        var file = pidFile(source);
+        var file = pidFile(source, port);
         Files.createDirectories(file.getParent());
-        // The command as well as the pid: a pid outlives its process, so adopting on the pid
-        // alone could serve something else that happens to hold the port.
-        Files.writeString(file, started.pid() + " " + port + " " + started.info().command().orElse(""));
+        // The revision and the command as well as the pid: a pid outlives its process, so
+        // adopting on the pid alone could serve something else that happens to hold the port,
+        // and adopting without the revision could serve a build of the wrong one.
+        Files.writeString(file, String.join("\n",
+            Long.toString(started.pid()),
+            Integer.toString(port),
+            revision(source),
+            started.info().command().orElse("")));
     }
 
     /**
@@ -340,7 +469,38 @@ public class Xui implements ManagedDependency {
         return capture(XuiCommands.headCommand(checkout));
     }
 
+    /**
+     * Whether a cached clone holds a commit. A clone of a pinned sha starts with a git init, so
+     * one interrupted during its fetch — which takes minutes the first time — leaves a .git
+     * behind with no commit in it. Fetching into that fails, and would go on failing every boot
+     * until the directory was removed by hand, so it is cloned again instead.
+     *
+     * <p>Only an absent commit is answered for. Anything else git has to say about the
+     * repository is raised, rather than taken as a reason to delete a clone and its
+     * node_modules: a devcontainer that git considers a dubiously owned checkout would
+     * otherwise have every boot spend minutes cloning it afresh.
+     */
+    private boolean hasCommit(Path dir) throws Exception {
+        if (!Files.isDirectory(dir.resolve(".git"))) {
+            return false;
+        }
+        // Exit 1 and nothing on stdout is how it says there is no commit.
+        if (!capture(XuiCommands.headIfAnyCommand(dir), Set.of(0, 1)).isBlank()) {
+            return true;
+        }
+        log("the clone in " + dir + " holds no commit, so it is being made again");
+        return false;
+    }
+
     private String capture(List<String> command) throws Exception {
+        return capture(command, Set.of(0));
+    }
+
+    /**
+     * Runs a command that answers with its exit status as well as its output, so that a status
+     * the caller expects is read as an answer rather than raised as a failure.
+     */
+    private String capture(List<String> command, Set<Integer> expected) throws Exception {
         var process = new ProcessBuilder(command).redirectErrorStream(true).start();
         String output;
         try (var stream = process.getInputStream()) {
@@ -350,7 +510,7 @@ public class Xui implements ManagedDependency {
             process.destroyForcibly();
             throw new IllegalStateException("'" + String.join(" ", command) + "' did not finish");
         }
-        if (process.exitValue() != 0) {
+        if (!expected.contains(process.exitValue())) {
             throw new IllegalStateException("'" + String.join(" ", command) + "' failed with status "
                 + process.exitValue() + ": " + output);
         }
@@ -370,6 +530,7 @@ public class Xui implements ManagedDependency {
                         .exitValueNormal()
                         // An install interrupted because another dependency failed must take its
                         // child with it, or it keeps building after the JVM has gone.
+                        .stopper(STOP_WITH_DESCENDANTS)
                         .destroyOnExit()
                         .timeout(INSTALL_TIMEOUT_MINUTES, TimeUnit.MINUTES)
                         .execute();

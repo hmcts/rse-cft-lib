@@ -239,9 +239,8 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.dependsOn("cftlibTestClasses");
         exec.args(file);
         exec.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
-        // No test needs XUI, and starting it costs an image pull or a node build.
-        exec.environment("RSE_LIB_XUI", "off");
-        exec.environment("RSE_LIB_XUI_MO", "off");
+        // Whether this suite gets XUI is settled by CftlibExec as it runs, once the consuming
+        // build has had its say over the dependency mode.
         exec.getOutputs().upToDateWhen(x -> false);
         return exec;
     }

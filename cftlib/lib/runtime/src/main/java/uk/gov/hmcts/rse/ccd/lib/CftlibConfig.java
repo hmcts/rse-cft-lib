@@ -25,7 +25,6 @@ public final class CftlibConfig {
     public enum EsMode {
         DOCKER,
         STUB,
-        PROCESS,
         EXTERNAL
     }
 

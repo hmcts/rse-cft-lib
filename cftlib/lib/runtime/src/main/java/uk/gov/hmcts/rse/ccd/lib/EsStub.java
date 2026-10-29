@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,6 +35,7 @@ public class EsStub implements ManagedDependency {
     private final ObjectMapper mapper = new ObjectMapper();
     private final EsStubSources sources;
     private HttpServer server;
+    private ExecutorService requests;
 
     public EsStub() {
         this(new EsStubSources());
@@ -69,7 +72,8 @@ public class EsStub implements ManagedDependency {
 
     void bind(String host, int port) throws IOException {
         server = HttpServer.create(new InetSocketAddress(host, port), 0);
-        server.setExecutor(Executors.newFixedThreadPool(QUERY_THREADS));
+        requests = Executors.newFixedThreadPool(QUERY_THREADS);
+        server.setExecutor(requests);
         server.createContext("/", this::handle);
         server.start();
         System.out.println("**** Cftlib elasticsearch stub listening on " + host + ":" + port()
@@ -80,6 +84,11 @@ public class EsStub implements ManagedDependency {
     public void stop() {
         if (server != null) {
             server.stop(0);
+        }
+        if (requests != null) {
+            // HttpServer shuts down only an executor it created itself, and these threads are
+            // not daemons, so they would outlive a stop that is meant to release everything.
+            requests.shutdownNow();
         }
     }
 
@@ -105,7 +114,7 @@ public class EsStub implements ManagedDependency {
                     throw EsStubException.badRequest("a document fetch must name an index, as in "
                         + "'/{index}/_doc/{id}'");
                 }
-                document(exchange, parts[0], parts[1]);
+                document(exchange, single(parts[0]), parts[1]);
             } else {
                 // The status in the body has to agree with the transport's: elasticsearch clients
                 // read the envelope's status for multi search items.
@@ -158,17 +167,18 @@ public class EsStub implements ManagedDependency {
      * does, so that the caller reports which search failed.
      */
     private ObjectNode msearch(String body, String pathIndex) throws SQLException {
-        var requests = new ArrayList<JsonNode[]>();
-        JsonNode header = null;
+        // Paired as text and parsed inside each slot below: a line that is not json belongs to
+        // one search, and parsing here would deny the searches beside it their results.
+        var requests = new ArrayList<String[]>();
+        String header = null;
         for (var line : body.split("\n")) {
             if (line.isBlank()) {
                 continue;
             }
-            var node = parse(line);
             if (header == null) {
-                header = node;
+                header = line;
             } else {
-                requests.add(new JsonNode[] {header, node});
+                requests.add(new String[] {header, line});
                 header = null;
             }
         }
@@ -179,17 +189,23 @@ public class EsStub implements ManagedDependency {
         var responses = mapper.createArrayNode();
         for (var request : requests) {
             try {
-                // Inside the slot: a header this stub will not serve must fail its own search
-                // rather than the valid ones alongside it.
-                var index = headerIndex(request[0], pathIndex);
+                // Inside the slot: a header or body this stub will not serve must fail its own
+                // search rather than the valid ones alongside it.
+                var index = headerIndex(parse(request[0]), pathIndex);
                 if (index == null) {
                     throw EsStubException.badRequest("a multi search header named no index");
                 }
-                var result = execute(index, request[1]);
+                var result = execute(index, parse(request[1]));
                 result.put("status", 200);
                 responses.add(result);
             } catch (EsStubException e) {
                 responses.add(error(e));
+            } catch (Exception e) {
+                // Anything else belongs to its own slot too: a statement postgres rejected, or a
+                // source that went away mid-search, would otherwise be reported as one failure
+                // for the whole multi search and lose the searches that did answer.
+                responses.add(error(new EsStubException(EsStubException.QUERY_ERROR, 500,
+                    "The cftlib elasticsearch stub failed: " + e)));
             }
         }
         var response = mapper.createObjectNode();
@@ -223,7 +239,10 @@ public class EsStub implements ManagedDependency {
             throw EsStubException.unsupported("a search over several indices",
                 "'" + index + "' names more than one, and CCD searches one index per request.");
         }
-        return index;
+        // An elasticsearch index name is lowercase, and the views derive theirs by lowercasing
+        // the case type, so a caller that names the index in the case type's own casing is
+        // answered rather than told, with a 200 and no hits, that there is nothing there.
+        return index.toLowerCase(Locale.ROOT);
     }
 
     /**
@@ -273,11 +292,12 @@ public class EsStub implements ManagedDependency {
         List<EsStubSources.Source> matching;
         try {
             matching = sources.sourcesFor(index);
-        } catch (SQLException e) {
-            // Reported against this search rather than thrown, so that one unreachable database
-            // does not fail every search in a multi search.
+        } catch (SQLException | IllegalStateException e) {
+            // Reported against this search rather than thrown, so that one unreachable or
+            // misconfigured database does not fail every search in a multi search. A source that
+            // holds no case data at all is an IllegalStateException naming it.
             throw new EsStubException(EsStubException.QUERY_ERROR, 500,
-                "The cftlib elasticsearch stub could not reach the databases holding case data: " + e.getMessage());
+                "The cftlib elasticsearch stub could not read the databases holding case data: " + e.getMessage());
         }
 
         var hits = mapper.createArrayNode();
@@ -286,14 +306,18 @@ public class EsStub implements ManagedDependency {
         var answering = 0;
         for (var source : matching) {
             try (var c = connect(source)) {
-                total += count(c, source, index, search);
-                if (wanted > 0 && hits.size() < wanted) {
-                    var before = hits.size();
+                var before = hits.size();
+                if (wanted > 0) {
                     collect(c, source, index, search, wanted, hits);
-                    if (hits.size() > before) {
-                        answering++;
-                    }
                 }
+                var returned = hits.size() - before;
+                if (returned > 0) {
+                    answering++;
+                }
+                // The page is the count whenever it came back short, which is the ordinary case
+                // at development volumes. Only a full page can have more behind it, and only
+                // then is a second scan of the case tables worth doing.
+                total += returned < wanted ? returned : count(c, source, index, search);
             }
         }
         if (answering > 1) {

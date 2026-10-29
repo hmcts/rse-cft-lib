@@ -16,12 +16,13 @@ import java.util.Properties;
  */
 final class XuiBuildMarker {
 
-    static final String FORMAT = "1";
+    static final String FORMAT = "2";
 
     private XuiBuildMarker() {
     }
 
-    static boolean upToDate(Path marker, Path checkout, String commit, String workingTree) throws IOException {
+    static boolean upToDate(Path marker, Path checkout, String commit, String workingTree, String node,
+                            Path output) throws IOException {
         if (!Files.exists(marker)) {
             return false;
         }
@@ -29,15 +30,21 @@ final class XuiBuildMarker {
         return FORMAT.equals(recorded.getProperty("format"))
             && checkout.toString().equals(recorded.getProperty("checkout"))
             && commit.equals(recorded.getProperty("commit"))
-            && workingTree.equals(recorded.getProperty("workingTree"));
+            && workingTree.equals(recorded.getProperty("workingTree"))
+            && node.equals(recorded.getProperty("node"))
+            // The build output itself is gitignored, so neither the commit nor the working tree
+            // reflects a git clean having removed it.
+            && Files.isRegularFile(output);
     }
 
-    static void write(Path marker, Path checkout, String commit, String workingTree) throws IOException {
+    static void write(Path marker, Path checkout, String commit, String workingTree, String node)
+        throws IOException {
         var properties = new Properties();
         properties.setProperty("format", FORMAT);
         properties.setProperty("checkout", checkout.toString());
         properties.setProperty("commit", commit);
         properties.setProperty("workingTree", workingTree);
+        properties.setProperty("node", node);
         Files.createDirectories(marker.getParent());
         try (var writer = Files.newBufferedWriter(marker, StandardCharsets.UTF_8)) {
             properties.store(writer, "Written by cftlib; delete to force an XUI rebuild");
