@@ -11,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +56,6 @@ public class Xui implements ManagedDependency {
 
     private volatile Process process;
     private volatile boolean stopped;
-    private volatile ProcessHandle adopted;
     private volatile Thread shutdownHook;
 
     private Xui(XuiApp app) {
@@ -81,35 +82,8 @@ public class Xui implements ManagedDependency {
 
     void start(Map<String, String> source) throws Exception {
         var port = app.port(source, XuiEnvironment.Network.HOST);
-        var revision = revision(source);
         if (Ports.isListening(port)) {
-            // Only a process from one of our own boots, which a hard-killed JVM can leave behind.
-            // Anything else is usually a leftover cftlib container, and adopting that would serve
-            // the published image rather than the revision pinned for this build.
-            var running = ownInstance(source, port);
-            if (running != null && revision.equals(running.revision())) {
-                log("reusing the instance it left running on port " + port);
-                // Adopted, so this boot owns it: otherwise it would hold the port after every
-                // later run too, and a switch back to docker mode would fail.
-                adopted = ProcessHandle.of(running.pid()).orElse(null);
-                return;
-            }
-            if (running != null) {
-                // Adopting it would serve the revision it was built from, however the pin or the
-                // checkout has moved on since, and say it was reusing what it left running.
-                log("the instance left running on port " + port + " was built from "
-                    + running.revision() + ", so it is being replaced with " + revision);
-                ProcessHandle.of(running.pid()).ifPresent(stale -> {
-                    stale.destroy();
-                    awaitExit(stale);
-                });
-            } else {
-                throw new IOException("Port " + port + " is already in use, but not by a " + name()
-                    + " cftlib started. A leftover cftlib container is the usual cause, and "
-                    + "'docker compose -p cftlib down' clears it. Set " + app.variable()
-                    + "=off to run without " + name()
-                    + ", or RSE_LIB_DEPENDENCY_MODE=docker to use the published image.");
-            }
+            reclaim(source, port);
         }
 
         var node = source.getOrDefault("RSE_LIB_NODE", "node");
@@ -132,8 +106,42 @@ public class Xui implements ManagedDependency {
     }
 
     /**
-     * Terminates the node process this boot is using, whether it started it or adopted one left
-     * by an earlier boot.
+     * Frees the port this boot's app is listening on. Only a process a JVM was killed outright
+     * can leave behind: both of the control plane's halting paths stop their dependencies first,
+     * and an ordinary exit runs the shutdown hook.
+     *
+     * <p>Reclaimed rather than taken over. A boot that took the instance over would be serving
+     * whatever the last one built, which it cannot tell from what this one asked for without the
+     * fetch and the build that adoption exists to skip — and by the time it could tell, it has
+     * done the work anyway. Relaunching costs the node boot, on a path only a hard kill reaches.
+     */
+    private void reclaim(Map<String, String> source, int port) throws IOException {
+        var holder = ownInstance(source, port);
+        if (holder == null) {
+            throw new IOException("Port " + port + " is already in use, but not by a " + name()
+                + " cftlib started. A leftover cftlib container is the usual cause, and "
+                + "'docker compose -p cftlib down' clears it. Set " + app.variable()
+                + "=off to run without " + name()
+                + ", or RSE_LIB_DEPENDENCY_MODE=docker to use the published image.");
+        }
+        if (holder.ownerAlive()) {
+            // Another cftlib is using it, and stopping it would take that boot's XUI down.
+            throw new IOException("Port " + port + " is serving the " + name() + " of the cftlib "
+                + "running as pid " + holder.ownerPid() + ". Set " + app.portVariable()
+                + " to run on another port, or " + app.variable() + "=off to run without "
+                + name() + ".");
+        }
+        log("stopping the instance a killed boot left on port " + port);
+        holder.node().destroy();
+        awaitExit(holder.node());
+        if (Ports.isListening(port)) {
+            throw new IOException("Port " + port + " is still held after stopping the " + name()
+                + " a killed boot left behind (pid " + holder.node().pid() + ").");
+        }
+    }
+
+    /**
+     * Terminates the node process this boot started.
      */
     @Override
     public void stop() {
@@ -141,15 +149,6 @@ public class Xui implements ManagedDependency {
         // another dependency has failed: without this the launch would complete unobserved and
         // outlive a JVM that halts without running shutdown hooks.
         stopped = true;
-        var reused = adopted;
-        adopted = null;
-        if (reused != null && reused.isAlive()) {
-            reused.destroy();
-            // Waited for, because the JVM halts as soon as this returns: a process still
-            // holding the port when the next boot probes it is the state adoption exists to
-            // prevent.
-            awaitExit(reused);
-        }
         var running = process;
         process = null;
         if (shutdownHook != null) {
@@ -174,7 +173,7 @@ public class Xui implements ManagedDependency {
         }
     }
 
-    /** Waits out an adopted process, escalating as the one this boot started is escalated. */
+    /** Waits out a process this boot did not start, escalating as its own is escalated. */
     private void awaitExit(ProcessHandle process) {
         try {
             process.onExit().get(STOP_TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -327,19 +326,18 @@ public class Xui implements ManagedDependency {
         return cacheRoot(source).resolve(app.slug() + "-" + port + ".pid");
     }
 
-    /** What an instance was built from: a checkout given to cftlib, or the revision it pinned. */
-    private String revision(Map<String, String> source) {
-        var override = app.checkoutOverride(source);
-        return override != null ? override : app.ref(source);
-    }
-
-    /** An instance a previous boot recorded, as its pid file describes it. */
-    private record Instance(long pid, String revision) {
+    /**
+     * An instance a previous boot recorded and the boot that started it, which may still be
+     * running: its own XUI, not something to be taken away from it.
+     */
+    private record Instance(ProcessHandle node, long ownerPid, boolean ownerAlive) {
     }
 
     /**
      * The instance this boot's own records say is holding the port, or null for anything else.
-     * Each field is a line of its own, since a checkout path and a command both hold spaces.
+     * Identified by pid and start time together, because a pid outlives the process that wrote
+     * it and after a reboot belongs to whatever claimed it next — an editor's node language
+     * server as readily as anything, which must not be mistaken for ours and stopped.
      */
     private Instance ownInstance(Map<String, String> source, int port) {
         var file = pidFile(source, port);
@@ -347,30 +345,24 @@ public class Xui implements ManagedDependency {
             return null;
         }
         try {
-            // Split rather than read as lines, which drops the empty last field a process whose
-            // command could not be read leaves behind, and with it the tolerance below.
             var lines = Files.readString(file).split("\n", -1);
-            if (lines.length < 4) {
+            if (lines.length < 3) {
                 // Written by a cftlib that recorded less than this one does.
                 return null;
             }
-            var pid = Long.parseLong(lines[0].trim());
-            if (Integer.parseInt(lines[1].trim()) != port) {
-                return null;
-            }
-            var command = lines[3];
-            var alive = ProcessHandle.of(pid)
+            var ownerPid = Long.parseLong(lines[0].trim());
+            var nodePid = Long.parseLong(lines[1].trim());
+            var started = Instant.parse(lines[2].trim());
+            var node = ProcessHandle.of(nodePid)
                 .filter(ProcessHandle::isAlive)
-                // A pid outlives the process that wrote it, so the command has to match too:
-                // adopting on the pid alone could serve a leftover container's published image
-                // in place of the revision this boot pinned. Where the command could not be read
-                // at launch there is nothing to compare, and refusing would leave a process
-                // cftlib started unadoptable, with advice about containers that cannot help.
-                .filter(process -> command.isBlank()
-                    || process.info().command().filter(command::equals).isPresent())
-                .isPresent();
-            return alive ? new Instance(pid, lines[2]) : null;
-        } catch (IOException | NumberFormatException e) {
+                .filter(process -> process.info().startInstant()
+                    .filter(instant -> instant.equals(started)).isPresent());
+            return node
+                .map(handle -> new Instance(handle, ownerPid, ProcessHandle.of(ownerPid)
+                    .filter(ProcessHandle::isAlive)
+                    .isPresent()))
+                .orElse(null);
+        } catch (IOException | NumberFormatException | DateTimeParseException e) {
             return null;
         }
     }
@@ -378,14 +370,12 @@ public class Xui implements ManagedDependency {
     private void recordPid(Process started, int port, Map<String, String> source) throws IOException {
         var file = pidFile(source, port);
         Files.createDirectories(file.getParent());
-        // The revision and the command as well as the pid: a pid outlives its process, so
-        // adopting on the pid alone could serve something else that happens to hold the port,
-        // and adopting without the revision could serve a build of the wrong one.
+        // This JVM as well as the node it started: a later boot has to tell an instance left by
+        // a killed boot, which is its to stop, from one a running boot is serving XUI with.
         Files.writeString(file, String.join("\n",
+            Long.toString(ProcessHandle.current().pid()),
             Long.toString(started.pid()),
-            Integer.toString(port),
-            revision(source),
-            started.info().command().orElse("")));
+            started.info().startInstant().map(Instant::toString).orElse("")));
     }
 
     /**

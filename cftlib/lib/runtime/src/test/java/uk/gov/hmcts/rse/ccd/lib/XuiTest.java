@@ -10,6 +10,7 @@ import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -19,71 +20,59 @@ import org.junit.jupiter.api.io.TempDir;
 class XuiTest {
 
     @Test
-    void reusesAnInstanceItLeftRunning(@TempDir Path cache) throws Exception {
-        try (var listening = new ServerSocket(0)) {
-            var port = listening.getLocalPort();
-            // The pid of a live process on that port is what identifies it as ours; this JVM is
-            // holding the socket, so its own pid is exactly that.
-            // A checkout that does not exist, so anything beyond adoption would fail.
-            var checkout = "/cftlib/does/not/exist";
-            record(cache, port, ProcessHandle.current().pid(), checkout,
-                ProcessHandle.current().info().command().orElseThrow());
-
-            var source = Map.of(
-                "XUI_PORT", Integer.toString(port),
-                "RSE_LIB_CACHE_DIR", cache.toString(),
-                "RSE_LIB_XUI_DIR", checkout);
-
-            assertThatCode(() -> Xui.manageCases().start(source)).doesNotThrowAnyException();
-        }
-    }
-
-    @Test
-    void reusesAnInstanceWhoseCommandWasNotRecorded(@TempDir Path cache) throws Exception {
-        try (var listening = new ServerSocket(0)) {
-            var port = listening.getLocalPort();
-            var checkout = "/cftlib/does/not/exist";
-            // A process does not always tell us its command, and the record then ends with an
-            // empty field. Reading that back as a record of three fields would leave a process
-            // cftlib itself started unadoptable, and the boot blaming a container for the port.
-            record(cache, port, ProcessHandle.current().pid(), checkout, "");
-
-            var source = Map.of(
-                "XUI_PORT", Integer.toString(port),
-                "RSE_LIB_CACHE_DIR", cache.toString(),
-                "RSE_LIB_XUI_DIR", checkout);
-
-            assertThatCode(() -> Xui.manageCases().start(source)).doesNotThrowAnyException();
-        }
-    }
-
-    @Test
-    void replacesAnInstanceBuiltFromAnotherRevision(@TempDir Path cache) throws Exception {
+    void stopsTheInstanceAKilledBootLeftBehind(@TempDir Path cache) throws Exception {
         assumeTrue(hostNodeVersion() != null, "no node on the path");
+        var port = freePort();
+        // Holding the port, as the instance it stands in for does: stopping it has to free it.
+        var stale = listener(port);
+        var owner = new ProcessBuilder("sleep", "600").start();
+        try {
+            // The boot that started it is gone, so the instance is this boot's to stop. It is
+            // not taken over: what it was built from cannot be told from what this boot wants
+            // without doing the fetch and the build that taking it over exists to skip.
+            owner.destroy();
+            assertThat(owner.waitFor(10, TimeUnit.SECONDS)).isTrue();
+            record(cache, port, owner.pid(), stale);
+
+            var source = Map.of(
+                "XUI_PORT", Integer.toString(port),
+                "RSE_LIB_XUI_NODE_RANGE", ">=0",
+                "RSE_LIB_CACHE_DIR", cache.toString(),
+                "RSE_LIB_XUI_DIR", "/cftlib/does/not/exist");
+
+            // Goes on to build and launch, rather than serving what it found.
+            assertThatThrownBy(() -> Xui.manageCases().start(source))
+                .hasMessageContaining("is not a directory");
+            assertThat(stale.waitFor(10, TimeUnit.SECONDS))
+                .as("the instance the killed boot left was stopped")
+                .isTrue();
+        } finally {
+            stale.destroyForcibly();
+            owner.destroyForcibly();
+        }
+    }
+
+    @Test
+    void leavesTheInstanceOfALiveBootAlone(@TempDir Path cache) throws Exception {
+        var running = new ProcessBuilder("sleep", "600").start();
         try (var listening = new ServerSocket(0)) {
             var port = listening.getLocalPort();
-            // A live instance of this app, on this port, built from a checkout this boot is not
-            // being pointed at: adopting it would serve the revision it was built from and
-            // report that it was reusing what it left running.
-            var stale = new ProcessBuilder("sleep", "600").start();
-            try {
-                record(cache, port, stale.pid(), "/an/older/checkout",
-                    stale.info().command().orElseThrow());
-                var source = Map.of(
-                    "XUI_PORT", Integer.toString(port),
-                    "RSE_LIB_XUI_NODE_RANGE", ">=0",
-                    "RSE_LIB_CACHE_DIR", cache.toString(),
-                    "RSE_LIB_XUI_DIR", "/cftlib/does/not/exist");
+            // Another project's boot, still running and serving XUI on this port. Stopping it
+            // would take that boot's XUI down from under it.
+            record(cache, port, ProcessHandle.current().pid(), running);
 
-                // Goes on to build what it was given, rather than returning from adoption.
-                assertThatThrownBy(() -> Xui.manageCases().start(source))
-                    .hasMessageContaining("is not a directory");
-                assertThat(stale.waitFor(10, TimeUnit.SECONDS))
-                    .as("the instance of the other revision was stopped")
-                    .isTrue();
-            } finally {
-                stale.destroyForcibly();
-            }
+            var source = Map.of(
+                "XUI_PORT", Integer.toString(port),
+                "RSE_LIB_CACHE_DIR", cache.toString(),
+                "RSE_LIB_XUI_DIR", "/cftlib/does/not/exist");
+
+            assertThatThrownBy(() -> Xui.manageCases().start(source))
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("is serving the xui-manage-cases of the cftlib running as pid")
+                .hasMessageContaining("XUI_PORT");
+            assertThat(running.isAlive()).as("the other boot's instance is untouched").isTrue();
+        } finally {
+            running.destroyForcibly();
         }
     }
 
@@ -91,10 +80,14 @@ class XuiTest {
     void refusesAPortWhoseRecordedPidIsNowSomethingElse(@TempDir Path cache) throws Exception {
         try (var listening = new ServerSocket(0)) {
             var port = listening.getLocalPort();
-            // A live pid on the right port, but not the process that was recorded: a recycled pid
-            // with a leftover container on the port is how this arises.
-            record(cache, port, ProcessHandle.current().pid(), "/cftlib/does/not/exist",
-                "/not/the/recorded/node");
+            // A live pid, but not the process that was recorded: after a reboot the pid belongs
+            // to whatever claimed it next, and the start time is what tells them apart. Stopping
+            // one of those would kill an unrelated process, an editor's node language server as
+            // readily as anything.
+            Files.writeString(pidFile(cache, port), String.join("\n",
+                Long.toString(ProcessHandle.current().pid()),
+                Long.toString(ProcessHandle.current().pid()),
+                Instant.parse("2020-01-01T00:00:00Z").toString()));
 
             var source = Map.of(
                 "XUI_PORT", Integer.toString(port),
@@ -104,6 +97,7 @@ class XuiTest {
             assertThatThrownBy(() -> Xui.manageCases().start(source))
                 .isInstanceOf(IOException.class)
                 .hasMessageContaining("already in use");
+            assertThat(ProcessHandle.current().isAlive()).isTrue();
         }
     }
 
@@ -173,11 +167,27 @@ class XuiTest {
     }
 
     /** Writes what a boot records of the instance it leaves running, a field to a line. */
-    private static void record(Path cache, int port, long pid, String revision, String command)
-        throws IOException {
-        var file = Files.createDirectories(cache.resolve("xui")).resolve("manage-cases-" + port + ".pid");
-        Files.writeString(file, String.join("\n",
-            Long.toString(pid), Integer.toString(port), revision, command));
+    private static void record(Path cache, int port, long ownerPid, Process node) throws IOException {
+        Files.writeString(pidFile(cache, port), String.join("\n",
+            Long.toString(ownerPid),
+            Long.toString(node.pid()),
+            node.info().startInstant().orElseThrow().toString()));
+    }
+
+    /** A node process holding a port, standing in for an instance a killed boot left running. */
+    private static Process listener(int port) throws Exception {
+        var process = new ProcessBuilder("node", "-e",
+            "require('net').createServer().listen(" + port + "); setInterval(() => {}, 1000);")
+            .start();
+        for (var waited = 0; waited < 200 && !Ports.isListening(port); waited++) {
+            Thread.sleep(50);
+        }
+        assertThat(Ports.isListening(port)).as("the stand-in took port %s", port).isTrue();
+        return process;
+    }
+
+    private static Path pidFile(Path cache, int port) throws IOException {
+        return Files.createDirectories(cache.resolve("xui")).resolve("manage-cases-" + port + ".pid");
     }
 
     private static int freePort() throws IOException {
