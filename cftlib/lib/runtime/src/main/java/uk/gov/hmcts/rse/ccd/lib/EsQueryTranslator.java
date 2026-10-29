@@ -411,7 +411,7 @@ class EsQueryTranslator {
         // case_insensitive is the one that matters: a term that asked for it and was answered
         // without it would match a different set of cases here than in a real cluster.
         rejectUnknownKeys(entry.getValue(), "term", Set.of("value", "boost", "_name"));
-        var value = scalar(entry.getValue(), "term", Set.of("value"));
+        var value = scalar(entry.getValue(), "term", List.of("value"));
         return matchTerm(field, value, params);
     }
 
@@ -464,7 +464,7 @@ class EsQueryTranslator {
             var zeroTerms = spec.get("zero_terms_query");
             allOnZeroTerms = zeroTerms != null && "all".equalsIgnoreCase(zeroTerms.asText());
         }
-        var value = scalar(spec, "match", Set.of("query"));
+        var value = scalar(spec, "match", List.of("query"));
 
         if (isCaseReference(field)) {
             return caseReference(field, value, params);
@@ -487,7 +487,7 @@ class EsQueryTranslator {
         var entry = singleField(node, "match_phrase");
         var field = field(entry.getKey(), scope);
         rejectSlop(entry.getValue(), "match_phrase");
-        var value = scalar(entry.getValue(), "match_phrase", Set.of("query"));
+        var value = scalar(entry.getValue(), "match_phrase", List.of("query"));
 
         if (isCaseReference(field)) {
             return caseReference(field, value, params);
@@ -508,7 +508,7 @@ class EsQueryTranslator {
         var entry = singleField(node, "match_phrase_prefix");
         var field = field(entry.getKey(), scope);
         rejectSlop(entry.getValue(), "match_phrase_prefix");
-        var value = scalar(entry.getValue(), "match_phrase_prefix", Set.of("query"));
+        var value = scalar(entry.getValue(), "match_phrase_prefix", List.of("query"));
 
         if (isCaseReference(field)) {
             return like(field, likeEscape(hyphenless(value)) + "%", params);
@@ -539,7 +539,7 @@ class EsQueryTranslator {
                 }
             }
         }
-        var pattern = scalar(spec, "wildcard", Set.of("wildcard", "value"));
+        var pattern = scalar(spec, "wildcard", List.of("wildcard", "value"));
 
         if (!field.analysed()) {
             // A wildcard is not analysed, but it runs against terms that the normalizer has
@@ -984,7 +984,12 @@ class EsQueryTranslator {
         }
     }
 
-    private String scalar(JsonNode node, String clause, Set<String> valueKeys) {
+    /**
+     * The value a clause carries, under the first of the keys it may use. Ordered, because a
+     * clause that carries two of them has to resolve to the same one on every run: a set would
+     * leave which key wins to an iteration order the jvm salts per run.
+     */
+    private String scalar(JsonNode node, String clause, List<String> valueKeys) {
         if (node.isObject()) {
             for (var key : valueKeys) {
                 if (node.has(key)) {
