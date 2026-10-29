@@ -606,6 +606,12 @@ class EsQueryTranslator {
             + path + "::jsonpath)) as e(value) where e.value is not null and e.value <> 'null'::jsonb)";
     }
 
+    /**
+     * Compares a field with a bound value. Text is compared as the normalizer leaves it where
+     * the field carries one, as matching it whole is: a bound of {@code Z} ranges over the terms
+     * a real cluster holds, which are folded, and not over the stored values as they were
+     * written.
+     */
     private String compare(Field field, String operator, String value, Params params) {
         if (isColumn(field)) {
             var column = TABLE + "." + field.column().name();
@@ -615,10 +621,20 @@ class EsQueryTranslator {
                     : column + " " + operator + " " + params.bind(value) + "::numeric";
                 case DATE -> column + " " + operator + " "
                     + params.bind(dateBound(value, operator)) + "::timestamp";
-                case TEXT -> column + " " + operator + " " + params.bind(value);
+                case TEXT -> mapped(column, field) + " " + operator + " " + needle(field, value, params);
             };
         }
-        return scalarPredicate(field, params, v -> v + " " + operator + " " + params.bind(value));
+        return scalarPredicate(field, params,
+            v -> mapped(v, field) + " " + operator + " " + needle(field, value, params));
+    }
+
+    /** A text expression in the form the field's own mapping holds it. */
+    private String mapped(String expression, Field field) {
+        return field.normalised() ? normalised(expression) : expression;
+    }
+
+    private String needle(Field field, String value, Params params) {
+        return field.normalised() ? normalised(bindText(params, value)) : params.bind(value);
     }
 
     /**

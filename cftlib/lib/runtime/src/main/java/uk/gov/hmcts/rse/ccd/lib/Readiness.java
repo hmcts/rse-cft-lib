@@ -51,7 +51,11 @@ public class Readiness {
     @SneakyThrows
     boolean dbReady() {
         try (var c = DriverManager.getConnection(
-            "jdbc:postgresql://" + CftlibConfig.dbHost() + ":" + CftlibConfig.dbPort() + "/postgres",
+            // Bounded for the same reason the http probes are: all three run on the one
+            // readiness thread, and a peer that accepts the connection without answering would
+            // hold it past every deadline above it, which are only checked between polls.
+            "jdbc:postgresql://" + CftlibConfig.dbHost() + ":" + CftlibConfig.dbPort() + "/postgres"
+                + "?connectTimeout=2&socketTimeout=5",
             CftlibConfig.dbUsername(), CftlibConfig.dbPassword())) {
 
             var dbs = List.of(Project.Datastore, Project.Definitionstore, Project.Userprofile, Project.AM)

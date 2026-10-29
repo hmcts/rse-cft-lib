@@ -39,6 +39,11 @@ class EmbeddedPostgresTest {
                 // character of its own.
                 assertThat(queryString(c, "select pg_encoding_to_char(encoding) from pg_database"
                     + " where datname = 'datastore'")).isEqualTo("UTF8");
+                // And the collation, which decides what a text comparison answers: a search
+                // whose hits depend on the developer's locale is worse than one that compares
+                // by byte everywhere.
+                assertThat(queryString(c, "select datcollate from pg_database"
+                    + " where datname = 'datastore'")).isEqualTo("C");
             }
             try (var c = connect(port, "datastore")) {
                 // The extensions the CFT services and CFTLibApiImpl create for themselves.
