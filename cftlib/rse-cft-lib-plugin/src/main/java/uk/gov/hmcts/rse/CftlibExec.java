@@ -15,12 +15,17 @@ import org.gradle.jvm.toolchain.JavaToolchainService;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class CftlibExec extends JavaExec {
+    /** The compose profiles cftlib manages itself, one per optional service. */
+    private static final List<String> OWN_PROFILES = List.of("xui", "xui-mo");
+
     public AuthMode authMode = AuthMode.AAT;
+    public DependencyMode dependencyMode = DependencyMode.Docker;
     private List<String> testPatterns = List.of();
 
     public CftlibExec() {
@@ -57,10 +62,9 @@ public class CftlibExec extends JavaExec {
     private void configure() {
         setRequiredJvmArgs();
         setStandardEnvVars();
+        resolveDependencies();
         if (authMode == AuthMode.Local) {
             environment("RSE_LIB_AUTH-MODE", "localAuth");
-            // Enable idam simulator
-            environment("COMPOSE_PROFILES", "localAuth");
 
             // S2S simulator
             environment("IDAM_S2S-AUTH_URL", "http://localhost:${RSE_LIB_S2S_PORT:8489}");
@@ -81,6 +85,73 @@ public class CftlibExec extends JavaExec {
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
                 "https://idam-web-public.aat.platform.hmcts.net/o");
         }
+    }
+
+    /**
+     * Settles which dependencies this run brings up. Done here rather than when the task is
+     * created, because {@link #dependencyMode} is assigned by the consuming build afterwards.
+     */
+    void resolveDependencies() {
+        // An inherited or explicitly configured value wins, so the mode can be flipped
+        // from the environment without editing the build script. Blank counts as unset, as it
+        // does everywhere else it is read.
+        if (unset("RSE_LIB_DEPENDENCY_MODE")) {
+            environment("RSE_LIB_DEPENDENCY_MODE", dependencyMode.name().toLowerCase());
+        }
+        // A test suite needs XUI only if it drives the browser. In process mode starting it
+        // clones and builds it from source before the suite runs, and fails the boot outright
+        // where the host's node is too old, so a process mode cftlibTest leaves it out unless
+        // the suite asks for it. Docker mode starts the containers as it always has: a
+        // consumer's suite may drive them, and nfdiv's does.
+        if ("cftlibTest".equals(getName()) && processMode()) {
+            offUnlessChosen("RSE_LIB_XUI");
+            offUnlessChosen("RSE_LIB_XUI_MO");
+        }
+        setComposeProfiles();
+    }
+
+    private boolean processMode() {
+        var mode = String.valueOf(getEnvironment().get("RSE_LIB_DEPENDENCY_MODE"));
+        return "process".equalsIgnoreCase(mode.trim());
+    }
+
+    private void offUnlessChosen(String variable) {
+        if (unset(variable)) {
+            environment(variable, "off");
+        }
+    }
+
+    private boolean unset(String variable) {
+        var value = getEnvironment().get(variable);
+        return value == null || String.valueOf(value).isBlank();
+    }
+
+    // The XUI containers sit behind a compose profile so that a run which does not want them
+    // does not pay for the image pull. Compose started them whatever RSE_LIB_XUI said before.
+    private void setComposeProfiles() {
+        var profiles = new ArrayList<String>();
+        if (wanted("RSE_LIB_XUI")) {
+            profiles.add("xui");
+        }
+        if (wanted("RSE_LIB_XUI_MO")) {
+            profiles.add("xui-mo");
+        }
+        var inherited = String.valueOf(getEnvironment().getOrDefault("COMPOSE_PROFILES", ""));
+        for (var profile : inherited.split(",")) {
+            var name = profile.trim();
+            // A profile of cftlib's own is decided by the variable that owns it, so an ambient
+            // COMPOSE_PROFILES cannot bring back a service this run asked to keep down. Any
+            // other profile is the consumer's and is passed along.
+            if (name.isBlank() || profiles.contains(name) || OWN_PROFILES.contains(name)) {
+                continue;
+            }
+            profiles.add(name);
+        }
+        environment("COMPOSE_PROFILES", String.join(",", profiles));
+    }
+
+    private boolean wanted(String var) {
+        return !"off".equalsIgnoreCase(String.valueOf(getEnvironment().get(var)));
     }
 
     // All services share a Java 21 JVM.

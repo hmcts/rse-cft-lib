@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -39,10 +40,13 @@ public class CftLibPlugin implements Plugin<Project> {
             Service.aacManageCaseAssignment, "uk.gov.hmcts.reform.managecase.Application",
             Service.ccdCaseDocumentAmApi, "uk.gov.hmcts.reform.ccd.documentam.Application",
             Service.dgDocassemblyApi, "uk.gov.hmcts.reform.dg.docassembly.Application",
-            Service.waTaskManagementApi, "uk.gov.hmcts.reform.wataskmanagementapi.Application"
+            Service.waTaskManagementApi, "uk.gov.hmcts.reform.wataskmanagementapi.Application",
+            Service.rseIdamSimulator, "uk.gov.hmcts.reform.rse.idam.simulator.Application"
     );
     private final List<File> manifests = new ArrayList<>();
     private final List<ManifestTask> manifestTasks = Lists.newArrayList();
+    private File localAuthManifest;
+    private ManifestTask localAuthManifestTask;
 
     public void apply(Project project) {
         project.getPlugins().apply("java");
@@ -56,6 +60,9 @@ public class CftLibPlugin implements Plugin<Project> {
         createBootWithCCDTask(project, manifestTask, "bootWithCCD");
         var dumpDefinitions = createBootWithCCDTask(project, manifestTask, "dumpCCDDefinitions");
         dumpDefinitions.environment("RSE_LIB_DUMP_DEFINITIONS", "true");
+        // Dumping definitions does not involve XUI, and building it would cost minutes.
+        dumpDefinitions.environment("RSE_LIB_XUI", "off");
+        dumpDefinitions.environment("RSE_LIB_XUI_MO", "off");
         dumpDefinitions.authMode = AuthMode.Local;
         dumpDefinitions.getOutputs().upToDateWhen(x -> false);
 
@@ -220,6 +227,8 @@ public class CftLibPlugin implements Plugin<Project> {
         exec.dependsOn("cftlibTestClasses");
         exec.args(file);
         exec.environment("RSE_LIB_STUB_AUTH_OUTBOUND", "true");
+        // Whether this suite gets XUI is settled by CftlibExec as it runs, once the consuming
+        // build has had its say over the dependency mode.
         exec.getOutputs().upToDateWhen(x -> false);
         return exec;
     }
@@ -244,9 +253,16 @@ public class CftLibPlugin implements Plugin<Project> {
                 "--rse.lib.service_name=" + service);
 
             args.addAll(service.args);
-            manifestTasks.add(
-                createServiceManifestTask(project, service, e.getValue(), file, args.toArray(String[]::new)));
-            manifests.add(file);
+            var task = createServiceManifestTask(project, service, e.getValue(), file,
+                args.toArray(String[]::new));
+            if (service == Service.rseIdamSimulator) {
+                // Only built and launched by tasks running in local auth mode.
+                localAuthManifest = file;
+                localAuthManifestTask = task;
+            } else {
+                manifestTasks.add(task);
+                manifests.add(file);
+            }
         }
     }
 
@@ -317,6 +333,14 @@ public class CftLibPlugin implements Plugin<Project> {
 
         j.args(manifests);
         j.dependsOn(manifestTasks);
+        // authMode is set by the consuming build after this task is created, so the idam simulator
+        // can only be resolved once the task graph is built.
+        j.dependsOn((Callable<Object>) () -> j.authMode == AuthMode.Local
+            ? localAuthManifestTask
+            : List.of());
+        j.getArgumentProviders().add(() -> j.authMode == AuthMode.Local
+            ? List.of(localAuthManifest.getAbsolutePath())
+            : List.of());
         return j;
     }
 
@@ -354,6 +378,11 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
     private Dependency[] serviceManifestDependencies(Project project, String dependency, Service service) {
+        if (service == Service.rseIdamSimulator) {
+            // The agent counts down the boot latch for each application it supervises, which is sized
+            // for the CFT services only. The simulator is also up before they start, so has nothing to wait for.
+            return libDependencies(project, dependency);
+        }
         var dependencies = Lists.newArrayList(libDependencies(project, dependency, "cftlib-agent"));
         if (service == Service.ccdDefinitionStoreApi) {
             dependencies.add(project.getDependencies()

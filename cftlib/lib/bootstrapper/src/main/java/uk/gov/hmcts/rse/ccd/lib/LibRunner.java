@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static java.lang.System.getenv;
@@ -16,6 +17,18 @@ import static java.lang.System.getenv;
 import lombok.SneakyThrows;
 
 public class LibRunner {
+    // The idam simulator provides the auth server the CFT services wait for, so it is started
+    // alongside the runtime rather than behind the auth gate.
+    private static final String AUTH_SERVER_MANIFEST = "rse-idam-simulator";
+    private static final int AUTH_SERVER_PORT = 5062;
+    /**
+     * Long enough for the compose run that frees the port to get there. It removes the orphan
+     * holding it as part of an up that resolves and pulls images first, and a cold pull of
+     * postgres and elasticsearch is minutes on its own — which is why this waits in multiples of
+     * what the bind itself needs. It says what it is waiting for while it waits.
+     */
+    private static final int AUTH_SERVER_PORT_WAIT_SECONDS = 300;
+
     public static void main(String[] args) throws Exception {
         Thread.currentThread().setName("**** cftlib bootstrap");
         Thread.currentThread().setUncaughtExceptionHandler(ControlPlane.failFast);
@@ -34,17 +47,85 @@ public class LibRunner {
             threads.add(t);
         }
 
+        var rest = new ArrayList<String>();
+        for (var f : Arrays.asList(args).subList(1, args.length)) {
+            if (new File(f).getName().equals(AUTH_SERVER_MANIFEST)) {
+                var t = new Thread(() -> {
+                    awaitAuthServerPort();
+                    launchAppOrFailFast(new File(f));
+                });
+                // launchAppOrFailFast installs this itself, but the port check runs before it and
+                // its failure is fatal: without a handler the thread would die quietly and the
+                // services would wait on an auth server that is never coming.
+                t.setUncaughtExceptionHandler(ControlPlane.failFast);
+                t.setName(AUTH_SERVER_MANIFEST);
+                t.start();
+                threads.add(t);
+            } else {
+                rest.add(f);
+            }
+        }
+
         // Cannot start spring boot apps until Oauth server ready.
         ControlPlane.waitForAuthServer();
 
-        var rest = Arrays.copyOfRange(args, 1, args.length);
-        Arrays.stream(rest).forEach(f -> {
+        rest.forEach(f -> {
             var t = new Thread(() -> launchAppOrFailFast(new File(f)));
             t.start();
             threads.add(t);
         });
         for (Thread thread : threads) {
             thread.join();
+        }
+    }
+
+    /**
+     * Waits for the simulator's port, which a container from a cftlib that ran the simulator in
+     * docker still holds. In docker mode compose removes that orphan, but it does so while this
+     * is starting, so the bind would otherwise lose a race it can simply wait out.
+     */
+    private static void awaitAuthServerPort() {
+        if (!portInUse()) {
+            return;
+        }
+        var hint = "Another cftlib run holds it, since the simulator now runs in the cftlib JVM "
+            + "rather than in a container shared by every run; or a simulator container from an "
+            + "older cftlib does, which 'docker rm -f cftlib-rse-idam-simulator-1' removes.";
+        // Only docker mode is going to free it, by removing the orphan as it brings compose up.
+        // Nothing will in process mode, so say so now rather than after a minute of waiting.
+        if (!"docker".equalsIgnoreCase(dependencyMode())) {
+            throw new IllegalStateException("Port " + AUTH_SERVER_PORT + " is already in use, and the idam "
+                + "simulator runs in this JVM. " + hint);
+        }
+
+        var deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(AUTH_SERVER_PORT_WAIT_SECONDS);
+        var reported = false;
+        while (portInUse() && System.nanoTime() < deadline) {
+            if (!reported) {
+                System.out.println("**** Cftlib is waiting for port " + AUTH_SERVER_PORT + ", which something "
+                    + "else is holding. " + hint);
+                reported = true;
+            }
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+        if (portInUse()) {
+            // Reported rather than left to surface as a bind error from deep inside spring.
+            throw new IllegalStateException("Port " + AUTH_SERVER_PORT + " was still in use after "
+                + AUTH_SERVER_PORT_WAIT_SECONDS + " seconds, so the idam simulator cannot start. " + hint);
+        }
+    }
+
+    private static boolean portInUse() {
+        try (var socket = new java.net.Socket()) {
+            socket.connect(new java.net.InetSocketAddress("localhost", AUTH_SERVER_PORT), 500);
+            return true;
+        } catch (java.io.IOException e) {
+            return false;
         }
     }
 
@@ -58,36 +139,42 @@ public class LibRunner {
 
         System.setProperty("USER_PROFILE_DB_HOST", dbHost);
         System.setProperty("USER_PROFILE_DB_PORT", dbPort);
-        System.setProperty("USER_PROFILE_DB_USERNAME", "postgres");
-        System.setProperty("USER_PROFILE_DB_PASSWORD", "postgres");
+        System.setProperty("USER_PROFILE_DB_USERNAME", "${RSE_LIB_DB_USERNAME:postgres}");
+        System.setProperty("USER_PROFILE_DB_PASSWORD", "${RSE_LIB_DB_PASSWORD:postgres}");
         System.setProperty("USER_PROFILE_DB_NAME", "userprofile");
         System.setProperty("USER_PROFILE_DB_OPTIONS", "?stringtype=unspecified");
 
         System.setProperty("DATA_STORE_DB_HOST", dbHost);
         System.setProperty("DATA_STORE_DB_PORT", dbPort);
-        System.setProperty("DATA_STORE_DB_USERNAME", "postgres");
-        System.setProperty("DATA_STORE_DB_PASSWORD", "postgres");
+        System.setProperty("DATA_STORE_DB_USERNAME", "${RSE_LIB_DB_USERNAME:postgres}");
+        System.setProperty("DATA_STORE_DB_PASSWORD", "${RSE_LIB_DB_PASSWORD:postgres}");
         System.setProperty("DATA_STORE_DB_NAME", "datastore");
         System.setProperty("DATA_STORE_DB_OPTIONS", "?stringtype=unspecified");
 
         System.setProperty("DEFINITION_STORE_DB_HOST", dbHost);
         System.setProperty("DEFINITION_STORE_DB_PORT", dbPort);
-        System.setProperty("DEFINITION_STORE_DB_USERNAME", "postgres");
-        System.setProperty("DEFINITION_STORE_DB_PASSWORD", "postgres");
+        System.setProperty("DEFINITION_STORE_DB_USERNAME", "${RSE_LIB_DB_USERNAME:postgres}");
+        System.setProperty("DEFINITION_STORE_DB_PASSWORD", "${RSE_LIB_DB_PASSWORD:postgres}");
         System.setProperty("DEFINITION_STORE_DB_NAME", "definitionstore");
 
         System.setProperty("ROLE_ASSIGNMENT_DB_HOST", dbHost);
         System.setProperty("ROLE_ASSIGNMENT_DB_PORT", dbPort);
         System.setProperty("ROLE_ASSIGNMENT_DB_NAME", "am");
-        System.setProperty("ROLE_ASSIGNMENT_DB_USERNAME", "postgres");
-        System.setProperty("ROLE_ASSIGNMENT_DB_PASSWORD", "postgres");
+        System.setProperty("ROLE_ASSIGNMENT_DB_USERNAME", "${RSE_LIB_DB_USERNAME:postgres}");
+        System.setProperty("ROLE_ASSIGNMENT_DB_PASSWORD", "${RSE_LIB_DB_PASSWORD:postgres}");
 
         var esHost = getenv("SEARCH_ELASTIC_HOSTS") != null ? getenv("SEARCH_ELASTIC_HOSTS") : "http://localhost:9200";
 
         System.setProperty("SEARCH_ELASTIC_HOSTS", esHost);
         System.setProperty("SEARCH_ELASTIC_DATA_HOSTS", esHost);
-        System.setProperty("elasticsearch.enabled", "true");
+        // The elasticsearch stub reads the case tables directly, so nothing needs to maintain an
+        // index and the definition store has no index to create on import.
+        var esStub = esStubMode();
+        System.setProperty("elasticsearch.enabled", esStub ? "false" : "true");
         System.setProperty("elasticsearch.failimportiferror", "true");
+        if (esStub) {
+            System.setProperty("ccd.sdk.decentralised.es-indexer.enabled", "false");
+        }
 
         // Allow more time for definitions to import to reduce test flakeyness
         // These timeouts are large since definition imports can start before elastic search is ready,
@@ -108,6 +195,28 @@ public class LibRunner {
 
         // Prevent definition store generating errors trying to translate welsh
         System.setProperty("WELSH_TRANSLATION_ENABLED", "false");
+    }
+
+    /**
+     * Mirrors CftlibConfig's resolution of RSE_LIB_ES. The bootstrapper is deliberately dependency
+     * free so that it does not pollute the system classloader, and so cannot read CftlibConfig,
+     * which lives in the runtime.
+     */
+    private static boolean esStubMode() {
+        var es = getenv("RSE_LIB_ES");
+        if (es != null && !es.isBlank()) {
+            return es.trim().equalsIgnoreCase("stub");
+        }
+        return "process".equalsIgnoreCase(dependencyMode());
+    }
+
+    /**
+     * The configured dependency mode, as the runtime's own config reads it: unset and blank both
+     * mean docker, and surrounding space is not part of the value.
+     */
+    private static String dependencyMode() {
+        var mode = getenv("RSE_LIB_DEPENDENCY_MODE");
+        return mode == null || mode.isBlank() ? "docker" : mode.trim();
     }
 
     private static void launchAppOrFailFast(File classpathFile) {

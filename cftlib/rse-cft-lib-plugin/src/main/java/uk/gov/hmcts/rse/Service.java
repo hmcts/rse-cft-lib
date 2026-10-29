@@ -16,15 +16,22 @@ public enum Service {
         "--POSTGRES_HOST=${RSE_LIB_DB_HOST:localhost}",
         "--POSTGRES_PORT=${RSE_LIB_DB_PORT:6432}",
         "--POSTGRES_NAME=cft_task_db",
-        "--POSTGRES_USERNAME=postgres",
-        "--POSTGRES_PASSWORD=postgres",
+        "--POSTGRES_USERNAME=${RSE_LIB_DB_USERNAME:postgres}",
+        "--POSTGRES_PASSWORD=${RSE_LIB_DB_PASSWORD:postgres}",
         "--POSTGRES_REPLICA_HOST=${RSE_LIB_DB_HOST:localhost}",
         "--POSTGRES_REPLICA_PORT=${RSE_LIB_DB_PORT:6432}",
         "--POSTGRES_REPLICA_NAME=cft_task_db",
-        "--REPLICATION_USERNAME=postgres",
-        "--REPLICATION_PASSWORD=postgres",
+        "--REPLICATION_USERNAME=${RSE_LIB_DB_USERNAME:postgres}",
+        "--REPLICATION_PASSWORD=${RSE_LIB_DB_PASSWORD:postgres}",
         "--POSTGRES_CLUSTER_HOST=${RSE_LIB_DB_HOST:localhost}",
         "--CCD_URL=http://localhost:4452"
+    ),
+    rseIdamSimulator(
+        "--server.port=5062",
+        "--simulator.jwt.issuer=${IDAM_SIMULATOR_BASE_URL:http://localhost:5062}/o",
+        "--simulator.openid.base-url=${IDAM_SIMULATOR_BASE_URL:http://localhost:5062}",
+        "--simulator.openid.base-url-outside-network="
+            + "${IDAM_SIMULATOR_BASE_URL_OUTSIDE_NETWORK:http://localhost:5062}"
     );
 
     public final List<String> args;

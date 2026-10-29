@@ -17,6 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -266,6 +267,8 @@ class LibConsumerApplicationTests extends CftlibTest {
 
     @Test
     void xuiContainerReceivesPrefixedEnvVars() {
+        assumeTrue("docker".equalsIgnoreCase(System.getenv().getOrDefault("RSE_LIB_XUI", "docker")),
+            "XUI is not running as a container");
         var expected = "DECENTRALISED_EVENT_BASE_URLS={\"E2E\":\"https://example.com\"}";
 
         var containerIds = await()

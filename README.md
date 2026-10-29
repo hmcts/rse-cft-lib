@@ -27,7 +27,7 @@ Improved local development and robust automated tests when working with CCD:
 
 - Java 21
 - Gradle 8.7
-- Docker
+- Docker (not needed in [process mode](#running-without-docker))
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) (when using automated AAT secret management)
 
 The bundled Docker Compose environment pulls some HMCTS images from `hmctsprod.azurecr.io`. Log in before running `bootWithCCD` or `cftlibTest`:
@@ -387,7 +387,90 @@ Services run on the following default ports:
 
 ### Clean boot
 
-For a clean boot define the RSE_LIB_CLEAN_BOOT environment variable, which will force recreate all docker containers upon boot.
+For a clean boot define the RSE_LIB_CLEAN_BOOT environment variable, which will force recreate all docker containers upon boot. In process mode it instead recreates the postgres data directory and rebuilds XUI.
+
+## Running without docker
+
+Cftlib can run its dependencies on the host instead of in containers:
+
+```groovy
+tasks.withType(uk.gov.hmcts.rse.CftlibExec) {
+    dependencyMode = uk.gov.hmcts.rse.DependencyMode.Process
+}
+```
+
+Or per run, without touching the build script:
+
+```sh
+RSE_LIB_DEPENDENCY_MODE=process ./gradlew cftlibTest
+```
+
+| Dependency | In docker mode | In process mode |
+| ---------- | -------------- | --------------- |
+| Postgres | `postgres:16` container | postgres run from the binaries published by `io.zonky.test`, downloaded on first use and cached in `~/.cftlib` |
+| Elasticsearch | `elasticsearch` container | a stub on port 9200 answering CCD's searches from postgres |
+| IDAM simulator | — | in the cftlib JVM in both modes |
+| XUI manage cases | container on port 3000 | built from a shallow clone with the host's node |
+| XUI manage organisations | container on port 3001 | off by default |
+
+Within a mode each dependency can be chosen individually, which is also how you point cftlib at something you already run, or opt out of one entirely:
+
+| Variable | In docker mode | In process mode | Default |
+| -------- | -------------- | --------------- | ------- |
+| `RSE_LIB_DEPENDENCY_MODE` | | | `docker` |
+| `RSE_LIB_DB` | `docker` | `embedded`, `external` | follows the mode |
+| `RSE_LIB_ES` | `docker` | `stub`, `external` | follows the mode |
+| `RSE_LIB_XUI` | `docker`, `off` | `process`, `off` | follows the mode; `off` for a process mode `cftlibTest` |
+| `RSE_LIB_XUI_MO` | `docker`, `off` | `process`, `off` | `docker` in docker mode, `off` in process mode |
+
+The two sets do not mix: compose brings up every container it manages whatever the individual variables say, so `RSE_LIB_ES=docker` in process mode is rejected rather than half applied. Switch `RSE_LIB_DEPENDENCY_MODE` to run a dependency as a container.
+
+`external` means cftlib uses something already running: set `RSE_LIB_DB_HOST`, `RSE_LIB_DB_PORT`, `RSE_LIB_DB_USERNAME` and `RSE_LIB_DB_PASSWORD` for a database, or `SEARCH_ELASTIC_HOSTS` for elasticsearch.
+
+### The elasticsearch stub
+
+The stub reads the case tables directly rather than maintaining an index, so there is no indexing lag — a case is searchable as soon as it is saved — and both the cftlib and SDK indexers are switched off. It answers the case type indices and `global_search`, for centralised and decentralised services alike.
+
+It supports the clauses CCD and XUI generate, and **rejects anything else with a 400 naming the clause** rather than returning no hits, so a query it cannot answer fails loudly instead of passing locally and failing in AAT. It does not score, and its text matching approximates elasticsearch's analysis, so it is not the place to validate a search feature — go back to docker mode, or point `SEARCH_ELASTIC_HOSTS` at a real cluster with `RSE_LIB_ES=external`, for that.
+
+It applies the analysis CCD's own mappings describe: a `.keyword` sub-field is matched and sorted lowercased and ascii folded, as `lowercase_normalizer` leaves it; `reference` ignores the hyphens the UI groups its digits with; a date bound with no time of day covers the whole of that day; and `o'brien` and `john.smith` are one word each, as the standard tokenizer leaves them.
+
+What it does not read is each case type's **field types**, which is where it still differs from a real cluster. It is more permissive in two ways: sorting on an analysed text field, and a `nested` query on a path that is not mapped as nested, both answer here and are errors against a real cluster. It also returns different hits in these cases:
+
+| | Elasticsearch | The stub |
+| --- | --- | --- |
+| `Email`, `Postcode`, `YesOrNo` fields | whole values, as `keyword` | split into words, so one word of an address matches it |
+| `PhoneUK` fields | spaces removed by `phone_number_analyzer` | split on the spaces |
+| `Date` and `DateTime` fields inside `data` | compared and rounded as dates | compared as text, which agrees for whole ISO timestamps only |
+| `Number` and `MoneyGBP` fields inside `data` | compared as numbers | compared as text, so `9` sorts above `10` |
+
+Each of those is a query that passes locally and behaves differently in AAT, so a feature or an end-to-end test that leans on exact-value matching of those types should be confirmed in docker mode, or against a real cluster with `RSE_LIB_ES=external`. Closing the gap means reading each case type's field types from the definition store and applying CCD's type-to-mapping table, which is not done here.
+
+The stub searches the data store and any database named in `RSE_LIB_ADDITIONAL_DATABASES`, which covers a decentralised service without further configuration. Set `RSE_LIB_ES_STUB_SOURCES` to a comma separated list of `database[:schema]` if case data lives anywhere else.
+
+It is built for development volumes: there is no index, so every search scans the case tables, and each search opens a connection per source it reads rather than drawing on a pool. A few thousand cases are fine; a database grown over months of local work will be noticeably slower than elasticsearch.
+
+### XUI without docker
+
+Each XUI app is pinned to a commit, shallow cloned into `~/.cftlib` and built once per commit, which takes several minutes the first time. Point cftlib at a checkout you already have to skip the clone:
+
+```sh
+RSE_LIB_XUI_DIR=~/code/rpx-xui-webapp ./gradlew bootWithCCD
+```
+
+The host's node must satisfy the app's own `engines.node` range, which cftlib checks before cloning or building. `RSE_LIB_NODE` selects a particular node binary, `RSE_LIB_XUI_REF` and `RSE_LIB_XUI_REPO` override the pin, and `RSE_LIB_XUI_REBUILD` forces a rebuild.
+
+Because that build would otherwise run before every test suite, a process mode `cftlibTest` leaves XUI out. A suite that drives the browser asks for it back with `RSE_LIB_XUI=process`.
+
+### Lifetime of the dependencies
+
+Unlike the containers, which are left up between runs, the postgres and XUI processes are shut down with the JVM. What makes a restart fast is the state they leave on disk rather than the processes themselves: the postgres data directory persists, so the server comes back in about a second with its databases intact, and XUI's clone, dependencies and build output are cached, so only the node startup is repeated. `RSE_LIB_CLEAN_BOOT` recreates both.
+
+Cftlib creates the cluster with UTF-8 encoding and the `C` collation, so that what a text comparison answers is the same on every machine rather than following the developer's locale. `initdb` settles that once, for the life of the data directory: a directory made by an earlier cftlib keeps the locale it was created with until `RSE_LIB_CLEAN_BOOT` remakes it.
+
+A JVM killed outright — `kill -9` — gets no chance to shut them down; the control plane's own halting paths stop them first. The next process mode boot recognises what one of its own boots left on these ports: it reuses the postgres, whose state is on disk either way, and stops the XUI, which it then rebuilds and relaunches rather than serve a build it cannot account for. Either way the port is occupied until that boot runs, which will stop the containers binding if you switch back to docker mode in between.
+
+A boot claims XUI's port for as long as it runs, before it starts building, and a second boot that wants the same port is turned away there and then. It has to be: a boot that is still building has not bound the port yet, so without the claim the second boot would find it free, build, lose the race to bind, and go on serving the first boot's XUI with the first boot's environment. Two projects that both want XUI need different `XUI_PORT`s, as they already need different `RSE_LIB_DB_PORT`s. Anything else holding one of these ports is reported rather than used, since serving from a stale container is worse than failing.
 
 ### Live reload
 

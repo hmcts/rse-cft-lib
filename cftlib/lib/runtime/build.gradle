@@ -9,6 +9,11 @@ dependencies {
     implementation group: 'net.lingala.zip4j', name: 'zip4j', version: '2.9.1'
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.3'
+    // The platform binaries are fetched on demand by PostgresBinaries rather than bundled,
+    // since the linux and macos jars alone would add 145MB to every cftlib consumer.
+    implementation('io.zonky.test:embedded-postgres:2.2.2') {
+        exclude group: 'io.zonky.test.postgres'
+    }
     implementation 'org.zeroturnaround:zt-exec:1.12'
     implementation 'com.auth0:java-jwt:3.18.3'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
@@ -19,6 +24,7 @@ dependencies {
     // https://www.elastic.co/guide/en/elasticsearch/client/java-rest/7.11/java-rest-high-getting-started-maven.html
     implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.11.2'
 
+    testImplementation 'io.zonky.test:embedded-postgres:2.2.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     testImplementation 'org.assertj:assertj-core:3.27.4'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
@@ -36,4 +42,9 @@ processResources {
 
 test {
     useJUnitPlatform()
+    // The logback config in lib:bootstrapper appends to ${cftlib_log_file}, which without this
+    // lands in the project directory as cftlib_log_file_IS_UNDEFINED.
+    systemProperty 'cftlib_log_file', layout.buildDirectory.file('test-logs/runtime.log').get().asFile
+    // Keep the postgres binaries the tests download inside the build rather than in ~/.cftlib.
+    systemProperty 'cftlib.cacheDir', layout.buildDirectory.dir('test-cache').get().asFile
 }

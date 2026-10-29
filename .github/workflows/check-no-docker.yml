@@ -1,0 +1,44 @@
+name: Java CI (no docker)
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: |
+          25
+          21
+        cache: 'gradle'
+    - name: Free up disk space
+      run: |
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /usr/local/lib/android
+        sudo rm -rf /opt/ghc
+        sudo rm -rf "/usr/local/share/boost"
+    # Any attempt to reach a container runtime should fail the build rather than
+    # silently fall back to the runner's docker daemon.
+    - name: Shadow docker
+      run: |
+        mkdir -p "$HOME/no-docker"
+        printf '#!/usr/bin/env bash\necho "docker was invoked in the no-docker build: $*" >&2\nexit 1\n' \
+          > "$HOME/no-docker/docker"
+        chmod +x "$HOME/no-docker/docker"
+        echo "$HOME/no-docker" >> "$GITHUB_PATH"
+    - name: Publish to Maven Local
+      run: (cd cftlib; ./gradlew publishToMavenLocal -i)
+    - name: Run the test project without docker
+      env:
+        RSE_LIB_DEPENDENCY_MODE: process
+      run: (cd cftlib; ./gradlew :test-project:cftlibTest -i)

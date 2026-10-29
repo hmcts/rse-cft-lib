@@ -263,16 +263,20 @@ public class CFTLibApiImpl implements CFTLib {
     @SneakyThrows
     @Override
     public Connection getConnection(Database database) {
-        var port = ControlPlane.getEnvVar("RSE_LIB_DB_PORT", 6432);
-        var host = ControlPlane.getEnvVar("RSE_LIB_DB_HOST", "localhost");
         return DriverManager.getConnection(
-                "jdbc:postgresql://" + host + ":" + port + "/" + String.valueOf(database).toLowerCase(),
-                "postgres", "postgres");
+                "jdbc:postgresql://" + CftlibConfig.dbHost() + ":" + CftlibConfig.dbPort()
+                    + "/" + String.valueOf(database).toLowerCase(),
+                CftlibConfig.dbUsername(), CftlibConfig.dbPassword());
     }
 
     @SneakyThrows
     @Override
     public void createGlobalSearchIndex() {
+        if (CftlibConfig.esMode() == CftlibConfig.EsMode.STUB) {
+            // The definition store's elastic support, including this endpoint, is switched off
+            // alongside the indexers, and the stub derives the global search index from case data.
+            return;
+        }
         HttpPost create = new HttpPost("http://localhost:4451/elastic-support/global-search/index");
         create.addHeader("Authorization", "Bearer " + buildJwt());
         create.addHeader("ServiceAuthorization", generateDummyS2SToken("ccd_gw"));

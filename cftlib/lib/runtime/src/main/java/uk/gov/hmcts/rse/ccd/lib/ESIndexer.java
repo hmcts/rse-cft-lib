@@ -24,6 +24,10 @@ public class ESIndexer {
     @SneakyThrows
     @Autowired
     public ESIndexer() {
+        if (CftlibConfig.esMode() == CftlibConfig.EsMode.STUB) {
+            // The stub answers searches from the case tables, so there is nothing to index.
+            return;
+        }
         var t = new Thread(this::index);
         t.setDaemon(true);
         t.setUncaughtExceptionHandler(ControlPlane.failFast);
@@ -108,7 +112,7 @@ public class ESIndexer {
                 }
                 if (actionCount > 0) {
                     var bulkRequest = HttpRequest.newBuilder()
-                        .uri(URI.create("http://localhost:9200/_bulk"))
+                        .uri(URI.create(CftlibConfig.esUrl() + "/_bulk"))
                         .header("Content-Type", "application/x-ndjson")
                         .POST(HttpRequest.BodyPublishers.ofString(request.toString()))
                         .build();
@@ -129,7 +133,7 @@ public class ESIndexer {
 
     private void ensureCaseIndex(HttpClient client, String index) throws Exception {
         var check = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:9200/" + index))
+            .uri(URI.create(CftlibConfig.esUrl() + "/" + index))
             .method("HEAD", HttpRequest.BodyPublishers.noBody())
             .build();
         var checkResponse = client.send(check, HttpResponse.BodyHandlers.discarding());
@@ -142,7 +146,7 @@ public class ESIndexer {
         }
 
         var create = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:9200/" + index))
+            .uri(URI.create(CftlibConfig.esUrl() + "/" + index))
             .header("Content-Type", "application/json")
             .PUT(HttpRequest.BodyPublishers.ofString("""
                 {

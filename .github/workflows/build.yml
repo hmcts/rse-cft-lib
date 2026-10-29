@@ -15,3 +15,6 @@ jobs:
   check:
     name: Check
     uses: ./.github/workflows/check.yml
+  check-no-docker:
+    name: Check (no docker)
+    uses: ./.github/workflows/check-no-docker.yml
