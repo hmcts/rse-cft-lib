@@ -468,7 +468,7 @@ Unlike the containers, which are left up between runs, the postgres and XUI proc
 
 A JVM killed outright — `kill -9` — gets no chance to shut them down; the control plane's own halting paths stop them first. The next process mode boot recognises what one of its own boots left on these ports: it reuses the postgres, whose state is on disk either way, and stops the XUI, which it then rebuilds and relaunches rather than serve a build it cannot account for. Either way the port is occupied until that boot runs, which will stop the containers binding if you switch back to docker mode in between.
 
-A boot leaves alone what another **running** cftlib is using, and says which one holds the port: two projects that both want XUI need different `XUI_PORT`s, as they already need different `RSE_LIB_DB_PORT`s. Anything else holding one of these ports is reported rather than used, since serving from a stale container is worse than failing.
+A boot claims XUI's port for as long as it runs, before it starts building, and a second boot that wants the same port is turned away there and then. It has to be: a boot that is still building has not bound the port yet, so without the claim the second boot would find it free, build, lose the race to bind, and go on serving the first boot's XUI with the first boot's environment. Two projects that both want XUI need different `XUI_PORT`s, as they already need different `RSE_LIB_DB_PORT`s. Anything else holding one of these ports is reported rather than used, since serving from a stale container is worse than failing.
 
 ### Live reload
 

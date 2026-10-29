@@ -8,8 +8,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -25,14 +27,12 @@ class XuiTest {
         var port = freePort();
         // Holding the port, as the instance it stands in for does: stopping it has to free it.
         var stale = listener(port);
-        var owner = new ProcessBuilder("sleep", "600").start();
         try {
-            // The boot that started it is gone, so the instance is this boot's to stop. It is
-            // not taken over: what it was built from cannot be told from what this boot wants
-            // without doing the fetch and the build that taking it over exists to skip.
-            owner.destroy();
-            assertThat(owner.waitFor(10, TimeUnit.SECONDS)).isTrue();
-            record(cache, port, owner.pid(), stale);
+            // No boot holds the claim on this port, so the instance belongs to one that was
+            // killed and is this boot's to stop. It is not taken over: what it was built from
+            // cannot be told from what this boot wants without doing the fetch and the build
+            // that taking it over exists to skip.
+            record(cache, port, stale);
 
             var source = Map.of(
                 "XUI_PORT", Integer.toString(port),
@@ -48,18 +48,20 @@ class XuiTest {
                 .isTrue();
         } finally {
             stale.destroyForcibly();
-            owner.destroyForcibly();
         }
     }
 
     @Test
-    void leavesTheInstanceOfALiveBootAlone(@TempDir Path cache) throws Exception {
+    void refusesAPortAnotherLiveBootHasClaimed(@TempDir Path cache) throws Exception {
+        var port = freePort();
         var running = new ProcessBuilder("sleep", "600").start();
-        try (var listening = new ServerSocket(0)) {
-            var port = listening.getLocalPort();
-            // Another project's boot, still running and serving XUI on this port. Stopping it
-            // would take that boot's XUI down from under it.
-            record(cache, port, ProcessHandle.current().pid(), running);
+        // The claim another boot took on this port, which it holds for as long as it runs. Taken
+        // before either boot binds, so a boot that is still building does not leave the port
+        // looking free to the next one.
+        try (var channel = FileChannel.open(pidFile(cache, port), StandardOpenOption.CREATE,
+                StandardOpenOption.WRITE, StandardOpenOption.READ);
+             var claim = channel.lock()) {
+            record(cache, port, running);
 
             var source = Map.of(
                 "XUI_PORT", Integer.toString(port),
@@ -68,7 +70,7 @@ class XuiTest {
 
             assertThatThrownBy(() -> Xui.manageCases().start(source))
                 .isInstanceOf(IOException.class)
-                .hasMessageContaining("is serving the xui-manage-cases of the cftlib running as pid")
+                .hasMessageContaining("belongs to the xui-manage-cases of another cftlib")
                 .hasMessageContaining("XUI_PORT");
             assertThat(running.isAlive()).as("the other boot's instance is untouched").isTrue();
         } finally {
@@ -85,7 +87,6 @@ class XuiTest {
             // one of those would kill an unrelated process, an editor's node language server as
             // readily as anything.
             Files.writeString(pidFile(cache, port), String.join("\n",
-                Long.toString(ProcessHandle.current().pid()),
                 Long.toString(ProcessHandle.current().pid()),
                 Instant.parse("2020-01-01T00:00:00Z").toString()));
 
@@ -167,9 +168,8 @@ class XuiTest {
     }
 
     /** Writes what a boot records of the instance it leaves running, a field to a line. */
-    private static void record(Path cache, int port, long ownerPid, Process node) throws IOException {
+    private static void record(Path cache, int port, Process node) throws IOException {
         Files.writeString(pidFile(cache, port), String.join("\n",
-            Long.toString(ownerPid),
             Long.toString(node.pid()),
             node.info().startInstant().orElseThrow().toString()));
     }
