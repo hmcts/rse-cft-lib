@@ -2,3 +2,9 @@ server:
   port:
     ${RSE_LIB_S2S_PORT:8489}
 
+
+spring:
+  webflux:
+    multipart:
+      # Documents uploaded to the dm-store stand-in.
+      max-disk-usage-per-part: 500MB

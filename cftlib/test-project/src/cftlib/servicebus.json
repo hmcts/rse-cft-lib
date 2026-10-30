@@ -1,0 +1,46 @@
+{
+  "Queues": [
+    {
+      "Name": "cftlib-sessions",
+      "Properties": {
+        "RequiresSession": true,
+        "MaxDeliveryCount": 10
+      }
+    },
+    {
+      "Name": "cftlib-dead-letters",
+      "Properties": {
+        "MaxDeliveryCount": 10
+      }
+    }
+  ],
+  "Topics": [
+    {
+      "Name": "cftlib-hearings",
+      "Subscriptions": [
+        {
+          "Name": "cftlib-civil",
+          "Rules": [
+            {
+              "Name": "civil-services",
+              "Properties": {
+                "FilterType": "Sql",
+                "SqlFilter": {
+                  "SqlExpression": "hmctsServiceId IN ('AAA7','AAA6')"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Name": "hmc-to-cft",
+      "Subscriptions": [
+        {
+          "Name": "cftlib-hearing-updates"
+        }
+      ]
+    }
+  ]
+}

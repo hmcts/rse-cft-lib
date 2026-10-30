@@ -16,7 +16,9 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -26,6 +28,8 @@ public class CftlibExec extends JavaExec {
 
     public AuthMode authMode = AuthMode.AAT;
     public DependencyMode dependencyMode = DependencyMode.Docker;
+    // Optional parts of the stack this task runs, as Feature names. RSE_LIB_FEATURES adds more for one run.
+    public List<String> features = new ArrayList<>();
     private List<String> testPatterns = List.of();
 
     public CftlibExec() {
@@ -38,6 +42,27 @@ public class CftlibExec extends JavaExec {
             throw new InvalidUserDataException("--tests is supported by cftlibTest only.");
         }
         testPatterns = List.copyOf(patterns);
+    }
+
+    public void features(String... names) {
+        features.addAll(Arrays.asList(names));
+    }
+
+    @Internal
+    public Set<Feature> getResolvedFeatures() {
+        return Feature.resolve(features, getEnvironment());
+    }
+
+    void checkFeaturesSupportAuthMode() {
+        if (authMode == AuthMode.Local) {
+            return;
+        }
+        var localOnly = getResolvedFeatures().stream().filter(Feature::requiresLocalAuth).map(Enum::name).toList();
+        if (!localOnly.isEmpty()) {
+            throw new InvalidUserDataException("The " + String.join(" and ", localOnly)
+                + (localOnly.size() == 1 ? " feature needs" : " features need") + " authMode = AuthMode.Local on "
+                + getName() + ", since it creates its users in the IDAM simulator.");
+        }
     }
 
     @Internal
@@ -60,6 +85,7 @@ public class CftlibExec extends JavaExec {
     }
 
     private void configure() {
+        checkFeaturesSupportAuthMode();
         setRequiredJvmArgs();
         setStandardEnvVars();
         resolveDependencies();
@@ -128,6 +154,7 @@ public class CftlibExec extends JavaExec {
 
     // The XUI containers sit behind a compose profile so that a run which does not want them
     // does not pay for the image pull. Compose started them whatever RSE_LIB_XUI said before.
+    // The task's features bring their own profiles too.
     private void setComposeProfiles() {
         var profiles = new ArrayList<String>();
         if (wanted("RSE_LIB_XUI")) {
@@ -136,18 +163,29 @@ public class CftlibExec extends JavaExec {
         if (wanted("RSE_LIB_XUI_MO")) {
             profiles.add("xui-mo");
         }
+        var resolved = getResolvedFeatures();
+        resolved.forEach(feature -> feature.composeProfiles.stream()
+            .filter(profile -> !profiles.contains(profile))
+            .forEach(profiles::add));
+        // Read by the runtime, which prepares the features' dependencies such as their databases.
+        environment("RSE_LIB_FEATURES", resolved.stream().map(Enum::name).collect(Collectors.joining(",")));
         var inherited = String.valueOf(getEnvironment().getOrDefault("COMPOSE_PROFILES", ""));
         for (var profile : inherited.split(",")) {
             var name = profile.trim();
-            // A profile of cftlib's own is decided by the variable that owns it, so an ambient
-            // COMPOSE_PROFILES cannot bring back a service this run asked to keep down. Any
+            // A profile of cftlib's own is decided by the variable or feature that owns it, so an
+            // ambient COMPOSE_PROFILES cannot bring back a service this run asked to keep down. Any
             // other profile is the consumer's and is passed along.
-            if (name.isBlank() || profiles.contains(name) || OWN_PROFILES.contains(name)) {
+            if (name.isBlank() || profiles.contains(name) || ownProfile(name)) {
                 continue;
             }
             profiles.add(name);
         }
         environment("COMPOSE_PROFILES", String.join(",", profiles));
+    }
+
+    private static boolean ownProfile(String name) {
+        return OWN_PROFILES.contains(name)
+            || Arrays.stream(Feature.values()).anyMatch(feature -> feature.composeProfiles.contains(name));
     }
 
     private boolean wanted(String var) {
@@ -208,6 +246,9 @@ public class CftlibExec extends JavaExec {
         environment("CORE_CASE_DATA_API_URL", "http://localhost:4452");
         environment("RSE_LIB_LOG_FOLDER", getProject().getLayout()
                 .getBuildDirectory().dir("cftlib/logs").get().getAsFile().getCanonicalPath());
+        // Documents stored by the runtime's dm-store stand-in.
+        environment("RSE_LIB_DM_STORE_DIR", getProject().getLayout()
+                .getBuildDirectory().dir("cftlib/dm-store").get().getAsFile().getCanonicalPath());
     }
 
     private void setRequiredJvmArgs() {

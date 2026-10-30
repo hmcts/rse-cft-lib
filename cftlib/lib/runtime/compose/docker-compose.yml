@@ -49,3 +49,33 @@ services:
       - ./xui-mo.env
     ports:
       - ${XUI_MO_PORT:-3001}:3001
+
+  # Azure Service Bus emulator, with the entities cftlib writes to servicebus/Config.json.
+  # Opt in with the servicebus feature. Clients connect with RSE_LIB_SERVICEBUS_CONNECTION_STRING.
+  servicebus:
+    image: "${SERVICEBUS_EMULATOR_IMAGE:-mcr.microsoft.com/azure-messaging/servicebus-emulator:2.0.1}"
+    profiles: ["servicebus"]
+    # Azure SDKs other than .NET ignore a port in the connection string, so AMQP stays on 5672.
+    ports:
+      - 5672:5672
+      - ${SERVICEBUS_HTTP_PORT:-5300}:5300
+    volumes:
+      - ./servicebus/Config.json:/ServiceBus_Emulator/ConfigFiles/Config.json
+    environment:
+      SQL_SERVER: servicebus-sql
+      MSSQL_SA_PASSWORD: "${SERVICEBUS_SQL_PASSWORD:-Cftlib-Servicebus-1}"
+      ACCEPT_EULA: "Y"
+      # A fresh SQL Server takes a while to upgrade its schema on first start.
+      SQL_WAIT_INTERVAL: 60
+    depends_on:
+      - servicebus-sql
+    restart: on-failure
+
+  # The emulator's own store. Microsoft publishes it for amd64 only, so Apple Silicon runs it under Rosetta.
+  servicebus-sql:
+    image: "${SERVICEBUS_SQL_IMAGE:-mcr.microsoft.com/mssql/server:2022-CU27-ubuntu-22.04}"
+    platform: linux/amd64
+    profiles: ["servicebus"]
+    environment:
+      MSSQL_SA_PASSWORD: "${SERVICEBUS_SQL_PASSWORD:-Cftlib-Servicebus-1}"
+      ACCEPT_EULA: "Y"
