@@ -35,6 +35,14 @@ public enum Feature {
     }
 
     /**
+     * Whether the feature only runs with local auth. Work allocation and hearings create the users their services act
+     * as, and HMC's listings are signed in, in the IDAM simulator.
+     */
+    public boolean requiresLocalAuth() {
+        return this == wa || this == hmc;
+    }
+
+    /**
      * The features named, with the features they need.
      */
     public static Set<Feature> resolve(Iterable<String> names) {

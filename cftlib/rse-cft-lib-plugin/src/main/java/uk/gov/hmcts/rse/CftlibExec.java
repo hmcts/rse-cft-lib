@@ -53,6 +53,18 @@ public class CftlibExec extends JavaExec {
         return Feature.resolve(features, getEnvironment());
     }
 
+    void checkFeaturesSupportAuthMode() {
+        if (authMode == AuthMode.Local) {
+            return;
+        }
+        var localOnly = getResolvedFeatures().stream().filter(Feature::requiresLocalAuth).map(Enum::name).toList();
+        if (!localOnly.isEmpty()) {
+            throw new InvalidUserDataException("The " + String.join(" and ", localOnly)
+                + (localOnly.size() == 1 ? " feature needs" : " features need") + " authMode = AuthMode.Local on "
+                + getName() + ", since it creates its users in the IDAM simulator.");
+        }
+    }
+
     @Internal
     public List<String> getTestArguments() {
         if (testPatterns.isEmpty()) {
@@ -73,6 +85,7 @@ public class CftlibExec extends JavaExec {
     }
 
     private void configure() {
+        checkFeaturesSupportAuthMode();
         setRequiredJvmArgs();
         setStandardEnvVars();
         resolveDependencies();

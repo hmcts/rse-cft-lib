@@ -11,7 +11,9 @@ import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -44,9 +46,10 @@ public class WorkAllocation {
     private final CFTLibApiImpl api;
     private final HttpClient http = HttpClient.newHttpClient();
     private final Gson gson = new Gson();
-    // The newest event in each source when cftlib started. Older events, such as those of a previous run, are not
+    // The newest event in each source from before this run started. Those events, a previous run's, are not
     // delivered.
     private final Map<Source, Long> delivered = new LinkedHashMap<>();
+    private LocalDateTime started;
 
     record Source(String database, String schema) {
         static List<Source> parse(String value) {
@@ -67,7 +70,7 @@ public class WorkAllocation {
     }
 
     static boolean enabled(Map<String, String> env) {
-        return Arrays.asList(env.getOrDefault("RSE_LIB_FEATURES", "").split(",")).contains("wa");
+        return Features.enabled(env, "wa");
     }
 
     static List<Source> sources(Map<String, String> env) {
@@ -97,8 +100,11 @@ public class WorkAllocation {
             return;
         }
         var thread = new Thread(() -> {
-            ControlPlane.waitForBoot();
             var wa = new WorkAllocation(api, sources(System.getenv()));
+            // Before the services boot, so that cases a CFTLibConfigurer or a test creates are this run's.
+            ControlPlane.waitForDB();
+            wa.started = wa.databaseTime();
+            ControlPlane.waitForBoot();
             wa.prepare();
             instance = wa;
             wa.deliverContinuously();
@@ -127,7 +133,7 @@ public class WorkAllocation {
             importCamundaDefinitions(null, file);
         }
         for (var source : delivered.keySet()) {
-            delivered.put(source, newestEvent(source));
+            delivered.put(source, newestEventBefore(source, started));
         }
     }
 
@@ -249,11 +255,24 @@ public class WorkAllocation {
         }
     }
 
+    // The time in the data store's database, whose clock stamps each event, in the session time zone the services
+    // also use.
     @SneakyThrows
-    private Long newestEvent(Source source) {
+    private LocalDateTime databaseTime() {
+        try (var c = connect(Source.parse(DEFAULT_SOURCE).get(0))) {
+            var result = c.prepareStatement("select localtimestamp").executeQuery();
+            result.next();
+            return result.getTimestamp(1).toLocalDateTime();
+        }
+    }
+
+    @SneakyThrows
+    private Long newestEventBefore(Source source, LocalDateTime time) {
         try (var c = connect(source)) {
-            var result = c.prepareStatement("select max(id) from " + source.schema() + ".message_queue_candidates")
-                .executeQuery();
+            var query = c.prepareStatement("select coalesce(max(id), 0) from " + source.schema()
+                + ".message_queue_candidates where time_stamp < ?");
+            query.setTimestamp(1, Timestamp.valueOf(time));
+            var result = query.executeQuery();
             result.next();
             return result.getLong(1);
         } catch (SQLException e) {
@@ -265,8 +284,8 @@ public class WorkAllocation {
     }
 
     private Connection connect(Source source) throws SQLException {
-        return DriverManager.getConnection("jdbc:postgresql://localhost:"
-            + ControlPlane.getEnvVar("RSE_LIB_DB_PORT", 6432) + "/" + source.database(), "postgres", "postgres");
+        return DriverManager.getConnection("jdbc:postgresql://" + CftlibConfig.dbHost() + ":" + CftlibConfig.dbPort()
+            + "/" + source.database(), CftlibConfig.dbUsername(), CftlibConfig.dbPassword());
     }
 
     private static String camundaUrl() {

@@ -24,12 +24,7 @@ public enum Service {
         "--REPLICATION_USERNAME=${RSE_LIB_DB_USERNAME:postgres}",
         "--REPLICATION_PASSWORD=${RSE_LIB_DB_PASSWORD:postgres}",
         "--POSTGRES_CLUSTER_HOST=${RSE_LIB_DB_HOST:localhost}",
-        "--CCD_URL=http://localhost:4452",
-        "--CAMUNDA_URL=" + Wa.CAMUNDA_URL,
-        "--OPEN_ID_IDAM_URL=${IDAM_API_URL}",
-        "--IDAM_URL=${IDAM_API_URL}",
-        "--WA_SYSTEM_USERNAME=" + Wa.SYSTEM_USERNAME,
-        "--WA_SYSTEM_PASSWORD=" + Wa.SYSTEM_PASSWORD
+        "--CCD_URL=http://localhost:4452"
     ),
     // HMCTS's Camunda engine, built on the community edition. As in preview, services call its REST API without S2S.
     camundaBpm(Feature.camunda,
@@ -177,6 +172,23 @@ public enum Service {
     Service(Feature feature, String... args) {
         this.feature = feature;
         this.args = List.of(args);
+    }
+
+    /**
+     * Arguments the service only gets when a feature is on. Task management runs whether or not work allocation does,
+     * and only uses cftlib's Camunda and WA system user when it does; otherwise its own configuration applies.
+     */
+    public List<String> featureArgs(Feature feature) {
+        if (this == waTaskManagementApi && feature == Feature.wa) {
+            return List.of(
+                "--CAMUNDA_URL=" + Wa.CAMUNDA_URL,
+                "--OPEN_ID_IDAM_URL=${IDAM_API_URL}",
+                "--IDAM_URL=${IDAM_API_URL}",
+                "--WA_SYSTEM_USERNAME=" + Wa.SYSTEM_USERNAME,
+                "--WA_SYSTEM_PASSWORD=" + Wa.SYSTEM_PASSWORD
+            );
+        }
+        return List.of();
     }
 
     // Settings the WA services share. The runtime creates the system user when the wa feature is on.

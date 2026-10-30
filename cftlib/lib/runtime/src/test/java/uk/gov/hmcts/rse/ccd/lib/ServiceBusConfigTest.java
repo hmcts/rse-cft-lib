@@ -25,7 +25,8 @@ class ServiceBusConfigTest {
             """);
         var config = dir.resolve("compose/servicebus/Config.json");
 
-        ServiceBusConfig.write(config, Map.of("RSE_LIB_SERVICEBUS_CONFIG", civil + ", " + hmc));
+        ServiceBusConfig.write(config, Map.of("RSE_LIB_FEATURES", "servicebus",
+            "RSE_LIB_SERVICEBUS_CONFIG", civil + ", " + hmc));
 
         JsonObject namespace = JsonParser.parseString(Files.readString(config)).getAsJsonObject()
             .getAsJsonObject("UserConfig").getAsJsonArray("Namespaces").get(0).getAsJsonObject();
@@ -74,6 +75,15 @@ class ServiceBusConfigTest {
             .getAsJsonObject("UserConfig").getAsJsonArray("Namespaces").get(0).getAsJsonObject();
         assertThat(namespace.getAsJsonArray("Queues")).isEmpty();
         assertThat(namespace.getAsJsonArray("Topics")).isEmpty();
+    }
+
+    @Test
+    void ignoresTheBuildsEntitiesWithoutTheServicebusFeature(@TempDir Path dir) throws Exception {
+        var config = dir.resolve("compose/servicebus/Config.json");
+
+        ServiceBusConfig.write(config, Map.of("RSE_LIB_SERVICEBUS_CONFIG", dir.resolve("missing.json").toString()));
+
+        assertThat(Files.exists(config)).isTrue();
     }
 
     @Test

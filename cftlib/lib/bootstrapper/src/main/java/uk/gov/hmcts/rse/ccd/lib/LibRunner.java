@@ -213,7 +213,7 @@ public class LibRunner {
 
         System.setProperty("CASE_DOCUMENT_AM_URL", "http://localhost:4455");
 
-        if (Arrays.asList(ControlPlane.getEnvVar("RSE_LIB_FEATURES", "").split(",")).contains("servicebus")) {
+        if (Features.enabled("servicebus")) {
             // The emulator's development connection string, for services and tests to read as configuration.
             System.setProperty("RSE_LIB_SERVICEBUS_CONNECTION_STRING",
                 "Endpoint=sb://localhost;SharedAccessKeyName=RootManageSharedAccessKey;"
@@ -259,7 +259,7 @@ public class LibRunner {
      * A build that replaces a list would shut out the services its features run, so add them.
      */
     private static void authoriseFeatureServices() {
-        var features = Arrays.asList(ControlPlane.getEnvVar("RSE_LIB_FEATURES", "").split(","));
+        var features = Features.enabled(System.getenv());
         var services = FEATURE_SERVICES.entrySet().stream()
             .filter(e -> features.contains(e.getKey()))
             .flatMap(e -> e.getValue().stream())

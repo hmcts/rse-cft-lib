@@ -31,7 +31,7 @@ public class ServiceBusConfig {
     static final String NAMESPACE = "sbemulatorns";
 
     static boolean enabled(Map<String, String> env) {
-        return Arrays.asList(env.getOrDefault("RSE_LIB_FEATURES", "").split(",")).contains("servicebus");
+        return Features.enabled(env, "servicebus");
     }
 
     // The entities each feature's services use, as classpath resources.
@@ -40,7 +40,7 @@ public class ServiceBusConfig {
     @SneakyThrows
     static void write(Path file, Map<String, String> env) {
         var namespaces = new ArrayList<JsonElement>();
-        var features = Arrays.asList(env.getOrDefault("RSE_LIB_FEATURES", "").split(","));
+        var features = Features.enabled(env);
         for (var feature : FEATURE_ENTITIES.entrySet()) {
             if (features.contains(feature.getKey())) {
                 try (var in = ServiceBusConfig.class.getResourceAsStream(feature.getValue())) {
@@ -48,7 +48,8 @@ public class ServiceBusConfig {
                 }
             }
         }
-        for (var path : sources(env)) {
+        // A build's entities only matter when the emulator runs, so a missing or invalid file only fails those boots.
+        for (var path : enabled(env) ? sources(env) : List.<String>of()) {
             namespaces.add(JsonParser.parseString(Files.readString(Path.of(path), StandardCharsets.UTF_8)));
         }
         Files.createDirectories(file.getParent());

@@ -65,7 +65,7 @@ public class Readiness {
                 .collect(Collectors.toCollection(ArrayList::new));
 
             dbs.add("cft_task_db");
-            if (Arrays.asList(System.getenv().getOrDefault("RSE_LIB_FEATURES", "").split(",")).contains("camunda")) {
+            if (Features.enabled("camunda")) {
                 dbs.add("camunda");
             }
             if (WorkAllocation.enabled(System.getenv())) {
@@ -106,6 +106,7 @@ public class Readiness {
         try {
             var c = (HttpURLConnection) new URL("http://localhost:"
                 + ControlPlane.getEnvVar("SERVICEBUS_HTTP_PORT", 5300) + "/health").openConnection();
+            timeout(c);
             if (c.getResponseCode() == 200) {
                 return true;
             }

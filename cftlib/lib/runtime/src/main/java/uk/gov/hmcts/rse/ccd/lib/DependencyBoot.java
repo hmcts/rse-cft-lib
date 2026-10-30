@@ -84,8 +84,10 @@ public class DependencyBoot {
         }
         var thread = new Thread(() -> {
             ControlPlane.waitForAuthServer();
-            // Data store looks up the roles of the user a case is created by.
-            var dataStoreUser = System.getProperty("IDAM_DATA_STORE_SYSTEM_USER_USERNAME");
+            // Data store looks up the roles of the user a case is created by. LibRunner sets a default unless the
+            // build sets one in the environment.
+            var dataStoreUser = System.getProperty("IDAM_DATA_STORE_SYSTEM_USER_USERNAME",
+                System.getenv("IDAM_DATA_STORE_SYSTEM_USER_USERNAME"));
             if (dataStoreUser != null) {
                 // A simulator container left by an older cftlib can answer the readiness check and then be removed
                 // as compose's orphan, so retry until the simulator in this JVM answers.

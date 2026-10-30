@@ -3,12 +3,12 @@ package uk.gov.hmcts.rse;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.concurrent.Callable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import com.google.common.base.Function;
@@ -59,6 +59,10 @@ public class CftLibPlugin implements Plugin<Project> {
     // Services that only run with their feature, so their manifests are only written when a task needs them.
     private final Map<Service, File> optionalManifests = new LinkedHashMap<>();
     private final Map<Service, ManifestTask> optionalManifestTasks = new LinkedHashMap<>();
+    // Manifests of a service with a feature's arguments added, which a task with that feature launches instead of the
+    // service's own manifest.
+    private final Map<File, Map<Feature, File>> featureManifests = new LinkedHashMap<>();
+    private final Map<File, Map<Feature, ManifestTask>> featureManifestTasks = new LinkedHashMap<>();
 
     public void apply(Project project) {
         project.getPlugins().apply("java");
@@ -273,6 +277,18 @@ public class CftLibPlugin implements Plugin<Project> {
             } else if (service.feature == null) {
                 manifestTasks.add(task);
                 manifests.add(file);
+                for (var feature : Feature.values()) {
+                    if (!service.featureArgs(feature).isEmpty()) {
+                        var variant = cftlibBuildDir(project).dir(feature.name()).file(service.id()).getAsFile();
+                        var variantArgs = new ArrayList<>(args);
+                        variantArgs.addAll(service.featureArgs(feature));
+                        var variantTask = createServiceManifestTask(project, service, e.getValue(), variant,
+                            "writeManifest" + service.id() + "-" + feature.name(), variantArgs.toArray(String[]::new));
+                        featureManifests.computeIfAbsent(file, f -> new LinkedHashMap<>()).put(feature, variant);
+                        featureManifestTasks.computeIfAbsent(file, f -> new LinkedHashMap<>())
+                            .put(feature, variantTask);
+                    }
+                }
             } else {
                 optionalManifestTasks.put(service, task);
                 optionalManifests.put(service, file);
@@ -345,8 +361,14 @@ public class CftLibPlugin implements Plugin<Project> {
             j.classpath(detachedConfiguration(project, libDependencies(project, "bootstrapper")));
         });
 
-        j.args(manifests);
+        // Each service's manifest, or its variant for one of the task's features.
+        j.getArgumentProviders().add(() -> manifests.stream()
+            .map(file -> featureManifest(j, file, featureManifests).orElse(file).getAbsolutePath())
+            .toList());
         j.dependsOn(manifestTasks);
+        j.dependsOn((Callable<List<ManifestTask>>) () -> manifests.stream()
+            .flatMap(file -> featureManifest(j, file, featureManifestTasks).stream())
+            .toList());
         // authMode is set by the consuming build after this task is created, so the idam simulator
         // can only be resolved once the task graph is built.
         j.dependsOn((Callable<Object>) () -> j.authMode == AuthMode.Local
@@ -364,6 +386,15 @@ public class CftLibPlugin implements Plugin<Project> {
     }
 
 
+    private static <T> Optional<T> featureManifest(CftlibExec task, File manifest,
+                                                   Map<File, Map<Feature, T>> variants) {
+        var features = task.getResolvedFeatures();
+        return variants.getOrDefault(manifest, Map.of()).entrySet().stream()
+            .filter(variant -> features.contains(variant.getKey()))
+            .map(Map.Entry::getValue)
+            .findFirst();
+    }
+
     private List<Service> enabledServices(CftlibExec task) {
         var features = task.getResolvedFeatures();
         return optionalManifestTasks.keySet().stream().filter(s -> features.contains(s.feature)).toList();
@@ -378,7 +409,12 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private ManifestTask createServiceManifestTask(Project project, Service service, String mainClass, File file,
                                                    String... args) {
-        var result = project.getTasks().create("writeManifest" + service.id(), ManifestTask.class);
+        return createServiceManifestTask(project, service, mainClass, file, "writeManifest" + service.id(), args);
+    }
+
+    private ManifestTask createServiceManifestTask(Project project, Service service, String mainClass, File file,
+                                                   String taskName, String... args) {
+        var result = project.getTasks().create(taskName, ManifestTask.class);
         var dependency = resolveDependencyFor(project, service);
         var localProject = resolveLocalProject(project, dependency);
         if (localProject != null) {

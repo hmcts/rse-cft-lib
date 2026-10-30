@@ -8,7 +8,6 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -60,7 +59,7 @@ public class Hearings {
     }
 
     static boolean enabled(Map<String, String> env) {
-        return Arrays.asList(env.getOrDefault("RSE_LIB_FEATURES", "").split(",")).contains("hmc");
+        return Features.enabled(env, "hmc");
     }
 
     /**

@@ -46,11 +46,6 @@ public class ControlPlane {
         SERVICEBUS_READY.countDown();
     }
 
-    public static void setServiceBusError(Throwable t) {
-        INIT_EXCEPTION = t;
-        SERVICEBUS_READY.countDown();
-    }
-
     public static void setDBReady() {
         DB_READY.countDown();
     }

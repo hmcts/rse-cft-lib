@@ -43,4 +43,19 @@ public class FeatureTest {
 
         assertThat(task.getResolvedFeatures()).containsExactly(Feature.servicebus, Feature.camunda);
     }
+
+    @Test
+    public void rejectsFeaturesThatNeedLocalAuthWithoutIt() {
+        var project = ProjectBuilder.builder().build();
+        project.getPlugins().apply("java");
+        var task = project.getTasks().create("bootWithCCD", CftlibExec.class);
+        task.features("wa", "servicebus");
+
+        assertThatThrownBy(task::checkFeaturesSupportAuthMode)
+            .isInstanceOf(InvalidUserDataException.class)
+            .hasMessageContaining("The wa feature needs authMode = AuthMode.Local");
+
+        task.authMode = AuthMode.Local;
+        task.checkFeaturesSupportAuthMode();
+    }
 }
