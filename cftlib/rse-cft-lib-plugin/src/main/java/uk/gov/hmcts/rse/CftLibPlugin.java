@@ -59,8 +59,9 @@ public class CftLibPlugin implements Plugin<Project> {
     // Services that only run with their feature, so their manifests are only written when a task needs them.
     private final Map<Service, File> optionalManifests = new LinkedHashMap<>();
     private final Map<Service, ManifestTask> optionalManifestTasks = new LinkedHashMap<>();
-    // Manifests of a service with a feature's arguments added, which a task with that feature launches instead of the
-    // service's own manifest.
+    // Services that run in every task but take extra arguments with some features. Each has its own manifest, and one
+    // with each such feature's arguments added, which a task with that feature launches instead.
+    private final Map<File, ManifestTask> variableManifestTasks = new LinkedHashMap<>();
     private final Map<File, Map<Feature, File>> featureManifests = new LinkedHashMap<>();
     private final Map<File, Map<Feature, ManifestTask>> featureManifestTasks = new LinkedHashMap<>();
 
@@ -274,9 +275,8 @@ public class CftLibPlugin implements Plugin<Project> {
                 // Only built and launched by tasks running in local auth mode.
                 localAuthManifest = file;
                 localAuthManifestTask = task;
-            } else if (service.feature == null) {
-                manifestTasks.add(task);
-                manifests.add(file);
+            } else if (service.feature == null && hasFeatureArgs(service)) {
+                variableManifestTasks.put(file, task);
                 for (var feature : Feature.values()) {
                     if (!service.featureArgs(feature).isEmpty()) {
                         var variant = cftlibBuildDir(project).dir(feature.name()).file(service.id()).getAsFile();
@@ -289,6 +289,9 @@ public class CftLibPlugin implements Plugin<Project> {
                             .put(feature, variantTask);
                     }
                 }
+            } else if (service.feature == null) {
+                manifestTasks.add(task);
+                manifests.add(file);
             } else {
                 optionalManifestTasks.put(service, task);
                 optionalManifests.put(service, file);
@@ -361,13 +364,15 @@ public class CftLibPlugin implements Plugin<Project> {
             j.classpath(detachedConfiguration(project, libDependencies(project, "bootstrapper")));
         });
 
-        // Each service's manifest, or its variant for one of the task's features.
-        j.getArgumentProviders().add(() -> manifests.stream()
+        // The runtime's manifest first, as LibRunner launches it first.
+        j.args(manifests);
+        j.dependsOn(manifestTasks);
+        // Each variable service's manifest, or its variant for one of the task's features.
+        j.getArgumentProviders().add(() -> variableManifestTasks.keySet().stream()
             .map(file -> featureManifest(j, file, featureManifests).orElse(file).getAbsolutePath())
             .toList());
-        j.dependsOn(manifestTasks);
-        j.dependsOn((Callable<List<ManifestTask>>) () -> manifests.stream()
-            .flatMap(file -> featureManifest(j, file, featureManifestTasks).stream())
+        j.dependsOn((Callable<List<ManifestTask>>) () -> variableManifestTasks.entrySet().stream()
+            .map(e -> featureManifest(j, e.getKey(), featureManifestTasks).orElse(e.getValue()))
             .toList());
         // authMode is set by the consuming build after this task is created, so the idam simulator
         // can only be resolved once the task graph is built.
@@ -385,6 +390,10 @@ public class CftLibPlugin implements Plugin<Project> {
         return j;
     }
 
+
+    private static boolean hasFeatureArgs(Service service) {
+        return Arrays.stream(Feature.values()).anyMatch(feature -> !service.featureArgs(feature).isEmpty());
+    }
 
     private static <T> Optional<T> featureManifest(CftlibExec task, File manifest,
                                                    Map<File, Map<Feature, T>> variants) {

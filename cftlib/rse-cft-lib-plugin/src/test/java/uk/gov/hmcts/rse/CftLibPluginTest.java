@@ -25,6 +25,29 @@ public class CftLibPluginTest {
     }
 
     @Test
+    public void launchesTheRuntimeFirstAndTaskManagementWithWorkAllocationSettingsOnlyWithWa() {
+        Project project = ProjectBuilder.builder().build();
+        project.getPlugins().apply("java");
+        project.getPlugins().apply(CftLibPlugin.class);
+        CftlibExec task = (CftlibExec) project.getTasks().getByName("bootWithCCD");
+
+        assertThat(manifests(task).get(0)).endsWith(File.separator + "runtime");
+        assertThat(manifests(task)).anyMatch(m -> m.endsWith("cftlib" + File.separator + "wa-task-management-api"));
+
+        task.features("wa");
+
+        assertThat(manifests(task).get(0)).endsWith(File.separator + "runtime");
+        assertThat(manifests(task)).anyMatch(m -> m.endsWith("wa" + File.separator + "wa-task-management-api"))
+            .noneMatch(m -> m.endsWith("cftlib" + File.separator + "wa-task-management-api"));
+    }
+
+    private static List<String> manifests(CftlibExec task) {
+        var args = new ArrayList<>(task.getArgs());
+        task.getArgumentProviders().forEach(provider -> provider.asArguments().forEach(args::add));
+        return args;
+    }
+
+    @Test
     public void leavesXuiOutOfAProcessModeTestSuiteHoweverTheModeWasChosen() {
         // The readme shows the build script form first, and a task's dependencyMode is assigned
         // after the plugin has created the task, so the choice can only be read as it runs.
