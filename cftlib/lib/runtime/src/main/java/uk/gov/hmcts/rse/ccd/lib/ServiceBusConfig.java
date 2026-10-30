@@ -29,6 +29,7 @@ import lombok.SneakyThrows;
 public class ServiceBusConfig {
     // The emulator supports a single namespace with this name.
     static final String NAMESPACE = "sbemulatorns";
+    static final String PLACEHOLDER_SUBSCRIPTION = "cftlib";
 
     static boolean enabled(Map<String, String> env) {
         return Features.enabled(env, "servicebus");
@@ -68,7 +69,20 @@ public class ServiceBusConfig {
         var namespace = new JsonObject();
         namespace.addProperty("Name", NAMESPACE);
         namespace.add("Queues", merge(namespaces, "Queues"));
-        namespace.add("Topics", merge(namespaces, "Topics"));
+        var topics = merge(namespaces, "Topics");
+        // The emulator will not start with a topic no one subscribes to, which a feature's topic is until a service
+        // declares a subscription, so such a topic gets one of cftlib's own.
+        for (var topic : topics) {
+            var subscriptions = topic.getAsJsonObject().getAsJsonArray("Subscriptions");
+            if (subscriptions == null || subscriptions.isEmpty()) {
+                var placeholder = new JsonObject();
+                placeholder.addProperty("Name", PLACEHOLDER_SUBSCRIPTION);
+                var list = new JsonArray();
+                list.add(placeholder);
+                topic.getAsJsonObject().add("Subscriptions", list);
+            }
+        }
+        namespace.add("Topics", topics);
 
         var all = new JsonArray();
         all.add(namespace);

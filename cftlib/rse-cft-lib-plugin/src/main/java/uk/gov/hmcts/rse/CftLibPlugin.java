@@ -392,7 +392,14 @@ public class CftLibPlugin implements Plugin<Project> {
 
 
     private static boolean hasFeatureArgs(Service service) {
-        return Arrays.stream(Feature.values()).anyMatch(feature -> !service.featureArgs(feature).isEmpty());
+        var features = Arrays.stream(Feature.values()).filter(f -> !service.featureArgs(f).isEmpty()).toList();
+        // A task launches one variant of a service's manifest, so a second feature's arguments would need a manifest
+        // combining both.
+        if (features.size() > 1) {
+            throw new IllegalStateException(service + " takes arguments from more than one feature, " + features
+                + ", but a task launches one feature's variant of its manifest.");
+        }
+        return !features.isEmpty();
     }
 
     private static <T> Optional<T> featureManifest(CftlibExec task, File manifest,

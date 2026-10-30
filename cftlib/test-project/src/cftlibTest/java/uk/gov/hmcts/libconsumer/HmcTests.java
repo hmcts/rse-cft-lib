@@ -109,9 +109,10 @@ class HmcTests extends CftlibTest {
 
     @Test
     void putsAHearingThatHmiRejectsInException() {
-        cftlib().rejectNextHmiRequest(2000, "cftlib rejected the hearing request");
+        var caseReference = createCase();
+        cftlib().rejectNextHmiRequest(caseReference, 2000, "cftlib rejected the hearing request");
 
-        var hearingId = requestHearing(createCase());
+        var hearingId = requestHearing(caseReference);
 
         awaitStatus(hearingId, "EXCEPTION");
         assertThat(cftlib().getHmiRequests(hearingId), hasSize(1));

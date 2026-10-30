@@ -46,6 +46,8 @@ public enum Service {
     ),
     // Turns CCD case events into Camunda messages that start and cancel tasks.
     waCaseEventHandler(Feature.wa,
+        // Pinned, as other services and the runtime call it here.
+        "--server.port=8088",
         "--POSTGRES_HOST=${RSE_LIB_DB_HOST:localhost}",
         "--POSTGRES_PORT=${RSE_LIB_DB_PORT:6432}",
         "--POSTGRES_NAME=wa_case_event_messages_db",
@@ -65,6 +67,8 @@ public enum Service {
     ),
     // Evaluates DMNs and sends messages to Camunda, and works the standalone task process's external tasks.
     waWorkflowApi(Feature.wa,
+        // Pinned, as other services and the runtime call it here.
+        "--server.port=8099",
         "--POSTGRES_HOST=${RSE_LIB_DB_HOST:localhost}",
         "--POSTGRES_PORT=${RSE_LIB_DB_PORT:6432}",
         "--POSTGRES_NAME=wa_workflow_api",
@@ -74,6 +78,8 @@ public enum Service {
     ),
     // Runs WA's batch jobs, which cftlib triggers on request rather than on a schedule.
     waTaskMonitor(Feature.wa,
+        // Pinned, as other services and the runtime call it here.
+        "--server.port=8077",
         "--POSTGRES_HOST=${RSE_LIB_DB_HOST:localhost}",
         "--POSTGRES_PORT=${RSE_LIB_DB_PORT:6432}",
         "--POSTGRES_NAME=cft_task_db",
@@ -91,6 +97,8 @@ public enum Service {
     // Takes hearing requests, sends them to HMI through the outbound adapter and publishes hearing updates to the
     // hmc-to-cft topic.
     hmcCftHearingService(Feature.hmc,
+        // Pinned, as other services and the runtime call it here.
+        "--server.port=4561",
         "--CFT_HEARING_SERVICE_DB_HOST=${RSE_LIB_DB_HOST:localhost}",
         "--CFT_HEARING_SERVICE_DB_PORT=${RSE_LIB_DB_PORT:6432}",
         "--CFT_HEARING_SERVICE_DB_NAME=" + Hmc.DATABASE,
@@ -115,6 +123,8 @@ public enum Service {
     ),
     // Receives HMI's listings and passes them to the hearing service through the hmc-from-hmi queue.
     hmcHmiInboundAdapter(Feature.hmc,
+        // Pinned, as other services and the runtime call it here.
+        "--server.port=4559",
         "--CFT_HEARING_SERVICE_URL=http://localhost:4561",
         "--HMC_SERVICE_BUS_CONNECTION_STRING=" + Hmc.SERVICE_BUS,
         "--HMC_SERVICE_BUS_QUEUE=" + Hmc.FROM_HMI_QUEUE,
@@ -127,6 +137,8 @@ public enum Service {
     ),
     // Sends the hearing service's pending requests to HMI, which in cftlib is a stand-in in the runtime.
     hmcHmiOutboundAdapter(Feature.hmc,
+        // Pinned, as other services and the runtime call it here.
+        "--server.port=4558",
         "--CFT_HEARING_SERVICE_DB_HOST=${RSE_LIB_DB_HOST:localhost}",
         "--CFT_HEARING_SERVICE_DB_PORT=${RSE_LIB_DB_PORT:6432}",
         "--CFT_HEARING_SERVICE_DB_NAME=" + Hmc.DATABASE,

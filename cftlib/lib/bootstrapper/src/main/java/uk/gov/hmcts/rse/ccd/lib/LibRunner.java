@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -12,7 +13,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.ZipFile;
 
 import static java.lang.System.getenv;
 
@@ -39,7 +42,7 @@ public class LibRunner {
 
     @SneakyThrows
     private static void doRun(String[] args) {
-        setConfigProperties();
+        setConfigProperties(Arrays.asList(args));
         // Every manifest after the runtime is a Spring Boot application that reports when it is ready, apart from the
         // idam simulator, which runs without the cftlib agent.
         ControlPlane.expectApps((int) Arrays.stream(args).skip(1)
@@ -136,7 +139,7 @@ public class LibRunner {
         }
     }
 
-    private static void setConfigProperties() {
+    private static void setConfigProperties(List<String> manifests) {
         if (!"localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
             System.setProperty("IDAM_API_URL", "https://idam-api.aat.platform.hmcts.net");
             System.setProperty("DM_STORE_BASE_URL", "http://dm-store-aat.service.core-compute-aat.internal");
@@ -220,7 +223,7 @@ public class LibRunner {
                     + "SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;");
         }
 
-        authoriseFeatureServices();
+        authoriseFeatureServices(manifests);
 
         // Prevent definition store generating errors trying to translate welsh
         System.setProperty("WELSH_TRANSLATION_ENABLED", "false");
@@ -258,20 +261,68 @@ public class LibRunner {
      * Data store's and role assignment's default S2S allow lists name the services that call them in an environment.
      * A build that replaces a list would shut out the services its features run, so add them.
      */
-    private static void authoriseFeatureServices() {
+    private static void authoriseFeatureServices(List<String> manifests) {
         var features = Features.enabled(System.getenv());
         var services = FEATURE_SERVICES.entrySet().stream()
             .filter(e -> features.contains(e.getKey()))
             .flatMap(e -> e.getValue().stream())
             .toList();
-        for (var list : List.of("DATA_STORE_S2S_AUTHORISED_SERVICES", "ROLE_ASSIGNMENT_S2S_AUTHORISED_SERVICES")) {
-            var configured = System.getenv(list);
-            if (configured != null && !services.isEmpty()) {
+        if (services.isEmpty()) {
+            return;
+        }
+        for (var list : S2S_ALLOW_LISTS.entrySet()) {
+            // The build's list, or else the service's own default, which in data store's case leaves out WA.
+            var configured = System.getenv(list.getKey()) != null
+                ? System.getenv(list.getKey())
+                : settingDefault(manifests, list.getValue(), list.getKey());
+            if (configured != null) {
                 var names = new LinkedHashSet<>(Arrays.asList(configured.split(",")));
                 names.addAll(services);
-                System.setProperty(list, String.join(",", names));
+                System.setProperty(list.getKey(), String.join(",", names));
             }
         }
+    }
+
+    // Each allow list, with the service whose list it is.
+    private static final Map<String, String> S2S_ALLOW_LISTS = Map.of(
+        "DATA_STORE_S2S_AUTHORISED_SERVICES", "ccd-data-store-api",
+        "ROLE_ASSIGNMENT_S2S_AUTHORISED_SERVICES", "am-role-assignment-service"
+    );
+
+    /**
+     * The default a service gives one of its settings, ${SETTING:default}, in the application properties of its own
+     * jar on the classpath of the manifest LibRunner launches it from. Null if there is none.
+     */
+    @SneakyThrows
+    static String settingDefault(List<String> manifests, String service, String setting) {
+        var manifest = manifests.stream().map(File::new).filter(f -> f.getName().equals(service)).findFirst();
+        if (manifest.isEmpty()) {
+            return null;
+        }
+        var placeholder = Pattern.compile("\\$\\{" + Pattern.quote(setting) + ":([^}]*)}");
+        var lines = Files.readAllLines(manifest.get().toPath());
+        for (var entry : lines.subList(1, lines.size())) {
+            var jar = new File(entry);
+            // The service's own jar sits in a Maven directory named after it.
+            if (!jar.getName().endsWith(".jar") || jar.getParentFile() == null
+                || jar.getParentFile().getParentFile() == null
+                || !jar.getParentFile().getParentFile().getName().equals(service)) {
+                continue;
+            }
+            try (var zip = new ZipFile(jar)) {
+                for (var name : List.of("application.properties", "application.yaml", "application.yml")) {
+                    var properties = zip.getEntry(name);
+                    if (properties != null) {
+                        var matcher = placeholder.matcher(
+                            new String(zip.getInputStream(properties).readAllBytes(), StandardCharsets.UTF_8));
+                        if (matcher.find()) {
+                            return matcher.group(1);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     // A system property overrides the environment in Spring, so only set one the build has not.

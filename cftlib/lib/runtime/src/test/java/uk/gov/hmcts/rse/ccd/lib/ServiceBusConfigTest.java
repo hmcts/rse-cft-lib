@@ -78,6 +78,19 @@ class ServiceBusConfigTest {
     }
 
     @Test
+    void subscribesToATopicNoServiceSubscribesTo(@TempDir Path dir) throws Exception {
+        var config = dir.resolve("compose/servicebus/Config.json");
+
+        // hmc's topic, with no service declaring a subscription to it.
+        ServiceBusConfig.write(config, Map.of("RSE_LIB_FEATURES", "servicebus,hmc"));
+
+        JsonObject namespace = JsonParser.parseString(Files.readString(config)).getAsJsonObject()
+            .getAsJsonObject("UserConfig").getAsJsonArray("Namespaces").get(0).getAsJsonObject();
+        assertThat(subscriptionNames(namespace.getAsJsonArray("Topics").get(0).getAsJsonObject()))
+            .containsExactly("cftlib");
+    }
+
+    @Test
     void ignoresTheBuildsEntitiesWithoutTheServicebusFeature(@TempDir Path dir) throws Exception {
         var config = dir.resolve("compose/servicebus/Config.json");
 

@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,7 @@ import reactor.core.publisher.Mono;
  * <p>Each document is a folder under RSE_LIB_DM_STORE_DIR holding its metadata and content, so documents last as
  * long as the case data that refers to them, across restarts.
  */
+@Conditional(LocalAuthOnly.class)
 @RestController
 @RequestMapping(DmStore.PATH)
 public class DmStore {

@@ -7,6 +7,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
+import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import reactor.core.publisher.Mono;
  * password grant, which has no such endpoint. Tests use the runtime as their IDAM API, so {@code /o/userinfo} passes
  * through to the simulator too.
  */
+@Conditional(LocalAuthOnly.class)
 @RestController
 public class IdamLogin {
     private static final String IDAM_SIMULATOR = "http://localhost:5062";

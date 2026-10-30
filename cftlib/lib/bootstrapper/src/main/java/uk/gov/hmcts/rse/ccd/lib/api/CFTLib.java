@@ -105,6 +105,13 @@ public interface CFTLib {
     void rejectNextHmiRequest(int errorCode, String description);
 
     /**
+     * With the hmc feature, have the HMI stand-in reject the next hearing request for this case with a 400 and this
+     * error. Unlike {@link #rejectNextHmiRequest(int, String)}, a request for another case, such as a retry, cannot
+     * take the rejection.
+     */
+    void rejectNextHmiRequest(String caseReference, int errorCode, String description);
+
+    /**
      * With the hmc feature, send HMI's response to a hearing request, such as its listing, to the inbound adapter's
      * PUT /listings/{hearingId}, as HMI does.
      *

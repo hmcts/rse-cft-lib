@@ -65,6 +65,11 @@ public class CFTLibApiImpl implements CFTLib {
     }
 
     @Override
+    public void rejectNextHmiRequest(String caseReference, int errorCode, String description) {
+        Hearings.get(this).rejectNextHmiRequest(caseReference, errorCode, description);
+    }
+
+    @Override
     public void sendHmiListing(String hearingId, String body) {
         Hearings.get(this).sendHmiListing(hearingId, body);
     }

@@ -76,6 +76,21 @@ class JsonDefinitionReaderTest {
             "TaskManagementLocationTypes-MINTI.json");
     }
 
+    @Test
+    void ordersPunctuationAsDefinitionProcessorDoes() {
+        // The order Node's localeCompare(b, 'en') gives: space, then _ - , . before digits and letters.
+        var files = new ArrayList<>(List.of(
+            new File("x/Case1.json"), new File("x/Case.json"), new File("x/Case_A.json"), new File("x/Case,A.json"),
+            new File("x/Case A.json"), new File("x/CaseA.json"), new File("x/Case-A.json"), new File("x/Case.A.json")
+        ));
+
+        files.sort(JsonDefinitionReader::compareJsonFiles);
+
+        assertThat(files).extracting(File::getName).containsExactly(
+            "Case.json", "Case A.json", "Case_A.json", "Case-A.json", "Case,A.json", "Case.A.json", "Case1.json",
+            "CaseA.json");
+    }
+
     @SneakyThrows
     Map<String, DefinitionSheet> loadReferenceXlsx() {
         var parser = new SpreadsheetParser(new SpreadsheetValidator());

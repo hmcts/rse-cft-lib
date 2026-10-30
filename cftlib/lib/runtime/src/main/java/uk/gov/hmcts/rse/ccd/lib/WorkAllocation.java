@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.awaitility.Awaitility;
  */
 public class WorkAllocation {
     static final String SYSTEM_USERNAME = "wa-system-user@cftlib.local";
+    // The ports Service.waCaseEventHandler and Service.waTaskMonitor pin.
     static final String CASE_EVENT_HANDLER_URL = "http://localhost:8088";
     static final String TASK_MONITOR_URL = "http://localhost:8077";
     static final String DEFAULT_SOURCE = "datastore:public";
@@ -49,6 +51,9 @@ public class WorkAllocation {
     // The newest event in each source from before this run started. Those events, a previous run's, are not
     // delivered.
     private final Map<Source, Long> delivered = new LinkedHashMap<>();
+    private static final int MAX_DELIVERY_ATTEMPTS = 5;
+    // Failed attempts to deliver each event, by source and id.
+    private final Map<String, Integer> attempts = new HashMap<>();
     private LocalDateTime started;
 
     record Source(String database, String schema) {
@@ -129,10 +134,9 @@ public class WorkAllocation {
     private void prepare() {
         api.createIdamUser(SYSTEM_USERNAME, systemUserRoles(System.getenv()));
         try (var bpmn = getClass().getResourceAsStream("/wa/wa-task-initiation-ia-asylum.bpmn")) {
-            // WA deploys its task process without a tenant, so every service's DMNs can start it.
-            var file = File.createTempFile("wa-task-initiation", ".bpmn");
-            Files.write(file.toPath(), bpmn.readAllBytes());
-            importCamundaDefinitions(null, file);
+            // WA deploys its task process without a tenant, so every service's DMNs can start it. Under its own
+            // name, so that Camunda recognises it on the next boot and keeps the version it has.
+            deploy(null, Map.of("wa-task-initiation-ia-asylum.bpmn", bpmn.readAllBytes()));
         }
         for (var source : delivered.keySet()) {
             delivered.put(source, newestEventBefore(source, started));
@@ -144,6 +148,18 @@ public class WorkAllocation {
      */
     @SneakyThrows
     void importCamundaDefinitions(String tenantId, File... files) {
+        var resources = new LinkedHashMap<String, byte[]>();
+        for (var file : files) {
+            resources.put(file.getName(), Files.readAllBytes(file.toPath()));
+        }
+        deploy(tenantId, resources);
+    }
+
+    /**
+     * Deploy BPMN and DMN resources by name. Camunda only makes a new version of a resource whose content changed.
+     */
+    @SneakyThrows
+    private void deploy(String tenantId, Map<String, byte[]> resources) {
         var engine = camundaUrl();
         Awaitility.await().atMost(5, TimeUnit.MINUTES).pollInterval(Duration.ofSeconds(2)).ignoreExceptions()
             .until(() -> http.send(HttpRequest.newBuilder(URI.create(engine + "/engine")).build(),
@@ -162,11 +178,11 @@ public class WorkAllocation {
             body.writeBytes(("--" + boundary + "\r\nContent-Disposition: form-data; name=\"" + field.getKey()
                 + "\"\r\n\r\n" + field.getValue() + "\r\n").getBytes(StandardCharsets.UTF_8));
         }
-        for (var file : files) {
-            body.writeBytes(("--" + boundary + "\r\nContent-Disposition: form-data; name=\"" + file.getName()
-                + "\"; filename=\"" + file.getName() + "\"\r\nContent-Type: application/octet-stream\r\n\r\n")
+        for (var resource : resources.entrySet()) {
+            body.writeBytes(("--" + boundary + "\r\nContent-Disposition: form-data; name=\"" + resource.getKey()
+                + "\"; filename=\"" + resource.getKey() + "\"\r\nContent-Type: application/octet-stream\r\n\r\n")
                 .getBytes(StandardCharsets.UTF_8));
-            body.writeBytes(Files.readAllBytes(file.toPath()));
+            body.writeBytes(resource.getValue());
             body.writeBytes("\r\n".getBytes(StandardCharsets.UTF_8));
         }
         body.writeBytes(("--" + boundary + "--\r\n").getBytes(StandardCharsets.UTF_8));
@@ -210,12 +226,14 @@ public class WorkAllocation {
                 var events = query.executeQuery();
                 while (events.next()) {
                     var id = events.getLong(1);
-                    post(events.getString(2));
+                    var sent = deliver(source, id, events.getString(2));
                     entry.setValue(id);
-                    var published = c.prepareStatement("update " + source.schema()
-                        + ".message_queue_candidates set published = now() where id = ?");
-                    published.setLong(1, id);
-                    published.execute();
+                    if (sent) {
+                        var published = c.prepareStatement("update " + source.schema()
+                            + ".message_queue_candidates set published = now() where id = ?");
+                        published.setLong(1, id);
+                        published.execute();
+                    }
                 }
             } catch (SQLException e) {
                 // A decentralised service creates its table when it first starts; until then there is nothing to send.
@@ -223,6 +241,29 @@ public class WorkAllocation {
                     throw e;
                 }
             }
+        }
+    }
+
+    /**
+     * Post a case event, retrying it on later passes so that each case's events stay in order. As WA's Service Bus
+     * subscription dead-letters a message it keeps failing, an event still rejected after a few attempts is set aside,
+     * so that it cannot hold up every later event. Returns whether the event was delivered.
+     */
+    private boolean deliver(Source source, long id, String event) {
+        var key = source + ":" + id;
+        try {
+            post(event);
+            attempts.remove(key);
+            return true;
+        } catch (RuntimeException e) {
+            int attempt = attempts.merge(key, 1, Integer::sum);
+            if (attempt < MAX_DELIVERY_ATTEMPTS) {
+                throw e;
+            }
+            attempts.remove(key);
+            System.out.println("**** cftlib gave up delivering case event " + id + " from " + source + " to work "
+                + "allocation after " + attempt + " attempts, and moved on to the next: " + e.getMessage());
+            return false;
         }
     }
 

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +33,7 @@ import org.awaitility.Awaitility;
 public class Hearings {
     static final String SYSTEM_USERNAME = "hmc-system-user@cftlib.local";
     static final String SYSTEM_PASSWORD = "password";
+    // The port Service.hmcHmiInboundAdapter pins.
     static final String INBOUND_ADAPTER_URL = "http://localhost:4559";
     static final String IDAM_URL = "http://localhost:5062";
     // In java.io.tmpdir, as the hmcCftHearingService service's arguments expect.
@@ -39,6 +41,8 @@ public class Hearings {
 
     // The hearing id that HMC sends HMI in a new hearing's request, as the hearing's case listing.
     private static final Pattern CASE_LISTING_ID = Pattern.compile("\"caseListingRequestId\"\\s*:\\s*\"([^\"]+)\"");
+    // The case a request to HMI is for.
+    private static final Pattern CASE_REFERENCE = Pattern.compile("\"caseIdHMCTS\"\\s*:\\s*\"([^\"]+)\"");
 
     record HmiRequest(String method, String hearingId, String body) {
     }
@@ -47,7 +51,9 @@ public class Hearings {
     }
 
     private static final List<HmiRequest> requests = new CopyOnWriteArrayList<>();
+    // Rejections for any case's next request, and for a particular case's.
     private static final Queue<Rejection> rejections = new ConcurrentLinkedQueue<>();
+    private static final Map<String, Queue<Rejection>> caseRejections = new ConcurrentHashMap<>();
     private static volatile boolean ready;
 
     private final CFTLibApiImpl api;
@@ -134,7 +140,10 @@ public class Hearings {
             hearingId = matcher.find() ? matcher.group(1) : null;
         }
         requests.add(new HmiRequest(method, hearingId, body));
-        return rejections.poll();
+        var caseReference = CASE_REFERENCE.matcher(body == null ? "" : body);
+        var forCase = caseReference.find() ? caseRejections.get(caseReference.group(1)) : null;
+        var rejection = forCase == null ? null : forCase.poll();
+        return rejection != null ? rejection : rejections.poll();
     }
 
     List<String> hmiRequests(String hearingId) {
@@ -146,6 +155,11 @@ public class Hearings {
 
     void rejectNextHmiRequest(int errorCode, String description) {
         rejections.add(new Rejection(errorCode, description));
+    }
+
+    void rejectNextHmiRequest(String caseReference, int errorCode, String description) {
+        caseRejections.computeIfAbsent(caseReference, c -> new ConcurrentLinkedQueue<>())
+            .add(new Rejection(errorCode, description));
     }
 
     /**

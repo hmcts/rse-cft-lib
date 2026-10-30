@@ -237,17 +237,16 @@ public class JsonDefinitionReader extends SpreadsheetParser {
         return Integer.compare(first.length(), second.length());
     }
 
-    // English collation for the characters in definition paths: punctuation, then digits, then letters.
+    // ASCII punctuation in the order localeCompare(b, 'en') puts it, which is ICU's, before digits and letters.
+    // java.text.Collator orders it differently, and ignores '-', so it would reorder definition files.
+    private static final String PUNCTUATION = " _-,;:!?.'\"()[]{}@*/\\&#%`^+<=>|~$";
+
     private static int collationKey(char c) {
-        return switch (c) {
-            case '_' -> 1;
-            case '-' -> 2;
-            case '.' -> 3;
-            case '/', '\\' -> 4;
-            default -> Character.isDigit(c) ? 100 + c
-                : Character.isLetter(c) ? 1000 + Character.toLowerCase(c)
-                : 10 + c;
-        };
+        int punctuation = PUNCTUATION.indexOf(c);
+        return punctuation >= 0 ? punctuation
+            : Character.isDigit(c) ? 100 + c
+            : Character.isLetter(c) ? 1000 + Character.toLowerCase(c)
+            : 100_000 + c;
     }
 
     // Equal but for case: lower case first, as ICU orders it.
