@@ -86,6 +86,12 @@ public final class CftlibConfig {
      */
     public static String esUrl() {
         var configured = ControlPlane.getEnvVar("SEARCH_ELASTIC_HOSTS", "http://localhost:9200");
+        // Blank counts as unset, as it does everywhere else a variable is read here. An exported
+        // but empty value would otherwise leave every readiness poll building a url with no host
+        // and failing on it, for the whole of its ten minutes, against a stub that was serving.
+        if (configured.isBlank()) {
+            configured = "http://localhost:9200";
+        }
         // The data store accepts a comma separated list and tolerates a trailing slash; callers
         // here append paths to a single host, so take the first and drop the slash.
         var first = configured.split(",")[0].trim();

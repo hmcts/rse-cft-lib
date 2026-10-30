@@ -23,7 +23,13 @@ public class LibRunner {
     // alongside the runtime rather than behind the auth gate.
     private static final String AUTH_SERVER_MANIFEST = "rse-idam-simulator";
     private static final int AUTH_SERVER_PORT = 5062;
-    private static final int AUTH_SERVER_PORT_WAIT_SECONDS = 60;
+    /**
+     * Long enough for the compose run that frees the port to get there. It removes the orphan
+     * holding it as part of an up that resolves and pulls images first, and a cold pull of
+     * postgres and elasticsearch is minutes on its own — which is why this waits in multiples of
+     * what the bind itself needs. It says what it is waiting for while it waits.
+     */
+    private static final int AUTH_SERVER_PORT_WAIT_SECONDS = 300;
 
     public static void main(String[] args) throws Exception {
         Thread.currentThread().setName("**** cftlib bootstrap");

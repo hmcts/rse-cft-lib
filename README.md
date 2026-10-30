@@ -466,7 +466,11 @@ Because that build would otherwise run before every test suite, a process mode `
 
 Unlike the containers, which are left up between runs, the postgres and XUI processes are shut down with the JVM. What makes a restart fast is the state they leave on disk rather than the processes themselves: the postgres data directory persists, so the server comes back in about a second with its databases intact, and XUI's clone, dependencies and build output are cached, so only the node startup is repeated. `RSE_LIB_CLEAN_BOOT` recreates both.
 
-A JVM killed outright — `kill -9`, or an application that calls `Runtime.halt` — gets no chance to shut them down. Cftlib recognises a postgres or XUI left behind by one of its own boots and reuses it, so the next boot in process mode carries on, but the port stays occupied until that process exits, which will stop the containers binding if you switch back to docker mode. Anything else holding one of these ports is reported rather than used, since serving from a stale container is worse than failing.
+Cftlib creates the cluster with UTF-8 encoding and the `C` collation, so that what a text comparison answers is the same on every machine rather than following the developer's locale. `initdb` settles that once, for the life of the data directory: a directory made by an earlier cftlib keeps the locale it was created with until `RSE_LIB_CLEAN_BOOT` remakes it.
+
+A JVM killed outright — `kill -9` — gets no chance to shut them down; the control plane's own halting paths stop them first. The next process mode boot recognises what one of its own boots left on these ports: it reuses the postgres, whose state is on disk either way, and stops the XUI, which it then rebuilds and relaunches rather than serve a build it cannot account for. Either way the port is occupied until that boot runs, which will stop the containers binding if you switch back to docker mode in between.
+
+A boot claims XUI's port for as long as it runs, before it starts building, and a second boot that wants the same port is turned away there and then. It has to be: a boot that is still building has not bound the port yet, so without the claim the second boot would find it free, build, lose the race to bind, and go on serving the first boot's XUI with the first boot's environment. Two projects that both want XUI need different `XUI_PORT`s, as they already need different `RSE_LIB_DB_PORT`s. Anything else holding one of these ports is reported rather than used, since serving from a stale container is worse than failing.
 
 ### Live reload
 

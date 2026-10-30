@@ -270,11 +270,12 @@ class EsStubSources {
     private boolean holdsCaseType(Source source, String caseTypeId) throws SQLException {
         // Only hits are remembered. A case type has no rows until its first case is created, and
         // callers poll a search until one appears, so a miss must stay a miss.
-        if (caseTypeOwners.contains(source.database() + "." + caseTypeId)) {
+        var owner = source.database() + "." + source.schema() + "." + caseTypeId;
+        if (caseTypeOwners.contains(owner)) {
             return true;
         }
         if (probeCaseType(source, caseTypeId)) {
-            caseTypeOwners.add(source.database() + "." + caseTypeId);
+            caseTypeOwners.add(owner);
             return true;
         }
         return false;

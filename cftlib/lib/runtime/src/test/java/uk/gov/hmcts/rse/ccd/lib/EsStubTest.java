@@ -45,7 +45,11 @@ class EsStubTest {
     void startStack() throws Exception {
         // As cftlib's own wrapper configures it: the encoding decides whether an accented
         // character is one character or a string of bytes to every expression below.
-        postgres = EmbeddedPostgres.builder().setLocaleConfig("encoding", "UTF8").start();
+        postgres = EmbeddedPostgres.builder()
+            .setLocaleConfig("encoding", "UTF8")
+            .setLocaleConfig("lc-collate", "C")
+            .setLocaleConfig("lc-ctype", "C")
+            .start();
         try (var c = connect("postgres"); var s = c.createStatement()) {
             s.execute("create database datastore");
         }

@@ -121,12 +121,17 @@ public class EmbeddedPostgres implements ManagedDependency {
         try {
             instance = io.zonky.test.db.postgres.embedded.EmbeddedPostgres.builder()
                 .setPort(port)
-                // initdb otherwise takes its encoding from the environment's locale, and under a
-                // plain C locale it picks SQL_ASCII, where every multi-byte character is a string
-                // of separate bytes: accented case data then tokenises and folds differently from
-                // the same case on a machine whose locale is a UTF-8 one. The data directory
-                // outlives the boot, so the choice is frozen the first time.
+                // Spelt out, because initdb otherwise takes all of it from the environment's
+                // locale and the data directory then freezes that choice for every later boot.
+                // Under a plain C locale it picks SQL_ASCII, where a multi-byte character is a
+                // string of separate bytes and accented case data folds differently from the
+                // same case on a UTF-8 machine. The collation decides what a text comparison
+                // answers — whether a stored 'ashley' is inside a bound of 'Z' — and a search
+                // that depends on the developer's locale for which cases come back is worse than
+                // one that sorts by byte everywhere. C is the only name every platform has.
                 .setLocaleConfig("encoding", "UTF8")
+                .setLocaleConfig("lc-collate", "C")
+                .setLocaleConfig("lc-ctype", "C")
                 .setDataDirectory(dataDirectory.toFile())
                 .setCleanDataDirectory(false)
                 .setRegisterShutdownHook(!leaveRunning)

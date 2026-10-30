@@ -75,6 +75,38 @@ class EsStubSourceShapeTest {
             .until(() -> sources.sourcesFor("pcs_cases").get(0).decentralised());
     }
 
+    @Test
+    void tellsTwoSchemasOfOneDatabaseApart() throws Exception {
+        try (var c = connect("postgres"); var s = c.createStatement()) {
+            s.execute("create database twoschemas");
+        }
+        try (var c = connect("twoschemas"); var s = c.createStatement()) {
+            // Both schemas hold case data, which is why a source names one of them, and only
+            // one of them holds this case type.
+            s.execute("create schema ccd");
+            s.execute("create table ccd.case_data (id bigint, reference bigint, case_type_id varchar(255))");
+            s.execute("create table ccd.case_event (id bigint, case_data_id bigint)");
+            s.execute("create table public.case_data (id bigint, reference bigint, case_type_id varchar(255))");
+            s.execute("create table public.case_event (id bigint, case_data_id bigint)");
+            s.execute("insert into public.case_data values (1, 1234567890123456, 'PCS')");
+        }
+
+        var sources = new EsStubSources("twoschemas:ccd,twoschemas:public",
+            EsStubSourceShapeTest::connect, java.util.Set.of());
+
+        // Answering from ccd would search a schema this case type has no rows in, so the search
+        // would come back empty — or fail, where that schema has no such table at all. Asked
+        // twice, because the first answer is what fills the cache that the second reads: a
+        // remembered hit has to belong to the schema it was found in.
+        assertThat(sources.sourcesFor("pcs_cases"))
+            .extracting(EsStubSources.Source::schema)
+            .containsExactly("public");
+        assertThat(sources.sourcesFor("pcs_cases"))
+            .as("the schema the case type was found in is the one remembered")
+            .extracting(EsStubSources.Source::schema)
+            .containsExactly("public");
+    }
+
     private static Connection connect(String database) throws SQLException {
         return DriverManager.getConnection(
             postgres.getJdbcUrl("postgres", database) + "&stringtype=unspecified", "postgres", "postgres");

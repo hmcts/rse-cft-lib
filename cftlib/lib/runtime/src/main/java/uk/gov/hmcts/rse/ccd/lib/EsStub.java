@@ -302,13 +302,15 @@ public class EsStub implements ManagedDependency {
 
         var hits = mapper.createArrayNode();
         long total = 0;
-        var wanted = search.from() + search.size();
+        // Counted as a long: from and size are each only required to be a non-negative int, and
+        // a size near the top of that range would otherwise wrap into a page nobody asked for.
+        var wanted = (long) search.from() + search.size();
         var answering = 0;
         for (var source : matching) {
             try (var c = connect(source)) {
                 var before = hits.size();
                 if (wanted > 0) {
-                    collect(c, source, index, search, wanted, hits);
+                    collect(c, source, index, search, (int) Math.min(wanted, Integer.MAX_VALUE), hits);
                 }
                 var returned = hits.size() - before;
                 if (returned > 0) {

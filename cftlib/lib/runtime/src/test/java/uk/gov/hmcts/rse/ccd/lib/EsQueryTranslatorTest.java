@@ -353,7 +353,10 @@ class EsQueryTranslatorTest {
         var search = translate("{\"query\":{\"range\":{\"data.dueDate\":"
             + "{\"from\":\"2024-01-01\",\"to\":\"2024-02-01\",\"include_lower\":true,\"include_upper\":false}}}}");
 
-        assertThat(search.where()).contains("v.val >= ?").contains("v.val < ?");
+        // Bounded against the terms a real cluster holds, which the normalizer has folded.
+        assertThat(search.where())
+            .contains(normalised("v.val") + " >= " + normalised("?::text"))
+            .contains(normalised("v.val") + " < " + normalised("?::text"));
         assertThat(search.whereParams()).containsExactly(
             "lax $.\"dueDate\"", "2024-01-01", "lax $.\"dueDate\"", "2024-02-01");
     }

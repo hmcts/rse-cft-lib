@@ -68,6 +68,11 @@ enum XuiApp {
         return envPrefix;
     }
 
+    /** The variable that moves this app off its default port. */
+    String portVariable() {
+        return portVariable;
+    }
+
     List<String> installArgs() {
         return installArgs;
     }
