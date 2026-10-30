@@ -52,16 +52,18 @@ public class WorkAllocation {
     private LocalDateTime started;
 
     record Source(String database, String schema) {
-        static List<Source> parse(String value) {
-            return Arrays.stream(value.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .map(s -> {
-                    var parts = s.split(":");
-                    return new Source(parts[0], parts.length > 1 ? parts[1] : "public");
-                })
-                .toList();
-        }
+    }
+
+    // database:schema pairs, the schema defaulting to public.
+    static List<Source> parseSources(String value) {
+        return Arrays.stream(value.split(","))
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .map(s -> {
+                var parts = s.split(":");
+                return new Source(parts[0], parts.length > 1 ? parts[1] : "public");
+            })
+            .toList();
     }
 
     WorkAllocation(CFTLibApiImpl api, List<Source> sources) {
@@ -75,7 +77,7 @@ public class WorkAllocation {
 
     static List<Source> sources(Map<String, String> env) {
         var extra = env.getOrDefault("RSE_LIB_WA_CASE_EVENT_SOURCES", "");
-        return Source.parse(DEFAULT_SOURCE + "," + extra);
+        return parseSources(DEFAULT_SOURCE + "," + extra);
     }
 
     /**
@@ -259,7 +261,7 @@ public class WorkAllocation {
     // also use.
     @SneakyThrows
     private LocalDateTime databaseTime() {
-        try (var c = connect(Source.parse(DEFAULT_SOURCE).get(0))) {
+        try (var c = connect(parseSources(DEFAULT_SOURCE).get(0))) {
             var result = c.prepareStatement("select localtimestamp").executeQuery();
             result.next();
             return result.getTimestamp(1).toLocalDateTime();
