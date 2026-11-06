@@ -38,6 +38,16 @@ task zipCompose(type: Zip) {
 
 processResources {
     from zipCompose
+    // WA's task process, which cftlib deploys to Camunda with the wa feature.
+    from(rootProject.file('../resources/wa-standalone-task-bpmn/src/main/resources')) {
+        include '*.bpmn'
+        into 'wa'
+    }
+    // The hearing service's room attributes, which it reads as a file rather than a classpath resource.
+    from(rootProject.file('../projects/hmc-cft-hearing-service/src/main/resources')) {
+        include 'room-attributes.json'
+        into 'hmc'
+    }
 }
 
 test {

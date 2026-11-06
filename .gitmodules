@@ -28,3 +28,27 @@
 [submodule "projects/rse-idam-simulator"]
 	path = projects/rse-idam-simulator
 	url = https://github.com/hmcts/rse-idam-simulator.git
+[submodule "projects/wa-case-event-handler"]
+	path = projects/wa-case-event-handler
+	url = https://github.com/hmcts/wa-case-event-handler.git
+[submodule "projects/wa-workflow-api"]
+	path = projects/wa-workflow-api
+	url = https://github.com/hmcts/wa-workflow-api.git
+[submodule "projects/wa-task-monitor"]
+	path = projects/wa-task-monitor
+	url = https://github.com/hmcts/wa-task-monitor.git
+[submodule "resources/wa-standalone-task-bpmn"]
+	path = resources/wa-standalone-task-bpmn
+	url = https://github.com/hmcts/wa-standalone-task-bpmn.git
+[submodule "projects/hmc-cft-hearing-service"]
+	path = projects/hmc-cft-hearing-service
+	url = https://github.com/hmcts/hmc-cft-hearing-service.git
+[submodule "projects/hmc-hmi-inbound-adapter"]
+	path = projects/hmc-hmi-inbound-adapter
+	url = https://github.com/hmcts/hmc-hmi-inbound-adapter.git
+[submodule "projects/hmc-hmi-outbound-adapter"]
+	path = projects/hmc-hmi-outbound-adapter
+	url = https://github.com/hmcts/hmc-hmi-outbound-adapter.git
+[submodule "projects/camunda-bpm"]
+	path = projects/camunda-bpm
+	url = https://github.com/hmcts/camunda-bpm.git

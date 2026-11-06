@@ -581,3 +581,28 @@ Copy and run the complete fat jars from the docker images in the hmcts container
 cons:
  * Transient images - HMCTS container images are cleared down after a time
  * Classpath injection harder with fat jars
+
+### Optional local integrations
+
+Tasks can request additional integrations with `features 'wa', 'hmc'`, or with
+`RSE_LIB_FEATURES=wa,hmc` for one run. With no features, existing service defaults and
+consumer overrides are preserved.
+
+| Feature | Provides | Requires |
+| --- | --- | --- |
+| `camunda` | In-process Camunda engine | |
+| `servicebus` | Azure Service Bus emulator | Docker dependency mode |
+| `localServices` | Local dm-store and IDAM compatibility endpoints; data-store system user | Local auth |
+| `wa` | Work allocation services and case-event delivery | `camunda`, `localServices` |
+| `hmc` | Hearing service, HMI adapters and controllable HMI stand-in | `servicebus`, `localServices` |
+
+For documents alone, set `features 'localServices'` and `authMode = AuthMode.Local`.
+This supplies a default `DM_STORE_BASE_URL` and document URL pattern only when the
+build has not configured them. If you enable `wa` or `hmc` while running your own
+document store, set `DM_STORE_BASE_URL` explicitly. Files live under `build/cftlib/dm-store`; `clean`
+removes them. Existing local-auth tasks do not opt into these defaults automatically.
+
+WA reads new case events from CCD and any `database:schema` pairs in
+`RSE_LIB_WA_CASE_EVENT_SOURCES`. It replaces the JMS delivery path for local tests;
+do not run another publisher for the same WA destination. Events rejected five
+times are set aside for that run.

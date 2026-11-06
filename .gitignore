@@ -8,3 +8,5 @@ log
 *.iml
 *.ipr
 *.iws
+# Written by logback when a test runs the bootstrapper without cftlib_log_file set.
+cftlib_log_file_IS_UNDEFINED

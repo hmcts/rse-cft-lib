@@ -5,8 +5,10 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import com.google.common.base.Function;
@@ -32,21 +34,36 @@ import org.gradle.testing.jacoco.plugins.JacocoPluginExtension;
 
 public class CftLibPlugin implements Plugin<Project> {
 
-    final Map<Service, String> projects = Map.of(
-            Service.amRoleAssignmentService, "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication",
-            Service.ccdDataStoreApi, "uk.gov.hmcts.ccd.CoreCaseDataApplication",
-            Service.ccdDefinitionStoreApi, "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication",
-            Service.ccdUserProfileApi, "uk.gov.hmcts.ccd.UserProfileApplication",
-            Service.aacManageCaseAssignment, "uk.gov.hmcts.reform.managecase.Application",
-            Service.ccdCaseDocumentAmApi, "uk.gov.hmcts.reform.ccd.documentam.Application",
-            Service.dgDocassemblyApi, "uk.gov.hmcts.reform.dg.docassembly.Application",
-            Service.waTaskManagementApi, "uk.gov.hmcts.reform.wataskmanagementapi.Application",
-            Service.rseIdamSimulator, "uk.gov.hmcts.reform.rse.idam.simulator.Application"
+    final Map<Service, String> projects = Map.ofEntries(
+            Map.entry(Service.amRoleAssignmentService, "uk.gov.hmcts.reform.roleassignment.RoleAssignmentApplication"),
+            Map.entry(Service.ccdDataStoreApi, "uk.gov.hmcts.ccd.CoreCaseDataApplication"),
+            Map.entry(Service.ccdDefinitionStoreApi, "uk.gov.hmcts.ccd.definition.store.CaseDataAPIApplication"),
+            Map.entry(Service.ccdUserProfileApi, "uk.gov.hmcts.ccd.UserProfileApplication"),
+            Map.entry(Service.aacManageCaseAssignment, "uk.gov.hmcts.reform.managecase.Application"),
+            Map.entry(Service.ccdCaseDocumentAmApi, "uk.gov.hmcts.reform.ccd.documentam.Application"),
+            Map.entry(Service.dgDocassemblyApi, "uk.gov.hmcts.reform.dg.docassembly.Application"),
+            Map.entry(Service.waTaskManagementApi, "uk.gov.hmcts.reform.wataskmanagementapi.Application"),
+            Map.entry(Service.rseIdamSimulator, "uk.gov.hmcts.reform.rse.idam.simulator.Application"),
+            Map.entry(Service.camundaBpm, "uk.gov.hmcts.reform.camunda.bpm.CamundaApplication"),
+            Map.entry(Service.waCaseEventHandler, "uk.gov.hmcts.reform.wacaseeventhandler.Application"),
+            Map.entry(Service.waWorkflowApi, "uk.gov.hmcts.reform.waworkflowapi.Application"),
+            Map.entry(Service.waTaskMonitor, "uk.gov.hmcts.reform.wataskmonitor.Application"),
+            Map.entry(Service.hmcCftHearingService, "uk.gov.hmcts.reform.hmc.Application"),
+            Map.entry(Service.hmcHmiInboundAdapter, "uk.gov.hmcts.reform.hmc.Application"),
+            Map.entry(Service.hmcHmiOutboundAdapter, "uk.gov.hmcts.reform.hmc.Application")
     );
     private final List<File> manifests = new ArrayList<>();
     private final List<ManifestTask> manifestTasks = Lists.newArrayList();
     private File localAuthManifest;
     private ManifestTask localAuthManifestTask;
+    // Services that only run with their feature, so their manifests are only written when a task needs them.
+    private final Map<Service, File> optionalManifests = new LinkedHashMap<>();
+    private final Map<Service, ManifestTask> optionalManifestTasks = new LinkedHashMap<>();
+    // Services that run in every task but take extra arguments with some features. Each has its own manifest, and one
+    // with each such feature's arguments added, which a task with that feature launches instead.
+    private final Map<File, ManifestTask> variableManifestTasks = new LinkedHashMap<>();
+    private final Map<File, Map<Feature, File>> featureManifests = new LinkedHashMap<>();
+    private final Map<File, Map<Feature, ManifestTask>> featureManifestTasks = new LinkedHashMap<>();
 
     public void apply(Project project) {
         project.getPlugins().apply("java");
@@ -253,15 +270,31 @@ public class CftLibPlugin implements Plugin<Project> {
                 "--rse.lib.service_name=" + service);
 
             args.addAll(service.args);
-            var task = createServiceManifestTask(project, service, e.getValue(), file,
-                args.toArray(String[]::new));
+            var task = createServiceManifestTask(project, service, e.getValue(), file, args.toArray(String[]::new));
             if (service == Service.rseIdamSimulator) {
                 // Only built and launched by tasks running in local auth mode.
                 localAuthManifest = file;
                 localAuthManifestTask = task;
-            } else {
+            } else if (service.feature == null && hasFeatureArgs(service)) {
+                variableManifestTasks.put(file, task);
+                for (var feature : Feature.values()) {
+                    if (!service.featureArgs(feature).isEmpty()) {
+                        var variant = cftlibBuildDir(project).dir(feature.name()).file(service.id()).getAsFile();
+                        var variantArgs = new ArrayList<>(args);
+                        variantArgs.addAll(service.featureArgs(feature));
+                        var variantTask = createServiceManifestTask(project, service, e.getValue(), variant,
+                            "writeManifest" + service.id() + "-" + feature.name(), variantArgs.toArray(String[]::new));
+                        featureManifests.computeIfAbsent(file, f -> new LinkedHashMap<>()).put(feature, variant);
+                        featureManifestTasks.computeIfAbsent(file, f -> new LinkedHashMap<>())
+                            .put(feature, variantTask);
+                    }
+                }
+            } else if (service.feature == null) {
                 manifestTasks.add(task);
                 manifests.add(file);
+            } else {
+                optionalManifestTasks.put(service, task);
+                optionalManifests.put(service, file);
             }
         }
     }
@@ -331,8 +364,16 @@ public class CftLibPlugin implements Plugin<Project> {
             j.classpath(detachedConfiguration(project, libDependencies(project, "bootstrapper")));
         });
 
+        // The runtime's manifest first, as LibRunner launches it first.
         j.args(manifests);
         j.dependsOn(manifestTasks);
+        // Each variable service's manifest, or its variant for one of the task's features.
+        j.getArgumentProviders().add(() -> variableManifestTasks.keySet().stream()
+            .map(file -> featureManifest(j, file, featureManifests).orElse(file).getAbsolutePath())
+            .toList());
+        j.dependsOn((Callable<List<ManifestTask>>) () -> variableManifestTasks.entrySet().stream()
+            .map(e -> featureManifest(j, e.getKey(), featureManifestTasks).orElse(e.getValue()))
+            .toList());
         // authMode is set by the consuming build after this task is created, so the idam simulator
         // can only be resolved once the task graph is built.
         j.dependsOn((Callable<Object>) () -> j.authMode == AuthMode.Local
@@ -341,9 +382,39 @@ public class CftLibPlugin implements Plugin<Project> {
         j.getArgumentProviders().add(() -> j.authMode == AuthMode.Local
             ? List.of(localAuthManifest.getAbsolutePath())
             : List.of());
+        // The services of the task's features, decided once the build script has configured the task.
+        j.dependsOn((Callable<List<ManifestTask>>) () -> enabledServices(j).stream()
+            .map(optionalManifestTasks::get).toList());
+        j.getArgumentProviders().add(() -> enabledServices(j).stream()
+            .map(service -> optionalManifests.get(service).getAbsolutePath()).toList());
         return j;
     }
 
+
+    private static boolean hasFeatureArgs(Service service) {
+        var features = Arrays.stream(Feature.values()).filter(f -> !service.featureArgs(f).isEmpty()).toList();
+        // A task launches one variant of a service's manifest, so a second feature's arguments would need a manifest
+        // combining both.
+        if (features.size() > 1) {
+            throw new IllegalStateException(service + " takes arguments from more than one feature, " + features
+                + ", but a task launches one feature's variant of its manifest.");
+        }
+        return !features.isEmpty();
+    }
+
+    private static <T> Optional<T> featureManifest(CftlibExec task, File manifest,
+                                                   Map<File, Map<Feature, T>> variants) {
+        var features = task.getResolvedFeatures();
+        return variants.getOrDefault(manifest, Map.of()).entrySet().stream()
+            .filter(variant -> features.contains(variant.getKey()))
+            .map(Map.Entry::getValue)
+            .findFirst();
+    }
+
+    private List<Service> enabledServices(CftlibExec task) {
+        var features = task.getResolvedFeatures();
+        return optionalManifestTasks.keySet().stream().filter(s -> features.contains(s.feature)).toList();
+    }
 
     Dependency[] libDependencies(Project project, String... libDeps) {
         return Arrays.stream(libDeps)
@@ -354,7 +425,12 @@ public class CftLibPlugin implements Plugin<Project> {
 
     private ManifestTask createServiceManifestTask(Project project, Service service, String mainClass, File file,
                                                    String... args) {
-        var result = project.getTasks().create("writeManifest" + service.id(), ManifestTask.class);
+        return createServiceManifestTask(project, service, mainClass, file, "writeManifest" + service.id(), args);
+    }
+
+    private ManifestTask createServiceManifestTask(Project project, Service service, String mainClass, File file,
+                                                   String taskName, String... args) {
+        var result = project.getTasks().create(taskName, ManifestTask.class);
         var dependency = resolveDependencyFor(project, service);
         var localProject = resolveLocalProject(project, dependency);
         if (localProject != null) {

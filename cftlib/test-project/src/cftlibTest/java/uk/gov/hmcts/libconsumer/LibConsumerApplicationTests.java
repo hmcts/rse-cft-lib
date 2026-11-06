@@ -1,9 +1,10 @@
 package uk.gov.hmcts.libconsumer;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -34,10 +35,12 @@ import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.util.FileSystemUtils;
 import uk.gov.hmcts.rse.ccd.lib.Database;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
@@ -261,8 +264,41 @@ class LibConsumerApplicationTests extends CftlibTest {
     @Order(5)
     @SneakyThrows
     @Test
-    void testJsonDefinitionImport() {
-        cftlib().importJsonDefinition(new File("../lib/cftlib-agent/src/test/resources/definition"));
+    void testJsonDefinitionImport(@TempDir Path definition) {
+        copyJsonImportFixture(definition);
+        cftlib().importJsonDefinition(definition.toFile());
+    }
+
+    @Order(6)
+    @SneakyThrows
+    @Test
+    void importsNestedComplexTypesInDefinitionProcessorsOrder(@TempDir Path definition) {
+        copyJsonImportFixture(definition);
+        var nested = Files.createDirectories(definition.resolve("ComplexTypes/CaseProgression"));
+
+        // By code point "LocationTypes" sorts before "LocationsModel", which it uses; the definition store only
+        // accepts a complex type after the types it uses, as ccd-definition-processor orders them.
+        Files.writeString(nested.resolve("TaskManagementLocationTypes.json"), """
+            [{"ID": "TaskManagementLocationTypes", "ListElementCode": "hearing", "ElementLabel": "Hearing",
+              "FieldType": "TaskManagementLocationsModel", "SecurityClassification": "Public"}]
+            """);
+        // A file may hold a single row rather than an array.
+        Files.writeString(nested.resolve("TaskManagementLocationsModel.json"), """
+            {"ID": "TaskManagementLocationsModel", "ListElementCode": "region", "ElementLabel": "Region",
+             "FieldType": "Text", "SecurityClassification": "Public"}
+            """);
+
+        cftlib().importJsonDefinition(definition.toFile());
+    }
+
+    private static void copyJsonImportFixture(Path definition) throws IOException {
+        FileSystemUtils.copyRecursively(Path.of("../lib/cftlib-agent/src/test/resources/definition"), definition);
+        // Import tests must not replace the NFD definition and callbacks used by case and hearing journeys.
+        try (var files = Files.walk(definition)) {
+            for (var file : files.filter(path -> path.toString().endsWith(".json")).toList()) {
+                Files.writeString(file, Files.readString(file).replace("\"NFD\"", "\"NFD_JSON_IMPORT\""));
+            }
+        }
     }
 
     @Test

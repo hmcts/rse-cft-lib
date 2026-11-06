@@ -23,6 +23,32 @@ def configurePublishing(p) {
                 }
             }
 
+            // HMCTS builds Camunda on the enterprise edition, which only Camunda's credentialed repository serves.
+            // Build it on the community edition of the same version, which has every API it uses, from Maven Central.
+            if (project.name == 'camunda-bpm') {
+                def matcher = project.buildFile.text =~ /camunda-bom:([0-9.]+)-ee/
+                if (matcher.find()) {
+                    def version = matcher.group(1)
+                    def toCommunityEdition = { DependencyResolveDetails details ->
+                        def requested = details.requested
+                        if (requested.group == 'org.camunda.bpm' && requested.name == 'camunda-bom') {
+                            details.useVersion(version)
+                        } else if (requested.group == 'org.camunda.bpm.springboot' && requested.name.endsWith('-ee')) {
+                            details.useTarget("${requested.group}:${requested.name - '-ee'}:${version}")
+                        }
+                    }
+                    // The dependency management plugin resolves imported BOMs in configurations of its own.
+                    dependencyManagement {
+                        resolutionStrategy {
+                            eachDependency toCommunityEdition
+                        }
+                    }
+                    configurations.configureEach {
+                        resolutionStrategy.eachDependency toCommunityEdition
+                    }
+                }
+            }
+
             // Configure publishing
             if (components.hasProperty('java')) {
                 configure(project) {
@@ -137,6 +163,14 @@ def configurePublishing(p) {
                                     dependencyNode.appendNode('groupId', it.moduleVersion.id.group)
                                     dependencyNode.appendNode('artifactId', it.moduleVersion.id.name)
                                     dependencyNode.appendNode('version', it.moduleVersion.id.version)
+                                    // Some dependencies are a classified jar, such as Camunda's web app classes,
+                                    // whose unclassified artifact is a war.
+                                    if (it.classifier) {
+                                        dependencyNode.appendNode('classifier', it.classifier)
+                                    }
+                                    if (it.extension && it.extension != 'jar') {
+                                        dependencyNode.appendNode('type', it.extension)
+                                    }
 
                                     def exclusion = dependencyNode.appendNode('exclusions').appendNode('exclusion')
                                     exclusion.appendNode('groupId', '*')

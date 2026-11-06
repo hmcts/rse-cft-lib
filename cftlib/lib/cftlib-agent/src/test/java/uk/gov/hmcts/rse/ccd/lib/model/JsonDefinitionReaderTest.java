@@ -18,6 +18,7 @@ import uk.gov.hmcts.rse.ccd.lib.definitionstore.JsonDefinitionReader;
 import uk.gov.hmcts.rse.ccd.lib.JsonDefinitionImport;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -43,6 +44,51 @@ class JsonDefinitionReaderTest {
         assertEquals("caseworker-divorce-courtadmin-la", result.get(2).get("UserRole"));
         assertEquals("caseworker-divorce-courtadmin_beta", result.get(3).get("UserRole"));
         assertEquals("caseworker-divorce-solicitor", result.get(4).get("UserRole"));
+    }
+
+    @Test
+    @SneakyThrows
+    void readsAFileHoldingASingleRow() {
+        var folder = Files.createDirectories(tempDir.resolve("AuthorisationCaseType"));
+        Files.writeString(folder.resolve("single.json"), "{\"UserRole\": \"caseworker-civil\"}");
+
+        var result = JsonDefinitionReader.readPath(folder.toString());
+
+        assertEquals(1, result.size());
+        assertEquals("caseworker-civil", result.get(0).get("UserRole"));
+    }
+
+    @Test
+    void ordersFilesAsDefinitionProcessorDoes() {
+        // glob's localeCompare(b, 'en'): case is ignored, so a complex type's own file comes before the types using it.
+        var files = new ArrayList<>(List.of(
+            new File("ComplexTypes/TaskManagementLocationTypes-MINTI.json"),
+            new File("ComplexTypes/TaskManagementLocationsModel-MINTI.json"),
+            new File("ComplexTypes/Address.json"),
+            new File("ComplexTypes/address-nonprod.json"),
+            new File("ComplexTypes/1_Debt.json")
+        ));
+
+        files.sort(JsonDefinitionReader::compareJsonFiles);
+
+        assertThat(files).extracting(File::getName).containsExactly(
+            "1_Debt.json", "Address.json", "address-nonprod.json", "TaskManagementLocationsModel-MINTI.json",
+            "TaskManagementLocationTypes-MINTI.json");
+    }
+
+    @Test
+    void ordersPunctuationAsDefinitionProcessorDoes() {
+        // The order Node's localeCompare(b, 'en') gives: space, then _ - , . before digits and letters.
+        var files = new ArrayList<>(List.of(
+            new File("x/Case1.json"), new File("x/Case.json"), new File("x/Case_A.json"), new File("x/Case,A.json"),
+            new File("x/Case A.json"), new File("x/CaseA.json"), new File("x/Case-A.json"), new File("x/Case.A.json")
+        ));
+
+        files.sort(JsonDefinitionReader::compareJsonFiles);
+
+        assertThat(files).extracting(File::getName).containsExactly(
+            "Case.json", "Case A.json", "Case_A.json", "Case-A.json", "Case,A.json", "Case.A.json", "Case1.json",
+            "CaseA.json");
     }
 
     @SneakyThrows
