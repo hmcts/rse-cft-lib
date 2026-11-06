@@ -10,13 +10,17 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.io.TempDir;
 
 class LibRunnerSettingDefaultTest {
 
-    @Test
-    void readsTheDefaultFromTheServicesOwnJar(@TempDir Path dir) throws Exception {
-        var jar = Files.createDirectories(dir.resolve("repository/ccd-data-store-api/DEV-SNAPSHOT"))
+    @ParameterizedTest
+    @ValueSource(strings = {"repository/ccd-data-store-api/DEV-SNAPSHOT",
+        "caches/modules-2/files-2.1/com.github.hmcts.rse-cft-lib/ccd-data-store-api/0.19.2446/hash"})
+    void readsTheDefaultFromTheServicesOwnJar(String layout, @TempDir Path dir) throws Exception {
+        var jar = Files.createDirectories(dir.resolve(layout))
             .resolve("ccd-data-store-api-DEV-SNAPSHOT.jar");
         try (var zip = new ZipOutputStream(Files.newOutputStream(jar))) {
             zip.putNextEntry(new ZipEntry("application.properties"));
@@ -32,4 +36,17 @@ class LibRunnerSettingDefaultTest {
         assertThat(LibRunner.settingDefault(List.of(manifest.toString()), "ccd-data-store-api", "OTHER")).isNull();
         assertThat(LibRunner.settingDefault(List.of(), "ccd-data-store-api", "OTHER")).isNull();
     }
+
+    @Test
+    void readsTheDefaultFromLocalProjectResources(@TempDir Path dir) throws Exception {
+        var resources = Files.createDirectories(dir.resolve("service/build/resources/main"));
+        Files.writeString(resources.resolve("application.yml"),
+            "services: ${DATA_STORE_S2S_AUTHORISED_SERVICES:ccd_gw,ccd_data}\n");
+        var manifest = Files.writeString(dir.resolve("ccd-data-store-api"),
+            "uk.gov.hmcts.ccd.CoreCaseDataApplication\n" + resources + "\n");
+
+        assertThat(LibRunner.settingDefault(List.of(manifest.toString()), "ccd-data-store-api",
+            "DATA_STORE_S2S_AUTHORISED_SERVICES")).isEqualTo("ccd_gw,ccd_data");
+    }
+
 }

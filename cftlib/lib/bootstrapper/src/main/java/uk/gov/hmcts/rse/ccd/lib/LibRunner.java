@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.zip.ZipFile;
 
 import static java.lang.System.getenv;
 
@@ -139,12 +138,12 @@ public class LibRunner {
         }
     }
 
-    private static void setConfigProperties(List<String> manifests) {
+    static void setConfigProperties(List<String> manifests) {
         if (!"localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
             System.setProperty("IDAM_API_URL", "https://idam-api.aat.platform.hmcts.net");
             System.setProperty("DM_STORE_BASE_URL", "http://dm-store-aat.service.core-compute-aat.internal");
         }
-        if ("localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
+        if ("localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE")) && Features.enabled("localServices")) {
             // The runtime creates this user in the IDAM simulator, whose users have this password.
             setUnlessConfigured("IDAM_DATA_STORE_SYSTEM_USER_USERNAME", "data-store-system-user@cftlib.local");
             setUnlessConfigured("IDAM_DATA_STORE_SYSTEM_USER_PASSWORD", "password");
@@ -272,11 +271,15 @@ public class LibRunner {
         }
         for (var list : S2S_ALLOW_LISTS.entrySet()) {
             // The build's list, or else the service's own default, which in data store's case leaves out WA.
-            var configured = System.getenv(list.getKey()) != null
-                ? System.getenv(list.getKey())
-                : settingDefault(manifests, list.getValue(), list.getKey());
+            var configured = System.getProperty(list.getKey(), System.getenv(list.getKey()));
+            if (configured == null) {
+                configured = settingDefault(manifests, list.getValue(), list.getKey());
+            }
             if (configured != null) {
-                var names = new LinkedHashSet<>(Arrays.asList(configured.split(",")));
+                var names = Arrays.stream(configured.split(","))
+                    .map(String::trim)
+                    .filter(name -> !name.isEmpty())
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
                 names.addAll(services);
                 System.setProperty(list.getKey(), String.join(",", names));
             }
@@ -301,20 +304,17 @@ public class LibRunner {
         }
         var placeholder = Pattern.compile("\\$\\{" + Pattern.quote(setting) + ":([^}]*)}");
         var lines = Files.readAllLines(manifest.get().toPath());
-        for (var entry : lines.subList(1, lines.size())) {
-            var jar = new File(entry);
-            // The service's own jar sits in a Maven directory named after it.
-            if (!jar.getName().endsWith(".jar") || jar.getParentFile() == null
-                || jar.getParentFile().getParentFile() == null
-                || !jar.getParentFile().getParentFile().getName().equals(service)) {
-                continue;
-            }
-            try (var zip = new ZipFile(jar)) {
-                for (var name : List.of("application.properties", "application.yaml", "application.yml")) {
-                    var properties = zip.getEntry(name);
-                    if (properties != null) {
-                        var matcher = placeholder.matcher(
-                            new String(zip.getInputStream(properties).readAllBytes(), StandardCharsets.UTF_8));
+        var urls = lines.stream().skip(1).map(LibRunner::toURL).toArray(URL[]::new);
+        // Service manifests may contain Maven jars, Gradle-cached jars or local-project resource directories.
+        // No parent: only inspect this service's classpath, not the bootstrapper's resources.
+        try (var resources = new URLClassLoader(urls, null)) {
+            for (var name : List.of("application.properties", "application.yaml", "application.yml")) {
+                var candidates = resources.getResources(name);
+                while (candidates.hasMoreElements()) {
+                    var resource = candidates.nextElement().openConnection();
+                    resource.setUseCaches(false);
+                    try (var input = resource.getInputStream()) {
+                        var matcher = placeholder.matcher(new String(input.readAllBytes(), StandardCharsets.UTF_8));
                         if (matcher.find()) {
                             return matcher.group(1);
                         }
@@ -327,7 +327,7 @@ public class LibRunner {
 
     // A system property overrides the environment in Spring, so only set one the build has not.
     private static void setUnlessConfigured(String name, String value) {
-        if (System.getenv(name) == null) {
+        if (System.getProperty(name) == null && System.getenv(name) == null) {
             System.setProperty(name, value);
         }
     }

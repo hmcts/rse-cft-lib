@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
  * password grant, which has no such endpoint. Tests use the runtime as their IDAM API, so {@code /o/userinfo} passes
  * through to the simulator too.
  */
-@Conditional(LocalAuthOnly.class)
+@Conditional(LocalServicesOnly.class)
 @RestController
 public class IdamLogin {
     private static final String IDAM_SIMULATOR = "http://localhost:5062";

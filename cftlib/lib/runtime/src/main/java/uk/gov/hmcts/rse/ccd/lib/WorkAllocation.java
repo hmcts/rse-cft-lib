@@ -16,10 +16,12 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -48,15 +50,20 @@ public class WorkAllocation {
     private final CFTLibApiImpl api;
     private final HttpClient http = HttpClient.newHttpClient();
     private final Gson gson = new Gson();
-    // The newest event in each source from before this run started. Those events, a previous run's, are not
-    // delivered.
-    private final Map<Source, Long> delivered = new LinkedHashMap<>();
+    // IDs handled in this run, including events set aside after repeated failures. Sequence IDs do not follow
+    // commit order across cases, so advancing an ID cursor would lose late-committing events.
+    private final Map<Source, DeliveryState> delivered = new LinkedHashMap<>();
+    private final String databaseUrl;
+    private final URI caseEventHandler;
     private static final int MAX_DELIVERY_ATTEMPTS = 5;
     // Failed attempts to deliver each event, by source and id.
     private final Map<String, Integer> attempts = new HashMap<>();
     private LocalDateTime started;
 
     record Source(String database, String schema) {
+    }
+
+    private record DeliveryState(long baseline, Set<Long> handled) {
     }
 
     // database:schema pairs, the schema defaulting to public.
@@ -72,8 +79,15 @@ public class WorkAllocation {
     }
 
     WorkAllocation(CFTLibApiImpl api, List<Source> sources) {
+        this(api, sources, "jdbc:postgresql://" + CftlibConfig.dbHost() + ":" + CftlibConfig.dbPort() + "/",
+            URI.create(CASE_EVENT_HANDLER_URL + "/messages"));
+    }
+
+    WorkAllocation(CFTLibApiImpl api, List<Source> sources, String databaseUrl, URI caseEventHandler) {
         this.api = api;
-        sources.forEach(s -> delivered.put(s, null));
+        this.databaseUrl = databaseUrl;
+        this.caseEventHandler = caseEventHandler;
+        sources.forEach(s -> delivered.put(s, new DeliveryState(0, new HashSet<>())));
     }
 
     static boolean enabled(Map<String, String> env) {
@@ -138,9 +152,7 @@ public class WorkAllocation {
             // name, so that Camunda recognises it on the next boot and keeps the version it has.
             deploy(null, Map.of("wa-task-initiation-ia-asylum.bpmn", bpmn.readAllBytes()));
         }
-        for (var source : delivered.keySet()) {
-            delivered.put(source, newestEventBefore(source, started));
-        }
+        startDelivery();
     }
 
     /**
@@ -221,13 +233,15 @@ public class WorkAllocation {
             var source = entry.getKey();
             try (var c = connect(source)) {
                 var query = c.prepareStatement("select id, message_information::text from " + source.schema()
-                    + ".message_queue_candidates where id > ? and message_type = 'CASE_EVENT' order by id");
-                query.setLong(1, entry.getValue() == null ? 0 : entry.getValue());
+                    + ".message_queue_candidates where id > ? and not (id = any (?))"
+                    + " and message_type = 'CASE_EVENT' order by id");
+                query.setLong(1, entry.getValue().baseline());
+                query.setArray(2, c.createArrayOf("bigint", entry.getValue().handled().toArray()));
                 var events = query.executeQuery();
                 while (events.next()) {
                     var id = events.getLong(1);
                     var sent = deliver(source, id, events.getString(2));
-                    entry.setValue(id);
+                    entry.getValue().handled().add(id);
                     if (sent) {
                         var published = c.prepareStatement("update " + source.schema()
                             + ".message_queue_candidates set published = now() where id = ?");
@@ -269,7 +283,7 @@ public class WorkAllocation {
 
     @SneakyThrows
     private void post(String event) {
-        var response = http.send(HttpRequest.newBuilder(URI.create(CASE_EVENT_HANDLER_URL + "/messages"))
+        var response = http.send(HttpRequest.newBuilder(caseEventHandler)
                 .header("Content-Type", "application/json")
                 .header("ServiceAuthorization", api.generateDummyS2SToken("wa_case_event_handler"))
                 .POST(HttpRequest.BodyPublishers.ofString(event))
@@ -309,8 +323,17 @@ public class WorkAllocation {
         }
     }
 
+    void startDelivery() {
+        if (started == null) {
+            started = databaseTime();
+        }
+        for (var source : delivered.keySet()) {
+            delivered.put(source, new DeliveryState(newestEventBefore(source, started), new HashSet<>()));
+        }
+    }
+
     @SneakyThrows
-    private Long newestEventBefore(Source source, LocalDateTime time) {
+    private long newestEventBefore(Source source, LocalDateTime time) {
         try (var c = connect(source)) {
             var query = c.prepareStatement("select coalesce(max(id), 0) from " + source.schema()
                 + ".message_queue_candidates where time_stamp < ?");
@@ -327,8 +350,8 @@ public class WorkAllocation {
     }
 
     private Connection connect(Source source) throws SQLException {
-        return DriverManager.getConnection("jdbc:postgresql://" + CftlibConfig.dbHost() + ":" + CftlibConfig.dbPort()
-            + "/" + source.database(), CftlibConfig.dbUsername(), CftlibConfig.dbPassword());
+        return DriverManager.getConnection(databaseUrl + source.database(),
+            CftlibConfig.dbUsername(), CftlibConfig.dbPassword());
     }
 
     private static String camundaUrl() {

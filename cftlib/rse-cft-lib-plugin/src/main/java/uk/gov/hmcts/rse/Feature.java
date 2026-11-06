@@ -18,11 +18,13 @@ public enum Feature {
     camunda(List.of(), List.of()),
     // Azure Service Bus emulator in docker. It is a .NET application, so cannot run in-process.
     servicebus(List.of("servicebus"), List.of()),
+    // Local document storage and IDAM compatibility endpoints, without replacing existing consumers' defaults.
+    localServices(List.of(), List.of()),
     // Work allocation: wa-case-event-handler, wa-workflow-api and wa-task-monitor in-process, on Camunda.
-    wa(List.of(), List.of(camunda)),
+    wa(List.of(), List.of(camunda, localServices)),
     // Hearings: hmc-cft-hearing-service and both HMI adapters in-process, on the Service Bus emulator, with a
     // stand-in for HMI.
-    hmc(List.of(), List.of(servicebus));
+    hmc(List.of(), List.of(servicebus, localServices));
 
     // The docker compose profiles the feature starts.
     public final List<String> composeProfiles;
@@ -39,7 +41,7 @@ public enum Feature {
      * as, and HMC's listings are signed in, in the IDAM simulator.
      */
     public boolean requiresLocalAuth() {
-        return this == wa || this == hmc;
+        return this == wa || this == hmc || this == localServices;
     }
 
     /**

@@ -22,7 +22,7 @@ public class FeatureTest {
     @Test
     public void addsTheFeaturesAFeatureNeeds() {
         assertThat(Feature.resolve(List.of("hmc", "wa")))
-            .containsExactly(Feature.hmc, Feature.servicebus, Feature.wa, Feature.camunda);
+            .containsExactly(Feature.hmc, Feature.servicebus, Feature.localServices, Feature.wa, Feature.camunda);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class FeatureTest {
 
         assertThatThrownBy(task::checkFeaturesSupportAuthMode)
             .isInstanceOf(InvalidUserDataException.class)
-            .hasMessageContaining("The wa feature needs authMode = AuthMode.Local");
+            .hasMessageContaining("features need authMode = AuthMode.Local");
 
         task.authMode = AuthMode.Local;
         task.checkFeaturesSupportAuthMode();

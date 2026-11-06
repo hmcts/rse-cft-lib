@@ -79,7 +79,7 @@ public class DependencyBoot {
      * With local auth, create the IDAM users the services act as themselves, once the IDAM simulator is up.
      */
     private void createSystemUsers(CFTLibApiImpl api) {
-        if (!CftlibConfig.localAuth()) {
+        if (!CftlibConfig.localAuth() || !Features.enabled("localServices")) {
             return;
         }
         var thread = new Thread(() -> {

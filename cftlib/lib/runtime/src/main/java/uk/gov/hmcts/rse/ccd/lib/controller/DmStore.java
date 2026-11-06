@@ -33,14 +33,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * A stand-in for dm-store, the document store CDAM keeps documents in, which with local auth cftlib points CDAM at
+ * An opt-in stand-in for dm-store, the document store CDAM keeps documents in. The localServices feature points CDAM at
  * (DM_STORE_BASE_URL). It answers the calls CDAM makes: upload, metadata and binary reads, the metadata PATCH that
  * attaches documents to a case, and delete.
  *
- * <p>Each document is a folder under RSE_LIB_DM_STORE_DIR holding its metadata and content, so documents last as
- * long as the case data that refers to them, across restarts.
+ * <p>Each document is a folder under RSE_LIB_DM_STORE_DIR holding its metadata and content. Documents survive
+ * restarts, but Gradle clean removes the default build/cftlib/dm-store directory.
  */
-@Conditional(LocalAuthOnly.class)
+@Conditional(LocalServicesOnly.class)
 @RestController
 @RequestMapping(DmStore.PATH)
 public class DmStore {
