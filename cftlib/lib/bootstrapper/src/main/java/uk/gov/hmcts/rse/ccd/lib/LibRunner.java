@@ -6,6 +6,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,11 +43,8 @@ public class LibRunner {
     @SneakyThrows
     private static void doRun(String[] args) {
         setConfigProperties(Arrays.asList(args));
-        // Every manifest after the runtime is a Spring Boot application that reports when it is ready, apart from the
-        // idam simulator, which runs without the cftlib agent.
-        ControlPlane.expectApps((int) Arrays.stream(args).skip(1)
-            .filter(f -> !new File(f).getName().equals(AUTH_SERVER_MANIFEST))
-            .count());
+        // Consumers may also launch plain Java support processes. Only applications with the agent report ready.
+        ControlPlane.expectApps(supervisedApps(Arrays.asList(args)));
         var threads = new ArrayList<Thread>();
         {
             var runtime = args[0];
@@ -329,6 +327,19 @@ public class LibRunner {
     private static void setUnlessConfigured(String name, String value) {
         if (System.getProperty(name) == null && System.getenv(name) == null) {
             System.setProperty(name, value);
+        }
+    }
+
+    static int supervisedApps(List<String> manifests) {
+        return (int) manifests.stream().skip(1).filter(LibRunner::reportsReady).count();
+    }
+
+    @SneakyThrows
+    private static boolean reportsReady(String manifest) {
+        var urls = Files.readAllLines(Path.of(manifest)).stream().skip(1)
+            .map(LibRunner::toURL).toArray(URL[]::new);
+        try (var resources = new URLClassLoader(urls, null)) {
+            return resources.findResource("uk/gov/hmcts/rse/ccd/lib/LibAgent.class") != null;
         }
     }
 
