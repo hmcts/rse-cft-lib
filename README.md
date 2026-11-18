@@ -309,6 +309,8 @@ XUI redirects the browser to the IDAM simulator at `http://localhost:5062` for l
 machine as cftlib, set `IDAM_SIMULATOR_BASE_URL_OUTSIDE_NETWORK` (or `XUI_IDAM_LOGIN_URL` to override XUI alone) to a URL
 the browser can reach.
 
+`bootWithCCD` keeps the simulator's users in `build/cftlib/idam-simulator/users.db`, so tokens issued before a restart stay valid after it. Users you remove from your configuration stay until you run `./gradlew clean` or delete that directory; `cftlibTest` and `dumpCCDDefinitions` keep their users in memory.
+
 ##### AAT (VPN required)
 
 ```groovy

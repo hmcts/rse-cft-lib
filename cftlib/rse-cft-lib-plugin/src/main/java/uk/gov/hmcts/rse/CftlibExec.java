@@ -89,6 +89,7 @@ public class CftlibExec extends JavaExec {
         setRequiredJvmArgs();
         setStandardEnvVars();
         resolveDependencies();
+        persistIdamUsers();
         if (authMode == AuthMode.Local) {
             environment("RSE_LIB_AUTH-MODE", "localAuth");
 
@@ -111,6 +112,16 @@ public class CftlibExec extends JavaExec {
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
                 "https://idam-web-public.aat.platform.hmcts.net/o");
         }
+    }
+
+    @SneakyThrows
+    void persistIdamUsers() {
+        if (authMode != AuthMode.Local || !"bootWithCCD".equals(getName())) {
+            return;
+        }
+        defaultTo("SIMULATOR_STORAGE_TYPE", "persistent");
+        defaultTo("SIMULATOR_STORAGE_PERSISTENT_FILE", getProject().getLayout()
+                .getBuildDirectory().file("cftlib/idam-simulator/users.db").get().getAsFile().getCanonicalPath());
     }
 
     /**
@@ -142,8 +153,12 @@ public class CftlibExec extends JavaExec {
     }
 
     private void offUnlessChosen(String variable) {
+        defaultTo(variable, "off");
+    }
+
+    private void defaultTo(String variable, String value) {
         if (unset(variable)) {
-            environment(variable, "off");
+            environment(variable, value);
         }
     }
 
