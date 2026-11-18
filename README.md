@@ -389,7 +389,7 @@ Services run on the following default ports:
 
 ### Clean boot
 
-For a clean boot define the RSE_LIB_CLEAN_BOOT environment variable, which will force recreate all docker containers upon boot. In process mode it instead recreates the postgres data directory and rebuilds XUI.
+For a clean boot define the RSE_LIB_CLEAN_BOOT environment variable, which will force recreate all docker containers upon boot. In process mode it instead recreates the postgres data directory and rebuilds XUI. Either way it clears the IDAM simulator users that `bootWithCCD` keeps.
 
 ## Running without docker
 

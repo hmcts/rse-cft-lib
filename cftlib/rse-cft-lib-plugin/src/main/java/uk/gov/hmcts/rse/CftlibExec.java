@@ -84,7 +84,7 @@ public class CftlibExec extends JavaExec {
         super.exec();
     }
 
-    private void configure() {
+    void configure() {
         checkFeaturesSupportAuthMode();
         setRequiredJvmArgs();
         setStandardEnvVars();
@@ -104,6 +104,7 @@ public class CftlibExec extends JavaExec {
             environment("CASE_DOCUMENT_AM_URL", "http://localhost:4455");
 
             environment("OIDC_ISSUER", "${IDAM_API_URL}");
+            environment("IDAM_SECURITY_ALLOWED_ISSUER_0", "${IDAM_API_URL}/o");
             environment("SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI",
                 "${IDAM_API_URL}/o");
         } else {
@@ -119,9 +120,12 @@ public class CftlibExec extends JavaExec {
         if (authMode != AuthMode.Local || !"bootWithCCD".equals(getName())) {
             return;
         }
+        var store = CftLibPlugin.cftlibBuildDir(getProject()).dir("idam-simulator");
+        if (getEnvironment().get("RSE_LIB_CLEAN_BOOT") != null || getEnvironment().get("CI") != null) {
+            getProject().delete(store);
+        }
         defaultTo("SIMULATOR_STORAGE_TYPE", "persistent");
-        defaultTo("SIMULATOR_STORAGE_PERSISTENT_FILE", getProject().getLayout()
-                .getBuildDirectory().file("cftlib/idam-simulator/users.db").get().getAsFile().getCanonicalPath());
+        defaultTo("SIMULATOR_STORAGE_PERSISTENT_FILE", store.file("users.db").getAsFile().getCanonicalPath());
     }
 
     /**

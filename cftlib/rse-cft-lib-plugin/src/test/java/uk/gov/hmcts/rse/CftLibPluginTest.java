@@ -102,7 +102,7 @@ public class CftLibPluginTest {
         // A task inherits this process's environment, which must not decide these tests.
         task.getEnvironment().keySet().removeAll(
             List.of("RSE_LIB_XUI", "RSE_LIB_XUI_MO", "RSE_LIB_DEPENDENCY_MODE", "COMPOSE_PROFILES",
-                "SIMULATOR_STORAGE_TYPE", "SIMULATOR_STORAGE_PERSISTENT_FILE"));
+                "SIMULATOR_STORAGE_TYPE", "SIMULATOR_STORAGE_PERSISTENT_FILE", "RSE_LIB_CLEAN_BOOT", "CI"));
         return task;
     }
 
@@ -153,6 +153,49 @@ public class CftLibPluginTest {
 
         assertThat(task.getEnvironment()).containsEntry("SIMULATOR_STORAGE_TYPE", "memory");
         assertThat(task.getEnvironment()).containsEntry("SIMULATOR_STORAGE_PERSISTENT_FILE", "/tmp/my-users.db");
+    }
+
+    @Test
+    public void runningBootWithCcdInLocalAuthModeKeepsIdamUsersAndTrustsTheSimulatorIssuer() {
+        CftlibExec task = task("bootWithCCD");
+        task.authMode = AuthMode.Local;
+
+        task.configure();
+
+        assertThat(task.getEnvironment()).containsEntry("SIMULATOR_STORAGE_TYPE", "persistent");
+        assertThat(task.getEnvironment()).containsEntry("IDAM_SECURITY_ALLOWED_ISSUER_0", "${IDAM_API_URL}/o");
+    }
+
+    @Test
+    public void cleanBootClearsTheStoredIdamUsers() throws Exception {
+        for (String variable : List.of("RSE_LIB_CLEAN_BOOT", "CI")) {
+            CftlibExec task = task("bootWithCCD");
+            task.authMode = AuthMode.Local;
+            task.environment(variable, "true");
+            File store = storedUsers(task);
+
+            task.persistIdamUsers();
+
+            assertThat(store).doesNotExist();
+        }
+    }
+
+    @Test
+    public void ordinaryBootKeepsTheStoredIdamUsers() throws Exception {
+        CftlibExec task = task("bootWithCCD");
+        task.authMode = AuthMode.Local;
+        File store = storedUsers(task);
+
+        task.persistIdamUsers();
+
+        assertThat(store).exists();
+    }
+
+    private static File storedUsers(CftlibExec task) throws Exception {
+        File store = CftLibPlugin.cftlibBuildDir(task.getProject()).file("idam-simulator/users.db").getAsFile();
+        assertThat(store.getParentFile().mkdirs()).isTrue();
+        assertThat(store.createNewFile()).isTrue();
+        return store;
     }
 
     @Test
