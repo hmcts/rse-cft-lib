@@ -91,5 +91,38 @@
         "authorisations": []
       }
     ]
+  },
+  {
+    "email": "quick-login-judge@example.com",
+    "id": "3",
+    "replaceOrganisationRoles": true,
+    "roleAssignments": [
+      {
+        "roleType": "ORGANISATION",
+        "roleName": "judge",
+        "grantType": "STANDARD",
+        "roleCategory": "JUDICIAL",
+        "classification": "PUBLIC",
+        "readOnly": false,
+        "attributes": {
+          "jurisdiction": "DIVORCE",
+          "primaryLocation": "1"
+        },
+        "authorisations": []
+      },
+      {
+        "roleType": "ORGANISATION",
+        "roleName": "hearing-viewer",
+        "grantType": "STANDARD",
+        "roleCategory": "JUDICIAL",
+        "classification": "PUBLIC",
+        "readOnly": false,
+        "attributes": {
+          "jurisdiction": "DIVORCE",
+          "primaryLocation": "1"
+        },
+        "authorisations": []
+      }
+    ]
   }
 ]
