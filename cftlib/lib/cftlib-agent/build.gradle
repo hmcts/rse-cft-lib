@@ -26,6 +26,9 @@ dependencies {
     // This is needed at runtime to decode JWTs
     implementation 'com.auth0:java-jwt:3.12.0'
 
+    // HMC's Service Bus client, for the senders cftlib reuses in its applications.
+    compileOnly 'com.azure:azure-messaging-servicebus:7.17.18'
+
     // Use definition store modules at compile time without pulling SB3 transitive deps.
     compileOnly('com.github.hmcts.rse-cft-lib:application:DEV-SNAPSHOT') {
         transitive = false
@@ -70,4 +73,28 @@ tasks.withType(JavaCompile).configureEach {
 // https://docs.gradle.org/current/userguide/composite_builds.html
 configurations.each {
     it.resolutionStrategy.useGlobalDependencySubstitutionRules = false
+}
+
+// Replacements for HMC's Service Bus senders. Each HMC application has classes of the same names that differ, so each
+// application's replacements are compiled against it alone, in a source set of their own, and go in the same jar.
+// Only the replacements for the application they run in are loaded: each is conditional on a class only it has.
+def hmcApplications = [
+    hmcHearingService : 'hmc-cft-hearing-service',
+    hmcInboundAdapter : 'hmc-hmi-inbound-adapter',
+    hmcOutboundAdapter: 'hmc-hmi-outbound-adapter',
+]
+hmcApplications.each { sourceSetName, project ->
+    def sourceSet = sourceSets.create(sourceSetName) {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+    }
+    dependencies.add(sourceSet.compileOnlyConfigurationName,
+        "com.github.hmcts.rse-cft-lib:${project}:DEV-SNAPSHOT") { transitive = false }
+    dependencies.add(sourceSet.compileOnlyConfigurationName, 'org.slf4j:slf4j-api:2.0.16')
+    // As for the configurations above: resolve these when compiling, after the HMC application is published to
+    // Maven Local, rather than while Gradle plans the build.
+    configurations.matching { it.name.startsWith(sourceSetName) }.configureEach {
+        it.resolutionStrategy.useGlobalDependencySubstitutionRules = false
+    }
+    tasks.named(sourceSet.compileJavaTaskName) { dependsOn ":publish${project}" }
+    tasks.named('jar') { from sourceSet.output }
 }
