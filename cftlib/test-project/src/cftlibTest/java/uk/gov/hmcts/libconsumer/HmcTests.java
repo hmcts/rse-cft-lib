@@ -3,6 +3,7 @@ package uk.gov.hmcts.libconsumer;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.startsWith;
@@ -48,6 +49,8 @@ import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 class HmcTests extends CftlibTest {
 
     private static final String HEARING_SERVICE = "http://localhost:4561";
+    // cftlib's runtime, on the S2S port this project sets, which serves the HMI stand-in and its /hmi page.
+    private static final String HMI = "http://localhost:7431/hmi";
     private static final Duration WAIT = Duration.ofMinutes(1);
     // A caseworker created by CFTLibConfig. HMC looks its callers up in IDAM, so they need real tokens.
     private static final String USER = "a@b.com";
@@ -116,6 +119,87 @@ class HmcTests extends CftlibTest {
 
         awaitStatus(hearingId, "EXCEPTION");
         assertThat(cftlib().getHmiRequests(hearingId), hasSize(1));
+    }
+
+    @Test
+    void listsAHearingFromTheHmiPage() {
+        var hearingId = requestHearing(createCase());
+        awaitStatus(hearingId, "AWAITING_LISTING");
+        assertThat(hmiPage(), containsString(hearingId));
+
+        var start = LocalDate.now().plusDays(21).atTime(14, 0);
+        assertThat(hmi("/requests/" + hearingId + "/listing", "start=" + start), equalTo(202));
+
+        var update = awaitStatus(hearingId, "LISTED");
+        assertThat(update.get("hearingListingStatus"), equalTo("FIXED"));
+        assertThat(update.get("hearingVenueId"), equalTo("20262"));
+        assertThat(update.get("nextHearingDate").toString(), startsWith(start.toString()));
+    }
+
+    @Test
+    void confirmsACancellationFromTheHmiPage() {
+        var hearingId = requestHearing(createCase());
+        awaitStatus(hearingId, "AWAITING_LISTING");
+
+        send(HttpRequest.newBuilder(URI.create(HEARING_SERVICE + "/hearing/" + hearingId))
+            .header("Content-Type", "application/json")
+            .method("DELETE", HttpRequest.BodyPublishers.ofString("{\"cancellationReasonCodes\": [\"withdraw\"]}")),
+            200);
+        awaitStatus(hearingId, "CANCELLATION_SUBMITTED");
+
+        assertThat(hmi("/requests/" + hearingId + "/cancellation", ""), equalTo(202));
+
+        awaitStatus(hearingId, "CANCELLED");
+    }
+
+    @Test
+    void reportsAHearingHmiCannotListFromTheHmiPage() {
+        var hearingId = requestHearing(createCase());
+        awaitStatus(hearingId, "AWAITING_LISTING");
+
+        assertThat(hmi("/requests/" + hearingId + "/exception", "errorCode=2000&description=No+room"), equalTo(202));
+
+        awaitStatus(hearingId, "EXCEPTION");
+    }
+
+    @Test
+    void rejectsTheNextRequestForACaseFromTheHmiPage() {
+        var caseReference = createCase();
+        assertThat(hmi("/rejections", "caseReference=" + caseReference), equalTo(202));
+
+        var hearingId = requestHearing(caseReference);
+
+        awaitStatus(hearingId, "EXCEPTION");
+    }
+
+    @Test
+    void listsHearingsByItselfWhenAskedTo() {
+        assertThat(hmi("/auto-respond", "enabled=true"), equalTo(202));
+        try {
+            var hearingId = requestHearing(createCase());
+
+            awaitStatus(hearingId, "LISTED");
+        } finally {
+            hmi("/auto-respond", "enabled=false");
+        }
+    }
+
+    @SneakyThrows
+    private int hmi(String path, String form) {
+        return http.send(HttpRequest.newBuilder(URI.create(HMI + path))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Accept", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(form))
+                .build(),
+            HttpResponse.BodyHandlers.ofString()).statusCode();
+    }
+
+    @SneakyThrows
+    private String hmiPage() {
+        var page = http.send(HttpRequest.newBuilder(URI.create(HMI)).header("Accept", "text/html").build(),
+            HttpResponse.BodyHandlers.ofString());
+        assertThat(page.statusCode(), equalTo(200));
+        return page.body();
     }
 
     @SneakyThrows

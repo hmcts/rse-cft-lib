@@ -270,6 +270,11 @@ final class XuiEnvironment {
         resolved.put("XUI_IDAM_API_URL", runtime);
         resolved.put("XUI_IDAM_LOGIN_URL", xuiIdamLoginUrl(source));
         resolved.put("SERVICES_WORK_ALLOCATION_TASK_API", host + ":8087");
+        if (Features.enabled(source, "hmc")) {
+            // The hearings tab and its journeys call HMC, which the hmc feature runs on the port it pins.
+            resolved.put("XUI_SERVICES_HMC_HEARINGS_COMPONENT_API",
+                value(source, "XUI_SERVICES_HMC_HEARINGS_COMPONENT_API", host + ":4561"));
+        }
         // Placeholders so the XUI health checks pass without these services running.
         resolved.put("XUI_EM_DOCASSEMBLY_API", value(source, "XUI_EM_DOCASSEMBLY_API", runtime));
         resolved.put("XUI_DOCUMENTS_API", value(source, "XUI_DOCUMENTS_API", runtime));
