@@ -1,8 +1,10 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
 import java.time.Duration;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import lombok.SneakyThrows;
 import org.awaitility.Awaitility;
 
 /**
@@ -11,6 +13,8 @@ import org.awaitility.Awaitility;
 public class DependencyBoot {
 
     private final Readiness readiness = new Readiness();
+    // Counted down once the provider has started the dependencies, so a probe can't reach a container it replaces.
+    private final CountDownLatch started = new CountDownLatch(1);
 
     public void startBoot() {
         try {
@@ -41,12 +45,14 @@ public class DependencyBoot {
                 // If we're running in CI we therefore re-create any existing containers
                 // and cannot start monitoring them until after this restart.
                 provider.start();
+                started.countDown();
                 monitor();
             } else {
                 // Otherwise boot as fast as possible by immediately checking to
                 // see if our dependencies are already up.
                 monitor();
                 provider.start();
+                started.countDown();
             }
         } catch (Throwable e) {
             // A dependency that cannot start is fatal, and the control plane gates cannot carry
@@ -157,6 +163,7 @@ public class DependencyBoot {
         t.start();
     }
 
+    @SneakyThrows
     private void monitorStartingServices() {
         Awaitility.await()
             .pollInSameThread()
@@ -190,6 +197,9 @@ public class DependencyBoot {
         ControlPlane.setESReady();
 
         if (ServiceBusConfig.enabled(System.getenv())) {
+            // Compose recreates the emulator on every boot, as it mounts its config from a new directory each time,
+            // and the one it replaces would pass the check. A message sent to that one is lost.
+            started.await();
             // The emulator waits for its SQL Server before it opens, which takes a minute or two on first boot.
             Awaitility.await()
                 .pollInSameThread()
