@@ -11,8 +11,9 @@ import com.azure.messaging.servicebus.ServiceBusSenderClient;
  * The Service Bus senders for HMC's queues and topic, one for each, reused for every message.
  *
  * <p>HMC builds a new sender, with its own AMQP connection, for every message it sends, and never closes it. Azure
- * Service Bus tolerates the leaked connections; the local Service Bus emulator stops opening send links after a few,
- * so hearing updates stop reaching services. cftlib replaces HMC's senders with ones that send through these.
+ * Service Bus closes each connection once it has had no active links for five minutes. The local Service Bus emulator
+ * allows at most 10 concurrent connections to its namespace, so after a few messages it stops opening send links and
+ * hearing updates stop reaching services. cftlib replaces HMC's senders with ones that send through these.
  *
  * <p>Each HMC application has its own classloader, so its own senders.
  */
