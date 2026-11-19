@@ -8,6 +8,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.DriverManager;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -25,10 +26,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
 import lombok.SneakyThrows;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
@@ -48,7 +47,8 @@ public class Hearings {
     // The port Service.hmcHmiInboundAdapter pins.
     static final String INBOUND_ADAPTER_URL = "http://localhost:4559";
     // The port Service.hmcCftHearingService pins.
-    static final String HEARING_SERVICE_URL = "http://localhost:4561";
+    // The hearing service's database, as Service.Hmc names it.
+    static final String HMC_DATABASE = "hmc_cft_hearing_service";
     static final String IDAM_URL = "http://localhost:5062";
     // In java.io.tmpdir, as the hmcCftHearingService service's arguments expect.
     static final String ROOM_ATTRIBUTES_FILE = "cftlib-hmc-room-attributes.json";
@@ -131,22 +131,21 @@ public class Hearings {
         var thread = new Thread(() -> {
             ControlPlane.waitForBoot();
             api.createIdamUser(SYSTEM_USERNAME, "caseworker", "hearing-manager");
-            // HMC checks its callers' organisational role assignments: hearing-manager to change a hearing, and
-            // hearing-viewer to read one, as the /hmi page does for its status. With no attributes they cover every
+            // HMC checks its callers' organisational role assignments. With no attributes this one covers every
             // jurisdiction and case type.
             api.configureRoleAssignments(new Gson().toJson(List.of(Map.of(
                 "id", idamUserId(SYSTEM_USERNAME),
                 "overrideAll", true,
-                "roleAssignments", Stream.of("hearing-manager", "hearing-viewer").map(role -> Map.of(
+                "roleAssignments", List.of(Map.of(
                     "roleType", "ORGANISATION",
-                    "roleName", role,
+                    "roleName", "hearing-manager",
                     "grantType", "STANDARD",
                     "roleCategory", "ADMIN",
                     "classification", "PUBLIC",
                     "readOnly", false,
                     "attributes", Map.of(),
                     "authorisations", List.of()
-                )).toList()
+                ))
             ))));
             instance = new Hearings(api);
         });
@@ -321,20 +320,22 @@ public class Hearings {
     }
 
     /**
-     * The hearing's status in HMC, or UNKNOWN if HMC cannot say.
+     * The hearing's status in HMC, or UNKNOWN if HMC has no such hearing. It is read from HMC's database: reading
+     * the hearing through HMC's API checks the caller can access the case in CCD, which cftlib's own user cannot.
      */
     @SneakyThrows
     String hmcStatus(String hearingId) {
-        var response = http.send(HttpRequest.newBuilder(URI.create(HEARING_SERVICE_URL + "/hearing/" + hearingId))
-                .header("Authorization", "Bearer " + systemUserToken())
-                .header("ServiceAuthorization", api.generateDummyS2SToken("hmc_hmi_inbound_adapter"))
-                .build(),
-            HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() != 200) {
+        try (var connection = DriverManager.getConnection(
+                "jdbc:postgresql://" + CftlibConfig.dbHost() + ":" + CftlibConfig.dbPort() + "/" + HMC_DATABASE,
+                CftlibConfig.dbUsername(), CftlibConfig.dbPassword());
+             var query = connection.prepareStatement("select status from hearing where hearing_id = ?")) {
+            query.setLong(1, Long.parseLong(hearingId));
+            try (var result = query.executeQuery()) {
+                return result.next() ? result.getString(1) : "UNKNOWN";
+            }
+        } catch (NumberFormatException e) {
             return "UNKNOWN";
         }
-        var details = JsonParser.parseString(response.body()).getAsJsonObject().getAsJsonObject("requestDetails");
-        return details == null || !details.has("status") ? "UNKNOWN" : details.get("status").getAsString();
     }
 
     /**
