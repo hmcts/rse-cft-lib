@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.IntStream;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -54,6 +55,8 @@ class HmcTests extends CftlibTest {
     private static final Duration WAIT = Duration.ofMinutes(1);
     // A caseworker created by CFTLibConfig. HMC looks its callers up in IDAM, so they need real tokens.
     private static final String USER = "a@b.com";
+    // The Service Bus emulator opens at most this many connections to its namespace at once.
+    private static final int EMULATOR_CONNECTIONS = 10;
 
     private final HttpClient http = HttpClient.newHttpClient();
     private final Gson gson = new Gson();
@@ -186,6 +189,22 @@ class HmcTests extends CftlibTest {
         } finally {
             hmi("/auto-respond", "enabled=false");
         }
+    }
+
+    // HMC opens a new connection for every message it sends and never closes it. cftlib replaces its senders with ones
+    // that reuse a connection, or the emulator would stop opening them, and hearing updates stop, after a few messages.
+    // Listing each hearing sends a message with each of the senders a listing uses: the hearing service's, to HMI and
+    // to services, the outbound adapter's, with HMI's acknowledgement, and the inbound adapter's, with the listing.
+    @Test
+    void keepsSendingHearingUpdatesPastTheEmulatorsConnectionLimit() {
+        var hearingIds = IntStream.rangeClosed(0, EMULATOR_CONNECTIONS)
+            .mapToObj(i -> requestHearing(createCase()))
+            .toList();
+        hearingIds.forEach(hearingId -> awaitStatus(hearingId, "AWAITING_LISTING"));
+
+        hearingIds.forEach(hearingId -> cftlib().sendHmiListing(hearingId, listing()));
+
+        hearingIds.forEach(hearingId -> awaitStatus(hearingId, "LISTED"));
     }
 
     @SneakyThrows
