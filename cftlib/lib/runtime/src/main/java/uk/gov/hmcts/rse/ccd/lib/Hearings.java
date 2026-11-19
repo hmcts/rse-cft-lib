@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
@@ -133,21 +134,22 @@ public class Hearings {
         var thread = new Thread(() -> {
             ControlPlane.waitForBoot();
             api.createIdamUser(SYSTEM_USERNAME, "caseworker", "hearing-manager");
-            // HMC checks its callers' organisational role assignments. With no attributes this one covers every
+            // HMC checks its callers' organisational role assignments: hearing-manager to change a hearing, and
+            // hearing-viewer to read one, as the /hmi page does for its status. With no attributes they cover every
             // jurisdiction and case type.
             api.configureRoleAssignments(new Gson().toJson(List.of(Map.of(
                 "id", idamUserId(SYSTEM_USERNAME),
                 "overrideAll", true,
-                "roleAssignments", List.of(Map.of(
+                "roleAssignments", Stream.of("hearing-manager", "hearing-viewer").map(role -> Map.of(
                     "roleType", "ORGANISATION",
-                    "roleName", "hearing-manager",
+                    "roleName", role,
                     "grantType", "STANDARD",
                     "roleCategory", "ADMIN",
                     "classification", "PUBLIC",
                     "readOnly", false,
                     "attributes", Map.of(),
                     "authorisations", List.of()
-                ))
+                )).toList()
             ))));
             instance = new Hearings(api);
         });

@@ -125,7 +125,11 @@ class HmcTests extends CftlibTest {
     void listsAHearingFromTheHmiPage() {
         var hearingId = requestHearing(createCase());
         awaitStatus(hearingId, "AWAITING_LISTING");
-        assertThat(hmiPage(), containsString(hearingId));
+        // The page reads each hearing's status from HMC, and offers the answers HMC accepts in it.
+        var page = hmiPage();
+        assertThat(page, containsString(hearingId));
+        assertThat(page, containsString("AWAITING_LISTING"));
+        assertThat(page, containsString("/hmi/requests/" + hearingId + "/listing"));
 
         var start = LocalDate.now().plusDays(21).atTime(14, 0);
         assertThat(hmi("/requests/" + hearingId + "/listing", "start=" + start), equalTo(202));
