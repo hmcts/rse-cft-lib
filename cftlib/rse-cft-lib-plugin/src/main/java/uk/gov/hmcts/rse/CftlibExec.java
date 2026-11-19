@@ -268,6 +268,9 @@ public class CftlibExec extends JavaExec {
         // Documents stored by the runtime's dm-store stand-in.
         environment("RSE_LIB_DM_STORE_DIR", getProject().getLayout()
                 .getBuildDirectory().dir("cftlib/dm-store").get().getAsFile().getCanonicalPath());
+        // The hearing requests the runtime's HMI stand-in has received, which its /hmi page lists.
+        environment("RSE_LIB_HMI_DIR", getProject().getLayout()
+                .getBuildDirectory().dir("cftlib/hmi").get().getAsFile().getCanonicalPath());
     }
 
     private void setRequiredJvmArgs() {

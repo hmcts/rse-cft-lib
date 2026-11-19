@@ -620,7 +620,8 @@ local auth, ExUI's hearings calls go to this HMC too, unless the build sets
 
 To answer a hearing by hand, open `http://localhost:8489/hmi` in a browser. It lists each
 hearing HMC has sent a request for, newest first, with its status in HMC, and offers the
-answers HMC accepts in that status:
+answers HMC accepts in that status. The requests are kept under `build/cftlib/hmi`
+(`RSE_LIB_HMI_DIR`), so the page still lists them after a restart; `clean` removes them.
 
 | Answer | When | HMC moves the hearing to |
 | --- | --- | --- |

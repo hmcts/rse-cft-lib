@@ -21,7 +21,6 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -68,9 +67,6 @@ public class Hearings {
     // The case a request to HMI is for.
     private static final Pattern CASE_REFERENCE = Pattern.compile("\"caseIdHMCTS\"\\s*:\\s*\"([^\"]+)\"");
 
-    record HmiRequest(String method, String hearingId, String body, Instant received) {
-    }
-
     public record Rejection(int errorCode, String description) {
     }
 
@@ -86,7 +82,8 @@ public class Hearings {
                              int duration, String judge) {
     }
 
-    private static final List<HmiRequest> requests = new CopyOnWriteArrayList<>();
+    // Kept in a file, so the /hmi page still lists hearings awaiting an answer after a restart.
+    private static final HmiRequestLog requests = HmiRequestLog.fromEnvironment(System.getenv());
     // Rejections for any case's next request, and for a particular case's.
     private static final Queue<Rejection> rejections = new ConcurrentLinkedQueue<>();
     private static final Map<String, Queue<Rejection>> caseRejections = new ConcurrentHashMap<>();
@@ -190,7 +187,7 @@ public class Hearings {
             var matcher = CASE_LISTING_ID.matcher(body == null ? "" : body);
             hearingId = matcher.find() ? matcher.group(1) : null;
         }
-        requests.add(new HmiRequest(method, hearingId, body, Instant.now()));
+        requests.add(new HmiRequestLog.HmiRequest(method, hearingId, body, Instant.now()));
         var caseReference = CASE_REFERENCE.matcher(body == null ? "" : body);
         var forCase = caseReference.find() ? caseRejections.get(caseReference.group(1)) : null;
         var rejection = forCase == null ? null : forCase.poll();
@@ -214,7 +211,7 @@ public class Hearings {
     }
 
     List<String> hmiRequests(String hearingId) {
-        return requests.stream()
+        return requests.all().stream()
             .filter(r -> hearingId.equals(r.hearingId()))
             .map(r -> r.method() + " " + r.body())
             .toList();
@@ -244,8 +241,8 @@ public class Hearings {
      * The hearings HMC has sent HMI requests for, most recently requested first, with their status in HMC.
      */
     public List<HmiHearing> hearings() {
-        var byHearing = new LinkedHashMap<String, List<HmiRequest>>();
-        for (var request : requests) {
+        var byHearing = new LinkedHashMap<String, List<HmiRequestLog.HmiRequest>>();
+        for (var request : requests.all()) {
             if (request.hearingId() != null) {
                 byHearing.computeIfAbsent(request.hearingId(), id -> new ArrayList<>()).add(request);
             }
@@ -289,7 +286,7 @@ public class Hearings {
      */
     public void cancel(String hearingId) {
         var request = hearingRequest(hearingId);
-        var reason = requests.stream()
+        var reason = requests.all().stream()
             .filter(r -> hearingId.equals(r.hearingId()) && "DELETE".equals(r.method()))
             .reduce((first, second) -> second)
             .map(r -> HmiResponses.cancellationReason(r.body()))
@@ -364,7 +361,8 @@ public class Hearings {
     }
 
     private HmiResponses.Request hearingRequest(String hearingId) {
-        var request = latestHearingRequest(requests.stream().filter(r -> hearingId.equals(r.hearingId())).toList());
+        var request = latestHearingRequest(
+            requests.all().stream().filter(r -> hearingId.equals(r.hearingId())).toList());
         if (request == null) {
             throw new IllegalArgumentException("HMC has not sent HMI a request for hearing " + hearingId);
         }
@@ -372,7 +370,7 @@ public class Hearings {
     }
 
     // The last request for a new hearing or an amendment, which says what to list.
-    private static HmiResponses.Request latestHearingRequest(List<HmiRequest> received) {
+    private static HmiResponses.Request latestHearingRequest(List<HmiRequestLog.HmiRequest> received) {
         for (int i = received.size() - 1; i >= 0; i--) {
             var request = received.get(i);
             if (!"DELETE".equals(request.method()) && request.body() != null) {
