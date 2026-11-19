@@ -90,7 +90,11 @@ hmcApplications.each { sourceSetName, project ->
     dependencies.add(sourceSet.compileOnlyConfigurationName,
         "com.github.hmcts.rse-cft-lib:${project}:DEV-SNAPSHOT") { transitive = false }
     dependencies.add(sourceSet.compileOnlyConfigurationName, 'org.slf4j:slf4j-api:2.0.16')
-    configurations[sourceSet.compileOnlyConfigurationName].resolutionStrategy.useGlobalDependencySubstitutionRules = false
+    // As for the configurations above: resolve these when compiling, after the HMC application is published to
+    // Maven Local, rather than while Gradle plans the build.
+    configurations.matching { it.name.startsWith(sourceSetName) }.configureEach {
+        it.resolutionStrategy.useGlobalDependencySubstitutionRules = false
+    }
     tasks.named(sourceSet.compileJavaTaskName) { dependsOn ":publish${project}" }
     tasks.named('jar') { from sourceSet.output }
 }
