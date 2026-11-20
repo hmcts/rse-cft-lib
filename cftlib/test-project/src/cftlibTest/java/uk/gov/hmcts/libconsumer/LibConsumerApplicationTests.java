@@ -190,6 +190,57 @@ class LibConsumerApplicationTests extends CftlibTest {
         }
     }
 
+    @Order(1)
+    @Test
+    @SneakyThrows
+    void replacesOnlyAUsersOrganisationRoles() {
+        // A case role the user gained while using the stack.
+        cftlib().configureRoleAssignments(new Gson().toJson(List.of(Map.of(
+            "id", "3",
+            "roleAssignments", List.of(Map.of(
+                "roleType", "CASE",
+                "roleName", "[APPONESOLICITOR]",
+                "grantType", "SPECIFIC",
+                "roleCategory", "JUDICIAL",
+                "classification", "RESTRICTED",
+                "readOnly", false,
+                "attributes", Map.of("caseType", "NFD", "jurisdiction", "DIVORCE", "caseId", "1"),
+                "authorisations", List.of()
+            ))
+        ))));
+        // The next boot loads the user's organisational roles again.
+        cftlib().configureRoleAssignments(Resources.toString(
+            Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8));
+
+        try (var c = cftlib().getConnection(Database.AM)) {
+            var v = c.createStatement().executeQuery("""
+                select count(*) filter (where role_type = 'ORGANISATION'),
+                       count(*) filter (where role_type = 'CASE')
+                from role_assignment
+                where actor_id = '3'
+                """);
+            v.next();
+            assertThat(v.getInt(1), equalTo(2));
+            assertThat(v.getInt(2), greaterThan(0));
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    void offersQuickLoginUsersOnTheLoginPage() {
+        var loginPage = HttpClientBuilder.create().build().execute(
+            new HttpGet("http://localhost:5062/login?redirect_uri=http://localhost:3000/oauth2/callback&client_id=xuiwebapp"));
+        var html = EntityUtils.toString(loginPage.getEntity());
+        assertThat(html.contains("quick-login-judge@example.com"), is(true));
+        assertThat(html.contains("Judges"), is(true));
+
+        var account = HttpClientBuilder.create().build().execute(
+            new HttpGet("http://localhost:5062/testing-support/accounts?email=quick-login-judge@example.com"));
+        var details = new Gson().fromJson(EntityUtils.toString(account.getEntity()), Map.class);
+        assertThat(details.get("forename"), equalTo("Quick"));
+        assertThat(details.get("surname"), equalTo("Judge"));
+    }
+
     @Order(2)
     @Test
     void caseCreation() throws IOException {

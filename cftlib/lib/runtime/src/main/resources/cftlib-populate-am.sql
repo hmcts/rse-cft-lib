@@ -1,10 +1,15 @@
 
 with entries(val) as (select jsonb_array_elements(?::jsonb))
-, rows(actor_id, overrideAll, val) as (
-  select val->>'id', val->>'overrideAll', jsonb_array_elements(val->'roleAssignments') from entries
+, rows(actor_id, overrideAll, replaceOrganisationRoles, val) as (
+  select val->>'id', val->>'overrideAll', val->>'replaceOrganisationRoles', jsonb_array_elements(val->'roleAssignments')
+  from entries
 ), clean as (
-  -- Optionally clean existing role assignments if requested
-  delete from role_assignment where actor_id in (select actor_id from rows where overrideAll::boolean = true)
+  -- Optionally clean existing role assignments if requested: all of them, or only the organisational ones, as
+  -- organisational role mapping replaces them, keeping the user's case roles.
+  delete from role_assignment
+  where actor_id in (select actor_id from rows where overrideAll::boolean = true)
+     or (role_type = 'ORGANISATION'
+         and actor_id in (select actor_id from rows where replaceOrganisationRoles::boolean = true))
 ), actors as (
 insert into role_assignment
   select

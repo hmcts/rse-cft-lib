@@ -15,6 +15,12 @@ public interface CFTLib {
     void createIdamUser(String email, String... roles);
 
     /**
+     * Create an IDAM user with a name, which the login page can offer for quick login.
+     * Password 'password'.
+     */
+    void createIdamUser(IdamUser user);
+
+    /**
      * Create a CCD User Profile.
      */
     void createProfile(String id, String jurisdiction, String caseType, String state);
@@ -25,8 +31,13 @@ public interface CFTLib {
     void createRoles(String... roles);
 
     /**
-     * Configure the AM role assignment service
-     * For format see https://github.com/hmcts/rse-cft-lib/blob/main/test-project/src/cftlib/resources/cftlib-am-role-assignments.json
+     * Configure the AM role assignment service.
+     * For format see https://github.com/hmcts/rse-cft-lib/blob/main/cftlib/test-project/src/cftlib/resources/cftlib-am-role-assignments.json
+     *
+     * <p>Each entry adds its role assignments to the user's. With {@code "overrideAll": true} they replace all the
+     * user's assignments. With {@code "replaceOrganisationRoles": true} they replace only the user's ORGANISATION
+     * assignments, as organisational role mapping does, so the case roles the user gains while using the stack
+     * survive the next boot.
      */
     void configureRoleAssignments(String json);
 

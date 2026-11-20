@@ -13,8 +13,8 @@ import java.sql.DriverManager;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,6 +34,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.util.DigestUtils;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
+import uk.gov.hmcts.rse.ccd.lib.api.IdamUser;
 
 public class CFTLibApiImpl implements CFTLib {
 
@@ -132,24 +133,32 @@ public class CFTLibApiImpl implements CFTLib {
         return caseTypeReferences;
     }
 
-    @SneakyThrows
     @Override
     public void createIdamUser(String email, String... roles) {
+        createIdamUser(new IdamUser(email, "A", "User", null, List.of(roles)));
+    }
+
+    @SneakyThrows
+    @Override
+    public void createIdamUser(IdamUser user) {
         // TODO: Allow creation of augmented accounts.
         if (!"localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
             return;
         }
-        var json = new Gson().toJson(Map.of(
-            "email", email,
-            "forename", "A",
-            "surname", "User",
-            "password", "password",
-            "roles", Arrays.stream(roles).map(x -> Map.of("code", x)).collect(Collectors.toList())
-        ));
+        var account = new LinkedHashMap<String, Object>();
+        account.put("email", user.email());
+        account.put("forename", user.forename());
+        account.put("surname", user.surname());
+        account.put("password", "password");
+        account.put("roles", user.roles().stream().map(x -> Map.of("code", x)).collect(Collectors.toList()));
+        if (user.quickLoginLabel() != null) {
+            account.put("quickLogin", true);
+            account.put("quickLoginLabel", user.quickLoginLabel());
+        }
         var request = HttpRequest.newBuilder()
             .uri(URI.create("http://localhost:5062/testing-support/accounts"))
             .header("content-type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(json))
+            .POST(HttpRequest.BodyPublishers.ofString(new Gson().toJson(account)))
             .build();
 
         var client = HttpClient.newHttpClient();
