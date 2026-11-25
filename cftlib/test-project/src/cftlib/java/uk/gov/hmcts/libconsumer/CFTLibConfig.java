@@ -6,8 +6,8 @@ import com.google.common.io.Resources;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
-import uk.gov.hmcts.rse.ccd.lib.api.IdamUser;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
+import uk.gov.hmcts.rse.ccd.lib.api.IdamUser;
 
 @Component
 public class CFTLibConfig implements CFTLibConfigurer {

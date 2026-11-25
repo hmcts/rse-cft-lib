@@ -42,6 +42,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.util.FileSystemUtils;
 import uk.gov.hmcts.rse.ccd.lib.Database;
+import uk.gov.hmcts.rse.ccd.lib.api.IdamUser;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -190,13 +191,16 @@ class LibConsumerApplicationTests extends CftlibTest {
         }
     }
 
+    // The id the IDAM simulator gives quick-login-judge@example.com, which cftlib-am-role-assignments.json names.
+    private static final String QUICK_LOGIN_JUDGE_ID = "1d57dc7d-a8d4-3f78-97a9-4632749587a8";
+
     @Order(1)
     @Test
     @SneakyThrows
     void replacesOnlyAUsersOrganisationRoles() {
         // A case role the user gained while using the stack.
         cftlib().configureRoleAssignments(new Gson().toJson(List.of(Map.of(
-            "id", "3",
+            "id", QUICK_LOGIN_JUDGE_ID,
             "roleAssignments", List.of(Map.of(
                 "roleType", "CASE",
                 "roleName", "[APPONESOLICITOR]",
@@ -213,12 +217,14 @@ class LibConsumerApplicationTests extends CftlibTest {
             Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8));
 
         try (var c = cftlib().getConnection(Database.AM)) {
-            var v = c.createStatement().executeQuery("""
+            var s = c.prepareStatement("""
                 select count(*) filter (where role_type = 'ORGANISATION'),
                        count(*) filter (where role_type = 'CASE')
                 from role_assignment
-                where actor_id = '3'
+                where actor_id = ?
                 """);
+            s.setString(1, QUICK_LOGIN_JUDGE_ID);
+            var v = s.executeQuery();
             v.next();
             assertThat(v.getInt(1), equalTo(2));
             assertThat(v.getInt(2), greaterThan(0));
@@ -239,6 +245,14 @@ class LibConsumerApplicationTests extends CftlibTest {
         var details = new Gson().fromJson(EntityUtils.toString(account.getEntity()), Map.class);
         assertThat(details.get("forename"), equalTo("Quick"));
         assertThat(details.get("surname"), equalTo("Judge"));
+        assertThat(details.get("id"), equalTo(QUICK_LOGIN_JUDGE_ID));
+    }
+
+    @Test
+    void returnsTheIdTheSimulatorGivesAUser() {
+        var id = cftlib().createIdamUser(IdamUser.quickLogin("Judges", "Quick", "Judge", "quick-login-judge@example.com",
+            "caseworker", "caseworker-divorce"));
+        assertThat(id, equalTo(QUICK_LOGIN_JUDGE_ID));
     }
 
     @Order(2)

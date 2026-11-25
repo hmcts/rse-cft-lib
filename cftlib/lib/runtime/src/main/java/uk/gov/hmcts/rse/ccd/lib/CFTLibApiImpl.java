@@ -23,6 +23,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import lombok.SneakyThrows;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -135,15 +136,15 @@ public class CFTLibApiImpl implements CFTLib {
 
     @Override
     public void createIdamUser(String email, String... roles) {
-        createIdamUser(new IdamUser(email, "A", "User", null, List.of(roles)));
+        createIdamUser(new IdamUser(null, "A", "User", email, List.of(roles)));
     }
 
     @SneakyThrows
     @Override
-    public void createIdamUser(IdamUser user) {
+    public String createIdamUser(IdamUser user) {
         // TODO: Allow creation of augmented accounts.
         if (!"localAuth".equals(System.getenv("RSE_LIB_AUTH-MODE"))) {
-            return;
+            return null;
         }
         var account = new LinkedHashMap<String, Object>();
         account.put("email", user.email());
@@ -166,6 +167,7 @@ public class CFTLibApiImpl implements CFTLib {
         if (!String.valueOf(response.statusCode()).startsWith("2")) {
             throw new RuntimeException("Failed to create idam account" + response.statusCode());
         }
+        return JsonParser.parseString(response.body()).getAsJsonObject().get("uuid").getAsString();
     }
 
     @SneakyThrows

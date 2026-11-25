@@ -17,8 +17,11 @@ public interface CFTLib {
     /**
      * Create an IDAM user with a name, which the login page can offer for quick login.
      * Password 'password'.
+     *
+     * @return the user's IDAM id, which role assignments name the user by; the simulator derives it from the email.
+     *     Null when the stack uses a real IDAM rather than the simulator, as no account is created.
      */
-    void createIdamUser(IdamUser user);
+    String createIdamUser(IdamUser user);
 
     /**
      * Create a CCD User Profile.
@@ -37,7 +40,8 @@ public interface CFTLib {
      * <p>Each entry adds its role assignments to the user's. With {@code "overrideAll": true} they replace all the
      * user's assignments. With {@code "replaceOrganisationRoles": true} they replace only the user's ORGANISATION
      * assignments, as organisational role mapping does, so the case roles the user gains while using the stack
-     * survive the next boot.
+     * survive the next boot. Any CASE assignments in such an entry are still added again on every boot, so only an
+     * entry that lists organisational roles alone is safe to load repeatedly.
      */
     void configureRoleAssignments(String json);
 

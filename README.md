@@ -182,9 +182,15 @@ lib.createIdamUser(IdamUser.quickLogin("Judges", "Amy", "Powell", "DJ.Amy.Powell
     "caseworker", "caseworker-civil", "caseworker-civil-judge"));
 ```
 
+To give the user role assignments, name it by the id `createIdamUser` returns. The simulator derives each user's id
+from their email (`UUID.nameUUIDFromBytes(email.getBytes())`), so a JSON file of role assignments can give the id
+directly.
+
 Role assignments are loaded on every boot, into a database that keeps the case roles users gain while using the stack.
-Mark an entry `"replaceOrganisationRoles": true` to replace only the user's organisational roles, as organisational
-role mapping does, rather than adding them again (`"overrideAll": true` replaces every assignment the user has).
+Mark an entry `"replaceOrganisationRoles": true` to replace the user's organisational roles, as organisational role
+mapping does, rather than adding them again (`"overrideAll": true` replaces every assignment the user has). The flag
+only removes organisational roles, so any case roles listed in the entry are still added again on every boot: use it
+on entries that list organisational roles alone.
 
 CCD definitions can also be imported directly from the JSON source used by the CCD definition processor:
 
