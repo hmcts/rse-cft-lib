@@ -8,13 +8,18 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +52,7 @@ public class Hearings {
     // The port Service.hmcHmiInboundAdapter pins.
     static final String INBOUND_ADAPTER_URL = "http://localhost:4559";
     // The port Service.hmcCftHearingService pins.
+    static final int HEARING_SERVICE_PORT = 4561;
     // The hearing service's database, as Service.Hmc names it.
     static final String HMC_DATABASE = "hmc_cft_hearing_service";
     static final String IDAM_URL = "http://localhost:5062";
@@ -73,17 +79,20 @@ public class Hearings {
     /**
      * A hearing HMC has sent HMI requests for, as the /hmi page shows it.
      *
-     * @param lastRequest   the method of the last request HMC sent for it: POST, PUT or DELETE
-     * @param hmcStatus     the hearing's status in HMC
-     * @param suggestedStart when the hearing would be listed if nobody chose a time
+     * @param lastRequest    the method of the last request HMC sent for it: POST, PUT or DELETE
+     * @param hmcStatus      the hearing's status in HMC
+     * @param suggestedStart when the hearing would be listed if nobody chose a time, in court time
+     * @param unreadable     why HMC's request for the hearing couldn't be read, if it couldn't
      */
     public record HmiHearing(String hearingId, String caseReference, String caseTitle, String lastRequest,
                              Instant lastReceived, String hmcStatus, LocalDateTime suggestedStart, String venue,
-                             int duration, String judge) {
+                             int duration, String judge, String unreadable) {
     }
 
-    // Kept in a file, so the /hmi page still lists hearings awaiting an answer after a restart.
-    private static final HmiRequestLog requests = HmiRequestLog.fromEnvironment(System.getenv());
+    // Kept in a file, so the /hmi page still lists hearings awaiting an answer after a restart. Read once HMC's
+    // database is up, the first time the requests are needed, which is only with the hmc feature on.
+    private static final HmiRequestLog requests = HmiRequestLog.fromEnvironment(System.getenv(),
+        Hearings::hmcDatabase);
     // Rejections for any case's next request, and for a particular case's.
     private static final Queue<Rejection> rejections = new ConcurrentLinkedQueue<>();
     private static final Map<String, Queue<Rejection>> caseRejections = new ConcurrentHashMap<>();
@@ -239,6 +248,7 @@ public class Hearings {
     /**
      * The hearings HMC has sent HMI requests for, most recently requested first, with their status in HMC.
      */
+    @SneakyThrows
     public List<HmiHearing> hearings() {
         var byHearing = new LinkedHashMap<String, List<HmiRequestLog.HmiRequest>>();
         for (var request : requests.all()) {
@@ -246,22 +256,37 @@ public class Hearings {
                 byHearing.computeIfAbsent(request.hearingId(), id -> new ArrayList<>()).add(request);
             }
         }
-        var today = LocalDate.now();
+        if (byHearing.isEmpty()) {
+            return List.of();
+        }
+        Map<String, String> statuses;
+        try (var connection = hmcConnection()) {
+            statuses = hmcStatuses(connection, byHearing.keySet());
+        }
+        var today = LocalDate.now(HmiResponses.COURT_TIME);
         var hearings = new ArrayList<HmiHearing>();
         byHearing.forEach((hearingId, received) -> {
             var last = received.get(received.size() - 1);
-            var request = latestHearingRequest(received);
+            HmiResponses.Request request = null;
+            String unreadable = null;
+            // One request HMI can't read shows on its own row, rather than stopping the page.
+            try {
+                request = latestHearingRequest(received);
+            } catch (RuntimeException e) {
+                unreadable = String.valueOf(e.getMessage());
+            }
             hearings.add(new HmiHearing(
                 hearingId,
                 request == null ? null : request.caseReference(),
                 request == null ? null : request.caseTitle(),
                 last.method(),
                 last.received(),
-                hmcStatus(hearingId),
+                statuses.get(hearingId),
                 request == null ? null : HmiResponses.defaultStart(request, today),
                 request == null ? null : request.venue(),
                 request == null ? HmiResponses.DEFAULT_DURATION_MINUTES : request.duration(),
-                request == null ? null : request.judge()
+                request == null ? null : request.judge(),
+                unreadable
             ));
         });
         hearings.sort(Comparator.comparing(HmiHearing::lastReceived).reversed());
@@ -272,12 +297,12 @@ public class Hearings {
      * List the hearing as List Assist would, from the last request HMC sent for it: at the venue, for the duration
      * and with the judge it asked for.
      *
-     * @param start when the hearing starts, or null for the first working day the request allows
+     * @param start when the hearing starts, in court time, or null for the first working day the request allows
      */
     public void list(String hearingId, LocalDateTime start) {
         var request = hearingRequest(hearingId);
-        var at = start != null ? start : HmiResponses.defaultStart(request, LocalDate.now());
-        sendHmiListing(hearingId, HmiResponses.listing(hearingId, request, at, LocalDateTime.now()));
+        var at = start != null ? start : HmiResponses.defaultStart(request, LocalDate.now(HmiResponses.COURT_TIME));
+        sendHmiListing(hearingId, HmiResponses.listing(hearingId, request, at, LocalDateTime.now(ZoneOffset.UTC)));
     }
 
     /**
@@ -290,7 +315,8 @@ public class Hearings {
             .reduce((first, second) -> second)
             .map(r -> HmiResponses.cancellationReason(r.body()))
             .orElse(null);
-        sendHmiListing(hearingId, HmiResponses.cancellation(hearingId, request, reason, LocalDateTime.now()));
+        sendHmiListing(hearingId, HmiResponses.cancellation(hearingId, request, reason,
+            LocalDateTime.now(ZoneOffset.UTC)));
     }
 
     /**
@@ -320,22 +346,66 @@ public class Hearings {
     }
 
     /**
-     * The hearing's status in HMC, or UNKNOWN if HMC has no such hearing. It is read from HMC's database: reading
-     * the hearing through HMC's API checks the caller can access the case in CCD, which cftlib's own user cannot.
+     * HMC's database. Hearings are read from it: reading a hearing through HMC's API checks the caller can access
+     * the case in CCD, which cftlib's own user cannot.
+     */
+    private static Connection hmcConnection() throws SQLException {
+        return DriverManager.getConnection(
+            "jdbc:postgresql://" + CftlibConfig.dbHost() + ":" + CftlibConfig.dbPort() + "/" + HMC_DATABASE,
+            CftlibConfig.dbUsername(), CftlibConfig.dbPassword());
+    }
+
+    /**
+     * Identifies HMC's database, which a clean boot recreates, numbering its hearings from the start again: the
+     * Postgres cluster's system identifier, which initdb sets, and the database's oid within it. A database user that
+     * can't read the cluster's identifier gets the oid alone.
      */
     @SneakyThrows
-    String hmcStatus(String hearingId) {
-        try (var connection = DriverManager.getConnection(
-                "jdbc:postgresql://" + CftlibConfig.dbHost() + ":" + CftlibConfig.dbPort() + "/" + HMC_DATABASE,
-                CftlibConfig.dbUsername(), CftlibConfig.dbPassword());
-             var query = connection.prepareStatement("select status from hearing where hearing_id = ?")) {
-            query.setLong(1, Long.parseLong(hearingId));
-            try (var result = query.executeQuery()) {
-                return result.next() ? result.getString(1) : "UNKNOWN";
+    private static String hmcDatabase() {
+        try (var connection = hmcConnection()) {
+            String cluster;
+            try (var query = connection.createStatement();
+                 var result = query.executeQuery("select system_identifier from pg_control_system()")) {
+                result.next();
+                cluster = result.getString(1);
+            } catch (SQLException e) {
+                cluster = "cluster";
             }
-        } catch (NumberFormatException e) {
-            return "UNKNOWN";
+            try (var query = connection.createStatement();
+                 var result = query.executeQuery("select oid from pg_database where datname = current_database()")) {
+                result.next();
+                return cluster + "/" + result.getString(1);
+            }
         }
+    }
+
+    /**
+     * The hearings' statuses in HMC, UNKNOWN for those HMC has no such hearing for.
+     */
+    static Map<String, String> hmcStatuses(Connection connection, Collection<String> hearingIds) throws SQLException {
+        var statuses = new HashMap<String, String>();
+        var ids = new ArrayList<Long>();
+        for (var hearingId : hearingIds) {
+            statuses.put(hearingId, "UNKNOWN");
+            try {
+                ids.add(Long.parseLong(hearingId));
+            } catch (NumberFormatException e) {
+                // Not one of HMC's ids.
+            }
+        }
+        if (ids.isEmpty()) {
+            return statuses;
+        }
+        try (var query = connection.prepareStatement(
+                "select hearing_id, status from hearing where hearing_id = any(?)")) {
+            query.setArray(1, connection.createArrayOf("bigint", ids.toArray()));
+            try (var result = query.executeQuery()) {
+                while (result.next()) {
+                    statuses.put(String.valueOf(result.getLong(1)), result.getString(2));
+                }
+            }
+        }
+        return statuses;
     }
 
     /**
@@ -345,8 +415,10 @@ public class Hearings {
     private void respondOnceAcknowledged(String method, String hearingId) {
         var acknowledged = ACKNOWLEDGED.get(method);
         try {
-            Awaitility.await().atMost(ACKNOWLEDGEMENT_WAIT).pollInterval(Duration.ofSeconds(1))
-                .until(() -> acknowledged.equals(hmcStatus(hearingId)));
+            try (var connection = hmcConnection()) {
+                Awaitility.await().atMost(ACKNOWLEDGEMENT_WAIT).pollInterval(Duration.ofSeconds(1))
+                    .until(() -> acknowledged.equals(hmcStatuses(connection, List.of(hearingId)).get(hearingId)));
+            }
             if ("DELETE".equals(method)) {
                 cancel(hearingId);
             } else {
@@ -355,9 +427,10 @@ public class Hearings {
         } catch (ConditionTimeoutException e) {
             System.out.println("**** cftlib's HMI did not respond to " + method + " for hearing " + hearingId
                 + ": HMC did not move it to " + acknowledged + " within " + ACKNOWLEDGEMENT_WAIT.toSeconds() + "s");
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
+            // Includes the checked exceptions the adapter's client and HMC's database throw.
             System.out.println("**** cftlib's HMI could not respond to " + method + " for hearing " + hearingId
-                + ": " + e.getMessage());
+                + ": " + e);
         }
     }
 
@@ -379,6 +452,14 @@ public class Hearings {
             }
         }
         return null;
+    }
+
+    /**
+     * The case in ExUI, on the port it's published on.
+     */
+    public static String caseUrl(String caseReference) {
+        var port = XuiApp.MANAGE_CASES.port(XuiEnvironment.interpolationSource(), XuiEnvironment.Network.HOST);
+        return "http://localhost:" + port + "/cases/case-details/" + caseReference;
     }
 
     // The inbound adapter checks its caller's token against IDAM, so it needs a real one rather than a dummy.

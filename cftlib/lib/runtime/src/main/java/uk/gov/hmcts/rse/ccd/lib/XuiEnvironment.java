@@ -273,7 +273,7 @@ final class XuiEnvironment {
         if (Features.enabled(source, "hmc")) {
             // The hearings tab and its journeys call HMC, which the hmc feature runs on the port it pins.
             resolved.put("XUI_SERVICES_HMC_HEARINGS_COMPONENT_API",
-                value(source, "XUI_SERVICES_HMC_HEARINGS_COMPONENT_API", host + ":4561"));
+                value(source, "XUI_SERVICES_HMC_HEARINGS_COMPONENT_API", host + ":" + Hearings.HEARING_SERVICE_PORT));
         }
         // Placeholders so the XUI health checks pass without these services running.
         resolved.put("XUI_EM_DOCASSEMBLY_API", value(source, "XUI_EM_DOCASSEMBLY_API", runtime));

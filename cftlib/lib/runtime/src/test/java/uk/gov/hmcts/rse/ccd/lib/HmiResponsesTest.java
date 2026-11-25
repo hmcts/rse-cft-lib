@@ -68,11 +68,30 @@ class HmiResponsesTest {
     }
 
     @Test
+    void treatsNullNumbersAsMissing() {
+        var request = HmiResponses.read("""
+            {"hearingRequest": {"_case": {"caseIdHMCTS": "1", "caseVersionId": null},
+              "listing": {"listingDuration": null}}}
+            """);
+
+        assertThat(request.version()).isEqualTo(1);
+        assertThat(request.duration()).isEqualTo(60);
+    }
+
+    @Test
     void takesAFixedDateTheRequestGives() {
         var request = HmiResponses.read(REQUEST.replace(
             "\"listingDuration\"", "\"listingDate\": \"2026-12-09T14:30:00Z\", \"listingDuration\""));
 
         assertThat(request.earliest()).isEqualTo(LocalDateTime.of(2026, 12, 9, 14, 30));
+    }
+
+    @Test
+    void readsHmcsUtcTimesAsUkTime() {
+        var request = HmiResponses.read(REQUEST.replace(
+            "\"listingDuration\"", "\"listingDate\": \"2026-07-09T13:30:00Z\", \"listingDuration\""));
+
+        assertThat(request.earliest()).isEqualTo(LocalDateTime.of(2026, 7, 9, 14, 30));
     }
 
     @Test
@@ -84,6 +103,25 @@ class HmiResponsesTest {
         // Friday: the window opened on the 7th, so the next working day is Monday.
         assertThat(HmiResponses.defaultStart(request, LocalDate.of(2026, 12, 11)))
             .isEqualTo(LocalDateTime.of(2026, 12, 14, 10, 0));
+    }
+
+    @Test
+    void movesAWindowOpeningAtTheWeekendToMonday() {
+        // Saturday 5 December.
+        var request = HmiResponses.read(REQUEST.replace("2026-12-07T00:00:00Z", "2026-12-05T00:00:00Z"));
+
+        assertThat(HmiResponses.defaultStart(request, LocalDate.of(2026, 11, 19)))
+            .isEqualTo(LocalDateTime.of(2026, 12, 7, 10, 0));
+    }
+
+    @Test
+    void keepsTheTimeOfAFixedDateMovedOffTheWeekend() {
+        // Sunday 6 December.
+        var request = HmiResponses.read(REQUEST.replace(
+            "\"listingDuration\"", "\"listingDate\": \"2026-12-06T14:30:00Z\", \"listingDuration\""));
+
+        assertThat(HmiResponses.defaultStart(request, LocalDate.of(2026, 11, 19)))
+            .isEqualTo(LocalDateTime.of(2026, 12, 7, 14, 30));
     }
 
     @Test
@@ -105,6 +143,17 @@ class HmiResponsesTest {
             .isEqualTo("EPIMS");
         assertThat(hearing.getAsJsonArray("hearingJohs").get(0).getAsJsonObject().get("johId").getAsString())
             .isEqualTo("4925644");
+    }
+
+    @Test
+    void sendsHmcTheListingInUtc() {
+        var request = HmiResponses.read(REQUEST);
+        var start = LocalDateTime.of(2027, 7, 6, 10, 0);
+
+        var hearing = hearing(HmiResponses.listing("2000000123", request, start, NOW));
+
+        assertThat(hearing.get("hearingStartTime").getAsString()).isEqualTo("2027-07-06T09:00");
+        assertThat(hearing.get("hearingEndTime").getAsString()).isEqualTo("2027-07-06T10:30");
     }
 
     @Test

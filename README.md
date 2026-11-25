@@ -622,14 +622,19 @@ To answer a hearing by hand, open `http://localhost:8489/hmi` in a browser. It l
 hearing HMC has sent a request for, newest first, with its status in HMC, and offers the
 answers HMC accepts in that status. The requests are kept under `build/cftlib/hmi`
 (`RSE_LIB_HMI_DIR`), so the page still lists them after a restart; `clean` removes them.
+They belong to HMC's database: when it's recreated, by a clean boot or by removing its
+volume, the requests for its old hearings are dropped, as HMC numbers new hearings from the
+start again. Without `RSE_LIB_HMI_DIR`, outside the Gradle plugin, they're kept in memory.
 
 | Answer | When | HMC moves the hearing to |
 | --- | --- | --- |
-| List, at the time given (by default the first working day the request allows, at 10:00) | Awaiting listing, or updated | `LISTED` |
+| List, at the UK time given (by default the first working day the request allows, at 10:00 or the time it asks for) | Awaiting listing, or updated | `LISTED` |
 | Confirm cancellation | Cancellation requested | `CANCELLED` |
 | Cannot list, with an error code and description | Any of the above | `EXCEPTION` |
 
-A listing uses the venue, duration and judge from the hearing's latest request. The page can
+A listing uses the venue, duration and judge from the hearing's latest request. Times on the
+page and in `start` are UK time; HMC keeps them in UTC, so a hearing listed at 10:00 in July
+is 09:00 in HMC. The page can
 also have HMI reject the next request, for any case or one case, with a 400, which HMC puts
 in `EXCEPTION`. Refresh the page to see HMC's status after answering.
 

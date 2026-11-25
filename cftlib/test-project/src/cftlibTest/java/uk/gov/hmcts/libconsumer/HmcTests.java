@@ -21,6 +21,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -140,7 +142,9 @@ class HmcTests extends CftlibTest {
         var update = awaitStatus(hearingId, "LISTED");
         assertThat(update.get("hearingListingStatus"), equalTo("FIXED"));
         assertThat(update.get("hearingVenueId"), equalTo("20262"));
-        assertThat(update.get("nextHearingDate").toString(), startsWith(start.toString()));
+        // The page takes UK time; HMC keeps times in UTC.
+        var startUtc = start.atZone(ZoneId.of("Europe/London")).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+        assertThat(update.get("nextHearingDate").toString(), startsWith(startUtc.toString()));
     }
 
     @Test

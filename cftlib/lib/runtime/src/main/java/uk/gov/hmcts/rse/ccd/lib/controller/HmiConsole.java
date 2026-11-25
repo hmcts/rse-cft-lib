@@ -135,7 +135,9 @@ public class HmiConsole {
             try {
                 var message = action.run(hearings, params);
                 return browser ? backToPage(message) : ResponseEntity.accepted().body(Map.of("message", message));
-            } catch (RuntimeException e) {
+            } catch (Exception e) {
+                // Includes the checked exceptions the inbound adapter's client and HMC's database throw, such as when
+                // the adapter is restarting.
                 return browser ? backToPage("Failed: " + e.getMessage())
                     : ResponseEntity.badRequest().body(Map.of("message", String.valueOf(e.getMessage())));
             }
@@ -197,6 +199,7 @@ public class HmiConsole {
         value.put("venue", hearing.venue());
         value.put("duration", hearing.duration());
         value.put("judge", hearing.judge());
+        value.put("unreadable", hearing.unreadable());
         return value;
     }
 
@@ -286,8 +289,8 @@ public class HmiConsole {
         for (var hearing : requested) {
             html.append("<tr><td>").append(escape(hearing.hearingId())).append("</td><td>");
             if (hearing.caseReference() != null) {
-                html.append("<a href=\"http://localhost:3000/cases/case-details/")
-                    .append(escape(hearing.caseReference())).append("\">").append(escape(hearing.caseReference()))
+                html.append("<a href=\"").append(escape(Hearings.caseUrl(hearing.caseReference()))).append("\">")
+                    .append(escape(hearing.caseReference()))
                     .append("</a>");
             }
             if (hearing.caseTitle() != null) {
@@ -302,6 +305,9 @@ public class HmiConsole {
             html.append(hearing.duration()).append(" min");
             if (hearing.judge() != null) {
                 html.append(", judge ").append(escape(hearing.judge()));
+            }
+            if (hearing.unreadable() != null) {
+                html.append("<br>Could not read HMC's request: ").append(escape(hearing.unreadable()));
             }
             html.append("</span></td><td>").append(actions(hearing)).append("</td></tr>\n");
         }
@@ -318,7 +324,7 @@ public class HmiConsole {
         }
         if (LISTABLE.contains(status) && !"DELETE".equals(hearing.lastRequest())) {
             actions.append("<form method=\"post\" action=\"/hmi/requests/").append(id).append("/listing\">")
-                .append("<input type=\"datetime-local\" name=\"start\" aria-label=\"Hearing start\" value=\"")
+                .append("<input type=\"datetime-local\" name=\"start\" aria-label=\"Hearing start, UK time\" value=\"")
                 .append(hearing.suggestedStart() == null ? "" : hearing.suggestedStart().toString()).append("\">")
                 .append("<button>List</button></form>");
         }

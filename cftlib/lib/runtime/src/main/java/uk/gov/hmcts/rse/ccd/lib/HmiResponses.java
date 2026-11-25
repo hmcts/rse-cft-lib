@@ -4,6 +4,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
 
 import com.google.gson.JsonArray;
@@ -14,6 +17,9 @@ import com.google.gson.JsonParser;
 /**
  * The responses List Assist sends HMC, through HMI and the inbound adapter's PUT /listings/{hearingId}, built from the
  * request HMC sent for the hearing, so a hearing can be listed or cancelled without writing them by hand.
+ *
+ * <p>HMC's dates and times are in UTC. The times here, such as when to list a hearing, are court time, the UK's, as
+ * List Assist shows them; they're converted from and to UTC at the edges.
  */
 final class HmiResponses {
 
@@ -21,6 +27,7 @@ final class HmiResponses {
     static final String LISTED = "100";
     static final String CLOSED = "8";
 
+    static final ZoneId COURT_TIME = ZoneId.of("Europe/London");
     static final LocalTime START_OF_DAY = LocalTime.of(10, 0);
     static final int DEFAULT_DURATION_MINUTES = 60;
 
@@ -34,7 +41,7 @@ final class HmiResponses {
      * @param caseTitle     the case's name, as HMC sent it
      * @param version       the hearing request's version, which a listing must give for HMC to accept it
      * @param venue         the court the hearing was requested at: the first court location, else the case's court
-     * @param earliest      the first date-time the hearing can be listed on, if the request gives one
+     * @param earliest      the first date-time, in court time, the hearing can be listed on, if the request gives one
      * @param duration      the hearing's duration in minutes
      * @param judge         the judge the request asks for, if any
      */
@@ -77,40 +84,46 @@ final class HmiResponses {
             }
         }
 
-        var version = hearingCase.get("caseVersionId");
-        var duration = listing.get("listingDuration");
+        var version = number(hearingCase, "caseVersionId");
+        var duration = number(listing, "listingDuration");
         return new Request(
             string(hearingCase, "caseIdHMCTS"),
             string(hearingCase, "caseTitle"),
-            version == null ? 1 : version.getAsInt(),
+            version == null ? 1 : version,
             venue,
             earliest,
-            duration == null ? DEFAULT_DURATION_MINUTES : duration.getAsInt(),
+            duration == null ? DEFAULT_DURATION_MINUTES : duration,
             judge
         );
     }
 
     /**
-     * When to list a hearing nobody chose a time for: the first time the request allows, but not before the next
-     * working day, at the start of the court day.
+     * When to list a hearing nobody chose a time for, in court time: the first working day the request allows, but
+     * not before the next working day, at the time the request asks for or else the start of the court day.
+     *
+     * @param today today's date in court time
      */
     static LocalDateTime defaultStart(Request request, LocalDate today) {
         var nextWorkingDay = workingDayFrom(today.plusDays(1));
-        if (request.earliest() == null || request.earliest().toLocalDate().isBefore(nextWorkingDay)) {
+        var earliest = request.earliest();
+        if (earliest == null || earliest.toLocalDate().isBefore(nextWorkingDay)) {
             return nextWorkingDay.atTime(START_OF_DAY);
         }
-        return request.earliest();
+        return workingDayFrom(earliest.toLocalDate()).atTime(earliest.toLocalTime());
     }
 
     /**
-     * List Assist's listing of the hearing for this request, at this time.
+     * List Assist's listing of the hearing for this request.
+     *
+     * @param start when the hearing starts, in court time
+     * @param now   the time now, in UTC
      */
     static String listing(String hearingId, Request request, LocalDateTime start, LocalDateTime now) {
         var hearing = hearing(hearingId, request, now);
         hearing.add("hearingCaseStatus", code(LISTED, "Listed"));
         hearing.add("hearingStatus", code("FIXED", "Fixed"));
-        hearing.addProperty("hearingStartTime", start.toString());
-        hearing.addProperty("hearingEndTime", start.plusMinutes(request.duration()).toString());
+        hearing.addProperty("hearingStartTime", utc(start).toString());
+        hearing.addProperty("hearingEndTime", utc(start.plusMinutes(request.duration())).toString());
         if (request.venue() != null) {
             var venue = new JsonObject();
             venue.addProperty("locationIdCaseHQ", request.venue());
@@ -142,6 +155,7 @@ final class HmiResponses {
      * List Assist closing the hearing, as it does once it has cancelled a hearing HMC asked it to cancel.
      *
      * @param reason the cancellation reason HMC sent, if any
+     * @param now    the time now, in UTC
      */
     static String cancellation(String hearingId, Request request, String reason, LocalDateTime now) {
         var hearing = hearing(hearingId, request, now);
@@ -215,14 +229,41 @@ final class HmiResponses {
         return date;
     }
 
-    // HMC sends HMI dates as 2026-11-20T00:00:00Z and date-times as 2026-11-20T10:00:00Z, both in UTC.
+    /**
+     * A court time in UTC, as HMC keeps it.
+     */
+    static LocalDateTime utc(LocalDateTime courtTime) {
+        return courtTime.atZone(COURT_TIME).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+    }
+
+    // HMC sends HMI dates as 2026-11-20T00:00:00Z and date-times as 2026-11-20T10:00:00Z, both in UTC. Returned in
+    // court time.
     private static LocalDateTime dateTime(String value) {
         if (value == null) {
             return null;
         }
         try {
-            return LocalDateTime.parse(value.endsWith("Z") ? value.substring(0, value.length() - 1) : value);
+            OffsetDateTime instant;
+            try {
+                instant = OffsetDateTime.parse(value);
+            } catch (DateTimeParseException e) {
+                instant = LocalDateTime.parse(value).atOffset(ZoneOffset.UTC);
+            }
+            return instant.atZoneSameInstant(COURT_TIME).toLocalDateTime();
         } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    // A whole number, or null when it's missing, null or isn't one.
+    private static Integer number(JsonObject parent, String name) {
+        var value = parent.get(name);
+        if (value == null || !value.isJsonPrimitive()) {
+            return null;
+        }
+        try {
+            return value.getAsInt();
+        } catch (NumberFormatException e) {
             return null;
         }
     }
