@@ -42,6 +42,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.util.FileSystemUtils;
 import uk.gov.hmcts.rse.ccd.lib.Database;
+import uk.gov.hmcts.rse.ccd.lib.api.IdamUser;
 import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -188,6 +189,70 @@ class LibConsumerApplicationTests extends CftlibTest {
             assertThat(v.getString(1), equalTo("2"));
             assertThat(v.getInt(2), greaterThan(1));
         }
+    }
+
+    // The id the IDAM simulator gives quick-login-judge@example.com, which cftlib-am-role-assignments.json names.
+    private static final String QUICK_LOGIN_JUDGE_ID = "1d57dc7d-a8d4-3f78-97a9-4632749587a8";
+
+    @Order(1)
+    @Test
+    @SneakyThrows
+    void replacesOnlyAUsersOrganisationRoles() {
+        // A case role the user gained while using the stack.
+        cftlib().configureRoleAssignments(new Gson().toJson(List.of(Map.of(
+            "id", QUICK_LOGIN_JUDGE_ID,
+            "roleAssignments", List.of(Map.of(
+                "roleType", "CASE",
+                "roleName", "[APPONESOLICITOR]",
+                "grantType", "SPECIFIC",
+                "roleCategory", "JUDICIAL",
+                "classification", "RESTRICTED",
+                "readOnly", false,
+                "attributes", Map.of("caseType", "NFD", "jurisdiction", "DIVORCE", "caseId", "1"),
+                "authorisations", List.of()
+            ))
+        ))));
+        // The next boot loads the user's organisational roles again.
+        cftlib().configureRoleAssignments(Resources.toString(
+            Resources.getResource("cftlib-am-role-assignments.json"), StandardCharsets.UTF_8));
+
+        try (var c = cftlib().getConnection(Database.AM)) {
+            var s = c.prepareStatement("""
+                select count(*) filter (where role_type = 'ORGANISATION'),
+                       count(*) filter (where role_type = 'CASE')
+                from role_assignment
+                where actor_id = ?
+                """);
+            s.setString(1, QUICK_LOGIN_JUDGE_ID);
+            var v = s.executeQuery();
+            v.next();
+            assertThat(v.getInt(1), equalTo(2));
+            assertThat(v.getInt(2), greaterThan(0));
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    void offersQuickLoginUsersOnTheLoginPage() {
+        var loginPage = HttpClientBuilder.create().build().execute(
+            new HttpGet("http://localhost:5062/login?redirect_uri=http://localhost:3000/oauth2/callback&client_id=xuiwebapp"));
+        var html = EntityUtils.toString(loginPage.getEntity());
+        assertThat(html.contains("quick-login-judge@example.com"), is(true));
+        assertThat(html.contains("Judges"), is(true));
+
+        var account = HttpClientBuilder.create().build().execute(
+            new HttpGet("http://localhost:5062/testing-support/accounts?email=quick-login-judge@example.com"));
+        var details = new Gson().fromJson(EntityUtils.toString(account.getEntity()), Map.class);
+        assertThat(details.get("forename"), equalTo("Quick"));
+        assertThat(details.get("surname"), equalTo("Judge"));
+        assertThat(details.get("id"), equalTo(QUICK_LOGIN_JUDGE_ID));
+    }
+
+    @Test
+    void returnsTheIdTheSimulatorGivesAUser() {
+        var id = cftlib().createIdamUser(IdamUser.quickLogin("Judges", "Quick", "Judge", "quick-login-judge@example.com",
+            "caseworker", "caseworker-divorce"));
+        assertThat(id, equalTo(QUICK_LOGIN_JUDGE_ID));
     }
 
     @Order(2)

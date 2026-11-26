@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
+import uk.gov.hmcts.rse.ccd.lib.api.IdamUser;
 
 @Component
 public class CFTLibConfig implements CFTLibConfigurer {
@@ -15,6 +16,8 @@ public class CFTLibConfig implements CFTLibConfigurer {
     public void configure(CFTLib lib) {
         lib.createIdamUser("a@b.com", "caseworker", "caseworker-divorce", "caseworker-divorce-solicitor",
             "caseworker-caa", "pui-organisation-manager");
+        lib.createIdamUser(IdamUser.quickLogin("Judges", "Quick", "Judge", "quick-login-judge@example.com",
+            "caseworker", "caseworker-divorce"));
         lib.createProfile("banderous", "DIVORCE", "NO_FAULT_DIVORCE", "Submitted");
         lib.createRoles(
             "caseworker-divorce-courtadmin_beta",

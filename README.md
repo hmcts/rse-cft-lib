@@ -172,6 +172,26 @@ public class CFTLibConfig implements CFTLibConfigurer {
 
 Note that your CFTLibConfigurer implementation must be in the cftlib sourceset.
 
+#### Test users
+
+`createIdamUser` creates an account in the IDAM simulator, whose password is `password`. Give an account a name and a
+label to have the login page list it, grouped by label, so people can sign in without looking up test users' emails:
+
+```java
+lib.createIdamUser(IdamUser.quickLogin("Judges", "Amy", "Powell", "DJ.Amy.Powell@ejudiciary.net",
+    "caseworker", "caseworker-civil", "caseworker-civil-judge"));
+```
+
+To give the user role assignments, name it by the id `createIdamUser` returns. The simulator derives each user's id
+from their email (`UUID.nameUUIDFromBytes(email.getBytes())`), so a JSON file of role assignments can give the id
+directly.
+
+Role assignments are loaded on every boot, into a database that keeps the case roles users gain while using the stack.
+Mark an entry `"replaceOrganisationRoles": true` to replace the user's organisational roles, as organisational role
+mapping does, rather than adding them again (`"overrideAll": true` replaces every assignment the user has). The flag
+only removes organisational roles, so any case roles listed in the entry are still added again on every boot: use it
+on entries that list organisational roles alone.
+
 CCD definitions can also be imported directly from the JSON source used by the CCD definition processor:
 
 ```java
