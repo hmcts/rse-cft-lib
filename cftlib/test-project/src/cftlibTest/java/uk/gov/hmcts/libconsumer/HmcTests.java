@@ -3,6 +3,7 @@ package uk.gov.hmcts.libconsumer;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.startsWith;
@@ -20,10 +21,13 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.IntStream;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,9 +52,13 @@ import uk.gov.hmcts.rse.ccd.lib.test.CftlibTest;
 class HmcTests extends CftlibTest {
 
     private static final String HEARING_SERVICE = "http://localhost:4561";
+    // cftlib's runtime, on the S2S port this project sets, which serves the HMI stand-in and its /hmi page.
+    private static final String HMI = "http://localhost:7431/hmi";
     private static final Duration WAIT = Duration.ofMinutes(1);
     // A caseworker created by CFTLibConfig. HMC looks its callers up in IDAM, so they need real tokens.
     private static final String USER = "a@b.com";
+    // The Service Bus emulator opens at most this many connections to its namespace at once.
+    private static final int EMULATOR_CONNECTIONS = 10;
 
     private final HttpClient http = HttpClient.newHttpClient();
     private final Gson gson = new Gson();
@@ -116,6 +124,109 @@ class HmcTests extends CftlibTest {
 
         awaitStatus(hearingId, "EXCEPTION");
         assertThat(cftlib().getHmiRequests(hearingId), hasSize(1));
+    }
+
+    @Test
+    void listsAHearingFromTheHmiPage() {
+        var hearingId = requestHearing(createCase());
+        awaitStatus(hearingId, "AWAITING_LISTING");
+        // The page reads each hearing's status from HMC, and offers the answers HMC accepts in it.
+        var page = hmiPage();
+        assertThat(page, containsString(hearingId));
+        assertThat(page, containsString("AWAITING_LISTING"));
+        assertThat(page, containsString("/hmi/requests/" + hearingId + "/listing"));
+
+        var start = LocalDate.now().plusDays(21).atTime(14, 0);
+        assertThat(hmi("/requests/" + hearingId + "/listing", "start=" + start), equalTo(202));
+
+        var update = awaitStatus(hearingId, "LISTED");
+        assertThat(update.get("hearingListingStatus"), equalTo("FIXED"));
+        assertThat(update.get("hearingVenueId"), equalTo("20262"));
+        // The page takes UK time; HMC keeps times in UTC.
+        var startUtc = start.atZone(ZoneId.of("Europe/London")).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+        assertThat(update.get("nextHearingDate").toString(), startsWith(startUtc.toString()));
+    }
+
+    @Test
+    void confirmsACancellationFromTheHmiPage() {
+        var hearingId = requestHearing(createCase());
+        awaitStatus(hearingId, "AWAITING_LISTING");
+
+        send(HttpRequest.newBuilder(URI.create(HEARING_SERVICE + "/hearing/" + hearingId))
+            .header("Content-Type", "application/json")
+            .method("DELETE", HttpRequest.BodyPublishers.ofString("{\"cancellationReasonCodes\": [\"withdraw\"]}")),
+            200);
+        awaitStatus(hearingId, "CANCELLATION_SUBMITTED");
+
+        assertThat(hmi("/requests/" + hearingId + "/cancellation", ""), equalTo(202));
+
+        awaitStatus(hearingId, "CANCELLED");
+    }
+
+    @Test
+    void reportsAHearingHmiCannotListFromTheHmiPage() {
+        var hearingId = requestHearing(createCase());
+        awaitStatus(hearingId, "AWAITING_LISTING");
+
+        assertThat(hmi("/requests/" + hearingId + "/exception", "errorCode=2000&description=No+room"), equalTo(202));
+
+        awaitStatus(hearingId, "EXCEPTION");
+    }
+
+    @Test
+    void rejectsTheNextRequestForACaseFromTheHmiPage() {
+        var caseReference = createCase();
+        assertThat(hmi("/rejections", "caseReference=" + caseReference), equalTo(202));
+
+        var hearingId = requestHearing(caseReference);
+
+        awaitStatus(hearingId, "EXCEPTION");
+    }
+
+    @Test
+    void listsHearingsByItselfWhenAskedTo() {
+        assertThat(hmi("/auto-respond", "enabled=true"), equalTo(202));
+        try {
+            var hearingId = requestHearing(createCase());
+
+            awaitStatus(hearingId, "LISTED");
+        } finally {
+            hmi("/auto-respond", "enabled=false");
+        }
+    }
+
+    // HMC opens a new connection for every message it sends and never closes it. cftlib replaces its senders with ones
+    // that reuse a connection, or the emulator would stop opening them, and hearing updates stop, after a few messages.
+    // Listing each hearing sends a message with each of the senders a listing uses: the hearing service's, to HMI and
+    // to services, the outbound adapter's, with HMI's acknowledgement, and the inbound adapter's, with the listing.
+    @Test
+    void keepsSendingHearingUpdatesPastTheEmulatorsConnectionLimit() {
+        var hearingIds = IntStream.rangeClosed(0, EMULATOR_CONNECTIONS)
+            .mapToObj(i -> requestHearing(createCase()))
+            .toList();
+        hearingIds.forEach(hearingId -> awaitStatus(hearingId, "AWAITING_LISTING"));
+
+        hearingIds.forEach(hearingId -> cftlib().sendHmiListing(hearingId, listing()));
+
+        hearingIds.forEach(hearingId -> awaitStatus(hearingId, "LISTED"));
+    }
+
+    @SneakyThrows
+    private int hmi(String path, String form) {
+        return http.send(HttpRequest.newBuilder(URI.create(HMI + path))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Accept", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(form))
+                .build(),
+            HttpResponse.BodyHandlers.ofString()).statusCode();
+    }
+
+    @SneakyThrows
+    private String hmiPage() {
+        var page = http.send(HttpRequest.newBuilder(URI.create(HMI)).header("Accept", "text/html").build(),
+            HttpResponse.BodyHandlers.ofString());
+        assertThat(page.statusCode(), equalTo(200));
+        return page.body();
     }
 
     @SneakyThrows

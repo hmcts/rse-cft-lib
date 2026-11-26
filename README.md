@@ -616,7 +616,7 @@ consumer overrides are preserved.
 | `servicebus` | Azure Service Bus emulator | Docker dependency mode |
 | `localServices` | Local dm-store and IDAM compatibility endpoints; data-store system user | Local auth |
 | `wa` | Work allocation services and case-event delivery | `camunda`, `localServices` |
-| `hmc` | Hearing service, HMI adapters and controllable HMI stand-in | `servicebus`, `localServices` |
+| `hmc` | Hearing service, HMI adapters, and an HMI stand-in answered from a page or tests | `servicebus`, `localServices` |
 
 For documents alone, set `features 'localServices'` and `authMode = AuthMode.Local`.
 This supplies a default `DM_STORE_BASE_URL` and document URL pattern only when the
@@ -628,3 +628,56 @@ WA reads new case events from CCD and any `database:schema` pairs in
 `RSE_LIB_WA_CASE_EVENT_SOURCES`. It replaces the JMS delivery path for local tests;
 do not run another publisher for the same WA destination. Events rejected five
 times are set aside for that run.
+
+#### Hearings and the HMI stand-in
+
+With `hmc`, the hearing service and both HMI adapters run in this JVM, and HMC sends hearing
+requests to a stand-in for HMI and List Assist in the runtime, at `http://localhost:8489/hmi`
+(the runtime is on `RSE_LIB_S2S_PORT`). The stand-in accepts each request, so HMC moves the
+hearing to `AWAITING_LISTING`, and then waits to be told how List Assist answers it. With
+local auth, ExUI's hearings calls go to this HMC too, unless the build sets
+`XUI_SERVICES_HMC_HEARINGS_COMPONENT_API`.
+
+To answer a hearing by hand, open `http://localhost:8489/hmi` in a browser. It lists each
+hearing HMC has sent a request for, newest first, with its status in HMC, and offers the
+answers HMC accepts in that status. The requests are kept under `build/cftlib/hmi`
+(`RSE_LIB_HMI_DIR`), so the page still lists them after a restart; `clean` removes them.
+They belong to HMC's database: when it's recreated, by a clean boot or by removing its
+volume, the requests for its old hearings are dropped, as HMC numbers new hearings from the
+start again. Without `RSE_LIB_HMI_DIR`, outside the Gradle plugin, they're kept in memory.
+
+| Answer | When | HMC moves the hearing to |
+| --- | --- | --- |
+| List, at the UK time given (by default the first working day the request allows, at 10:00 or the time it asks for) | Awaiting listing, or updated | `LISTED` |
+| Confirm cancellation | Cancellation requested | `CANCELLED` |
+| Cannot list, with an error code and description | Any of the above | `EXCEPTION` |
+
+A listing uses the venue, duration and judge from the hearing's latest request. Times on the
+page and in `start` are UK time; HMC keeps them in UTC, so a hearing listed at 10:00 in July
+is 09:00 in HMC. The page can
+also have HMI reject the next request, for any case or one case, with a 400, which HMC puts
+in `EXCEPTION`. Refresh the page to see HMC's status after answering.
+
+To have HMI answer by itself, as List Assist would after listing a hearing, turn on automatic
+responses on the page, or set `RSE_LIB_HMI_AUTO_RESPOND=true` on the task. HMI then lists new
+and amended hearings, and confirms cancellations, once HMC has recorded that it accepted the
+request.
+
+The page's actions are also an API, for scripts and UI tests. Each takes form or query
+parameters and returns `202`, or `400` with a message; a browser is sent back to the page.
+
+| Request | Parameters |
+| --- | --- |
+| `GET /hmi/requests` | The hearings as JSON |
+| `POST /hmi/requests/{hearingId}/listing` | `start`, optional, such as `2026-12-01T10:00` |
+| `POST /hmi/requests/{hearingId}/cancellation` | |
+| `POST /hmi/requests/{hearingId}/exception` | `errorCode` and `description`, optional |
+| `POST /hmi/rejections` | `caseReference`, `errorCode` and `description`, optional |
+| `POST /hmi/auto-respond` | `enabled`, `true` or `false` |
+
+```shell
+curl -X POST http://localhost:8489/hmi/requests/2000000123/listing -d start=2026-12-01T10:00
+```
+
+Tests running in the cftlib JVM can use the Java API instead: `sendHmiListing`,
+`rejectNextHmiRequest` and `getHmiRequests` on `CFTLib`.

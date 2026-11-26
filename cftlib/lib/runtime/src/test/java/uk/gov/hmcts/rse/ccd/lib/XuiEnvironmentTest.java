@@ -301,6 +301,34 @@ class XuiEnvironmentTest {
     }
 
     @Test
+    void theHmcFeaturePointsManageCasesAtTheLocalHearingService() {
+        var source = Map.of("RSE_LIB_AUTH-MODE", "localAuth", "RSE_LIB_FEATURES", "servicebus,localServices,hmc");
+
+        assertThat(XuiEnvironment.manageCases(source, XuiEnvironment.Network.HOST, 3000))
+            .containsEntry("SERVICES_HMC_HEARINGS_COMPONENT_API", "http://localhost:4561");
+        assertThat(XuiEnvironment.manageCases(source, XuiEnvironment.Network.DOCKER, 3000))
+            .containsEntry("SERVICES_HMC_HEARINGS_COMPONENT_API", "http://host.docker.internal:4561");
+    }
+
+    @Test
+    void withoutTheHmcFeatureManageCasesKeepsAatsHearingService() {
+        var source = Map.of("RSE_LIB_AUTH-MODE", "localAuth", "RSE_LIB_FEATURES", "wa");
+
+        assertThat(XuiEnvironment.manageCases(source, XuiEnvironment.Network.HOST, 3000))
+            .containsEntry("SERVICES_HMC_HEARINGS_COMPONENT_API",
+                "http://hmc-cft-hearing-service-aat.service.core-compute-aat.internal");
+    }
+
+    @Test
+    void theHmcFeatureLeavesAHearingServiceOverrideAlone() {
+        var source = Map.of("RSE_LIB_AUTH-MODE", "localAuth", "RSE_LIB_FEATURES", "hmc",
+            "XUI_SERVICES_HMC_HEARINGS_COMPONENT_API", "http://hmc");
+
+        assertThat(XuiEnvironment.manageCases(source, XuiEnvironment.Network.HOST, 3000))
+            .containsEntry("SERVICES_HMC_HEARINGS_COMPONENT_API", "http://hmc");
+    }
+
+    @Test
     void localAuthLeavesDocumentOverridesAlone() {
         var source = Map.of(
             "RSE_LIB_AUTH-MODE", "localAuth",
