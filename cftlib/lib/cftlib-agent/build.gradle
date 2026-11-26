@@ -3,6 +3,10 @@ repositories {
     mavenLocal()
 }
 
+// The CFT applications this compiles against are published to Maven Local by this build, at the version it publishes.
+// A release publishes them at its own version, not DEV-SNAPSHOT.
+def cftVersion = version
+
 dependencies {
     // All these dependencies will be provided at runtime by the service this
     // library is injected into.
@@ -30,16 +34,16 @@ dependencies {
     compileOnly 'com.azure:azure-messaging-servicebus:7.17.18'
 
     // Use definition store modules at compile time without pulling SB3 transitive deps.
-    compileOnly('com.github.hmcts.rse-cft-lib:application:DEV-SNAPSHOT') {
+    compileOnly("com.github.hmcts.rse-cft-lib:application:${cftVersion}") {
         transitive = false
     }
-    compileOnly('com.github.hmcts.rse-cft-lib:excel-importer:DEV-SNAPSHOT') {
+    compileOnly("com.github.hmcts.rse-cft-lib:excel-importer:${cftVersion}") {
         transitive = false
     }
     compileOnly 'org.apache.poi:poi-ooxml:5.5.1'
 
     // Provide definition store parser classes for tests.
-    testImplementation('com.github.hmcts.rse-cft-lib:excel-importer:DEV-SNAPSHOT') {
+    testImplementation("com.github.hmcts.rse-cft-lib:excel-importer:${cftVersion}") {
         transitive = false
     }
     testImplementation project(':lib:bootstrapper')
@@ -88,7 +92,7 @@ hmcApplications.each { sourceSetName, project ->
         compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
     }
     dependencies.add(sourceSet.compileOnlyConfigurationName,
-        "com.github.hmcts.rse-cft-lib:${project}:DEV-SNAPSHOT") { transitive = false }
+        "com.github.hmcts.rse-cft-lib:${project}:${cftVersion}") { transitive = false }
     dependencies.add(sourceSet.compileOnlyConfigurationName, 'org.slf4j:slf4j-api:2.0.16')
     // As for the configurations above: resolve these when compiling, after the HMC application is published to
     // Maven Local, rather than while Gradle plans the build.
