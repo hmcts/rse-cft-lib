@@ -283,6 +283,8 @@ public class CftlibExec extends JavaExec {
             jvmArgs("--add-opens", "java.base/" + x + "=ALL-UNNAMED");
         });
         jvmArgs("--add-opens", "java.desktop/java.awt.font=ALL-UNNAMED");
-        jvmArgs("-XX:ReservedCodeCacheSize=128m");
+        // Every CFT application compiles into this one cache. Once it is full the JIT stops, and the method handles
+        // an application then needs fail with "Out of space in CodeCache". 128m no longer fits them all.
+        jvmArgs("-XX:ReservedCodeCacheSize=256m");
     }
 }
