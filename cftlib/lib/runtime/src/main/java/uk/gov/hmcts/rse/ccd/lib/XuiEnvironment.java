@@ -1,6 +1,7 @@
 package uk.gov.hmcts.rse.ccd.lib;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -15,6 +16,10 @@ import java.util.Properties;
 final class XuiEnvironment {
 
     static final String XUI_ENV_PREFIX = "RSE_LIB_XUI_ENV_";
+    // ExUI's URLs for rd-commondata-api, rd-location-ref-api and rd-judicial-api, which the refData feature serves.
+    static final List<String> REF_DATA_SERVICES = List.of("SERVICES_PRD_COMMONDATA_API", "SERVICES_PRD_LOCATION_API",
+        "SERVICES_LOCATION_API", "SERVICES_LOCATION_REF_API_URL", "SERVICES_PRD_JUDICIAL_API",
+        "SERVICES_CASE_JUDICIAL_API");
 
     private static final String DOCKER_JVM_HOST = "host.docker.internal";
     private static final String APPINSIGHTS_CONNECTION_STRING =
@@ -274,6 +279,13 @@ final class XuiEnvironment {
             // The hearings tab and its journeys call HMC, which the hmc feature runs on the port it pins.
             resolved.put("XUI_SERVICES_HMC_HEARINGS_COMPONENT_API",
                 value(source, "XUI_SERVICES_HMC_HEARINGS_COMPONENT_API", host + ":" + Hearings.HEARING_SERVICE_PORT));
+        }
+        if (Features.enabled(source, "refData")) {
+            // The reference data stand-in is in the runtime, on the S2S port.
+            var refData = host + ":" + value(source, "RSE_LIB_S2S_PORT", "8489");
+            for (var service : REF_DATA_SERVICES) {
+                resolved.put(service, value(source, service, refData));
+            }
         }
         // Placeholders so the XUI health checks pass without these services running.
         resolved.put("XUI_EM_DOCASSEMBLY_API", value(source, "XUI_EM_DOCASSEMBLY_API", runtime));

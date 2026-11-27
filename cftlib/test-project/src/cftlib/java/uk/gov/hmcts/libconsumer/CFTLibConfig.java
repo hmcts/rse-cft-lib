@@ -18,6 +18,8 @@ public class CFTLibConfig implements CFTLibConfigurer {
             "caseworker-caa", "pui-organisation-manager");
         lib.createIdamUser(IdamUser.quickLogin("Judges", "Quick", "Judge", "quick-login-judge@example.com",
             "caseworker", "caseworker-divorce"));
+        // RefDataTests: the judge the refData feature's stand-in for rd-judicial-api offers.
+        lib.createJudicialUser("quick-login-judge@example.com", "9000001");
         lib.createProfile("banderous", "DIVORCE", "NO_FAULT_DIVORCE", "Submitted");
         lib.createRoles(
             "caseworker-divorce-courtadmin_beta",

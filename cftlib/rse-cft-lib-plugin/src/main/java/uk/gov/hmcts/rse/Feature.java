@@ -22,9 +22,12 @@ public enum Feature {
     localServices(List.of(), List.of()),
     // Work allocation: wa-case-event-handler, wa-workflow-api and wa-task-monitor in-process, on Camunda.
     wa(List.of(), List.of(camunda, localServices)),
+    // A stand-in for the reference data ExUI reads: rd-commondata-api's lists of values and case flags,
+    // rd-location-ref-api's court venues and rd-judicial-api's judges, from files the service supplies.
+    refData(List.of(), List.of()),
     // Hearings: hmc-cft-hearing-service and both HMI adapters in-process, on the Service Bus emulator, with a
-    // stand-in for HMI.
-    hmc(List.of(), List.of(servicebus, localServices));
+    // stand-in for HMI. ExUI's hearing journeys read reference data.
+    hmc(List.of(), List.of(servicebus, localServices, refData));
 
     // The docker compose profiles the feature starts.
     public final List<String> composeProfiles;
@@ -38,10 +41,10 @@ public enum Feature {
 
     /**
      * Whether the feature only runs with local auth. Work allocation and hearings create the users their services act
-     * as, and HMC's listings are signed in, in the IDAM simulator.
+     * as, and HMC's listings are signed in, in the IDAM simulator. With AAT auth, ExUI reads AAT's reference data.
      */
     public boolean requiresLocalAuth() {
-        return this == wa || this == hmc || this == localServices;
+        return this == wa || this == hmc || this == localServices || this == refData;
     }
 
     /**

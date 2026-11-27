@@ -271,6 +271,8 @@ public class CftlibExec extends JavaExec {
         // The hearing requests the runtime's HMI stand-in has received, which its /hmi page lists.
         environment("RSE_LIB_HMI_DIR", getProject().getLayout()
                 .getBuildDirectory().dir("cftlib/hmi").get().getAsFile().getCanonicalPath());
+        // The reference data the refData feature's stand-in serves, which the service supplies.
+        defaultTo("RSE_LIB_REFDATA_DIR", getProject().file("src/cftlib/refdata").getCanonicalPath());
     }
 
     private void setRequiredJvmArgs() {

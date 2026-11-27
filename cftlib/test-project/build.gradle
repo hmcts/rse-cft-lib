@@ -64,6 +64,8 @@ cftlibTest {
     authMode = AuthMode.Local
     // CamundaTests and WorkAllocationTests: work allocation, which brings the Camunda engine, in-process.
     features 'wa'
+    // RefDataTests: the reference data ExUI reads, from src/cftlib/refdata. hmc brings it too, but needs docker.
+    features 'refData'
     if (System.getenv('RSE_LIB_DEPENDENCY_MODE') != 'process') {
         // ServiceBusTests and HmcTests: hearings, which bring the Service Bus emulator, a container.
         features 'hmc'

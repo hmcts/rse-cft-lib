@@ -1,0 +1,4 @@
+[
+  {"key": "INTER", "value_en": "In Person", "value_cy": "Wyneb yn wyneb", "lov_order": 1},
+  {"key": "VID", "value_en": "Video", "value_cy": "Fideo", "lov_order": 2}
+]
