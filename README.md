@@ -616,7 +616,8 @@ consumer overrides are preserved.
 | `servicebus` | Azure Service Bus emulator | Docker dependency mode |
 | `localServices` | Local dm-store and IDAM compatibility endpoints; data-store system user | Local auth |
 | `wa` | Work allocation services and case-event delivery | `camunda`, `localServices` |
-| `hmc` | Hearing service, HMI adapters, and an HMI stand-in answered from a page or tests | `servicebus`, `localServices` |
+| `refData` | A stand-in for the reference data ExUI reads, from files the service supplies | Local auth |
+| `hmc` | Hearing service, HMI adapters, and an HMI stand-in answered from a page or tests | `servicebus`, `localServices`, `refData` |
 
 For documents alone, set `features 'localServices'` and `authMode = AuthMode.Local`.
 This supplies a default `DM_STORE_BASE_URL` and document URL pattern only when the
@@ -681,3 +682,51 @@ curl -X POST http://localhost:8489/hmi/requests/2000000123/listing -d start=2026
 
 Tests running in the cftlib JVM can use the Java API instead: `sendHmiListing`,
 `rejectNextHmiRequest` and `getHmiRequests` on `CFTLib`.
+
+#### Reference data
+
+With `refData`, the runtime stands in for the reference data ExUI reads for case flags, case
+links and its hearing journeys: rd-commondata-api's lists of values and case flags,
+rd-location-ref-api's court venues and rd-judicial-api's judges. ExUI's URLs for them point at
+the runtime, unless the build sets them (`SERVICES_PRD_COMMONDATA_API`,
+`SERVICES_PRD_LOCATION_API`, `SERVICES_LOCATION_API`, `SERVICES_LOCATION_REF_API_URL`,
+`SERVICES_PRD_JUDICIAL_API` and `SERVICES_CASE_JUDICIAL_API`). `hmc` turns it on.
+
+The service supplies the data as files under `src/cftlib/refdata` (`RSE_LIB_REFDATA_DIR`). They're
+read on each request, so an edit applies without a restart. Each file is either the body the real
+API returns, so a response saved from AAT can be used as it is, or the same rows as a JSON array.
+
+| File | Holds | Answers |
+| --- | --- | --- |
+| `lov/<category>.json` | Values of the category for any service, each naming it in `service_id`, or none for every service | `GET /refdata/commondata/lov/categories/{category}` |
+| `lov/<service id>/<category>.json` | Values of the category for the service, such as `lov/AAA7/HearingType.json` | The same |
+| `caseflags/<service id>.json` | The service's case flags | `GET /refdata/commondata/caseflags/service-id={id}` |
+| `court-venues.json` | Court venues | `GET /refdata/location/court-venues`, and `/venue-search` by name, site, address or postcode |
+
+The lists of values are answered as rd-commondata-api answers them: a service's own values, or the
+values for every service if it has none, by `parentCategory`, `parentKey` and `key`, with
+`child_nodes` for `isChildRequired=Y`. A value's `child_nodes` in a file are values too. A
+category no file has is an empty list, where rd-commondata-api would answer 404, so a journey
+reading a list the service hasn't supplied still works. Case flags are filtered by `flag-type`,
+`welsh-required` and `available-external-flag` as rd-commondata-api filters them, and a service
+with no file gets its 404.
+
+Judges are the IDAM users the service names in its `CFTLibConfigurer`, so the judges ExUI offers
+are the judges people sign in as. A hearing request names a judge by personal code:
+
+```java
+lib.createIdamUser(IdamUser.quickLogin("Judges", "Amy", "Powell", "judge@example.com", "caseworker", "judge"));
+lib.createJudicialUser("judge@example.com", "9000001");
+```
+
+`POST /refdata/judicial/users` finds them by `sidam_ids`, `object_ids` or `personal_code`, and
+`POST /refdata/judicial/users/search` by a `searchString` in their name or email.
+
+To take values from AAT, save its response to the matching file, for example on the VPN with an
+IDAM token and an S2S token for a service rd-commondata-api accepts:
+
+```shell
+curl -H "Authorization: Bearer $IDAM_TOKEN" -H "ServiceAuthorization: $S2S_TOKEN" \
+  "http://rd-commondata-api-aat.service.core-compute-aat.internal/refdata/commondata/lov/categories/HearingType?serviceId=AAA7&isChildRequired=Y" \
+  > src/cftlib/refdata/lov/AAA7/HearingType.json
+```

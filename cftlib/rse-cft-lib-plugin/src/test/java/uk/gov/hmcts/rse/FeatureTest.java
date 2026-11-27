@@ -22,7 +22,8 @@ public class FeatureTest {
     @Test
     public void addsTheFeaturesAFeatureNeeds() {
         assertThat(Feature.resolve(List.of("hmc", "wa")))
-            .containsExactly(Feature.hmc, Feature.servicebus, Feature.localServices, Feature.wa, Feature.camunda);
+            .containsExactly(Feature.hmc, Feature.servicebus, Feature.localServices, Feature.refData, Feature.wa,
+                Feature.camunda);
     }
 
     @Test

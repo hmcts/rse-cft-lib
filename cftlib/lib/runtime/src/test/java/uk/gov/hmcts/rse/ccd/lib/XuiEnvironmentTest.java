@@ -320,6 +320,29 @@ class XuiEnvironmentTest {
     }
 
     @Test
+    void theRefDataFeaturePointsManageCasesAtTheRuntimesReferenceData() {
+        var source = Map.of("RSE_LIB_AUTH-MODE", "localAuth", "RSE_LIB_FEATURES", "refData",
+            "RSE_LIB_S2S_PORT", "7431", "SERVICES_PRD_JUDICIAL_API", "http://judicial");
+
+        var env = XuiEnvironment.manageCases(source, XuiEnvironment.Network.DOCKER, 3000);
+        assertThat(env)
+            .containsEntry("SERVICES_PRD_COMMONDATA_API", "http://host.docker.internal:7431")
+            .containsEntry("SERVICES_PRD_LOCATION_API", "http://host.docker.internal:7431")
+            .containsEntry("SERVICES_LOCATION_API", "http://host.docker.internal:7431")
+            .containsEntry("SERVICES_LOCATION_REF_API_URL", "http://host.docker.internal:7431")
+            .containsEntry("SERVICES_CASE_JUDICIAL_API", "http://host.docker.internal:7431")
+            .containsEntry("SERVICES_PRD_JUDICIAL_API", "http://judicial");
+    }
+
+    @Test
+    void withoutTheRefDataFeatureManageCasesKeepsAatsReferenceData() {
+        var source = Map.of("RSE_LIB_AUTH-MODE", "localAuth", "RSE_LIB_FEATURES", "wa");
+
+        assertThat(XuiEnvironment.manageCases(source, XuiEnvironment.Network.HOST, 3000))
+            .containsEntry("SERVICES_PRD_COMMONDATA_API", "http://rd-commondata-api-aat.service.core-compute-aat.internal");
+    }
+
+    @Test
     void theHmcFeatureLeavesAHearingServiceOverrideAlone() {
         var source = Map.of("RSE_LIB_AUTH-MODE", "localAuth", "RSE_LIB_FEATURES", "hmc",
             "XUI_SERVICES_HMC_HEARINGS_COMPONENT_API", "http://hmc");

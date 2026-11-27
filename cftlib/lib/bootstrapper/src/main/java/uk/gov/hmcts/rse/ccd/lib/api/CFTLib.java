@@ -24,6 +24,13 @@ public interface CFTLib {
     String createIdamUser(IdamUser user);
 
     /**
+     * With the refData feature, make an IDAM user created with {@link #createIdamUser} a judge in the stand-in for
+     * rd-judicial-api, under the user's name. ExUI's hearing journeys find judges there by name, and a hearing request
+     * names a judge by personal code.
+     */
+    void createJudicialUser(String email, String personalCode);
+
+    /**
      * Create a CCD User Profile.
      */
     void createProfile(String id, String jurisdiction, String caseType, String state);

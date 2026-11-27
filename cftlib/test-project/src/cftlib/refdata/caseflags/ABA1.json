@@ -1,0 +1,24 @@
+{
+  "flags": [
+    {
+      "FlagDetails": [
+        {"name": "Case", "name_cy": "Achos", "hearingRelevant": false, "flagComment": false,
+         "defaultStatus": "Active", "externallyAvailable": false, "flagCode": "CATGRY", "isParent": true,
+         "Path": [],
+         "childFlags": [
+           {"name": "Urgent case", "name_cy": "Achos brys", "hearingRelevant": true, "flagComment": false,
+            "defaultStatus": "Active", "externallyAvailable": false, "flagCode": "CF0007", "isParent": false,
+            "Path": ["Case"], "childFlags": []}
+         ]},
+        {"name": "Party", "name_cy": "Parti", "hearingRelevant": false, "flagComment": false,
+         "defaultStatus": "Active", "externallyAvailable": false, "flagCode": "CATGRY", "isParent": true,
+         "Path": [],
+         "childFlags": [
+           {"name": "Vulnerable user", "name_cy": "Defnyddiwr agored i niwed", "hearingRelevant": true,
+            "flagComment": false, "defaultStatus": "Active", "externallyAvailable": false, "flagCode": "PF0002",
+            "isParent": false, "Path": ["Party"], "childFlags": []}
+         ]}
+      ]
+    }
+  ]
+}

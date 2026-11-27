@@ -386,6 +386,8 @@ class LibConsumerApplicationTests extends CftlibTest {
 
         var env = docker("inspect", containerId, "--format", "{{range .Config.Env}}{{println .}}{{end}}");
         assertThat(env.contains(expected), is(true));
+        // The refData feature points ExUI's reference data at the runtime, on the S2S port this project sets.
+        assertThat(env.contains("SERVICES_PRD_COMMONDATA_API=http://host.docker.internal:7431"), is(true));
     }
 
 

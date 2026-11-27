@@ -1,0 +1,10 @@
+{
+  "list_of_values": [
+    {"category_key": "HearingType", "key": "ABA1-DIR", "value_en": "Directions", "value_cy": "Cyfarwyddiadau",
+     "hint_text_en": "", "hint_text_cy": "", "lov_order": 2, "parent_category": "", "parent_key": "",
+     "active_flag": "Y", "child_nodes": null},
+    {"category_key": "HearingType", "key": "ABA1-FHR", "value_en": "First Hearing", "value_cy": "Gwrandawiad Cyntaf",
+     "hint_text_en": "", "hint_text_cy": "", "lov_order": 1, "parent_category": "", "parent_key": "",
+     "active_flag": "Y", "child_nodes": null}
+  ]
+}

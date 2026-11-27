@@ -167,7 +167,14 @@ public class CFTLibApiImpl implements CFTLib {
         if (!String.valueOf(response.statusCode()).startsWith("2")) {
             throw new RuntimeException("Failed to create idam account" + response.statusCode());
         }
-        return JsonParser.parseString(response.body()).getAsJsonObject().get("uuid").getAsString();
+        var id = JsonParser.parseString(response.body()).getAsJsonObject().get("uuid").getAsString();
+        RefData.recordIdamUser(user.email(), id, user.forename(), user.surname());
+        return id;
+    }
+
+    @Override
+    public void createJudicialUser(String email, String personalCode) {
+        RefData.addJudge(email, personalCode);
     }
 
     @SneakyThrows

@@ -1,0 +1,12 @@
+[
+  {"court_venue_id": "1", "epimms_id": "20262", "site_name": "Central London County Court",
+   "court_name": "Central London County Court", "court_address": "Thomas More Building, Royal Courts of Justice",
+   "postcode": "WC2A 2LL", "region_id": "1", "region": "London", "court_type_id": "10",
+   "court_type": "County Court", "location_type": "COURT", "court_status": "Open",
+   "is_case_management_location": "Y", "is_hearing_location": "Y"},
+  {"court_venue_id": "2", "epimms_id": "827534", "site_name": "Aberystwyth Justice Centre",
+   "court_name": "Aberystwyth Justice Centre", "court_address": "Y Lanfa, Trefechan, Aberystwyth",
+   "postcode": "SY23 1AS", "region_id": "7", "region": "Wales", "court_type_id": "10",
+   "court_type": "County Court", "location_type": "COURT", "court_status": "Open",
+   "is_case_management_location": "Y", "is_hearing_location": "Y"}
+]
